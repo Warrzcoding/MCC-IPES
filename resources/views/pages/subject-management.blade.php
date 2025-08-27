@@ -471,6 +471,50 @@
     <input type="hidden" name="section" id="deleteSubjectSection">
 </form>
 
+<!-- CSV Upload Modal -->
+<div class="modal fade" id="csvUploadModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fas fa-upload me-2"></i>Upload CSV - Assign Instructors</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="csvUploadForm" enctype="multipart/form-data">
+                @csrf
+                <div class="modal-body">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>CSV Format:</strong> Subject Code, Staff ID, Semester, Year, Section<br>
+                        <small>Current semester: <span id="currentSemester" class="fw-bold text-primary"></span></small>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="csvFile" class="form-label">Select CSV File</label>
+                        <input type="file" class="form-control" id="csvFile" name="csv_file" accept=".csv" required>
+                        <div class="form-text">Only CSV files are allowed. Maximum file size: 2MB</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Semester</label>
+                        <input type="text" class="form-control" id="uploadSemester" name="semester" readonly>
+                    </div>
+                    
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>Warning:</strong> This will update instructor assignments for existing subjects. Make sure your CSV data is correct before uploading.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-upload me-2"></i>Upload & Assign
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <style>
 /* Custom validation styles */
 .form-control.is-valid {
@@ -1379,6 +1423,24 @@ document.addEventListener('DOMContentLoaded', function() {
     
     searchFilterWrapper.appendChild(clearButton);
     
+    // --- CSV Upload Button ---
+    const csvUploadButton = document.createElement('button');
+    csvUploadButton.type = 'button';
+    csvUploadButton.className = 'btn btn-success ms-2 shadow-sm d-flex align-items-center gap-2';
+    csvUploadButton.style.height = '40px';
+    csvUploadButton.innerHTML = '<i class="fas fa-upload"></i> <span>Upload CSV</span>';
+    csvUploadButton.title = 'Upload CSV file to assign instructors';
+    csvUploadButton.onclick = function() {
+        // Get current active semester
+        const activeSemester = document.querySelector('.nav-link.active').getAttribute('data-semester');
+        const semesterNumber = activeSemester === 'Sem 1' ? '1' : '2';
+        
+        // Show CSV upload modal
+        showCSVUploadModal(semesterNumber);
+    };
+    
+    searchFilterWrapper.appendChild(csvUploadButton);
+    
     // --- Filter status indicator ---
     const filterStatus = document.createElement('div');
     filterStatus.id = 'filterStatus';
@@ -1974,6 +2036,156 @@ document.addEventListener('DOMContentLoaded', function() {
                     icon: 'error',
                     confirmButtonText: 'OK'
                 });
+            });
+        });
+    }
+    
+    // CSV Upload Functions
+    window.showCSVUploadModal = function(semester) {
+        const modal = new bootstrap.Modal(document.getElementById('csvUploadModal'));
+        const currentSemesterSpan = document.getElementById('currentSemester');
+        const uploadSemesterInput = document.getElementById('uploadSemester');
+        
+        // Set semester information
+        currentSemesterSpan.textContent = `Semester ${semester}`;
+        uploadSemesterInput.value = semester;
+        
+        // Reset form
+        document.getElementById('csvUploadForm').reset();
+        uploadSemesterInput.value = semester; // Reset clears this, so set it again
+        
+        modal.show();
+    };
+    
+    // Handle CSV Upload Form Submission
+    const csvUploadForm = document.getElementById('csvUploadForm');
+    if (csvUploadForm) {
+        csvUploadForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const fileInput = document.getElementById('csvFile');
+            
+            // Validate file
+            if (!fileInput.files[0]) {
+                Swal.fire({
+                    title: 'No File Selected',
+                    text: 'Please select a CSV file to upload.',
+                    icon: 'warning',
+                    confirmButtonText: 'OK'
+                });
+                return;
+            }
+            
+            // Check file type
+            if (!fileInput.files[0].name.toLowerCase().endsWith('.csv')) {
+                Swal.fire({
+                    title: 'Invalid File Type',
+                    text: 'Please select a CSV file only.',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+                return;
+            }
+            
+            // Check file size (2MB limit)
+            if (fileInput.files[0].size > 2 * 1024 * 1024) {
+                Swal.fire({
+                    title: 'File Too Large',
+                    text: 'File size must be less than 2MB.',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+                return;
+            }
+            
+            // Show confirmation dialog
+            Swal.fire({
+                title: 'Confirm CSV Upload',
+                text: 'This will update instructor assignments for the selected semester. Are you sure you want to continue?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#28a745',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, Upload',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Show loading
+                    Swal.fire({
+                        title: 'Uploading CSV...',
+                        html: `
+                            <div class="text-center">
+                                <i class="fas fa-spinner fa-spin text-success" style="font-size: 2rem; margin-bottom: 1rem;"></i>
+                                <p>Please wait while we process your CSV file and update instructor assignments.</p>
+                            </div>
+                        `,
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        showConfirmButton: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+                    
+                    // Submit form via AJAX (placeholder - you'll need to implement the backend route)
+                    fetch('/dashboard/upload-csv-instructors', {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        Swal.close();
+                        
+                        if (data.success) {
+                            // Close modal
+                            bootstrap.Modal.getInstance(document.getElementById('csvUploadModal')).hide();
+                            
+                            // Show success message
+                            Swal.fire({
+                                title: 'Upload Successful!',
+                                html: `
+                                    <div class="text-center">
+                                        <i class="fas fa-check-circle text-success" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                                        <p><strong>${data.updated_count || 0}</strong> instructor assignments updated successfully.</p>
+                                        ${data.errors && data.errors.length > 0 ? 
+                                            `<p class="text-warning"><small>${data.errors.length} rows had errors and were skipped.</small></p>` : 
+                                            ''
+                                        }
+                                    </div>
+                                `,
+                                icon: 'success',
+                                timer: 4000,
+                                showConfirmButton: false,
+                                timerProgressBar: true,
+                                didClose: () => {
+                                    window.location.reload();
+                                }
+                            });
+                        } else {
+                            Swal.fire({
+                                title: 'Upload Failed',
+                                text: data.message || 'Failed to process CSV file. Please check the format and try again.',
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        Swal.close();
+                        Swal.fire({
+                            title: 'Upload Error',
+                            text: 'An error occurred while uploading the file. Please try again.',
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                    });
+                }
             });
         });
     }
