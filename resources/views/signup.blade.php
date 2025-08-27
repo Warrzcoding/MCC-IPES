@@ -7,36 +7,11 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
-    <!-- Enhanced preloading for instant background loading -->
-    <link rel="preload" href="{{ asset('images/mainmcc.jpg') }}" as="image" crossorigin>
-    <link rel="prefetch" href="{{ asset('images/mainmcc.jpg') }}">
-    
-    <!-- DNS prefetch for faster external resource loading -->
-    <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
-    <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
-    
-    <!-- Force immediate image loading -->
-    <script>
-        // Preload image immediately to ensure it's cached
-        const img = new Image();
-        img.src = '{{ asset('images/mainmcc.jpg') }}';
-        img.onload = function() {
-            document.body.classList.add('image-loaded');
-        };
-        
-        // Additional prefetch
-        const link = document.createElement('link');
-        link.rel = 'prefetch';
-        link.href = '{{ asset('images/mainmcc.jpg') }}';
-        document.head.appendChild(link);
-    </script>
+    <!-- Preload school image for instant loading -->
+    <link rel="preload" href="{{ asset('images/mainmcc.jpg') }}" as="image">
     <style>
         body {
-            background: 
-                linear-gradient(135deg, rgba(102, 126, 234, 0.4) 0%, rgba(118, 75, 162, 0.4) 50%, rgba(240, 147, 251, 0.3) 100%),
-                url('{{ asset('images/mainmcc.jpg') }}') center/cover no-repeat;
-            background-attachment: fixed;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
