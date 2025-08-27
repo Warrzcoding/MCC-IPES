@@ -948,7 +948,7 @@
     <footer class="footer">
         <div class="footer-content">
             <div class="footer-text">
-                &copy; {{ date('Y') }} MCC | Office Performance Evaluation System.
+                &copy; {{ date('Y') }} MCC | Office Instructor's Evaluation System.
             </div>
             
             <div class="footer-links">

@@ -41,10 +41,25 @@ if (Auth::user()->isAdmin()) {
     // Non-teaching Staff (count staff where staff_type is non-teaching)
     $stats['non_teaching_staff'] = \App\Models\Staff::where('staff_type', 'non-teaching')->count();
     
-    // Department Instructors (count unique instructors teaching subjects that match student's course, year_level, and section)
+    // Department Instructors (count unique instructors teaching subjects that match student's course, year_level, section, and active semester)
+    // Get the active academic year to filter by semester
+    $currentAcademicYear = \App\Models\AcademicYear::where('is_active', 1)->first();
+    $activeSemester = $currentAcademicYear ? (string) $currentAcademicYear->semester : null;
+    
     $stats['department_instructors'] = \App\Models\Subject::whereRaw('LOWER(TRIM(sub_department)) = ?', [strtolower(trim(Auth::user()->course))])
         ->whereRaw('LOWER(TRIM(sub_year)) = ?', [strtolower(trim(Auth::user()->year_level))])
         ->whereRaw('LOWER(TRIM(section)) = ?', [strtolower(trim(Auth::user()->section))])
+        ->when($activeSemester, function ($q) use ($activeSemester) {
+            $sem = strtolower(trim((string) $activeSemester));
+            $aliases = in_array($sem, ['2','2nd','second','second semester','sem 2','semester 2'])
+                ? ['2','2nd','second','second semester','sem 2','semester 2']
+                : ['1','1st','first','first semester','sem 1','semester 1'];
+            $q->where(function ($qq) use ($aliases) {
+                foreach ($aliases as $a) {
+                    $qq->orWhereRaw('LOWER(TRIM(semester)) = ?', [$a]);
+                }
+            });
+        })
         ->whereNotNull('assign_instructor')
         ->where('assign_instructor', '!=', '')
         ->distinct('assign_instructor')
