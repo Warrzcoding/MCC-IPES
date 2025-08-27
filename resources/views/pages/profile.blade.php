@@ -132,11 +132,20 @@
                             </select>
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label">Section <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" 
+                                   name="section" value="{{ old('section', Auth::user()->section) }}" 
+                                   disabled>
+                        </div>
+                    </div>
                     <!-- Hidden inputs to preserve values for disabled fields -->
                     <input type="hidden" name="email" value="{{ Auth::user()->email }}">
                     <input type="hidden" name="school_id" value="{{ Auth::user()->school_id }}">
                     <input type="hidden" name="course" value="{{ Auth::user()->course }}">
                     <input type="hidden" name="year_level" value="{{ Auth::user()->year_level }}">
+                    <input type="hidden" name="section" value="{{ Auth::user()->section }}">
                     @endif
                     
                     @if(Auth::user()->role === 'admin')
