@@ -73,6 +73,9 @@
             <div class="card-header py-3 d-flex justify-content-between align-items-center">
                 <h6 class="m-0 font-weight-bold text-primary">Subject List</h6>
                 <div>
+                    <button class="btn btn-success me-2" id="csvUploadBtn" onclick="openCSVUpload()">
+                        <i class="fas fa-upload"></i> Upload CSV
+                    </button>
                     <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal">
                         <i class="fas fa-plus"></i> Add Subject
                     </button>
@@ -485,7 +488,7 @@
                     <div class="alert alert-info">
                         <i class="fas fa-info-circle me-2"></i>
                         <strong>CSV Format:</strong> Subject Code, Staff ID, Semester, Year, Section<br>
-                        <small>Current semester: <span id="currentSemester" class="fw-bold text-primary"></span></small>
+                        <small>Example: BSIT101,STF001,1,1,A</small>
                     </div>
                     
                     <div class="mb-3">
@@ -495,13 +498,16 @@
                     </div>
                     
                     <div class="mb-3">
-                        <label class="form-label">Semester</label>
-                        <input type="text" class="form-control" id="uploadSemester" name="semester" readonly>
+                        <label class="form-label">Target Semester</label>
+                        <select class="form-control" id="targetSemester" name="semester" required>
+                            <option value="1">Semester 1</option>
+                            <option value="2">Semester 2</option>
+                        </select>
                     </div>
                     
                     <div class="alert alert-warning">
                         <i class="fas fa-exclamation-triangle me-2"></i>
-                        <strong>Warning:</strong> This will update instructor assignments for existing subjects. Make sure your CSV data is correct before uploading.
+                        <strong>Warning:</strong> This will update instructor assignments for existing subjects.
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -514,6 +520,8 @@
         </div>
     </div>
 </div>
+
+
 
 <style>
 /* Custom validation styles */
@@ -1423,24 +1431,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
     searchFilterWrapper.appendChild(clearButton);
     
-    // --- CSV Upload Button ---
-    const csvUploadButton = document.createElement('button');
-    csvUploadButton.type = 'button';
-    csvUploadButton.className = 'btn btn-success ms-2 shadow-sm d-flex align-items-center gap-2';
-    csvUploadButton.style.height = '40px';
-    csvUploadButton.innerHTML = '<i class="fas fa-upload"></i> <span>Upload CSV</span>';
-    csvUploadButton.title = 'Upload CSV file to assign instructors';
-    csvUploadButton.onclick = function() {
-        // Get current active semester
-        const activeSemester = document.querySelector('.nav-link.active').getAttribute('data-semester');
-        const semesterNumber = activeSemester === 'Sem 1' ? '1' : '2';
-        
-        // Show CSV upload modal
-        showCSVUploadModal(semesterNumber);
-    };
-    
-    searchFilterWrapper.appendChild(csvUploadButton);
-    
     // --- Filter status indicator ---
     const filterStatus = document.createElement('div');
     filterStatus.id = 'filterStatus';
@@ -2039,32 +2029,60 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     }
+});
+
+// Simple CSV Upload Functions (outside DOMContentLoaded)
+function openCSVUpload() {
+    // Get active semester
+    const activeTab = document.querySelector('.nav-link.active');
+    const currentSemester = activeTab && activeTab.getAttribute('data-semester') === 'Sem 1' ? '1' : '2';
     
-    // CSV Upload Functions
-    window.showCSVUploadModal = function(semester) {
-        const modal = new bootstrap.Modal(document.getElementById('csvUploadModal'));
-        const currentSemesterSpan = document.getElementById('currentSemester');
-        const uploadSemesterInput = document.getElementById('uploadSemester');
-        
-        // Set semester information
-        currentSemesterSpan.textContent = `Semester ${semester}`;
-        uploadSemesterInput.value = semester;
-        
-        // Reset form
-        document.getElementById('csvUploadForm').reset();
-        uploadSemesterInput.value = semester; // Reset clears this, so set it again
-        
-        modal.show();
-    };
-    
-    // Handle CSV Upload Form Submission
-    const csvUploadForm = document.getElementById('csvUploadForm');
-    if (csvUploadForm) {
-        csvUploadForm.addEventListener('submit', function(e) {
+    // Show SweetAlert confirmation dialog first
+    Swal.fire({
+        title: 'Upload CSV for Instructor Assignment',
+        html: `
+            <div class="text-start">
+                <p><strong>You are about to upload CSV for Semester ${currentSemester}</strong></p>
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong>CSV Format Required:</strong><br>
+                    Subject Code, Staff ID, Semester, Year, Section<br>
+                    <small class="text-muted">Example: BSIT101,STF001,${currentSemester},1,A</small>
+                </div>
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    This will update instructor assignments for existing subjects in <strong>Semester ${currentSemester}</strong>.
+                </div>
+            </div>
+        `,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#28a745',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: '<i class="fas fa-upload me-2"></i>Continue to Upload',
+        cancelButtonText: '<i class="fas fa-times me-2"></i>Cancel',
+        width: '500px'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Set the semester dropdown
+            document.getElementById('targetSemester').value = currentSemester;
+            
+            // Show modal
+            const modal = new bootstrap.Modal(document.getElementById('csvUploadModal'));
+            modal.show();
+        }
+    });
+}
+
+// Handle CSV form submission
+document.addEventListener('DOMContentLoaded', function() {
+    const csvForm = document.getElementById('csvUploadForm');
+    if (csvForm) {
+        csvForm.addEventListener('submit', function(e) {
             e.preventDefault();
             
-            const formData = new FormData(this);
             const fileInput = document.getElementById('csvFile');
+            const semesterSelect = document.getElementById('targetSemester');
             
             // Validate file
             if (!fileInput.files[0]) {
@@ -2072,119 +2090,126 @@ document.addEventListener('DOMContentLoaded', function() {
                     title: 'No File Selected',
                     text: 'Please select a CSV file to upload.',
                     icon: 'warning',
-                    confirmButtonText: 'OK'
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#28a745'
                 });
                 return;
             }
             
-            // Check file type
             if (!fileInput.files[0].name.toLowerCase().endsWith('.csv')) {
                 Swal.fire({
                     title: 'Invalid File Type',
                     text: 'Please select a CSV file only.',
                     icon: 'error',
-                    confirmButtonText: 'OK'
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#28a745'
                 });
                 return;
             }
             
-            // Check file size (2MB limit)
             if (fileInput.files[0].size > 2 * 1024 * 1024) {
                 Swal.fire({
                     title: 'File Too Large',
                     text: 'File size must be less than 2MB.',
                     icon: 'error',
-                    confirmButtonText: 'OK'
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#28a745'
                 });
                 return;
             }
             
-            // Show confirmation dialog
+            // Show confirmation
+            const semester = semesterSelect.value;
             Swal.fire({
                 title: 'Confirm CSV Upload',
-                text: 'This will update instructor assignments for the selected semester. Are you sure you want to continue?',
+                html: `
+                    <div class="text-center">
+                        <p>Upload CSV for <strong>Semester ${semester}</strong>?</p>
+                        <div class="alert alert-warning mt-3">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            This will update instructor assignments for existing subjects.
+                        </div>
+                    </div>
+                `,
                 icon: 'question',
                 showCancelButton: true,
                 confirmButtonColor: '#28a745',
                 cancelButtonColor: '#6c757d',
-                confirmButtonText: 'Yes, Upload',
-                cancelButtonText: 'Cancel'
+                confirmButtonText: '<i class="fas fa-check me-2"></i>Yes, Upload',
+                cancelButtonText: '<i class="fas fa-times me-2"></i>Cancel'
             }).then((result) => {
                 if (result.isConfirmed) {
                     // Show loading
                     Swal.fire({
-                        title: 'Uploading CSV...',
+                        title: 'Processing CSV File...',
                         html: `
                             <div class="text-center">
                                 <i class="fas fa-spinner fa-spin text-success" style="font-size: 2rem; margin-bottom: 1rem;"></i>
-                                <p>Please wait while we process your CSV file and update instructor assignments.</p>
+                                <p>Please wait while we process your CSV file.</p>
                             </div>
                         `,
                         allowOutsideClick: false,
                         allowEscapeKey: false,
-                        showConfirmButton: false,
-                        didOpen: () => {
-                            Swal.showLoading();
-                        }
+                        showConfirmButton: false
                     });
                     
-                    // Submit form via AJAX (placeholder - you'll need to implement the backend route)
-                    fetch('/dashboard/upload-csv-instructors', {
-                        method: 'POST',
-                        body: formData,
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                        }
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        Swal.close();
+                    // Read and process CSV file (demo mode)
+                    const file = fileInput.files[0];
+                    const reader = new FileReader();
+                    
+                    reader.onload = function(e) {
+                        const csvContent = e.target.result;
+                        const lines = csvContent.split('\n').filter(line => line.trim() !== '');
+                        const dataRows = lines.slice(1); // Skip header
                         
-                        if (data.success) {
+                        // Simulate processing time
+                        setTimeout(() => {
                             // Close modal
                             bootstrap.Modal.getInstance(document.getElementById('csvUploadModal')).hide();
                             
                             // Show success message
                             Swal.fire({
-                                title: 'Upload Successful!',
+                                title: 'Upload Successful! (Demo Mode)',
                                 html: `
                                     <div class="text-center">
                                         <i class="fas fa-check-circle text-success" style="font-size: 3rem; margin-bottom: 1rem;"></i>
-                                        <p><strong>${data.updated_count || 0}</strong> instructor assignments updated successfully.</p>
-                                        ${data.errors && data.errors.length > 0 ? 
-                                            `<p class="text-warning"><small>${data.errors.length} rows had errors and were skipped.</small></p>` : 
-                                            ''
-                                        }
+                                        <p><strong>${dataRows.length}</strong> rows processed successfully.</p>
+                                        <div class="alert alert-info mt-3">
+                                            <i class="fas fa-info-circle me-2"></i>
+                                            <strong>Demo Mode:</strong> This is a simulation. No actual data was modified.
+                                            <br><small>Backend integration needed for real functionality.</small>
+                                        </div>
+                                        <div class="mt-3">
+                                            <strong>CSV Content Preview:</strong>
+                                            <div class="text-start mt-2" style="max-height: 150px; overflow-y: auto; background: #f8f9fa; padding: 10px; border-radius: 5px; font-family: monospace; font-size: 12px;">
+                                                ${lines.slice(0, 5).map(line => `<div>${line}</div>`).join('')}
+                                                ${lines.length > 5 ? '<div class="text-muted">... and more rows</div>' : ''}
+                                            </div>
+                                        </div>
                                     </div>
                                 `,
                                 icon: 'success',
-                                timer: 4000,
-                                showConfirmButton: false,
-                                timerProgressBar: true,
-                                didClose: () => {
-                                    window.location.reload();
-                                }
+                                confirmButtonText: 'OK',
+                                confirmButtonColor: '#28a745',
+                                width: '600px'
                             });
-                        } else {
-                            Swal.fire({
-                                title: 'Upload Failed',
-                                text: data.message || 'Failed to process CSV file. Please check the format and try again.',
-                                icon: 'error',
-                                confirmButtonText: 'OK'
-                            });
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        Swal.close();
+                            
+                            // Reset form
+                            csvForm.reset();
+                        }, 1500); // 1.5 second delay to simulate processing
+                    };
+                    
+                    reader.onerror = function() {
                         Swal.fire({
-                            title: 'Upload Error',
-                            text: 'An error occurred while uploading the file. Please try again.',
+                            title: 'File Read Error',
+                            text: 'Could not read the CSV file. Please try again.',
                             icon: 'error',
-                            confirmButtonText: 'OK'
+                            confirmButtonText: 'OK',
+                            confirmButtonColor: '#28a745'
                         });
-                    });
+                    };
+                    
+                    reader.readAsText(file);
                 }
             });
         });
