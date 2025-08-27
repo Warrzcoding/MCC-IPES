@@ -7,6 +7,71 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
+## 🚀 Quick Setup (After Cloning)
+
+After cloning this repository, follow these steps to set up the project:
+
+### Automated Setup (Recommended)
+```bash
+# Run the setup script
+powershell -ExecutionPolicy Bypass -File setup.ps1
+```
+
+### Manual Setup
+```bash
+# 1. Install PHP dependencies
+composer install
+
+# 2. Copy environment file
+Copy-Item .env.example .env
+
+# 3. Generate application key
+php artisan key:generate
+
+# 4. Set up MySQL database
+# - Start your MySQL server (XAMPP, WAMP, etc.)
+# - Create a database named 'mccopes'
+# - Update .env with your MySQL credentials if needed
+
+# 5. Run migrations
+php artisan migrate
+
+# 6. Install Node.js dependencies (optional)
+npm install
+
+# 7. Build frontend assets (optional)
+npm run build
+
+# 8. Start development server
+php artisan serve
+```
+
+Your application will be available at `http://127.0.0.1:8000`
+
+### Requirements
+- PHP 8.2 or higher
+- Composer
+- Node.js (optional, for frontend assets)
+
+### Database Configuration
+This project uses **MySQL** by default. You need to:
+
+1. **Start MySQL server** (XAMPP, WAMP, or standalone MySQL)
+2. **Create database**: Create a database named `mccopes` in MySQL
+3. **Update credentials**: If your MySQL username/password is different, update your `.env` file:
+   ```env
+   DB_USERNAME=your_mysql_username
+   DB_PASSWORD=your_mysql_password
+   ```
+
+**Alternative: Use SQLite for simpler setup**
+If you prefer SQLite for development:
+1. Change `DB_CONNECTION=sqlite` in your `.env` file
+2. Comment out other DB_ lines with `#`
+3. Create file: `New-Item -ItemType File -Path "database\database.sqlite" -Force`
+
+---
+
 ## About Laravel
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
