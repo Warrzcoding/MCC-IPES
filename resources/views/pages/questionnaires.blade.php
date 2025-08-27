@@ -243,7 +243,10 @@
                                 @foreach($questions as $question)
                                     <tr>
                                         <td><strong>{{ $question->title }}</strong></td>
-                                        <td class="text-muted">{{ $question->description }}</td>
+                                        <td class="text-muted" style="max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" 
+                                            title="{{ $question->description }}" data-bs-toggle="tooltip" data-bs-placement="top">
+                                            {{ $question->description }}
+                                        </td>
                                         <td>
                                             <span class="badge {{ $question->staff_type == 'teaching' ? 'bg-primary' : 'bg-success' }}">
                                                 {{ ucfirst($question->staff_type) }}
@@ -336,7 +339,7 @@
                                     <option value="">Select Response Type</option>
                                     <option value="Rating_Scale" {{ old('response_type') == 'Rating_Scale' ? 'selected' : '' }}>Rating Scale (Poor, Fair, Good, Very Good, Excellent)</option>
                                     <option value="Frequency" {{ old('response_type') == 'Frequency' ? 'selected' : '' }}>Frequency (Rarely, Sometimes, Most of the Time, Always)</option>
-                                    <option value="Frequency" {{ old('response_type') == 'Agreement' ? 'selected' : '' }}>Agreement (Strongly Disagree, Disagree, Neutral, Agree, Strongly Agree)</option>
+                                    <option value="Agreement" {{ old('response_type') == 'Agreement' ? 'selected' : '' }}>Agreement (Strongly Disagree, Disagree, Neutral, Agree, Strongly Agree)</option>
                                     <option value="Satisfaction" {{ old('response_type') == 'Satisfaction' ? 'selected' : '' }}>Satisfaction (Very Dissatisfied, Dissatisfied, Neutral, Satisfied, Very Satisfied)</option>
                                     <option value="Yes_No" {{ old('response_type') == 'Yes_No' ? 'selected' : '' }}>Yes/No (Yes, No)</option>
                                     <option value="Text" {{ old('response_type') == 'Text' ? 'selected' : '' }}>Text Response (Free text input)</option>
@@ -780,6 +783,12 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }, 30000); // Check every 30 seconds
     @endif
+    
+    // Initialize Bootstrap tooltips for description column
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
 });
 </script> 
 
