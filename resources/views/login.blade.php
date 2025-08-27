@@ -27,7 +27,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Office Performance Evaluation System</title>
+    <title>Login - Office Instructors Evaluation System</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -734,8 +734,8 @@
             <div class="logo" style="box-shadow: 0 4px 16px rgb(253, 253, 253); display: flex; align-items: center; justify-content: center; margin-bottom: 10px;">
                 <img src="{{ asset('images/mcclogo.png') }}" alt="MCC Logo" class="login-logo-img" style="width: 120px; height: 120px; object-fit: contain; padding: 5px; max-width: 100%; height: auto;">
             </div>
-            <h2 style="margin-top: 0;">MCC | OPES</h2>
-            <p>Office Performance Evaluation System</p>
+            <h2 style="margin-top: 0;">MCC | IPES</h2>
+            <p>Office Instructor's Evaluation System</p>
         </div>
 
         
