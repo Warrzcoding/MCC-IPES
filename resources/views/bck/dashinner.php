@@ -667,7 +667,7 @@
         </button>
         <a href="{{ route('dashboard') }}" class="logo" id="mainLogo" style="transition:width 0.3s,opacity 0.3s;">
             <img src="{{ asset('images/mcclogo.png') }}" alt="MCC Logo" class="school-logo">
-            <span class="logo-text" style="transition:opacity 0.3s;">MCC-OPES</span>
+            <span class="logo-text" style="transition:opacity 0.3s;">MCC-IPES</span>
         </a>
         <div class="user-menu">
             <div class="dropdown">
