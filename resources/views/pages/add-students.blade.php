@@ -40,7 +40,7 @@
                 
                 <!-- Evaluation Statistics -->
                 <div class="row mb-3">
-                    <div class="col-md-4">
+                    <div class="col-md-2">
                         <div class="card bg-primary text-white">
                             <div class="card-body text-center">
                                 <h5 class="card-title">{{ $students->where('evaluation_count', 0)->count() }}</h5>
@@ -48,7 +48,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-2">
                         <div class="card bg-warning text-white">
                             <div class="card-body text-center">
                                 <h5 class="card-title">{{ $students->filter(function($s) { return $s->evaluation_count > 0 && !str_contains($s->evaluation_status, 'Done'); })->count() }}</h5>
@@ -56,11 +56,141 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-2">
+                        <div class="card text-white" style="background-color: #90EE90;">
+                            <div class="card-body text-center">
+                                @php
+                                    $instructorCompletedCount = 0;
+                                    foreach($students as $student) {
+                                        // Get current academic year and active semester
+                                        $currentAcademicYear = \App\Models\AcademicYear::where('is_active', 1)->first();
+                                        $activeSemester = $currentAcademicYear ? (string) $currentAcademicYear->semester : null;
+                                        
+                                        // Get total available instructors for this student with semester filtering
+                                        $instructorNames = \App\Models\Subject::whereRaw('LOWER(TRIM(sub_department)) = ?', [strtolower(trim($student->course))])
+                                            ->whereRaw('LOWER(TRIM(sub_year)) = ?', [strtolower(trim($student->year_level))])
+                                            ->whereRaw('LOWER(TRIM(section)) = ?', [strtolower(trim($student->section))])
+                                            ->when($activeSemester, function ($q) use ($activeSemester) {
+                                                $sem = strtolower(trim((string) $activeSemester));
+                                                $aliases = in_array($sem, ['2','2nd','second','second semester','sem 2','semester 2'])
+                                                    ? ['2','2nd','second','second semester','sem 2','semester 2']
+                                                    : ['1','1st','first','first semester','sem 1','semester 1'];
+                                                $q->where(function ($qq) use ($aliases) {
+                                                    foreach ($aliases as $a) {
+                                                        $qq->orWhereRaw('LOWER(TRIM(semester)) = ?', [$a]);
+                                                    }
+                                                });
+                                            })
+                                            ->whereNotNull('assign_instructor')
+                                            ->where('assign_instructor', '!=', '')
+                                            ->distinct('assign_instructor')
+                                            ->pluck('assign_instructor');
+                                        
+                                        $totalInstructors = \App\Models\Staff::whereIn('full_name', $instructorNames)
+                                            ->where('staff_type', 'teaching')
+                                            ->count();
+                                        
+                                        // Get evaluated instructors count
+                                        $evaluations = \App\Models\Evaluation::where('user_id', $student->id)->get();
+                                        $distinctStaffIds = $evaluations->pluck('staff_id')->unique();
+                                        $evaluatedInstructors = \App\Models\Staff::whereIn('id', $distinctStaffIds)->where('staff_type', 'teaching')->count();
+                                        
+                                        // Check if all instructors are evaluated
+                                        if ($totalInstructors > 0 && $evaluatedInstructors >= $totalInstructors) {
+                                            $instructorCompletedCount++;
+                                        }
+                                    }
+                                @endphp
+                                <h5 class="card-title">{{ $instructorCompletedCount }}</h5>
+                                <p class="card-text">Instructor Completed</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
                         <div class="card bg-success text-white">
                             <div class="card-body text-center">
-                                <h5 class="card-title">{{ $students->filter(function($s) { return str_contains($s->evaluation_status, 'Done'); })->count() }}</h5>
-                                <p class="card-text">Completed</p>
+                                @php
+                                    $nonTeachingCompletedCount = 0;
+                                    foreach($students as $student) {
+                                        // Get total non-teaching staff
+                                        $totalNonTeaching = \App\Models\Staff::where('staff_type', 'non-teaching')->count();
+                                        
+                                        // Get evaluated non-teaching staff count
+                                        $evaluations = \App\Models\Evaluation::where('user_id', $student->id)->get();
+                                        $distinctStaffIds = $evaluations->pluck('staff_id')->unique();
+                                        $evaluatedNonTeaching = \App\Models\Staff::whereIn('id', $distinctStaffIds)->where('staff_type', 'non-teaching')->count();
+                                        
+                                        // Check if all non-teaching staff are evaluated
+                                        if ($totalNonTeaching > 0 && $evaluatedNonTeaching >= $totalNonTeaching) {
+                                            $nonTeachingCompletedCount++;
+                                        }
+                                    }
+                                @endphp
+                                <h5 class="card-title">{{ $nonTeachingCompletedCount }}</h5>
+                                <p class="card-text">Non-Teaching Completed</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="card bg-info text-white">
+                            <div class="card-body text-center">
+                                @php
+                                    $fullyCompletedCount = 0;
+                                    foreach($students as $student) {
+                                        // Get current academic year and active semester
+                                        $currentAcademicYear = \App\Models\AcademicYear::where('is_active', 1)->first();
+                                        $activeSemester = $currentAcademicYear ? (string) $currentAcademicYear->semester : null;
+                                        
+                                        // Get total available instructors for this student with semester filtering
+                                        $instructorNames = \App\Models\Subject::whereRaw('LOWER(TRIM(sub_department)) = ?', [strtolower(trim($student->course))])
+                                            ->whereRaw('LOWER(TRIM(sub_year)) = ?', [strtolower(trim($student->year_level))])
+                                            ->whereRaw('LOWER(TRIM(section)) = ?', [strtolower(trim($student->section))])
+                                            ->when($activeSemester, function ($q) use ($activeSemester) {
+                                                $sem = strtolower(trim((string) $activeSemester));
+                                                $aliases = in_array($sem, ['2','2nd','second','second semester','sem 2','semester 2'])
+                                                    ? ['2','2nd','second','second semester','sem 2','semester 2']
+                                                    : ['1','1st','first','first semester','sem 1','semester 1'];
+                                                $q->where(function ($qq) use ($aliases) {
+                                                    foreach ($aliases as $a) {
+                                                        $qq->orWhereRaw('LOWER(TRIM(semester)) = ?', [$a]);
+                                                    }
+                                                });
+                                            })
+                                            ->whereNotNull('assign_instructor')
+                                            ->where('assign_instructor', '!=', '')
+                                            ->distinct('assign_instructor')
+                                            ->pluck('assign_instructor');
+                                        
+                                        $totalInstructors = \App\Models\Staff::whereIn('full_name', $instructorNames)
+                                            ->where('staff_type', 'teaching')
+                                            ->count();
+                                        $totalNonTeaching = \App\Models\Staff::where('staff_type', 'non-teaching')->count();
+                                        
+                                        // Get evaluated staff counts
+                                        $evaluations = \App\Models\Evaluation::where('user_id', $student->id)->get();
+                                        $distinctStaffIds = $evaluations->pluck('staff_id')->unique();
+                                        $evaluatedInstructors = \App\Models\Staff::whereIn('id', $distinctStaffIds)->where('staff_type', 'teaching')->count();
+                                        $evaluatedNonTeaching = \App\Models\Staff::whereIn('id', $distinctStaffIds)->where('staff_type', 'non-teaching')->count();
+                                        
+                                        // Check if both instructors and non-teaching staff are fully evaluated
+                                        $instructorsComplete = ($totalInstructors > 0 && $evaluatedInstructors >= $totalInstructors);
+                                        $nonTeachingComplete = ($totalNonTeaching > 0 && $evaluatedNonTeaching >= $totalNonTeaching);
+                                        
+                                        if ($instructorsComplete && $nonTeachingComplete) {
+                                            $fullyCompletedCount++;
+                                        }
+                                    }
+                                @endphp
+                                <h5 class="card-title">{{ $fullyCompletedCount }}</h5>
+                                <p class="card-text">Fully Completed</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="card bg-secondary text-white">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">{{ $students->count() }}</h5>
+                                <p class="card-text">Total Students</p>
                             </div>
                         </div>
                     </div>
@@ -144,6 +274,43 @@
   padding: 0.5em 1em;
   line-height: 1.2;
   white-space: nowrap;
+}
+
+/* Dual badge layout for separate instructor/non-teaching status */
+.dual-badge-container {
+  display: flex;
+  gap: 2px;
+  margin-bottom: 0.25rem;
+}
+
+.dual-badge-item {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.dual-badge {
+  display: block;
+  width: 100%;
+  text-align: center;
+  font-weight: 600;
+  font-size: 0.7rem;
+  padding: 0.4em 0.2em;
+  line-height: 1.1;
+  white-space: nowrap;
+  border-radius: 0.25rem;
+}
+
+.dual-count-container {
+  display: flex;
+  gap: 2px;
+}
+
+.dual-count-item {
+  flex: 1;
+  font-size: 0.65rem;
+  line-height: 1.2;
+  text-align: center;
 }
 
 /* Statistics Cards Styling */
@@ -451,10 +618,24 @@
                                                 $totalNonTeachingStaff = 0;
                                                 
                                                 if ($currentAcademicYear) {
-                                                    // Get instructor names for student's specific course, year level, and section
+                                                    // Get active semester for filtering
+                                                    $activeSemester = $currentAcademicYear ? (string) $currentAcademicYear->semester : null;
+                                                    
+                                                    // Get instructor names for student's specific course, year level, section, and active semester
                                                     $instructorNames = \App\Models\Subject::whereRaw('LOWER(TRIM(sub_department)) = ?', [strtolower(trim($student->course))])
                                                         ->whereRaw('LOWER(TRIM(sub_year)) = ?', [strtolower(trim($student->year_level))])
                                                         ->whereRaw('LOWER(TRIM(section)) = ?', [strtolower(trim($student->section))])
+                                                        ->when($activeSemester, function ($q) use ($activeSemester) {
+                                                            $sem = strtolower(trim((string) $activeSemester));
+                                                            $aliases = in_array($sem, ['2','2nd','second','second semester','sem 2','semester 2'])
+                                                                ? ['2','2nd','second','second semester','sem 2','semester 2']
+                                                                : ['1','1st','first','first semester','sem 1','semester 1'];
+                                                            $q->where(function ($qq) use ($aliases) {
+                                                                foreach ($aliases as $a) {
+                                                                    $qq->orWhereRaw('LOWER(TRIM(semester)) = ?', [$a]);
+                                                                }
+                                                            });
+                                                        })
                                                         ->whereNotNull('assign_instructor')
                                                         ->where('assign_instructor', '!=', '')
                                                         ->distinct('assign_instructor')
@@ -466,38 +647,48 @@
                                                         ->count();
                                                     $totalNonTeachingStaff = \App\Models\Staff::where('staff_type', 'non-teaching')->count();
                                                 }
+                                                
+                                                // Determine completion status for each category
+                                                $instructorsComplete = ($totalTeachingStaff > 0 && $teachingCount >= $totalTeachingStaff);
+                                                $nonTeachingComplete = ($totalNonTeachingStaff > 0 && $nonTeachingCount >= $totalNonTeachingStaff);
+                                                $fullyComplete = $instructorsComplete && $nonTeachingComplete;
                                             @endphp
-                                            @if($student->evaluation_count > 0)
-                                                @if(str_contains($student->evaluation_status, 'Done'))
-                                                    <div class="status-container">
-                                                        <span class="badge bg-success status-badge-fixed-width">Done</span>
-                                                        <div class="status-counts">
-                                                            <span class="count-item text-info">
+                                            <div class="status-container">
+                                                <table style="width: 100%; border-collapse: collapse; margin: 0; table-layout: fixed;">
+                                                    <tr>
+                                                        <td style="width: 50%; padding: 0 1px 2px 0; text-align: center;">
+                                                            @if($instructorsComplete)
+                                                                <span class="badge" style="background-color: #90EE90; color: #000; font-size: 0.7rem; padding: 0.3em 0.2em; width: 100%; display: block; min-width: 80px; box-sizing: border-box;">Done</span>
+                                                            @elseif($teachingCount > 0)
+                                                                <span class="badge bg-warning" style="font-size: 0.7rem; padding: 0.3em 0.2em; width: 100%; display: block; min-width: 80px; box-sizing: border-box;">In Progress</span>
+                                                            @else
+                                                                <span class="badge bg-primary" style="font-size: 0.7rem; padding: 0.3em 0.2em; width: 100%; display: block; min-width: 80px; box-sizing: border-box;">Never</span>
+                                                            @endif
+                                                        </td>
+                                                        <td style="width: 50%; padding: 0 0 2px 1px; text-align: center;">
+                                                            @if($nonTeachingComplete)
+                                                                <span class="badge bg-success" style="font-size: 0.7rem; padding: 0.3em 0.2em; width: 100%; display: block; min-width: 80px; box-sizing: border-box;">Done</span>
+                                                            @elseif($nonTeachingCount > 0)
+                                                                <span class="badge bg-warning" style="font-size: 0.7rem; padding: 0.3em 0.2em; width: 100%; display: block; min-width: 80px; box-sizing: border-box;">In Progress</span>
+                                                            @else
+                                                                <span class="badge bg-primary" style="font-size: 0.7rem; padding: 0.3em 0.2em; width: 100%; display: block; min-width: 80px; box-sizing: border-box;">Never</span>
+                                                            @endif
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="padding: 0 1px 0 0; text-align: center; font-size: 0.65rem; white-space: nowrap;">
+                                                            <span class="text-info">
                                                                 <i class="fas fa-chalkboard-teacher"></i> {{ $teachingCount }}/{{ $totalTeachingStaff }} Instructors
                                                             </span>
-                                                            <span class="count-item text-secondary">
+                                                        </td>
+                                                        <td style="padding: 0 0 0 1px; text-align: center; font-size: 0.65rem; white-space: nowrap;">
+                                                            <span class="text-secondary">
                                                                 <i class="fas fa-users"></i> {{ $nonTeachingCount }}/{{ $totalNonTeachingStaff }} Non-teaching
                                                             </span>
-                                                        </div>
-                                                    </div>
-                                                @else
-                                                    <div class="status-container">
-                                                        <span class="badge bg-warning status-badge-fixed-width">In Progress</span>
-                                                        <div class="status-counts">
-                                                            <span class="count-item text-info">
-                                                                <i class="fas fa-chalkboard-teacher"></i> {{ $teachingCount }}/{{ $totalTeachingStaff }} Instructors
-                                                            </span>
-                                                            <span class="count-item text-secondary">
-                                                                <i class="fas fa-users"></i> {{ $nonTeachingCount }}/{{ $totalNonTeachingStaff }} Non-teaching
-                                                            </span>
-                                                        </div>
-                                                    </div>
-                                                @endif
-                                            @else
-                                                <div class="status-container">
-                                                    <span class="badge bg-primary status-badge-fixed-width">Never Evaluated</span>
-                                                </div>
-                                            @endif
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </div>
                                         </td>
                                         <td>{{ $student->created_at ? $student->created_at->format('Y-m-d') : '' }}</td>
                                         <td class="actions-column">
