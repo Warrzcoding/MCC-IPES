@@ -506,7 +506,7 @@
             // OTP Timer variables
             let otpTimer;
             let otpTimeLeft = 300; // 5 minutes in seconds
-            const OTP_TIMEOUT = 10; // 5 minutes 300
+            const OTP_TIMEOUT = 300; // 5 minutes in seconds
             
             // Function to manage back button visibility
             function updateBackButtonVisibility() {
@@ -708,7 +708,7 @@
                 });
             }
 
-            // Step 2: Verify OTP (Modified to always succeed but still call backend)
+            // Step 2: Verify OTP
             if(otpForm) {
                 otpForm.addEventListener('submit', function(e) {
                     e.preventDefault();
@@ -718,7 +718,7 @@
                     verifyOtpBtn.disabled = true;
                     verifyOtpBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
                     
-                    // Call backend to set session properly, but always proceed on success
+                    // Send AJAX request to verify OTP
                     fetch(this.action, {
                         method: 'POST',
                         body: new FormData(this),
@@ -728,37 +728,43 @@
                     })
                     .then(response => response.json())
                     .then(data => {
-                        // TEMPORARY: Always proceed regardless of backend response
-                        // Stop the timer
-                        stopOtpTimer();
-                        
-                        step2.style.display = 'none';
-                        step3.style.display = 'block';
-                        passwordEmail.value = otpEmail.value;
-                        passwordOtp.value = otp;
-                        updateBackButtonVisibility();
-                        
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'OTP Verified!',
-                            text: 'Please enter your new password. (Test mode - any OTP accepted)',
-                            confirmButtonColor: '#667eea'
-                        });
+                        if (data.status === 'success') {
+                            // OTP is correct - proceed to password reset
+                            stopOtpTimer();
+                            
+                            step2.style.display = 'none';
+                            step3.style.display = 'block';
+                            passwordEmail.value = otpEmail.value;
+                            passwordOtp.value = otp;
+                            updateBackButtonVisibility();
+                            
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'OTP Verified!',
+                                text: 'Please enter your new password.',
+                                confirmButtonColor: '#667eea'
+                            });
+                        } else {
+                            // OTP is incorrect - show error
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Incorrect OTP',
+                                text: data.message,
+                                confirmButtonColor: '#667eea',
+                                confirmButtonText: 'Try Again'
+                            });
+                            
+                            // Clear the OTP input and focus it
+                            document.getElementById('otp_code').value = '';
+                            document.getElementById('otp_code').focus();
+                        }
                     })
                     .catch(error => {
-                        // TEMPORARY: Even on error, proceed to next step
-                        stopOtpTimer();
-                        
-                        step2.style.display = 'none';
-                        step3.style.display = 'block';
-                        passwordEmail.value = otpEmail.value;
-                        passwordOtp.value = otp;
-                        updateBackButtonVisibility();
-                        
+                        console.error('Error:', error);
                         Swal.fire({
-                            icon: 'success',
-                            title: 'OTP Verified!',
-                            text: 'Please enter your new password. (Test mode - any OTP accepted)',
+                            icon: 'error',
+                            title: 'Verification Error',
+                            text: 'Unable to verify OTP. Please check your connection and try again.',
                             confirmButtonColor: '#667eea'
                         });
                     })

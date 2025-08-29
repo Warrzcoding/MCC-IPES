@@ -58,29 +58,38 @@ class PasswordResetController extends Controller
         // Generate OTP (6 digits)
         $otp = str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT);
         
-        // Store OTP in session with expiration (10 minutes)
+        // Store OTP in session with expiration (5 minutes)
         Session::put('reset_otp', $otp);
         Session::put('reset_email', $email);
-        Session::put('reset_otp_expires', now()->addMinutes(10));
+        Session::put('reset_otp_expires', now()->addMinutes(5));
 
-        // Send email with OTP (temporary implementation)
-        // In production, you would use Laravel's Mail facade
+        // Send email with OTP
         try {
-            // For now, we'll just simulate sending the email
-            // You can implement actual email sending here
-            \Log::info("Password reset OTP for {$email}: {$otp}");
+            Mail::raw("🔐 MCC-IPES Password Reset Verification
+
+Your verification code is: {$otp}
+
+This code will expire in 5 minutes.
+
+If you didn't request this password reset, please ignore this email.
+
+Time: " . now() . "
+System: MCC-IPES", function ($message) use ($email) {
+                $message->to($email)
+                        ->subject('MCC-IPES Password Reset - Verification Code');
+            });
             
-            // TEMPORARY: Always return success for testing
+            \Log::info("Password reset OTP sent to {$email}: {$otp}");
+            
             return response()->json([
                 'status' => 'success',
-                'message' => 'Verification code sent successfully. Check the logs for the OTP code.'
+                'message' => 'Verification code sent to your Microsoft 365 email. Please check your inbox.'
             ]);
         } catch (\Exception $e) {
-            // TEMPORARY: Even if there's an exception, return success for testing
-            \Log::error("Error in sendVerification: " . $e->getMessage());
+            \Log::error("Error sending OTP email: " . $e->getMessage());
             return response()->json([
-                'status' => 'success',
-                'message' => 'Verification code sent successfully. Check the logs for the OTP code.'
+                'status' => 'error',
+                'message' => 'Failed to send verification code. Please try again.'
             ]);
         }
     }
@@ -97,19 +106,6 @@ class PasswordResetController extends Controller
             $email = $request->ms365_email;
             $otp = $request->otp_code;
 
-            // TEMPORARY: Always accept any OTP for testing purposes
-            // Set the session as verified regardless of the OTP
-            Session::put('reset_otp_verified', true);
-            Session::put('reset_email', $email);
-            
-            \Log::info("OTP verification bypassed for testing - Email: {$email}, OTP: {$otp}");
-
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Verification code verified successfully (test mode - any OTP accepted).'
-            ]);
-
-            /* ORIGINAL OTP VERIFICATION - COMMENTED OUT FOR TESTING
             // Check if OTP exists and is not expired
             $storedOtp = Session::get('reset_otp');
             $storedEmail = Session::get('reset_email');
@@ -118,36 +114,33 @@ class PasswordResetController extends Controller
             if (!$storedOtp || $email !== $storedEmail || now()->isAfter($otpExpires)) {
                 return response()->json([
                     'status' => 'error',
-                    'message' => 'Invalid or expired verification code.'
+                    'message' => 'Invalid or expired verification code. Please request a new code.'
                 ]);
             }
 
             if ($otp !== $storedOtp) {
                 return response()->json([
                     'status' => 'error',
-                    'message' => 'Invalid verification code.'
+                    'message' => 'Invalid verification code. Please check and try again.'
                 ]);
             }
 
             // OTP is valid, mark as verified
             Session::put('reset_otp_verified', true);
+            
+            \Log::info("OTP verification successful for email: {$email}");
 
             return response()->json([
                 'status' => 'success',
                 'message' => 'Verification code verified successfully.'
             ]);
-            */
 
         } catch (\Exception $e) {
             \Log::error("OTP verification error: " . $e->getMessage());
             
-            // TEMPORARY: Even on error, return success for testing
-            Session::put('reset_otp_verified', true);
-            Session::put('reset_email', $request->ms365_email);
-            
             return response()->json([
-                'status' => 'success',
-                'message' => 'Verification code verified successfully (test mode - error bypassed).'
+                'status' => 'error',
+                'message' => 'An error occurred during verification. Please try again.'
             ]);
         }
     }

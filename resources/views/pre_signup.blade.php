@@ -368,7 +368,7 @@
 
         let otpTimer;
         let otpTimeLeft = 300; // 5 minutes in seconds
-        const OTP_TIMEOUT = 20; // 5 minutes
+        const OTP_TIMEOUT = 300; // 5 minutes in seconds
         
         // Function to manage back button visibility
         function updateBackButtonVisibility() {
@@ -571,20 +571,73 @@
             otpForm.addEventListener('submit', function(e) {
                 e.preventDefault();
                 
-                // Show success SweetAlert first
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Email Verified!',
-                    text: 'Your Microsoft 365 email has been successfully verified. Redirecting to signup...',
-                    timer: 2000,
-                    timerProgressBar: true,
-                    showConfirmButton: false,
-                    allowOutsideClick: false,
-                    allowEscapeKey: false
-                }).then(() => {
-                    // Stop timer and redirect directly to signup
-                    stopOtpTimer();
-                    window.location.href = `{{ route('signup') }}?verified_email=${encodeURIComponent(otpEmail.value)}`;
+                const otpCode = document.getElementById('otp_code').value;
+                const email = otpEmail.value;
+                const submitBtn = otpForm.querySelector('button[type="submit"]');
+                const originalBtnText = submitBtn.innerHTML;
+                
+                // Disable button and show loading state
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
+                
+                // Create FormData object
+                const formData = new FormData(otpForm);
+                
+                // Send AJAX request to verify OTP
+                fetch(otpForm.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || document.querySelector('input[name="_token"]').value
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        // OTP is correct - show success and redirect
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Email Verified!',
+                            text: 'Your Microsoft 365 email has been successfully verified. Redirecting to signup...',
+                            timer: 2000,
+                            timerProgressBar: true,
+                            showConfirmButton: false,
+                            allowOutsideClick: false,
+                            allowEscapeKey: false
+                        }).then(() => {
+                            // Stop timer and redirect to signup
+                            stopOtpTimer();
+                            window.location.href = `{{ route('signup') }}?verified_email=${encodeURIComponent(email)}`;
+                        });
+                    } else {
+                        // OTP is incorrect - show error
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Incorrect OTP',
+                            text: data.message,
+                            confirmButtonColor: '#667eea',
+                            confirmButtonText: 'Try Again'
+                        });
+                        
+                        // Clear the OTP input and focus it
+                        document.getElementById('otp_code').value = '';
+                        document.getElementById('otp_code').focus();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Verification Error',
+                        text: 'Unable to verify OTP. Please check your connection and try again.',
+                        confirmButtonColor: '#667eea'
+                    });
+                })
+                .finally(() => {
+                    // Re-enable button and restore original text
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalBtnText;
                 });
             });
         }

@@ -662,7 +662,7 @@
                                                             @elseif($teachingCount > 0)
                                                                 <span class="badge bg-warning" style="font-size: 0.7rem; padding: 0.3em 0.2em; width: 100%; display: block; min-width: 80px; box-sizing: border-box;">In Progress</span>
                                                             @else
-                                                                <span class="badge bg-primary" style="font-size: 0.7rem; padding: 0.3em 0.2em; width: 100%; display: block; min-width: 80px; box-sizing: border-box;">Never</span>
+                                                                <span class="badge bg-primary" style="font-size: 0.7rem; padding: 0.3em 0.2em; width: 100%; display: block; min-width: 80px; box-sizing: border-box;">Never Evaluated</span>
                                                             @endif
                                                         </td>
                                                         <td style="width: 50%; padding: 0 0 2px 1px; text-align: center;">
@@ -671,7 +671,7 @@
                                                             @elseif($nonTeachingCount > 0)
                                                                 <span class="badge bg-warning" style="font-size: 0.7rem; padding: 0.3em 0.2em; width: 100%; display: block; min-width: 80px; box-sizing: border-box;">In Progress</span>
                                                             @else
-                                                                <span class="badge bg-primary" style="font-size: 0.7rem; padding: 0.3em 0.2em; width: 100%; display: block; min-width: 80px; box-sizing: border-box;">Never</span>
+                                                                <span class="badge bg-primary" style="font-size: 0.7rem; padding: 0.3em 0.2em; width: 100%; display: block; min-width: 80px; box-sizing: border-box;">Never Evaluated</span>
                                                             @endif
                                                         </td>
                                                     </tr>
@@ -744,7 +744,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <form method="POST" enctype="multipart/form-data" action="{{ url('/dashboard/update-students') }}">
+                <form method="POST" enctype="multipart/form-data" action="{{ route('students.update') }}">
                     @csrf
                     <input type="hidden" name="student_id" id="editStudentId">
                     
@@ -828,7 +828,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <form method="POST" action="{{ url('/dashboard/delete-students') }}" id="deleteStudentForm" style="display: inline;">
+                <form method="POST" action="{{ route('students.delete') }}" id="deleteStudentForm" style="display: inline;">
                     @csrf
                     <input type="hidden" name="student_id" id="deleteStudentId">
                     <button type="submit" class="btn btn-danger">Delete</button>
@@ -1277,31 +1277,35 @@ function formatSchoolId(input) {
                 let statusMatch = true;
                 let departmentMatch = true;
 
-                // Check search filter
-                for (let j = 0; j < cells.length - 2; j++) { // -2 to exclude Actions column
-                    if (cells[j] && cells[j].textContent.toUpperCase().indexOf(searchFilter) > -1) {
-                        found = true;
-                        break;
-                    }
-                }
-
-                // Check status filter
-                if (statusFilter && found) {
-                    const statusCell = cells[8]; // Evaluation Status column (moved due to Section column)
-                    if (statusCell) {
-                        const statusText = statusCell.textContent.trim();
-                        if (statusFilter === 'Done') {
-                            statusMatch = statusText.includes('Done');
-                        } else if (statusFilter === 'In Progress') {
-                            statusMatch = statusText.includes('In Progress');
-                        } else if (statusFilter === 'Never Evaluated') {
-                            statusMatch = statusText.includes('Never Evaluated');
+                // Check search filter (treat empty search as match-all)
+                if (!searchFilter) {
+                    found = true;
+                } else {
+                    for (let j = 0; j < cells.length - 2; j++) { // -2 to exclude Actions column
+                        if (cells[j] && cells[j].textContent.toUpperCase().indexOf(searchFilter) > -1) {
+                            found = true;
+                            break;
                         }
                     }
                 }
 
-                // Check department filter
-                if (departmentFilter && found && statusMatch) {
+                // Check status filter (independent of search)
+                if (statusFilter) {
+                    const statusCell = cells[8]; // Evaluation Status column (moved due to Section column)
+                    if (statusCell) {
+                        const statusText = statusCell.textContent.trim().toLowerCase();
+                        if (statusFilter === 'Done') {
+                            statusMatch = statusText.includes('done');
+                        } else if (statusFilter === 'In Progress') {
+                            statusMatch = statusText.includes('in progress');
+                        } else if (statusFilter === 'Never Evaluated') {
+                            statusMatch = statusText.includes('never evaluated');
+                        }
+                    }
+                }
+
+                // Check department filter (independent of search)
+                if (departmentFilter) {
                     const departmentCell = cells[5]; // Course column as department
                     if (departmentCell) {
                         departmentMatch = departmentCell.textContent.trim().startsWith(departmentFilter);
@@ -1324,6 +1328,9 @@ function formatSchoolId(input) {
         if (departmentFilter) {
             departmentFilter.addEventListener('change', filterTable);
         }
+        
+        // Run once on load to apply default filters
+        filterTable();
     }
 
     // Add event listeners for school ID formatting
@@ -1397,7 +1404,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const editStudentForm = document.querySelector('form[action*="update-students"]');
     if (editStudentForm) {
         editStudentForm.addEventListener('submit', function(e) {
-            e.preventDefault();
+            // Allow normal form submission to let Laravel handle redirects/validation
             
             Swal.fire({
                 title: 'Updating Student...',
@@ -1451,7 +1458,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const deleteStudentForm = document.getElementById('deleteStudentForm');
     if (deleteStudentForm) {
         deleteStudentForm.addEventListener('submit', function(e) {
-            e.preventDefault();
+            // Allow normal form submission to let Laravel handle redirects/validation
             
             Swal.fire({
                 title: 'Deleting Student...',

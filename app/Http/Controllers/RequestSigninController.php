@@ -10,11 +10,18 @@ use Illuminate\Support\Facades\DB;
 
 class RequestSigninController extends Controller
 {
-    // Show all pending requests
+    // Show pending and rejected requests with pagination
     public function index()
     {
-        $pendingRequests = RequestSignin::where('status', 'pending')->orderBy('created_at', 'desc')->get();
-        return view('pages.pending-requests', compact('pendingRequests'));
+        $pendingRequests = RequestSignin::where('status', 'pending')
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+
+        $rejectedRequests = RequestSignin::where('status', 'rejected')
+            ->orderBy('updated_at', 'desc')
+            ->paginate(10);
+
+        return view('pages.pending-requests', compact('pendingRequests', 'rejectedRequests'));
     }
 
     // Approve a request: move to users table, then delete from request_signin

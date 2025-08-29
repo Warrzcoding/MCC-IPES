@@ -883,15 +883,17 @@ function loadSubjectData(code, name, department, year, section, semester, instru
     document.getElementById('editSubjectName').value = name;
     document.getElementById('editDepartment').value = department;
     document.getElementById('editYear').value = year;
-    document.getElementById('editSection').value = section || '';
     document.getElementById('editSemester').value = semester || '';
     document.getElementById('editInstructor').value = instructor || '';
     document.getElementById('editSubjectType').value = subjectType || 'Major';
     document.getElementById('originalSubjectCode').value = code;
     document.getElementById('originalSection').value = section || '';
-    
-    // Populate sections for edit modal
+
+    // First populate section options based on department/year
     populateEditSections();
+
+    // Then preselect the current section value (after options are in place)
+    document.getElementById('editSection').value = section || '';
 }
 
 // Validation functions
@@ -1230,18 +1232,21 @@ function populateAddSections() {
     }
 }
 
-// Function to populate sections for edit modal
+// Function to populate sections for edit modal (preserves current selection)
 function populateEditSections() {
     const departmentSelect = document.getElementById('editDepartment');
     const yearSelect = document.getElementById('editYear');
     const sectionSelect = document.getElementById('editSection');
-    
+
     const department = departmentSelect.value;
     const year = yearSelect.value;
-    
+
+    // Remember currently set section (e.g., from loadSubjectData)
+    const currentValue = sectionSelect.value;
+
     // Clear existing options
     sectionSelect.innerHTML = '<option value="">Select section...</option>';
-    
+
     if (department && year && sectionData[department] && sectionData[department][year]) {
         const sections = sectionData[department][year];
         sections.forEach(section => {
@@ -1250,7 +1255,12 @@ function populateEditSections() {
             option.textContent = section.label;
             sectionSelect.appendChild(option);
         });
-        
+
+        // Re-select previously chosen section if it exists in the list
+        if (currentValue) {
+            sectionSelect.value = currentValue;
+        }
+
         // Enable the section dropdown
         sectionSelect.disabled = false;
     } else {

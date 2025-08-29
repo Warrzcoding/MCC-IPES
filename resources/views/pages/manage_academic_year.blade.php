@@ -962,7 +962,7 @@ if (!function_exists('getRatingStatus')) {
     }
 
     function fetchComments(staffId, staffName) {
-        fetch('{{ route("academic_year.staff_comments") }}', {
+        fetch('{{ route("staff.comments") }}', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
