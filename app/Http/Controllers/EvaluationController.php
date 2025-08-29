@@ -397,6 +397,35 @@ class EvaluationController extends Controller
         }
     }
 
+    public function checkQuestionsEmpty()
+    {
+        try {
+            // Check if there are any questions in the questions table
+            $questionCount = DB::table('questions')->count();
+            
+            // Log for debugging
+            \Log::info('Checking questions empty', [
+                'count' => $questionCount,
+                'empty' => $questionCount === 0
+            ]);
+            
+            return response()->json([
+                'empty' => $questionCount === 0,
+                'count' => $questionCount
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Error checking questions empty', [
+                'error' => $e->getMessage()
+            ]);
+            
+            return response()->json([
+                'empty' => true,
+                'count' => 0,
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function saveAndClearAllResults(Request $request)
     {
         DB::beginTransaction();

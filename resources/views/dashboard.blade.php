@@ -1232,7 +1232,7 @@
                     return;
                 }
                 
-                // Check if questions table is empty before proceeding
+                // If evaluations exist, check if questions table is empty before proceeding
                 fetch('/admin/check-questions-empty', {
                     method: 'GET',
                     headers: {
@@ -1242,88 +1242,89 @@
                 })
                 .then(response => response.json())
                 .then(data => {
-                    if (data.empty) {
-                        // Show SweetAlert confirmation
+                    if (!data.empty) {
+                        // Questions table is not empty - show warning
                         Swal.fire({
-                            title: 'Save & Clear All Results?',
-                            html: "<span style='font-size:1.1rem;'>This will save all evaluation results and <b>clear all entries</b> from the system.<br><br>Are you sure?</span>",
+                            title: 'Cannot Save Results',
+                            text: 'There are still active questionnaires in the system. Please save all questionnaires first before saving evaluation results.',
                             icon: 'warning',
-                            showCancelButton: true,
-                            confirmButtonColor: '#dc3545',
-                            cancelButtonColor: '#6c757d',
-                            confirmButtonText: '<i class="fas fa-save me-1"></i>Yes, Save & Clear!',
-                            cancelButtonText: '<i class="fas fa-times me-1"></i>Cancel',
-                            reverseButtons: true,
+                            confirmButtonText: 'OK',
+                            confirmButtonColor: '#f39c12',
                             showClass: {
                                 popup: 'animate__animated animate__fadeInDown'
                             },
                             hideClass: {
                                 popup: 'animate__animated animate__fadeOutUp'
                             }
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                // Show loading alert
-                                Swal.fire({
-                                    title: 'Saving Results...',
-                                    text: 'Please wait while we save all evaluation results.',
-                                    icon: 'info',
-                                    allowOutsideClick: false,
-                                    allowEscapeKey: false,
-                                    showConfirmButton: false,
-                                    didOpen: () => {
-                                        Swal.showLoading();
-                                    }
-                                });
-                                
-                                // Make the save request
-                                fetch('{{ route("evaluations.saveAndClearAll") }}', {
-                                    method: 'POST',
-                                    headers: {
-                                        'Content-Type': 'application/x-www-form-urlencoded',
-                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                                    },
-                                    body: ''
-                                })
-                                .then(response => response.json())
-                                .then(data => {
-                                    if (data.success) {
-                                        // Show success alert with auto-dismiss
-                                        Swal.fire({
-                                            title: 'Success!',
-                                            text: 'All evaluations have been saved and entries cleared successfully!',
-                                            icon: 'success',
-                                            timer: 3000,
-                                            showConfirmButton: false,
-                                            timerProgressBar: true,
-                                            showClass: {
-                                                popup: 'animate__animated animate__fadeInDown'
-                                            },
-                                            hideClass: {
-                                                popup: 'animate__animated animate__fadeOutUp'
-                                            }
-                                        }).then(() => {
-                                            location.reload();
-                                        });
-                                    } else {
-                                        Swal.fire({
-                                            title: 'Error!',
-                                            text: 'Error saving evaluations: ' + data.message,
-                                            icon: 'error',
-                                            confirmButtonText: 'OK',
-                                            confirmButtonColor: '#dc3545',
-                                            showClass: {
-                                                popup: 'animate__animated animate__fadeInDown'
-                                            },
-                                            hideClass: {
-                                                popup: 'animate__animated animate__fadeOutUp'
-                                            }
-                                        });
-                                    }
-                                })
-                                .catch(error => {
+                        });
+                        return;
+                    }
+                    
+                    // Questions table is empty - proceed with saving
+                    Swal.fire({
+                        title: 'Save & Clear All Results?',
+                        html: "<span style='font-size:1.1rem;'>This will save all evaluation results and <b>clear all entries</b> from the system.<br><br>Are you sure?</span>",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#dc3545',
+                        cancelButtonColor: '#6c757d',
+                        confirmButtonText: '<i class="fas fa-save me-1"></i>Yes, Save & Clear!',
+                        cancelButtonText: '<i class="fas fa-times me-1"></i>Cancel',
+                        reverseButtons: true,
+                        showClass: {
+                            popup: 'animate__animated animate__fadeInDown'
+                        },
+                        hideClass: {
+                            popup: 'animate__animated animate__fadeOutUp'
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Show loading alert
+                            Swal.fire({
+                                title: 'Saving Results...',
+                                text: 'Please wait while we save all evaluation results.',
+                                icon: 'info',
+                                allowOutsideClick: false,
+                                allowEscapeKey: false,
+                                showConfirmButton: false,
+                                didOpen: () => {
+                                    Swal.showLoading();
+                                }
+                            });
+                            
+                            // Make the save request
+                            fetch('{{ route("evaluations.saveAndClearAll") }}', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/x-www-form-urlencoded',
+                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                },
+                                body: ''
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    // Show success alert with auto-dismiss
+                                    Swal.fire({
+                                        title: 'Success!',
+                                        text: 'All evaluations have been saved and entries cleared successfully!',
+                                        icon: 'success',
+                                        timer: 3000,
+                                        showConfirmButton: false,
+                                        timerProgressBar: true,
+                                        showClass: {
+                                            popup: 'animate__animated animate__fadeInDown'
+                                        },
+                                        hideClass: {
+                                            popup: 'animate__animated animate__fadeOutUp'
+                                        }
+                                    }).then(() => {
+                                        location.reload();
+                                    });
+                                } else {
                                     Swal.fire({
                                         title: 'Error!',
-                                        text: 'Error saving evaluations. Please try again.',
+                                        text: 'Error saving evaluations: ' + data.message,
                                         icon: 'error',
                                         confirmButtonText: 'OK',
                                         confirmButtonColor: '#dc3545',
@@ -1334,26 +1335,39 @@
                                             popup: 'animate__animated animate__fadeOutUp'
                                         }
                                     });
+                                }
+                            })
+                            .catch(error => {
+                                Swal.fire({
+                                    title: 'Error!',
+                                    text: 'Error saving evaluations. Please try again.',
+                                    icon: 'error',
+                                    confirmButtonText: 'OK',
+                                    confirmButtonColor: '#dc3545',
+                                    showClass: {
+                                        popup: 'animate__animated animate__fadeInDown'
+                                    },
+                                    hideClass: {
+                                        popup: 'animate__animated animate__fadeOutUp'
+                                    }
                                 });
-                            }
-                        });
-                    } else {
-                        Swal.fire({
-                            title: 'Cannot Save Results',
-                            text: 'There are still active questions in the system. Please clear all questions before saving results.',
-                            icon: 'error',
-                            confirmButtonText: 'OK',
-                            confirmButtonColor: '#dc3545'
-                        });
-                    }
+                            });
+                        }
+                    });
                 })
                 .catch(error => {
                     Swal.fire({
                         title: 'Error!',
-                        text: 'Error checking system status. Please try again.',
+                        text: 'Error checking questionnaire status. Please try again.',
                         icon: 'error',
                         confirmButtonText: 'OK',
-                        confirmButtonColor: '#dc3545'
+                        confirmButtonColor: '#dc3545',
+                        showClass: {
+                            popup: 'animate__animated animate__fadeInDown'
+                        },
+                        hideClass: {
+                            popup: 'animate__animated animate__fadeOutUp'
+                        }
                     });
                 });
             })
@@ -1364,7 +1378,13 @@
                     text: 'Error checking evaluation status. Please try again.',
                     icon: 'error',
                     confirmButtonText: 'OK',
-                    confirmButtonColor: '#dc3545'
+                    confirmButtonColor: '#dc3545',
+                    showClass: {
+                        popup: 'animate__animated animate__fadeInDown'
+                    },
+                    hideClass: {
+                        popup: 'animate__animated animate__fadeOutUp'
+                    }
                 });
             });
         }
