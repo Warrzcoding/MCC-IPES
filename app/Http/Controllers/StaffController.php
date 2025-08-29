@@ -6,6 +6,7 @@ use App\Models\Staff;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 
 class StaffController extends Controller
 {
@@ -192,6 +193,179 @@ class StaffController extends Controller
             return redirect()->back()
                 ->with('message', 'Error deleting staff. Please try again.')
                 ->with('message_type', 'danger');
+        }
+    }
+
+    /**
+     * Get staff comments for general staff ratings page (uses evaluations table)
+     */
+    public function getStaffComments(Request $request)
+    {
+        $request->validate([
+            'staff_id' => 'required|integer|exists:staff,id'
+        ]);
+
+        try {
+            // Get the staff record
+            $staff = Staff::find($request->staff_id);
+            if (!$staff) {
+                return response()->json(['success' => false, 'message' => 'Staff not found.']);
+            }
+            
+            // Get unique comments per user from evaluations table
+            $comments = DB::table('evaluations as e')
+                ->select(
+                    'e.id',
+                    'e.comments',
+                    'e.created_at',
+                    'e.user_id',
+                    'u.full_name as user_name'
+                )
+                ->join('users as u', 'e.user_id', '=', 'u.id')
+                ->where('e.staff_id', $staff->id)
+                ->whereNotNull('e.comments')
+                ->where('e.comments', '!=', '')
+                ->whereRaw('e.id = (
+                    SELECT MIN(e2.id) 
+                    FROM evaluations e2 
+                    WHERE e2.staff_id = e.staff_id 
+                    AND e2.user_id = e.user_id 
+                    AND e2.comments IS NOT NULL 
+                    AND e2.comments != ""
+                )')
+                ->orderBy('e.created_at', 'desc')
+                ->get();
+
+            return response()->json([
+                'success' => true,
+                'comments' => $comments
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error loading comments: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Get staff profile and ratings for general staff ratings page (uses evaluations table)
+     */
+    public function getStaffProfileRatings($staffId)
+    {
+        try {
+            $staff = Staff::find($staffId);
+            if (!$staff) {
+                return response()->json(['success' => false, 'message' => 'Staff not found.']);
+            }
+
+            // Get categories from questions table (current evaluation questions)
+            $categories = DB::table('questions')
+                ->where('staff_type', $staff->staff_type)
+                ->select('title')
+                ->distinct()
+                ->pluck('title');
+
+            $averages = [];
+            foreach ($categories as $category) {
+                // Find all questions for this staff type and category title
+                $questionIds = DB::table('questions')
+                    ->where('staff_type', $staff->staff_type)
+                    ->where('title', $category)
+                    ->pluck('id');
+
+                $avg = DB::table('evaluations')
+                    ->where('staff_id', $staff->id)
+                    ->whereIn('question_id', $questionIds)
+                    ->avg('response_score');
+
+                $averages[$category] = $avg ? round($avg, 2) : 0;
+            }
+
+            // Calculate overall average
+            $overall_average = DB::table('evaluations')
+                ->where('staff_id', $staff->id)
+                ->avg('response_score');
+            $overall_average = $overall_average ? round($overall_average, 2) : 0;
+
+            return response()->json([
+                'success' => true,
+                'staff' => [
+                    'id' => $staff->id,
+                    'full_name' => $staff->full_name,
+                    'email' => $staff->email,
+                    'department' => $staff->department,
+                    'staff_type' => $staff->staff_type,
+                    'image_path' => $staff->image_path,
+                ],
+                'categories' => $categories->map(function($category) {
+                    return [
+                        'title' => $category,
+                    ];
+                })->values(),
+                'averages' => $averages,
+                'overall_average' => $overall_average,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error loading profile: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Get staff detailed evaluations for general staff ratings page (uses evaluations table)
+     */
+    public function getStaffDetailedEvaluations($staffId)
+    {
+        try {
+            $staff = Staff::find($staffId);
+            if (!$staff) {
+                return response()->json(['success' => false, 'message' => 'Staff not found.']);
+            }
+
+            // Get all questions for this staff_type with their evaluations
+            $questions = DB::table('questions')
+                ->where('staff_type', $staff->staff_type)
+                ->orderBy('title')
+                ->orderBy('description')
+                ->get();
+
+            // For each question, calculate the average response_score for this staff from evaluations
+            $evaluations = [];
+            foreach ($questions as $question) {
+                $avg = DB::table('evaluations')
+                    ->where('staff_id', $staff->id)
+                    ->where('question_id', $question->id)
+                    ->avg('response_score');
+
+                $evaluations[] = [
+                    'question_id' => $question->id,
+                    'question_text' => $question->description,
+                    'category' => $question->title,
+                    'average_rating' => $avg ? round($avg, 2) : 0,
+                ];
+            }
+
+            return response()->json([
+                'success' => true,
+                'staff' => [
+                    'id' => $staff->id,
+                    'staff_id' => $staff->staff_id,
+                    'full_name' => $staff->full_name,
+                    'email' => $staff->email,
+                    'department' => $staff->department,
+                    'staff_type' => $staff->staff_type,
+                    'image_path' => $staff->image_path,
+                ],
+                'evaluations' => $evaluations,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error loading detailed evaluations: ' . $e->getMessage()
+            ], 500);
         }
     }
 } 

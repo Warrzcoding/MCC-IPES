@@ -935,9 +935,9 @@ function getRatingStatus($rating) {
             return;
         }
 
-        console.log('Making fetch request to:', '{{ route("staff.comments") }}', 'with staffId:', staffId);
+        console.log('Making fetch request to:', '{{ route("staff.comments.general") }}', 'with staffId:', staffId);
         
-        fetch('{{ route("staff.comments") }}', {
+        fetch('{{ route("staff.comments.general") }}', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
@@ -1019,7 +1019,7 @@ function getRatingStatus($rating) {
         profileContent.innerHTML = `<div class='text-center'><div class='spinner-border text-primary' role='status'><span class='visually-hidden'>Loading...</span></div></div>`;
         modal.show();
         // Fetch profile and ratings via AJAX
-        fetch(`/staff/profile-ratings/${staffId}`)
+        fetch(`{{ url('/staff/profile-ratings') }}/${staffId}`)
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
@@ -1136,7 +1136,7 @@ function getRatingStatus($rating) {
         });
 
         // Fetch detailed staff evaluation data including questions and ratings
-        fetch(`/staff/detailed-evaluations/${staffId}`)
+        fetch(`{{ url('/staff/detailed-evaluations') }}/${staffId}`)
             .then(response => response.json())
             .then(data => {
                 if (data.success) {

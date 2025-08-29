@@ -64,6 +64,11 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/academic-year/staff-comments', [AcademicYearController::class, 'getStaffCommentsForYear'])->name('staff.comments');
     Route::get('/academic-year/{staffId}/{academicYearId}/profile-ratings', [AcademicYearController::class, 'profileRatingsForYearAjax'])->name('staff.profileRatings');
     Route::get('/academic-year/{staffId}/{academicYearId}/detailed-evaluations', [AcademicYearController::class, 'detailedEvaluationsForYearAjax'])->name('staff.detailedEvaluations');
+    
+    // Staff AJAX routes for general staff ratings page (without academic year context)
+    Route::post('/staff/comments', [StaffController::class, 'getStaffComments'])->name('staff.comments.general');
+    Route::get('/staff/profile-ratings/{staffId}', [StaffController::class, 'getStaffProfileRatings'])->name('staff.profileRatings.general');
+    Route::get('/staff/detailed-evaluations/{staffId}', [StaffController::class, 'getStaffDetailedEvaluations'])->name('staff.detailedEvaluations.general');
 
     // Staff CRUD Routes
     Route::post('/dashboard/add-staff', [StaffController::class, 'store'])->name('staff.store');
@@ -82,6 +87,15 @@ Route::middleware(['auth'])->group(function () {
        // Question reuse routes
        Route::post('/questions/reuse-saved', [\App\Http\Controllers\QuestionController::class, 'reuseSavedQuestion'])->name('question.reuseSaved');
        Route::post('/questions/reuse-all-saved', [\App\Http\Controllers\QuestionController::class, 'reuseAllSavedQuestions'])->name('question.reuseAllSaved');
+
+       // Questionnaires & Questions Routes
+       Route::post('/dashboard/add-question', [\App\Http\Controllers\QuestionController::class, 'store'])->name('questions.store');
+       Route::post('/dashboard/update-question', [\App\Http\Controllers\QuestionController::class, 'update'])->name('questions.update');
+       Route::post('/dashboard/delete-question', [\App\Http\Controllers\QuestionController::class, 'destroy'])->name('questions.delete');
+       Route::post('/dashboard/toggle-questionnaire-status', [\App\Http\Controllers\QuestionController::class, 'toggleStatus'])->name('questionnaires.toggle');
+       Route::post('/dashboard/set-questionnaire-schedule', [\App\Http\Controllers\QuestionController::class, 'setSchedule'])->name('questionnaires.schedule.set');
+       Route::get('/dashboard/clear-questionnaire-schedule', [\App\Http\Controllers\QuestionController::class, 'clearSchedule'])->name('questionnaires.schedule.clear');
+       Route::post('/questions/save-all', [\App\Http\Controllers\QuestionController::class, 'saveAllQuestions'])->name('questions.saveAll');
 
     // Pending Requests Routes
     Route::get('/dashboard/pending-requests', [RequestSigninController::class, 'index'])->name('pending.requests.index');
