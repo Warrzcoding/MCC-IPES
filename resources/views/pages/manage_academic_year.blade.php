@@ -1085,9 +1085,18 @@ if (!function_exists('getRatingStatus')) {
         });
 
         // Fetch detailed staff evaluation data including questions and ratings
-        fetch(`/academic-year/detailed-evaluations/${staffId}/{{ $year->id }}`)
-            .then(response => response.json())
+        const url = `{{ url('/academic-year') }}/${staffId}/{{ $year->id }}/detailed-evaluations`;
+        console.log('Fetching URL:', url);
+        fetch(url)
+            .then(response => {
+                console.log('Response status:', response.status);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
             .then(data => {
+                console.log('Response data:', data);
                 if (data.success) {
                     const staff = data.staff;
                     const evaluations = data.evaluations;
@@ -1237,10 +1246,11 @@ if (!function_exists('getRatingStatus')) {
                 }
             })
             .catch(error => {
+                console.error('Fetch error:', error);
                 Swal.close();
                 Swal.fire({
                     title: 'Error!',
-                    text: 'Error loading staff report. Please try again.',
+                    text: `Error loading staff report: ${error.message}. Please try again.`,
                     icon: 'error',
                     confirmButtonText: 'OK',
                     confirmButtonColor: '#dc3545'
