@@ -57,26 +57,13 @@ class PreSignupController extends Controller
         Session::put('pre_signup_email', $request->ms365_email);
         Session::put('pre_signup_otp_expires', now()->addMinutes(5));
 
-        // Send email with OTP
+        // Send email with OTP (HTML template)
         try {
-            \Illuminate\Support\Facades\Mail::raw("🎓 Welcome to MCC-IPES!
+            \Illuminate\Support\Facades\Mail::to($request->ms365_email)
+                ->send(new \App\Mail\OtpVerificationMail($otp, $request->ms365_email, 5));
 
-Your verification code is: {$otp}
-
-This code will expire in 5 minutes.
-
-Please enter this code to complete your registration.
-
-If you didn't request this registration, please ignore this email.
-
-Time: " . now() . "
-System: MCC-IPES", function ($message) use ($request) {
-                $message->to($request->ms365_email)
-                        ->subject('MCC-IPES Registration - Verification Code');
-            });
-            
             \Log::info("Pre-signup OTP sent to {$request->ms365_email}: {$otp}");
-            
+
             return response()->json([
                 'status' => 'success',
                 'message' => 'Verification code sent to your Microsoft 365 email. Please check your inbox.'

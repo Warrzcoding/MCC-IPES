@@ -63,24 +63,13 @@ class PasswordResetController extends Controller
         Session::put('reset_email', $email);
         Session::put('reset_otp_expires', now()->addMinutes(5));
 
-        // Send email with OTP
+        // Send email with OTP (HTML template)
         try {
-            Mail::raw("🔐 MCC-IPES Password Reset Verification
+            \Illuminate\Support\Facades\Mail::to($email)
+                ->send(new \App\Mail\OtpVerificationMail($otp, $email, 5));
 
-Your verification code is: {$otp}
-
-This code will expire in 5 minutes.
-
-If you didn't request this password reset, please ignore this email.
-
-Time: " . now() . "
-System: MCC-IPES", function ($message) use ($email) {
-                $message->to($email)
-                        ->subject('MCC-IPES Password Reset - Verification Code');
-            });
-            
             \Log::info("Password reset OTP sent to {$email}: {$otp}");
-            
+
             return response()->json([
                 'status' => 'success',
                 'message' => 'Verification code sent to your Microsoft 365 email. Please check your inbox.'
