@@ -325,9 +325,7 @@
                 
                 <!-- Horizontal button layout -->
                 <div class="d-flex justify-content-between gap-2 mt-2">
-                    <a href="{{ route('login') }}" class="btn btn-outline-secondary flex-fill" style="min-width: 0;">
-                        <i class="fas fa-arrow-left me-1"></i> Back to Login
-                    </a>
+                   
                     <button type="button" class="btn btn-outline-primary flex-fill" id="resendOtpBtn" style="display:none; min-width: 0;">
                         <i class="fas fa-redo me-1"></i> Resend Code
                     </button>

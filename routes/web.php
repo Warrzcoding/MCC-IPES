@@ -51,6 +51,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/evaluation-form', [EvaluationController::class, 'showEvaluationForm'])->name('evaluations.show');
     Route::post('/evaluations/submit', [EvaluationController::class, 'submit'])->name('evaluations.submit');
     Route::post('/evaluations/save-and-clear-all', [EvaluationController::class, 'saveAndClearAllResults'])->name('evaluations.saveAndClearAll');
+    Route::get('/admin/check-evaluations-exist', [EvaluationController::class, 'checkEvaluationsExist'])->name('evaluations.checkExist');
+    Route::get('/admin/check-questions-empty', [EvaluationController::class, 'checkQuestionsEmpty'])->name('evaluations.checkQuestionsEmpty');
 
     // Academic Year Routes
     Route::get('/dashboard/academic-years', [AcademicYearController::class, 'index'])->name('academic-years.index');
@@ -74,6 +76,19 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/dashboard/add-staff', [StaffController::class, 'store'])->name('staff.store');
     Route::post('/dashboard/update-staff', [StaffController::class, 'update'])->name('staff.update');
     Route::post('/dashboard/delete-staff', [StaffController::class, 'destroy'])->name('staff.delete');
+
+    // Admin management routes
+    Route::post('/dashboard/add-admin', [DashboardController::class, 'addAdmin'])->name('admin.add');
+    Route::post('/dashboard/update-admin', [DashboardController::class, 'updateAdmin'])->name('admin.update');
+    Route::post('/dashboard/delete-admin', [DashboardController::class, 'deleteAdmin'])->name('admin.delete');
+
+    // Profile Update Route
+    Route::post('/dashboard/update-profile', [DashboardController::class, 'updateProfile'])->name('profile.update');
+    
+    // Test route for debugging
+    Route::get('/dashboard/test-profile', function() {
+        return response()->json(['message' => 'Profile route is working', 'user' => Auth::user()->full_name]);
+    })->name('profile.test');
 
     // Student CRUD Routes
     Route::post('/dashboard/update-students', [StudentController::class, 'update'])->name('students.update');

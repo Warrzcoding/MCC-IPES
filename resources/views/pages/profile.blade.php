@@ -1,8 +1,20 @@
 @if(session('message'))
-    <div class="alert alert-{{ session('message_type', 'info') }} alert-dismissible fade show" role="alert">
-        {{ session('message') }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
+    @php
+        $type = session('message_type', 'info');
+        $icon = $type === 'danger' ? 'error' : ($type === 'warning' ? 'warning' : ($type === 'success' ? 'success' : 'info'));
+        $title = $type === 'success' ? 'Success' : ($type === 'danger' ? 'Error' : 'Notice');
+    @endphp
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            Swal.fire({
+                icon: '{{ $icon }}',
+                title: '{{ $title }}',
+                text: @json(session('message')),
+                confirmButtonColor: '#667eea'
+            });
+        });
+    </script>
 @endif
 
 @if($errors->any())
@@ -61,7 +73,7 @@
                 </h5>
             </div>
             <div class="card-body">
-                <form action="{{ url('/dashboard/update-profile') }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="row">
                         <div class="col-md-6 mb-3">
@@ -87,7 +99,7 @@
                             <label class="form-label">Email <span class="text-danger">*</span></label>
                             @if(Auth::user()->role === 'student')
                                 <input type="email" class="form-control" 
-                                       name="email" value="{{ old('email', Auth::user()->email) }}" 
+                                       value="{{ old('email', Auth::user()->email) }}" 
                                        disabled>
                             @else
                                 <input type="email" class="form-control @error('email') is-invalid @enderror" 
@@ -102,7 +114,7 @@
                         <div class="col-md-6 mb-3">
                             <label class="form-label">School ID <span class="text-danger">*</span></label>
                             <input type="text" class="form-control school-id-input" 
-                                   name="school_id" value="{{ old('school_id', Auth::user()->school_id) }}" 
+                                   value="{{ old('school_id', Auth::user()->school_id) }}" 
                                    disabled>
                         </div>
                         @endif
@@ -112,7 +124,7 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Course <span class="text-danger">*</span></label>
-                            <select class="form-select" name="course" disabled>
+                            <select class="form-select" disabled>
                                 <option value="">Select Course</option>
                                 <option value="BSIT" {{ Auth::user()->course === 'BSIT' ? 'selected' : '' }}>BSIT</option>
                                 <option value="BSHM" {{ Auth::user()->course === 'BSHM' ? 'selected' : '' }}>BSHM</option>
@@ -123,7 +135,7 @@
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Year Level <span class="text-danger">*</span></label>
-                            <select class="form-select" name="year_level" disabled>
+                            <select class="form-select" disabled>
                                 <option value="">Select Year Level</option>
                                 <option value="1st Year" {{ Auth::user()->year_level === '1st Year' ? 'selected' : '' }}>1st Year</option>
                                 <option value="2nd Year" {{ Auth::user()->year_level === '2nd Year' ? 'selected' : '' }}>2nd Year</option>
@@ -136,7 +148,7 @@
                         <div class="col-md-12 mb-3">
                             <label class="form-label">Section <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" 
-                                   name="section" value="{{ old('section', Auth::user()->section) }}" 
+                                   value="{{ old('section', Auth::user()->section) }}" 
                                    disabled>
                         </div>
                     </div>
@@ -346,7 +358,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <form action="{{ url('/dashboard/add-admin') }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('admin.add') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="row">
                         <div class="col-md-6 mb-3">

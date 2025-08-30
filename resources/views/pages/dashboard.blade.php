@@ -65,6 +65,56 @@ if (Auth::user()->isAdmin()) {
         ->distinct('assign_instructor')
         ->count('assign_instructor');
     
+    // Calculate evaluation completion status for department instructors
+    $departmentInstructorIds = \App\Models\Subject::whereRaw('LOWER(TRIM(sub_department)) = ?', [strtolower(trim(Auth::user()->course))])
+        ->whereRaw('LOWER(TRIM(sub_year)) = ?', [strtolower(trim(Auth::user()->year_level))])
+        ->whereRaw('LOWER(TRIM(section)) = ?', [strtolower(trim(Auth::user()->section))])
+        ->when($activeSemester, function ($q) use ($activeSemester) {
+            $sem = strtolower(trim((string) $activeSemester));
+            $aliases = in_array($sem, ['2','2nd','second','second semester','sem 2','semester 2'])
+                ? ['2','2nd','second','second semester','sem 2','semester 2']
+                : ['1','1st','first','first semester','sem 1','semester 1'];
+            $q->where(function ($qq) use ($aliases) {
+                foreach ($aliases as $a) {
+                    $qq->orWhereRaw('LOWER(TRIM(semester)) = ?', [$a]);
+                }
+            });
+        })
+        ->whereNotNull('assign_instructor')
+        ->where('assign_instructor', '!=', '')
+        ->pluck('assign_instructor')
+        ->unique()
+        ->values();
+
+    // Get staff IDs for department instructors
+    $departmentStaffIds = \App\Models\Staff::whereIn('full_name', $departmentInstructorIds)
+        ->where('staff_type', 'teaching')
+        ->pluck('id');
+
+    // Count evaluated department instructors
+    $evaluatedDepartmentInstructors = \App\Models\Evaluation::where('user_id', Auth::id())
+        ->whereIn('staff_id', $departmentStaffIds)
+        ->distinct('staff_id')
+        ->count('staff_id');
+
+    // Get all non-teaching staff IDs
+    $nonTeachingStaffIds = \App\Models\Staff::where('staff_type', 'non-teaching')->pluck('id');
+
+    // Count evaluated non-teaching staff
+    $evaluatedNonTeachingStaff = \App\Models\Evaluation::where('user_id', Auth::id())
+        ->whereIn('staff_id', $nonTeachingStaffIds)
+        ->distinct('staff_id')
+        ->count('staff_id');
+
+    // Calculate completion percentages
+    $departmentInstructorCompletion = $stats['department_instructors'] > 0 
+        ? ($evaluatedDepartmentInstructors / $stats['department_instructors']) * 100 
+        : 0;
+    
+    $nonTeachingStaffCompletion = $stats['non_teaching_staff'] > 0 
+        ? ($evaluatedNonTeachingStaff / $stats['non_teaching_staff']) * 100 
+        : 0;
+
     // My Recent Evaluations with staff details
     $my_evaluations = \App\Models\Evaluation::select(
         'staff.full_name as staff_name',
@@ -297,6 +347,29 @@ if (Auth::user()->isAdmin()) {
             transform: scale(1.1);
         }
         
+        /* Completion Badge Styles */
+        .completion-badge {
+            animation: completionPulse 2s infinite;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .completion-badge:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        
+        @keyframes completionPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        /* Enhanced circular card hover effects */
+        .circular-card:hover .completion-badge {
+            animation-duration: 1s;
+        }
+        
         @media (max-width: 768px) {
             .student-card {
                 width: 100px !important;
@@ -343,47 +416,132 @@ if (Auth::user()->isAdmin()) {
         <!-- Student Dashboard -->
         <div class="col-12 mb-4">
             <div class="row justify-content-center">
-                <div class="col-6 col-sm-4 col-md-3 d-flex justify-content-center mb-3">
-                    <div class="circular-card shadow student-card" style="width: 120px; height: 120px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; text-align: center; position: relative; overflow: hidden;">
-                        <div class="circular-icon mb-1">
-                            <i class="fas fa-clipboard-check fa-2x" style="opacity: 0.9;"></i>
-                        </div>
-                        <div class="circular-content">
-                            <div class="text-xs font-weight-bold text-uppercase mb-1" style="font-size: 0.6rem; opacity: 0.9;">Staff Evaluated</div>
-                            <div class="h5 mb-0 font-weight-bold">{{ $stats['my_evaluations'] }}</div>
-                        </div>
-                        <div class="circular-overlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.1); border-radius: 50%; pointer-events: none;"></div>
-                    </div>
-                </div>
-                
-                    <div class="col-6 col-sm-4 col-md-3 d-flex justify-content-center mb-3">
-                    <div class="circular-card shadow student-card" style="width: 120px; height: 120px; border-radius: 50%; background: linear-gradient(135deg, #ff7f2f 0%, #ffcf3e 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; text-align: center; position: relative; overflow: hidden;">
+                <div class="col-6 col-sm-6 col-md-4 d-flex justify-content-center mb-3">
+                    <div class="circular-card shadow student-card" style="width: 120px; height: 120px; border-radius: 50%; background: linear-gradient(135deg, #ff7f2f 0%, #ffcf3e 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; text-align: center; position: relative; overflow: hidden;" 
+                         title="Department Instructors: {{ $evaluatedDepartmentInstructors }} out of {{ $stats['department_instructors'] }} evaluated ({{ round($departmentInstructorCompletion) }}% complete)">
+                        <!-- Completion Status Indicator -->
+                        @if($evaluatedDepartmentInstructors >= $stats['department_instructors'] && $stats['department_instructors'] > 0)
+                            <div class="completion-badge" style="position: absolute; top: -2px; right: -2px; width: 28px; height: 28px; background: linear-gradient(135deg, #28a745 0%, #20c997 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid white; z-index: 10;" 
+                                 title="All department instructors evaluated! ✓">
+                                <i class="fas fa-check" style="font-size: 0.7rem; color: white;"></i>
+                            </div>
+                        @elseif($evaluatedDepartmentInstructors > 0)
+                            <div class="completion-badge" style="position: absolute; top: -2px; right: -2px; width: 28px; height: 28px; background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid white; z-index: 10;" 
+                                 title="{{ round($departmentInstructorCompletion) }}% completed - {{ $stats['department_instructors'] - $evaluatedDepartmentInstructors }} more to go!">
+                                <span style="font-size: 0.6rem; font-weight: bold; color: white;">{{ round($departmentInstructorCompletion) }}%</span>
+                            </div>
+                        @else
+                            <div class="completion-badge" style="position: absolute; top: -2px; right: -2px; width: 28px; height: 28px; background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid white; z-index: 10;" 
+                                 title="No evaluations completed yet - Start evaluating your department instructors!">
+                                <i class="fas fa-exclamation" style="font-size: 0.7rem; color: white;"></i>
+                            </div>
+                        @endif
+                        
                         <div class="circular-icon mb-1">
                             <i class="fas fa-chalkboard-teacher fa-2x" style="opacity: 0.9;"></i>
                         </div>
                         <div class="circular-content">
                             <div class="text-xs font-weight-bold text-uppercase mb-1" style="font-size: 0.6rem; opacity: 0.9;">Department Instructors</div>
-                            <div class="h5 mb-0 font-weight-bold">{{ $stats['department_instructors'] }}</div>
+                            <div class="h5 mb-0 font-weight-bold">
+                                {{ $evaluatedDepartmentInstructors }}/{{ $stats['department_instructors'] }}
+                            </div>
                         </div>
                         <div class="circular-overlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.1); border-radius: 50%; pointer-events: none;"></div>
                     </div>
                 </div>
 
 
-                <div class="col-6 col-sm-4 col-md-3 d-flex justify-content-center mb-3">
-                    <div class="circular-card shadow student-card" style="width: 120px; height: 120px; border-radius: 50%; background: linear-gradient(135deg, #28a745 0%, #20c997 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; text-align: center; position: relative; overflow: hidden;">
+                <div class="col-6 col-sm-6 col-md-4 d-flex justify-content-center mb-3">
+                    <div class="circular-card shadow student-card" style="width: 120px; height: 120px; border-radius: 50%; background: linear-gradient(135deg, #28a745 0%, #20c997 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; text-align: center; position: relative; overflow: hidden;" 
+                         title="Non-Teaching Staff: {{ $evaluatedNonTeachingStaff }} out of {{ $stats['non_teaching_staff'] }} evaluated ({{ round($nonTeachingStaffCompletion) }}% complete)">
+                        <!-- Completion Status Indicator -->
+                        @if($evaluatedNonTeachingStaff >= $stats['non_teaching_staff'] && $stats['non_teaching_staff'] > 0)
+                            <div class="completion-badge" style="position: absolute; top: -2px; right: -2px; width: 28px; height: 28px; background: linear-gradient(135deg, #28a745 0%, #20c997 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid white; z-index: 10;" 
+                                 title="All non-teaching staff evaluated! ✓">
+                                <i class="fas fa-check" style="font-size: 0.7rem; color: white;"></i>
+                            </div>
+                        @elseif($evaluatedNonTeachingStaff > 0)
+                            <div class="completion-badge" style="position: absolute; top: -2px; right: -2px; width: 28px; height: 28px; background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid white; z-index: 10;" 
+                                 title="{{ round($nonTeachingStaffCompletion) }}% completed - {{ $stats['non_teaching_staff'] - $evaluatedNonTeachingStaff }} more to go!">
+                                <span style="font-size: 0.6rem; font-weight: bold; color: white;">{{ round($nonTeachingStaffCompletion) }}%</span>
+                            </div>
+                        @else
+                            <div class="completion-badge" style="position: absolute; top: -2px; right: -2px; width: 28px; height: 28px; background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid white; z-index: 10;" 
+                                 title="No evaluations completed yet - Start evaluating non-teaching staff!">
+                                <i class="fas fa-exclamation" style="font-size: 0.7rem; color: white;"></i>
+                            </div>
+                        @endif
+                        
                         <div class="circular-icon mb-1">
                             <i class="fas fa-users fa-2x" style="opacity: 0.9;"></i>
                         </div>
                         <div class="circular-content">
                             <div class="text-xs font-weight-bold text-uppercase mb-1" style="font-size: 0.6rem; opacity: 0.9;">Non-teaching Staff</div>
-                            <div class="h5 mb-0 font-weight-bold">{{ $stats['non_teaching_staff'] }}</div>
+                            <div class="h5 mb-0 font-weight-bold">
+                                {{ $evaluatedNonTeachingStaff }}/{{ $stats['non_teaching_staff'] }}
+                            </div>
                         </div>
                         <div class="circular-overlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.1); border-radius: 50%; pointer-events: none;"></div>
                     </div>
                 </div>
                 
                
+            </div>
+            
+            <!-- Evaluation Status Summary -->
+            <div class="row justify-content-center mt-3">
+                <div class="col-12 col-md-8">
+                    <div class="card border-0 shadow-sm" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 15px;">
+                        <div class="card-body p-3">
+                            <h6 class="text-center mb-3 font-weight-bold text-primary">
+                                <i class="fas fa-chart-pie me-2"></i>Your Evaluation Progress
+                            </h6>
+                            <div class="row text-center">
+                                <!-- Department Instructors Status -->
+                                <div class="col-6">
+                                    <div class="d-flex align-items-center justify-content-center mb-2">
+                                        <div style="width: 24px; height: 24px; background: linear-gradient(135deg, #ff7f2f 0%, #ffcf3e 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 10px;">
+                                            <i class="fas fa-chalkboard-teacher" style="font-size: 0.7rem; color: white;"></i>
+                                        </div>
+                                        <div class="text-left">
+                                            <div class="font-weight-bold text-dark" style="font-size: 0.9rem;">Department Instructors</div>
+                                            <div class="text-muted" style="font-size: 0.75rem;">
+                                                @if($evaluatedDepartmentInstructors >= $stats['department_instructors'] && $stats['department_instructors'] > 0)
+                                                    <span class="text-success"><i class="fas fa-check-circle"></i> Completed</span>
+                                                @elseif($evaluatedDepartmentInstructors > 0)
+                                                    <span class="text-warning"><i class="fas fa-clock"></i> In Progress</span>
+                                                @else
+                                                    <span class="text-danger"><i class="fas fa-exclamation-circle"></i> Not Started</span>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Non-Teaching Staff Status -->
+                                <div class="col-6">
+                                    <div class="d-flex align-items-center justify-content-center mb-2">
+                                        <div style="width: 24px; height: 24px; background: linear-gradient(135deg, #28a745 0%, #20c997 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 10px;">
+                                            <i class="fas fa-users" style="font-size: 0.7rem; color: white;"></i>
+                                        </div>
+                                        <div class="text-left">
+                                            <div class="font-weight-bold text-dark" style="font-size: 0.9rem;">Non-Teaching Staff</div>
+                                            <div class="text-muted" style="font-size: 0.75rem;">
+                                                @if($evaluatedNonTeachingStaff >= $stats['non_teaching_staff'] && $stats['non_teaching_staff'] > 0)
+                                                    <span class="text-success"><i class="fas fa-check-circle"></i> Completed</span>
+                                                @elseif($evaluatedNonTeachingStaff > 0)
+                                                    <span class="text-warning"><i class="fas fa-clock"></i> In Progress</span>
+                                                @else
+                                                    <span class="text-danger"><i class="fas fa-exclamation-circle"></i> Not Started</span>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         

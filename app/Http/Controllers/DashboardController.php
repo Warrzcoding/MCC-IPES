@@ -609,6 +609,7 @@ class DashboardController extends Controller
 
     public function updateProfile(Request $request)
     {
+        \Log::info('Profile update method called', ['user_id' => Auth::id(), 'request_data' => $request->all()]);
         $user = Auth::user();
         
         $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
@@ -618,6 +619,7 @@ class DashboardController extends Controller
             'school_id' => $user->role === 'student' ? 'required|string|max:255' : 'nullable|string|max:255',
             'course' => $user->role === 'student' || $user->role === 'admin' ? 'required|string|max:255' : 'nullable|string|max:255',
             'year_level' => $user->role === 'student' ? 'required|string|in:1st Year,2nd Year,3rd Year,4th Year' : 'nullable|string',
+            'section' => $user->role === 'student' ? 'required|string|max:255' : 'nullable|string|max:255',
             'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'current_password' => 'nullable|string',
             'new_password' => 'nullable|string|min:6|confirmed',
@@ -641,6 +643,7 @@ class DashboardController extends Controller
                 $user->school_id = $request->school_id;
                 $user->course = $request->course;
                 $user->year_level = $request->year_level;
+                $user->section = $request->section;
             } elseif ($user->role === 'admin') {
                 $user->course = $request->course;
             }
@@ -713,7 +716,7 @@ class DashboardController extends Controller
             'admin_username' => 'required|string|max:255|unique:users,username',
             'admin_email' => 'required|email|max:255|unique:users,email',
             'admin_course' => 'required|string|max:255',
-            'admin_password' => 'required|string|min:6',
+            'admin_password' => 'required|string|min:8',
             'admin_password_confirmation' => 'required|same:admin_password',
             'admin_profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
@@ -734,7 +737,8 @@ class DashboardController extends Controller
             $user->username = $request->admin_username;
             $user->email = $request->admin_email;
             $user->course = $request->admin_course;
-            $user->password = Hash::make($request->admin_password);
+            // Ensure Argon2id is used (configured via config/hashing.php)
+$user->password = Hash::make($request->admin_password);
             $user->role = 'admin';
             $user->status = 'active';
             // Laravel will automatically set created_at and updated_at timestamps

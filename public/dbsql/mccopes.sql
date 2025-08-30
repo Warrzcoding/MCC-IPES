@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 26, 2025 at 11:13 AM
+-- Generation Time: Aug 27, 2025 at 09:37 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -47,7 +47,8 @@ INSERT INTO `academic_years` (`id`, `year`, `semester`, `is_active`, `used`, `op
 (47, '2025-2026', 1, 0, 1, NULL, NULL, '2025-08-19 11:53:11', '2025-08-19 14:51:31'),
 (48, '2025-2026', 2, 0, 1, NULL, NULL, '2025-08-19 15:33:14', '2025-08-21 17:33:15'),
 (49, '2026-2027', 1, 0, 1, NULL, NULL, '2025-08-22 02:15:17', '2025-08-22 09:05:49'),
-(50, '2026-2027', 2, 1, 0, NULL, NULL, '2025-08-26 05:22:11', '2025-08-26 05:22:19');
+(50, '2026-2027', 2, 0, 1, NULL, NULL, '2025-08-26 05:22:11', '2025-08-27 05:38:41'),
+(51, '2027-2028', 1, 1, 0, NULL, NULL, '2025-08-27 05:39:02', '2025-08-27 05:39:09');
 
 -- --------------------------------------------------------
 
@@ -144,19 +145,38 @@ CREATE TABLE `questions` (
 --
 
 INSERT INTO `questions` (`id`, `title`, `description`, `staff_type`, `response_type`, `academic_year_id`, `created_at`, `is_open`) VALUES
-(503, 'Instructional Competence', 'Organization of lesson content', 'teaching', 'Rating_Scale', 50, '2025-08-26 05:22:44', 1),
-(504, 'Instructional Competence', 'Ability to adjust to student learning needs', 'teaching', 'Rating_Scale', 50, '2025-08-26 05:22:44', 1),
-(505, 'Classroom Management', 'Maximizes instructional time', 'teaching', 'Frequency', 50, '2025-08-26 05:22:44', 1),
-(506, 'Classroom Management', 'Starts and ends class on time', 'teaching', 'Frequency', 50, '2025-08-26 05:22:44', 1),
-(507, 'Communication and Interpersonal Skills', 'Is approachable and respectful', 'teaching', 'Frequency', 50, '2025-08-26 05:22:44', 1),
-(508, 'Communication and Interpersonal Skills', 'Listens actively to student concerns', 'teaching', 'Frequency', 50, '2025-08-26 05:22:44', 1),
-(509, 'Work Habits and Punctuality', 'Completes tasks without reminders', 'non-teaching', 'Frequency', 50, '2025-08-26 05:22:44', 1),
-(510, 'Work Habits and Punctuality', 'Wears proper uniform/ID', 'teaching', 'Frequency', 50, '2025-08-26 05:22:44', 1),
-(511, 'Attitude and Teamwork', 'Responds respectfully to instructions', 'non-teaching', 'Frequency', 50, '2025-08-26 05:22:44', 1),
-(512, 'Attitude and Teamwork', 'Maintains a positive attitude', 'non-teaching', 'Frequency', 50, '2025-08-26 05:22:44', 1),
-(513, 'Work Habits and Punctuality', 'Uses tools and supplies properly', 'non-teaching', 'Frequency', 50, '2025-08-26 05:22:44', 1),
-(514, 'Service and Responsiveness', 'Satisfaction with behavior toward students', 'non-teaching', 'Satisfaction', 50, '2025-08-26 05:22:44', 1),
-(515, 'Service and Responsiveness', 'Satisfaction with courtesy to visitors', 'non-teaching', 'Satisfaction', 50, '2025-08-26 05:22:44', 1);
+(516, 'TEACHER\'S PERSONALITY', 'The teacher is neat and well-groomed.', 'teaching', 'Agreement', 51, '2025-08-27 05:46:40', 0),
+(517, 'TEACHER\'S PERSONALITY', 'The teacher has a compelling personality that commands respect and focus.', 'teaching', 'Agreement', 51, '2025-08-27 05:48:32', 0),
+(518, 'TEACHER\'S PERSONALITY', 'The teacher show shows dynamism and enthusiasm.', 'teaching', 'Agreement', 51, '2025-08-27 05:49:35', 0),
+(519, 'TEACHER\'S PERSONALITY', 'The teacher\'s voice is sufficiently adjusted for the classroom.', 'teaching', 'Agreement', 51, '2025-08-27 05:50:43', 0),
+(520, 'TEACHER\'S PERSONALITY', 'The teacher comes and dismisses on time.', 'teaching', 'Agreement', 51, '2025-08-27 05:51:40', 0),
+(521, 'LESSON PLANNING', 'The lesson plan is well prepared.', 'teaching', 'Agreement', 51, '2025-08-27 06:03:55', 0),
+(522, 'LESSON PLANNING', 'There is congruence between: objective and subject matter.', 'teaching', 'Agreement', 51, '2025-08-27 06:06:10', 0),
+(523, 'LESSON PLANNING', 'There is congruence between: objective and teaching procedure.', 'teaching', 'Agreement', 51, '2025-08-27 06:07:31', 0),
+(524, 'LESSON PLANNING', 'There is congruence between: objective and formative test.', 'teaching', 'Agreement', 51, '2025-08-27 06:09:03', 0),
+(525, 'LESSON PLANNING', 'The lesson is effectively carried out and adheres to its specifics.', 'teaching', 'Aggreement', 51, '2025-08-27 06:10:28', 0),
+(526, 'LESSON PLANNING', 'The language used in the lesson planning observes gender-biased.', 'teaching', 'Agreement', 51, '2025-08-27 06:14:15', 0),
+(527, 'LESSON PLANNING', 'The lesson plan is students-friendly.', 'teaching', 'Agreement', 51, '2025-08-27 06:14:53', 0),
+(528, 'CONTENT', 'The teacher: demonstrates in depth knowledge of the subject matter.', 'teaching', 'Agreement', 51, '2025-08-27 06:16:42', 0),
+(529, 'CONTENT', 'The teacher: provides lessons to active life situations.', 'teaching', 'Agreement', 51, '2025-08-27 06:17:40', 0),
+(530, 'CONTENT', 'The teacher: stay current with ongoing theories & scientific knowledge.', 'teaching', 'Agreement', 51, '2025-08-27 06:19:32', 0),
+(532, 'CONTENT', 'The teacher: follows sequences in presenting a lesson.', 'teaching', 'Agreement', 51, '2025-08-27 06:22:52', 0),
+(535, 'CONTENT', 'The teacher: imparts sufficient and concrete examples to create meaningful learning experiences.', 'teaching', 'Agreement', 51, '2025-08-27 06:57:14', 0),
+(536, 'TEACHING METHOD', 'Methods/ used is/ are suited to the needs and capabilities of the students. The approach taken is appropriate for the learners\' needs and skill level.', 'teaching', 'Agreement', 51, '2025-08-27 07:08:31', 0),
+(537, 'TEACHING METHOD', 'The teacher is imaginative enough to modify his/her approach to the ability to the learners.', 'teaching', 'Agreement', 51, '2025-08-27 07:17:08', 0),
+(538, 'TEACHING METHOD', 'Visual aids are utilized according to standards size and colors.', 'teaching', 'Agreement', 51, '2025-08-27 07:18:19', 0),
+(539, 'TEACHING METHOD', 'The teacher makes effective use of the informative test results during  evaluation.', 'teaching', 'Agreement', 51, '2025-08-27 07:19:34', 0),
+(540, 'TEACHING METHOD', 'The teacher utilizes different techniques and approaches in teaching.', 'teaching', 'Agreement', 51, '2025-08-27 07:20:41', 0),
+(541, 'CLASSROOM MANAGEMENT', 'The teacher has a systematic way of checking attendance and assignment/homework/agreement.', 'teaching', 'Agreement', 51, '2025-08-27 07:22:57', 0),
+(542, 'CLASSROOM MANAGEMENT', 'The teacher has a systematic way of practice exercise and group of projects.', 'teaching', 'Agreement', 51, '2025-08-27 07:24:35', 0),
+(543, 'CLASSROOM MANAGEMENT', 'The teacher has a systematic way of passing in and out of the room and correcting, distributing, and collecting papers.', 'teaching', 'Agreement', 51, '2025-08-27 07:26:11', 0),
+(544, 'CLASSROOM MANAGEMENT', 'Order and discipline are present in the classroom.', 'teaching', 'Agreement', 51, '2025-08-27 07:27:05', 0),
+(545, 'CLASSROOM MANAGEMENT', 'Instructional materials are within easy reach of the teacher during his/her teaching.', 'teaching', 'Agreement', 51, '2025-08-27 07:28:13', 0),
+(546, 'QUESTIONING SKILLS', 'The teacher\'s questioning skill such as the following stimulates discussion in different way: prohibiting for learners\' understanding.', 'teaching', 'Agreement', 51, '2025-08-27 07:31:43', 0),
+(547, 'QUESTIONING SKILLS', 'The teacher\'s questioning skill such as the following stimulates discussion in different way: helping students articulate their ideas and thinking process.', 'teaching', 'Agreement', 51, '2025-08-27 07:32:47', 0),
+(548, 'QUESTIONING SKILLS', 'The teacher\'s questioning skill such as the following stimulates discussion in different way: stimulating curiosity.', 'teaching', 'Agreement', 51, '2025-08-27 07:33:24', 0),
+(549, 'QUESTIONING SKILLS', 'The teacher\'s questioning skill such as the following stimulates discussion in different way: helping students to ask questions.', 'teaching', 'Agreement', 51, '2025-08-27 07:34:05', 0),
+(550, 'QUESTIONING SKILLS', 'The teacher\'s questioning skill such as the following stimulates discussion in different way: facilitating factual recall.', 'teaching', 'Agreement', 51, '2025-08-27 07:34:45', 0);
 
 -- --------------------------------------------------------
 
@@ -288,7 +308,20 @@ INSERT INTO `saved_questions` (`id`, `academic_year_id`, `title`, `description`,
 (270, 49, 'Attitude and Teamwork', 'Maintains a positive attitude', 'non-teaching', 'Frequency', '2025-08-22 09:05:34', '2025-08-22 09:05:34'),
 (271, 49, 'Work Habits and Punctuality', 'Uses tools and supplies properly', 'non-teaching', 'Frequency', '2025-08-22 09:05:34', '2025-08-22 09:05:34'),
 (272, 49, 'Service and Responsiveness', 'Satisfaction with behavior toward students', 'non-teaching', 'Satisfaction', '2025-08-22 09:05:34', '2025-08-22 09:05:34'),
-(273, 49, 'Service and Responsiveness', 'Satisfaction with courtesy to visitors', 'non-teaching', 'Satisfaction', '2025-08-22 09:05:34', '2025-08-22 09:05:34');
+(273, 49, 'Service and Responsiveness', 'Satisfaction with courtesy to visitors', 'non-teaching', 'Satisfaction', '2025-08-22 09:05:34', '2025-08-22 09:05:34'),
+(274, 50, 'Instructional Competence', 'Organization of lesson content', 'teaching', 'Rating_Scale', '2025-08-27 05:38:30', '2025-08-27 05:38:30'),
+(275, 50, 'Instructional Competence', 'Ability to adjust to student learning needs', 'teaching', 'Rating_Scale', '2025-08-27 05:38:30', '2025-08-27 05:38:30'),
+(276, 50, 'Classroom Management', 'Maximizes instructional time', 'teaching', 'Frequency', '2025-08-27 05:38:30', '2025-08-27 05:38:30'),
+(277, 50, 'Classroom Management', 'Starts and ends class on time', 'teaching', 'Frequency', '2025-08-27 05:38:30', '2025-08-27 05:38:30'),
+(278, 50, 'Communication and Interpersonal Skills', 'Is approachable and respectful', 'teaching', 'Frequency', '2025-08-27 05:38:30', '2025-08-27 05:38:30'),
+(279, 50, 'Communication and Interpersonal Skills', 'Listens actively to student concerns', 'teaching', 'Frequency', '2025-08-27 05:38:30', '2025-08-27 05:38:30'),
+(280, 50, 'Work Habits and Punctuality', 'Completes tasks without reminders', 'non-teaching', 'Frequency', '2025-08-27 05:38:30', '2025-08-27 05:38:30'),
+(281, 50, 'Work Habits and Punctuality', 'Wears proper uniform/ID', 'teaching', 'Frequency', '2025-08-27 05:38:30', '2025-08-27 05:38:30'),
+(282, 50, 'Attitude and Teamwork', 'Responds respectfully to instructions', 'non-teaching', 'Frequency', '2025-08-27 05:38:30', '2025-08-27 05:38:30'),
+(283, 50, 'Attitude and Teamwork', 'Maintains a positive attitude', 'non-teaching', 'Frequency', '2025-08-27 05:38:30', '2025-08-27 05:38:30'),
+(284, 50, 'Work Habits and Punctuality', 'Uses tools and supplies properly', 'non-teaching', 'Frequency', '2025-08-27 05:38:30', '2025-08-27 05:38:30'),
+(285, 50, 'Service and Responsiveness', 'Satisfaction with behavior toward students', 'non-teaching', 'Satisfaction', '2025-08-27 05:38:30', '2025-08-27 05:38:30'),
+(286, 50, 'Service and Responsiveness', 'Satisfaction with courtesy to visitors', 'non-teaching', 'Satisfaction', '2025-08-27 05:38:30', '2025-08-27 05:38:30');
 
 -- --------------------------------------------------------
 
@@ -348,7 +381,21 @@ INSERT INTO `save_eval_result` (`id`, `staff_id`, `question_id`, `response`, `us
 (562, 15, 264, 'most_time', 71, 49, 'Good Teaching style', 3, '2025-08-22 08:57:54', '2025-08-22 09:05:49'),
 (563, 15, 265, 'most_time', 71, 49, 'Good Teaching style', 3, '2025-08-22 08:57:54', '2025-08-22 09:05:49'),
 (564, 15, 266, 'most_time', 71, 49, 'Good Teaching style', 3, '2025-08-22 08:57:54', '2025-08-22 09:05:49'),
-(565, 15, 268, 'most_time', 71, 49, 'Good Teaching style', 3, '2025-08-22 08:57:54', '2025-08-22 09:05:49');
+(565, 15, 268, 'most_time', 71, 49, 'Good Teaching style', 3, '2025-08-22 08:57:54', '2025-08-22 09:05:49'),
+(566, 22, 274, 'fair', 71, 50, 'ds', 2, '2025-08-27 03:50:13', '2025-08-27 05:38:41'),
+(567, 22, 275, 'good', 71, 50, 'ds', 3, '2025-08-27 03:50:13', '2025-08-27 05:38:41'),
+(568, 22, 276, 'most_time', 71, 50, 'ds', 3, '2025-08-27 03:50:13', '2025-08-27 05:38:41'),
+(569, 22, 277, 'most_time', 71, 50, 'ds', 3, '2025-08-27 03:50:13', '2025-08-27 05:38:41'),
+(570, 22, 278, 'sometimes', 71, 50, 'ds', 2, '2025-08-27 03:50:13', '2025-08-27 05:38:41'),
+(571, 22, 279, 'most_time', 71, 50, 'ds', 3, '2025-08-27 03:50:13', '2025-08-27 05:38:41'),
+(572, 22, 281, 'most_time', 71, 50, 'ds', 3, '2025-08-27 03:50:13', '2025-08-27 05:38:41'),
+(573, 20, 274, 'good', 71, 50, 'sasas', 3, '2025-08-27 04:06:54', '2025-08-27 05:38:41'),
+(574, 20, 275, 'very_good', 71, 50, 'sasas', 4, '2025-08-27 04:06:54', '2025-08-27 05:38:41'),
+(575, 20, 276, 'most_time', 71, 50, 'sasas', 3, '2025-08-27 04:06:54', '2025-08-27 05:38:41'),
+(576, 20, 277, 'most_time', 71, 50, 'sasas', 3, '2025-08-27 04:06:54', '2025-08-27 05:38:41'),
+(577, 20, 278, 'most_time', 71, 50, 'sasas', 3, '2025-08-27 04:06:55', '2025-08-27 05:38:41'),
+(578, 20, 279, 'most_time', 71, 50, 'sasas', 3, '2025-08-27 04:06:55', '2025-08-27 05:38:41'),
+(579, 20, 281, 'most_time', 71, 50, 'sasas', 3, '2025-08-27 04:06:55', '2025-08-27 05:38:41');
 
 -- --------------------------------------------------------
 
@@ -525,7 +572,7 @@ INSERT INTO `subjects` (`id`, `sub_code`, `sub_name`, `sub_department`, `sub_yea
 (130, 'ITE 111', 'Introduction To Computing', 'BSIT', '1st Year', 'NORTH', '1', NULL, 'Major', '2025-08-21 14:30:32', '2025-08-21 14:30:32'),
 (131, 'ITE 111', 'Introduction To Computing', 'BSIT', '1st Year', 'WEST', '1', NULL, 'Major', '2025-08-21 14:30:57', '2025-08-21 14:30:57'),
 (132, 'ITE 111', 'Introduction To Computing', 'BSIT', '1st Year', 'SOUTH', '1', NULL, 'Major', '2025-08-21 14:31:27', '2025-08-21 14:31:27'),
-(133, 'ITE 111', 'Introduction To Computing', 'BSIT', '1st Year', 'EAST', '1', NULL, 'Major', '2025-08-21 14:31:53', '2025-08-22 05:55:12'),
+(133, 'ITE 111', 'Introduction To Computing', 'BSIT', '1st Year', 'EAST', '1', 'Miko Aguntin', 'Major', '2025-08-21 14:31:53', '2025-08-27 03:48:14'),
 (134, 'ITE 111', 'Introduction To Computing', 'BSIT', '1st Year', 'SOUTHWEST', '1', NULL, 'Major', '2025-08-21 14:32:04', '2025-08-21 14:32:04'),
 (135, 'ITE 111', 'Introduction To Computing', 'BSIT', '1st Year', 'NORTHWEST', '1', NULL, 'Major', '2025-08-21 14:32:15', '2025-08-21 14:32:15'),
 (136, 'ITE 111', 'Introduction To Computing', 'BSIT', '1st Year', 'SOUTHEAST', '1', NULL, 'Major', '2025-08-21 14:32:27', '2025-08-21 14:32:27'),
@@ -597,7 +644,7 @@ INSERT INTO `subjects` (`id`, `sub_code`, `sub_name`, `sub_department`, `sub_yea
 (210, 'ITE 121', 'Computer Programming 1', 'BSIT', '1st Year', 'NORTH', '2', NULL, 'Major', '2025-08-21 15:56:41', '2025-08-21 15:56:41'),
 (211, 'ITE 121', 'Computer Programming 1', 'BSIT', '1st Year', 'WEST', '2', NULL, 'Major', '2025-08-21 15:57:16', '2025-08-21 15:57:16'),
 (212, 'ITE 121', 'Computer Programming 1', 'BSIT', '1st Year', 'SOUTH', '2', NULL, 'Major', '2025-08-21 15:57:30', '2025-08-21 15:57:30'),
-(213, 'ITE 121', 'Computer Programming 1', 'BSIT', '1st Year', 'EAST', '2', NULL, 'Major', '2025-08-21 15:57:46', '2025-08-21 15:57:46'),
+(213, 'ITE 121', 'Computer Programming 1', 'BSIT', '1st Year', 'EAST', '2', 'Richard Bracero', 'Major', '2025-08-21 15:57:46', '2025-08-27 03:48:47'),
 (214, 'ITE 121', 'Computer Programming 1', 'BSIT', '1st Year', 'SOUTHWEST', '2', NULL, 'Major', '2025-08-21 15:58:01', '2025-08-21 15:58:01'),
 (215, 'ITE 121', 'Computer Programming 1', 'BSIT', '1st Year', 'NORTHWEST', '2', NULL, 'Major', '2025-08-21 15:58:28', '2025-08-21 15:58:28'),
 (216, 'ITE 121', 'Computer Programming 1', 'BSIT', '1st Year', 'SOUTHEAST', '2', NULL, 'Major', '2025-08-21 15:58:44', '2025-08-21 15:58:44'),
@@ -829,8 +876,8 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `email`, `password`, `full_name`, `school_id`, `role`, `profile_image`, `course`, `year_level`, `section`, `status`, `is_main_admin`, `last_login`, `last_active_at`, `email_verified_at`, `remember_token`, `created_at`, `updated_at`) VALUES
-(1, 'Main Admin', 'admin@gmail.com', '$2y$12$OcLwTbzl2qEX8HA0himNPeTzt6xtdwtOHwMq4wTflz6Z/BHpADri6', 'Administrator', NULL, 'admin', '1750266339_snapedit_1745568681642.jpeg.png', 'Student Affairs', NULL, NULL, 'active', 1, '2025-08-26 05:26:16', NULL, NULL, NULL, '2025-06-16 21:09:38', '2025-08-26 05:26:16'),
-(71, 'Wardass', 'warren.ilustrisimo@mcclawis.edu.ph', '$argon2id$v=19$m=65536,t=4,p=1$Z25tTkk4ZHJMSUJER3pydQ$+F3EKj+7R5Qe9mEVrure/8JQMR91TrDBsdtnoqhPf1k', 'Warren Ilustrisimo', '2022-1969', 'student', '1755144539_dev1.png', 'BSIT', '1st Year', 'EAST', 'active', 0, '2025-08-26 05:27:04', NULL, NULL, NULL, '2025-08-14 04:09:29', '2025-08-26 05:27:04'),
+(1, 'Main Admin', 'admin@gmail.com', '$2y$12$OcLwTbzl2qEX8HA0himNPeTzt6xtdwtOHwMq4wTflz6Z/BHpADri6', 'Administrator', NULL, 'admin', '1750266339_snapedit_1745568681642.jpeg.png', 'Student Affairs', NULL, NULL, 'active', 1, '2025-08-27 03:10:23', NULL, NULL, NULL, '2025-06-16 21:09:38', '2025-08-27 03:10:23'),
+(71, 'Wardass', 'warren.ilustrisimo@mcclawis.edu.ph', '$argon2id$v=19$m=65536,t=4,p=1$Z25tTkk4ZHJMSUJER3pydQ$+F3EKj+7R5Qe9mEVrure/8JQMR91TrDBsdtnoqhPf1k', 'Warren Ilustrisimo', '2022-1969', 'student', '1755144539_dev1.png', 'BSIT', '1st Year', 'EAST', 'active', 0, '2025-08-27 05:52:16', NULL, NULL, NULL, '2025-08-14 04:09:29', '2025-08-27 05:52:16'),
 (72, 'Mikoy', 'michael.layaog@mcclawis.edu.ph', '$argon2id$v=19$m=65536,t=4,p=1$MjZhRjN0WGNFOE1XVFV0Ng$hIFOZDWbPHdQDnSRgPhL/WANxKTzHn7k7xqHPKCYpTU', 'Michael Layaog', '2222-2222', 'student', '1755150605_480665539_628400923314794_4185009517735006139_n.jpg', 'BSBA', '3rd Year', 'FM-3H', 'active', 0, NULL, NULL, NULL, NULL, '2025-08-14 05:50:44', '2025-08-14 05:50:44'),
 (73, 'Loben', 'harold.ofaga@mcclawis.edu.ph', '$argon2id$v=19$m=65536,t=4,p=1$LjNSU3MvRnljNTI0ZlgvMw$hWVd4Lz8Skieeygp58ccVq75JWKOEHfKVU/TTw9y7gA', 'Harold Ofaga', '1111-1111', 'student', '1755150493_loben.jpg', 'BSHM', '3rd Year', 'BSHM-3D', 'active', 0, '2025-08-14 06:05:52', NULL, NULL, NULL, '2025-08-14 05:50:51', '2025-08-14 06:05:52'),
 (74, 'Jov', 'jovelyn.canseran@mcclawis.edu.ph', '$argon2id$v=19$m=65536,t=4,p=1$Lk1OTnZaSWs5S1NXSmJvQQ$2EzLLxOY0yB+0IYv9NRFBF+Pyok77jrE1nMhUpRD580', 'Jovelyn Canseran', '3333-3333', 'student', '1755150795_genlou.jpg', 'BEED', '2nd Year', '2-TODDLER', 'active', 0, NULL, NULL, NULL, NULL, '2025-08-14 06:57:57', '2025-08-14 06:57:57'),
@@ -924,13 +971,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `academic_years`
 --
 ALTER TABLE `academic_years`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=52;
 
 --
 -- AUTO_INCREMENT for table `evaluations`
 --
 ALTER TABLE `evaluations`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=624;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=638;
 
 --
 -- AUTO_INCREMENT for table `migrations`
@@ -942,7 +989,7 @@ ALTER TABLE `migrations`
 -- AUTO_INCREMENT for table `questions`
 --
 ALTER TABLE `questions`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=516;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=551;
 
 --
 -- AUTO_INCREMENT for table `request_signin`
@@ -960,13 +1007,13 @@ ALTER TABLE `response_options`
 -- AUTO_INCREMENT for table `saved_questions`
 --
 ALTER TABLE `saved_questions`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=274;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=287;
 
 --
 -- AUTO_INCREMENT for table `save_eval_result`
 --
 ALTER TABLE `save_eval_result`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=566;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=580;
 
 --
 -- AUTO_INCREMENT for table `staff`
