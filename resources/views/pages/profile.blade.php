@@ -293,9 +293,16 @@
                                         <td>{{ $admin->email }}</td>
                                         <td>{{ $admin->course ?? 'N/A' }}</td>
                                         <td>
-                                            <span class="badge bg-{{ $admin->status === 'active' ? 'success' : 'danger' }}">
-                                                <i class="fas {{ $admin->status === 'active' ? 'fa-check-circle' : 'fa-times-circle' }} me-1"></i>
-                                                {{ ucfirst($admin->status) }}
+                                            @php
+                                                $hasActivity = !empty($admin->last_active_at) || !empty($admin->last_login);
+                                                $isActive = ($admin->status === 'active') && $hasActivity; // Only show Active when status is active AND has activity
+                                                $statusLabel = $isActive ? 'Active' : 'Inactive';
+                                                $statusClass = $isActive ? 'success' : 'danger';
+                                                $statusIcon = $isActive ? 'fa-check-circle' : 'fa-times-circle';
+                                            @endphp
+                                            <span class="badge bg-{{ $statusClass }}">
+                                                <i class="fas {{ $statusIcon }} me-1"></i>
+                                                {{ $statusLabel }}
                                             </span>
                                             @if($admin->id === Auth::id())
                                                 <span class="badge bg-primary ms-1">

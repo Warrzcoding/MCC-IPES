@@ -118,37 +118,3 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/dashboard/pending-requests/{id}/reject', [RequestSigninController::class, 'reject'])->name('pending.requests.reject');
     Route::post('/dashboard/pending-requests/{id}/delete', [RequestSigninController::class, 'delete'])->name('pending.requests.delete');
 });
-
-// Test email route
-Route::get('/test-email', function () {
-    try {
-        Mail::raw('🎉 Gmail SMTP Test Successful!
-
-Your MCC-IPES email configuration is working perfectly!
-
-Time: ' . now() . '
-From: MCC-IPES System
-
-This is a test email to verify your Gmail SMTP setup.', function ($message) {
-            $message->to('mccipesotp@gmail.com')
-                    ->subject('MCC-IPES Email Test - ' . now());
-        });
-        
-        return response()->json([
-            'status' => 'success',
-            'message' => '✅ Test email sent successfully!',
-            'details' => [
-                'to' => 'mccipesotp@gmail.com',
-                'from' => config('mail.from.address'),
-                'time' => now()
-            ]
-        ]);
-        
-    } catch (Exception $e) {
-        return response()->json([
-            'status' => 'error',
-            'message' => '❌ Email sending failed',
-            'error' => $e->getMessage()
-        ]);
-    }
-});

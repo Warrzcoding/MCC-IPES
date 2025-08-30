@@ -570,7 +570,7 @@
                 <i class="fas fa-user-plus"></i>
             </div>
             <h2>Sign Up</h2>
-            <p>Create your account for the Office Performance Evaluation System</p>
+            <p>Create your account for the Instructors Performance Evaluation System</p>
         </div>
 
         <!-- Step Indicator -->

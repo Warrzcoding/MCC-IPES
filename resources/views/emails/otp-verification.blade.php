@@ -55,12 +55,20 @@
             margin: 30px 0;
         }
         .otp-code {
-            font-size: 36px;
-            font-weight: bold;
-            color: white;
-            letter-spacing: 8px;
             margin: 10px 0;
+            text-align: center;
+        }
+        .otp-box {
+            display: inline-block;
+            padding: 10px 16px; /* Compact but readable */
+            background: #ffffff; /* Box color */
+            color: #5b67e2; /* Number color */
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
             font-family: 'Courier New', monospace;
+            font-size: 28px; /* Adjust size to save width */
+            font-weight: 700;
+            letter-spacing: 6px; /* Visual spacing between digits inside single box */
         }
         .otp-label {
             color: rgba(255, 255, 255, 0.9);
@@ -104,7 +112,7 @@
         <div class="header">
             <div class="logo">🛡️</div>
             <h1>MCC-IPES Verification</h1>
-            <p>Office Performance Evaluation System</p>
+            <p>Instructors Performance Evaluation System</p>
         </div>
 
         <div class="content">
@@ -114,7 +122,9 @@
 
         <div class="otp-section">
             <div class="otp-label">Your Verification Code</div>
-            <div class="otp-code">{{ $otpCode }}</div>
+            <div class="otp-code">
+                <span class="otp-box">{{ $otpCode }}</span>
+            </div>
             <div class="expiry-info">This code expires in {{ $expiryMinutes }} minutes</div>
         </div>
 
@@ -140,7 +150,7 @@
             
             <div class="school-info">
                 <strong>Madridejos Community College</strong><br>
-                Office Performance Evaluation System<br>
+                Instructors Performance Evaluation System<br>
                 Madridejos, Cebu, Philippines
             </div>
         </div>

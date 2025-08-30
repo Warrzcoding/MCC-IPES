@@ -317,7 +317,7 @@
                 <div class="mb-3 text-center">
                     <label for="otp_code" class="form-label">Enter the code sent to your Outlook email</label>
                     <div class="d-flex justify-content-center">
-                        <input type="tel" class="form-control text-center" id="otp_code" name="otp_code" maxlength="6" pattern="\d{6}" inputmode="numeric" required 
+                        <input type="tel" class="form-control text-center"   id="otp_code" name="otp_code" maxlength="6" pattern="\d{6}" inputmode="numeric" required 
                                style="letter-spacing: 0.5em; font-size: 1.2em; font-weight: 600; max-width: 200px;">
                     </div>
                 </div>

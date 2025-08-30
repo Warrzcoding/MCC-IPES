@@ -470,9 +470,7 @@
                 <h5>Password Reset Successful!</h5>
                 <p>Your password has been updated successfully. You can now login with your new password.</p>
             </div>
-            <a href="{{ route('login') }}" class="btn btn-primary">
-                <i class="fas fa-sign-in-alt"></i> Back to Login
-            </a>
+          
         </div>
         
         <!-- Back to Login button for steps 1, 3, and 4 -->
