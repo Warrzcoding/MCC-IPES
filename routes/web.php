@@ -12,6 +12,7 @@ use App\Http\Controllers\AcademicYearController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\RequestSigninController;
 use App\Http\Controllers\StudentController;
+use App\Http\Controllers\TestRecaptchaController;
 
 // Root route - redirect to login
 Route::get('/', function () {
@@ -118,3 +119,11 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/dashboard/pending-requests/{id}/reject', [RequestSigninController::class, 'reject'])->name('pending.requests.reject');
     Route::post('/dashboard/pending-requests/{id}/delete', [RequestSigninController::class, 'delete'])->name('pending.requests.delete');
 });
+
+// reCAPTCHA setup and test routes
+Route::get('/recaptcha/setup', function () {
+    return view('recaptcha-setup');
+})->name('recaptcha.setup');
+
+Route::get('/test/recaptcha/config', [TestRecaptchaController::class, 'testConfig'])->name('test.recaptcha.config');
+Route::get('/test/recaptcha/type', [TestRecaptchaController::class, 'testCaptchaType'])->name('test.recaptcha.type');

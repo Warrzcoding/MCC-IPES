@@ -7,10 +7,18 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use App\Services\RecaptchaService;
 use Carbon\Carbon;
 
 class LoginController extends Controller
 {
+    protected $recaptchaService;
+
+    public function __construct(RecaptchaService $recaptchaService)
+    {
+        $this->recaptchaService = $recaptchaService;
+    }
+
    /* public function showLoginForm()
     {
         if (Auth::check()) {
@@ -18,7 +26,7 @@ class LoginController extends Controller
         }
         return view('login');
     }*/
-public function showLoginForm()
+public function showLoginForm(Request $request)
     {
         // Clear any existing student verification if accessing login page directly
         // unless we're showing the login form after ID verification
@@ -26,7 +34,13 @@ public function showLoginForm()
             Session::forget(['verified_student_id', 'verified_student_email']);
         }
         
-        return view('login');
+        // Determine reCAPTCHA type based on failed attempts and user role
+        $failedAttempts = Session::get('failed_attempts', 0);
+        $userRole = $request->get('role', 'student'); // Default to student
+        
+        $captchaType = $this->recaptchaService->determineCaptchaType($failedAttempts, $userRole);
+        
+        return view('login', compact('captchaType'));
     }
 
 public function verifyStudentId(Request $request)
@@ -71,6 +85,44 @@ public function login(Request $request)
         'password' => 'required|string',
         'user_type' => 'required|in:student,admin,staff'
     ]);
+
+    // reCAPTCHA verification
+    $failedAttempts = Session::get('failed_attempts', 0);
+    $captchaType = $this->recaptchaService->determineCaptchaType($failedAttempts, $request->user_type);
+    
+    // Skip reCAPTCHA if not configured
+    if ($captchaType === null) {
+        \Log::info('reCAPTCHA: Skipping verification - not configured');
+    } elseif ($captchaType === 'checkbox') {
+        // Verify reCAPTCHA v2 checkbox
+        if (!$request->has('g-recaptcha-response') || empty($request->input('g-recaptcha-response'))) {
+            return $this->handleCaptchaError($request, 'Please complete the reCAPTCHA verification.');
+        }
+        
+        $captchaResult = $this->recaptchaService->verifyV2($request->input('g-recaptcha-response'));
+        if (!$captchaResult['success']) {
+            return $this->handleCaptchaError($request, 'reCAPTCHA verification failed. Please try again.');
+        }
+    } else {
+        // Verify reCAPTCHA v3
+        if (!$request->has('recaptcha_token') || empty($request->input('recaptcha_token'))) {
+            return $this->handleCaptchaError($request, 'Security verification failed. Please refresh and try again.');
+        }
+        
+        $captchaResult = $this->recaptchaService->verifyV3($request->input('recaptcha_token'), 'login');
+        if (!$captchaResult['success']) {
+            return $this->handleCaptchaError($request, 'Security verification failed. Please try again.');
+        }
+        
+        // Check score threshold
+        $scoreThreshold = $this->recaptchaService->getScoreThreshold($request->user_type);
+        if ($captchaResult['score'] < $scoreThreshold) {
+            // Low score - increment failed attempts and potentially show checkbox
+            $failedAttempts++;
+            Session::put('failed_attempts', $failedAttempts);
+            return $this->handleCaptchaError($request, 'Security verification failed. Please try again.');
+        }
+    }
 
     // Lockout logic
     $failedAttempts = Session::get('failed_attempts', 0);
@@ -324,5 +376,44 @@ public function login(Request $request)
     {
         Session::forget(['verified_student_id', 'verified_student_email', 'show_login_form', 'student_data']);
         return redirect()->route('login');
+    }
+
+    /**
+     * Handle reCAPTCHA verification errors
+     */
+    private function handleCaptchaError(Request $request, $message)
+    {
+        if ($request->user_type === 'student') {
+            // For students, preserve the login form state
+            $verifiedStudentId = Session::get('verified_student_id');
+            $student = null;
+            
+            if ($verifiedStudentId) {
+                $student = User::where('school_id', $verifiedStudentId)
+                              ->where('role', 'student')
+                              ->first();
+            }
+            
+            return redirect()->route('login')->with([
+                'show_login_form' => true,
+                'student_data' => $student ? [
+                    'full_name' => $student->full_name,
+                    'school_id' => $student->school_id,
+                    'username' => $student->username,
+                ] : [
+                    'full_name' => 'Student',
+                    'school_id' => 'Unknown',
+                    'username' => 'Unknown',
+                ],
+                'error' => $message,
+                'login_email' => $request->email,
+                'captcha_error' => true
+            ]);
+        } else {
+            return redirect()->back()->with([
+                'error' => $message,
+                'captcha_error' => true
+            ]);
+        }
     }
 } 

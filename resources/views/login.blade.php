@@ -31,6 +31,15 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <!-- reCAPTCHA Scripts -->
+    @if(config('services.recaptcha.site_key_v2') || config('services.recaptcha.site_key_v3'))
+        @if(isset($captchaType) && $captchaType === 'checkbox' && config('services.recaptcha.site_key_v2'))
+            <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+        @elseif(config('services.recaptcha.site_key_v3'))
+            <script src="https://www.google.com/recaptcha/api.js?render={{ config('services.recaptcha.site_key_v3') }}" async defer></script>
+        @endif
+    @endif
     <style>
         body {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -429,6 +438,21 @@
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
+        
+        /* reCAPTCHA Styling */
+        .g-recaptcha {
+            display: flex;
+            justify-content: center;
+            margin: 15px 0;
+        }
+        
+        /* reCAPTCHA responsive styling */
+        @media (max-width: 576px) {
+            .g-recaptcha {
+                transform: scale(0.85);
+                transform-origin: center;
+            }
+        }
         .lock-warning {
             background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%);
             color: white;
@@ -825,6 +849,13 @@
                         </div>
                     </div>
 
+                    <!-- reCAPTCHA for Admin -->
+                    @if(isset($captchaType) && $captchaType === 'checkbox' && config('services.recaptcha.site_key_v2'))
+                        <div class="mb-3">
+                            <div class="g-recaptcha" data-sitekey="{{ config('services.recaptcha.site_key_v2') }}"></div>
+                        </div>
+                    @endif
+
                     <button type="submit" name="login" class="btn btn-primary">
                         <i class="fas fa-sign-in-alt"></i> Login as Administrator
                     </button>
@@ -862,6 +893,13 @@
                                    placeholder="Enter your password" required value="" autocomplete="new-password">
                         </div>
                     </div>
+
+                    <!-- reCAPTCHA for Staff -->
+                    @if(isset($captchaType) && $captchaType === 'checkbox' && config('services.recaptcha.site_key_v2'))
+                        <div class="mb-3">
+                            <div class="g-recaptcha" data-sitekey="{{ config('services.recaptcha.site_key_v2') }}"></div>
+                        </div>
+                    @endif
 
                     <button type="submit" name="login" class="btn btn-primary">
                         <i class="fas fa-sign-in-alt"></i> Login as Staff
@@ -907,6 +945,13 @@
                                    placeholder="Enter your password" value="" autocomplete="new-password">
                         </div>
                     </div>
+
+                    <!-- reCAPTCHA for Student -->
+                    @if(isset($captchaType) && $captchaType === 'checkbox' && config('services.recaptcha.site_key_v2'))
+                        <div class="mb-3">
+                            <div class="g-recaptcha" data-sitekey="{{ config('services.recaptcha.site_key_v2') }}"></div>
+                        </div>
+                    @endif
 
                     <button type="submit" name="login" class="btn btn-primary">
                         <i class="fas fa-sign-in-alt"></i> Login as Student
@@ -1057,25 +1102,6 @@ Swal.fire({
         }
             // Clear all forms on page load
             clearAllForms();
-            
-            const loginForms = document.querySelectorAll('form[action*="login"]');
-            
-            loginForms.forEach(form => {
-                form.addEventListener('submit', function(e) {
-                    // Show loading state
-                    const submitBtn = form.querySelector('button[type="submit"]');
-                    const originalText = submitBtn.innerHTML;
-                    
-                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
-                    submitBtn.disabled = true;
-                    
-                    // Re-enable button after 5 seconds if form doesn't submit
-                    setTimeout(() => {
-                        submitBtn.innerHTML = originalText;
-                        submitBtn.disabled = false;
-                    }, 5000);
-                });
-            });
         });
 
         function handleUserTypeChange() {
@@ -1349,6 +1375,112 @@ Swal.fire({
                 desktopForm.style.display = 'block';
             }
         });
+
+        // reCAPTCHA v3 Integration
+        @if(config('services.recaptcha.site_key_v3') && (!isset($captchaType) || $captchaType === 'v3'))
+        function executeRecaptchaV3(form) {
+            return new Promise((resolve, reject) => {
+                if (typeof grecaptcha === 'undefined') {
+                    console.warn('reCAPTCHA not loaded, proceeding without verification');
+                    resolve();
+                    return;
+                }
+                
+                grecaptcha.ready(function() {
+                    grecaptcha.execute('{{ config('services.recaptcha.site_key_v3') }}', {action: 'login'})
+                        .then(function(token) {
+                            // Add token to form
+                            let tokenInput = form.querySelector('input[name="recaptcha_token"]');
+                            if (!tokenInput) {
+                                tokenInput = document.createElement('input');
+                                tokenInput.type = 'hidden';
+                                tokenInput.name = 'recaptcha_token';
+                                form.appendChild(tokenInput);
+                            }
+                            tokenInput.value = token;
+                            resolve();
+                        })
+                        .catch(function(error) {
+                            console.error('reCAPTCHA v3 error:', error);
+                            reject(error);
+                        });
+                });
+            });
+        }
+        @else
+        // Fallback function when reCAPTCHA v3 is not configured
+        function executeRecaptchaV3(form) {
+            return new Promise((resolve) => {
+                console.log('reCAPTCHA v3 not configured, proceeding without verification');
+                resolve();
+            });
+        }
+        @endif
+
+        // Enhanced form submission with reCAPTCHA v3
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginForms = document.querySelectorAll('form[action*="login"]');
+            
+            loginForms.forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const submitBtn = form.querySelector('button[type="submit"]');
+                    const originalText = submitBtn.innerHTML;
+                    
+                    // Show loading state
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
+                    submitBtn.disabled = true;
+                    
+                    // Execute reCAPTCHA v3
+                    executeRecaptchaV3(form)
+                        .then(() => {
+                            // Submit the form
+                            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
+                            form.submit();
+                        })
+                        .catch((error) => {
+                            console.error('reCAPTCHA verification failed:', error);
+                            submitBtn.innerHTML = originalText;
+                            submitBtn.disabled = false;
+                            
+                            // Show error message
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Security Verification Failed',
+                                text: 'Please refresh the page and try again.',
+                                confirmButtonColor: '#667eea'
+                            });
+                        });
+                });
+            });
+        });
+
+        // reCAPTCHA v2 (Checkbox) Integration
+        @if(isset($captchaType) && $captchaType === 'checkbox')
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginForms = document.querySelectorAll('form[action*="login"]');
+            
+            loginForms.forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    const recaptchaResponse = form.querySelector('[name="g-recaptcha-response"]');
+                    
+                    if (recaptchaResponse && !recaptchaResponse.value) {
+                        e.preventDefault();
+                        
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'reCAPTCHA Required',
+                            text: 'Please complete the reCAPTCHA verification.',
+                            confirmButtonColor: '#667eea'
+                        });
+                        
+                        return false;
+                    }
+                });
+            });
+        });
+        @endif
     </script>
   <script src="{{ asset('js/dev-tools-security.js') }}?v=<?php echo time(); ?>"></script>
 </body>
