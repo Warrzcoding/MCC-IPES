@@ -213,6 +213,199 @@
             50% { transform: scale(1.02); border-color: #667eea; }
             100% { transform: scale(1); }
         }
+        
+        /* Terms and Conditions Styles */
+        .terms-checkbox-container {
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(102, 126, 234, 0.05);
+            border-radius: 12px;
+            border: 1px solid rgba(102, 126, 234, 0.1);
+        }
+        
+        .form-check-input:checked {
+            background-color: #667eea;
+            border-color: #667eea;
+        }
+        
+        .form-check-input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.25);
+        }
+        
+        .terms-link {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        
+        .terms-link:hover {
+            color: #764ba2;
+            text-decoration: underline;
+        }
+        
+        .btn-primary:disabled {
+            background: #6c757d;
+            border-color: #6c757d;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+        
+        /* Modal Styles */
+        .modal-dialog {
+            margin: 1rem auto;
+            max-width: 90%;
+            width: 90%;
+        }
+        
+        .modal-content {
+            border-radius: 20px;
+            border: none;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .modal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 20px 20px 0 0;
+            border-bottom: none;
+        }
+        
+        .modal-header .btn-close {
+            filter: invert(1);
+        }
+        
+        .modal-body {
+            padding: 30px;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+        
+        .modal-footer {
+            border-top: 1px solid #e9ecef;
+            padding: 20px 30px;
+        }
+        
+        .terms-content {
+            line-height: 1.6;
+            color: #333;
+        }
+        
+        .terms-content h4 {
+            color: #667eea;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+        
+        .terms-content h4:first-child {
+            margin-top: 0;
+        }
+        
+        /* Accept Terms Button Styling */
+        #acceptTermsBtn {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            border: none;
+            padding: 12px 30px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        #acceptTermsBtn:hover {
+            background: linear-gradient(135deg, #218838 0%, #1ea085 100%);
+            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+            transform: translateY(-2px);
+        }
+        
+        /* Mobile Modal Responsive Styles */
+        @media (max-width: 767.98px) {
+            .modal-dialog {
+                margin: 0.5rem auto;
+                max-width: 85%;
+                width: 85%;
+            }
+            
+            .modal-content {
+                border-radius: 15px;
+                max-height: 90vh;
+                display: flex;
+                flex-direction: column;
+            }
+            
+            .modal-header {
+                padding: 15px 20px;
+                border-radius: 15px 15px 0 0;
+            }
+            
+            .modal-header .modal-title {
+                font-size: 1.1rem;
+            }
+            
+            .modal-body {
+                padding: 20px;
+                max-height: calc(90vh - 140px);
+                overflow-y: auto;
+                flex: 1;
+            }
+            
+            .modal-footer {
+                padding: 15px 20px;
+                flex-shrink: 0;
+            }
+            
+            .terms-content {
+                font-size: 14px;
+                line-height: 1.5;
+            }
+            
+            .terms-content h4 {
+                font-size: 1rem;
+                margin-top: 20px;
+                margin-bottom: 10px;
+            }
+            
+            .terms-content ul {
+                padding-left: 20px;
+            }
+            
+            .terms-content li {
+                margin-bottom: 5px;
+            }
+            
+            .modal-footer .btn {
+                font-size: 14px;
+                padding: 10px 15px;
+            }
+        }
+        
+        /* Extra small devices */
+        @media (max-width: 575.98px) {
+            .modal-dialog {
+                margin: 0.5rem auto;
+                max-width: 80%;
+                width: 80%;
+            }
+            
+            .modal-body {
+                padding: 15px;
+            }
+            
+            .modal-footer {
+                padding: 12px 15px;
+            }
+            
+            .terms-content {
+                font-size: 13px;
+            }
+            
+            .modal-footer .btn {
+                font-size: 13px;
+                padding: 8px 12px;
+            }
+        }
         @media (max-width: 767.98px) {
             body {
                 padding: 0;
@@ -267,6 +460,17 @@
                 max-width: 180px !important;
                 font-size: 1.1em !important;
             }
+            
+            /* Mobile terms checkbox styling */
+            .terms-checkbox-container {
+                margin: 15px 0;
+                padding: 12px;
+            }
+            
+            .form-check-label {
+                font-size: 13px;
+                line-height: 1.4;
+            }
         }
     </style>
 </head>
@@ -301,7 +505,18 @@
                         <input type="email" class="form-control" id="ms365_email" name="ms365_email" placeholder="firstname.lastname@mcclawis.edu.ph" required autofocus pattern="^[a-zA-Z]+\.[a-zA-Z]+@mcclawis\.edu\.ph$" title="Email must be in the format firstname.lastname@mcclawis.edu.ph">
                     </div>
                 </div>
-                <button type="submit" class="btn btn-primary">Send Verification Code</button>
+                
+                <!-- Terms and Conditions Checkbox -->
+                <div class="terms-checkbox-container">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="acceptTerms" name="accept_terms" required>
+                        <label class="form-check-label" for="acceptTerms">
+                            I agree to the <span class="terms-link" id="termsLink">Terms and Conditions</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary" id="sendVerificationBtn" disabled>Send Verification Code</button>
             </form>
         </div>
         <div id="preSignupStep2" style="display:none;">
@@ -346,6 +561,103 @@
             </a>
         </div>
     </div>
+
+    <!-- Terms and Conditions Modal -->
+    <div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="termsModalLabel">
+                        <i class="fas fa-file-contract me-2"></i>Terms and Conditions
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="terms-content">
+                        <h4>1. Acceptance of Terms</h4>
+                        <p>By accessing and using the Office Performance Evaluation System (OPES) at MCC Lawis, you acknowledge that you have read, understood, and agree to be bound by these Terms and Conditions.</p>
+                        
+                        <h4>2. System Purpose</h4>
+                        <p>OPES is designed exclusively for educational and administrative purposes within MCC Lawis. The system facilitates performance evaluation, data management, and academic administration for authorized users only.</p>
+                        
+                        <h4>3. User Eligibility</h4>
+                        <p>Access to this system is restricted to:</p>
+                        <ul>
+                            <li>Current students, faculty, and staff of MCC Lawis</li>
+                            <li>Users with valid @mcclawis.edu.ph email addresses</li>
+                            <li>Individuals authorized by the institution's administration</li>
+                        </ul>
+                        
+                        <h4>4. Data Privacy and Protection</h4>
+                        <p>We are committed to protecting your privacy and personal information:</p>
+                        <ul>
+                            <li>Personal data is collected only for legitimate educational purposes</li>
+                            <li>Information is stored securely and accessed only by authorized personnel</li>
+                            <li>Data sharing complies with applicable privacy laws and institutional policies</li>
+                            <li>Microsoft 365 integration follows Microsoft's privacy standards</li>
+                        </ul>
+                        
+                        <h4>5. Acceptable Use Policy</h4>
+                        <p>Users must:</p>
+                        <ul>
+                            <li>Use the system only for its intended educational purposes</li>
+                            <li>Maintain the confidentiality of login credentials</li>
+                            <li>Report any security vulnerabilities or unauthorized access</li>
+                            <li>Respect the intellectual property rights of the institution</li>
+                        </ul>
+                        
+                        <p>Users must NOT:</p>
+                        <ul>
+                            <li>Share account credentials with unauthorized individuals</li>
+                            <li>Attempt to access restricted areas or data</li>
+                            <li>Use the system for commercial or non-educational purposes</li>
+                            <li>Engage in any activity that could harm the system or other users</li>
+                        </ul>
+                        
+                        <h4>6. System Availability</h4>
+                        <p>While we strive to maintain system availability, MCC Lawis reserves the right to:</p>
+                        <ul>
+                            <li>Perform scheduled maintenance that may temporarily limit access</li>
+                            <li>Modify system features and functionality as needed</li>
+                            <li>Suspend access for security or administrative reasons</li>
+                        </ul>
+                        
+                        <h4>7. Limitation of Liability</h4>
+                        <p>MCC Lawis and its representatives shall not be liable for:</p>
+                        <ul>
+                            <li>Temporary system outages or technical difficulties</li>
+                            <li>Data loss due to user error or system failures</li>
+                            <li>Unauthorized access resulting from user negligence</li>
+                        </ul>
+                        
+                        <h4>8. Account Termination</h4>
+                        <p>MCC Lawis reserves the right to terminate user accounts for:</p>
+                        <ul>
+                            <li>Violation of these terms and conditions</li>
+                            <li>Misuse of system resources or data</li>
+                            <li>End of enrollment or employment with the institution</li>
+                        </ul>
+                        
+                        <h4>9. Changes to Terms</h4>
+                        <p>These terms may be updated periodically. Users will be notified of significant changes and continued use constitutes acceptance of modified terms.</p>
+                        
+                        <h4>10. Contact Information</h4>
+                        <p>For questions about these terms or the system, please contact the MCC Lawis IT Department or administration.</p>
+                        
+                        <p class="mt-4"><strong>Last Updated:</strong> {{ date('F d, Y') }}</p>
+                        
+                        <!-- Accept Terms Button at the end of content -->
+                        <div class="text-center mt-4 pt-3" style="border-top: 1px solid #e9ecef;">
+                            <button type="button" class="btn btn-primary btn-lg" id="acceptTermsBtn">
+                                <i class="fas fa-check me-2"></i>I Accept These Terms and Conditions
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
     // Example JS to handle step transitions (replace with backend logic as needed)
     document.addEventListener('DOMContentLoaded', function() {
@@ -363,6 +675,13 @@
         const otpTimerAlert = document.getElementById('otpTimerAlert');
         const otpCountdown = document.getElementById('otpCountdown');
         const backToLoginContainer = document.getElementById('backToLoginContainer');
+        
+        // Terms and Conditions elements
+        const acceptTermsCheckbox = document.getElementById('acceptTerms');
+        const sendVerificationBtn = document.getElementById('sendVerificationBtn');
+        const acceptTermsBtn = document.getElementById('acceptTermsBtn');
+        const termsModalElement = document.getElementById('termsModal');
+        const termsLink = document.getElementById('termsLink');
 
         let otpTimer;
         let otpTimeLeft = 300; // 5 minutes in seconds
@@ -381,6 +700,122 @@
         
         // Initialize back button visibility on page load
         updateBackButtonVisibility();
+        
+        // Simple Terms and Conditions functionality
+        let termsAccepted = false;
+        
+        // Simple function to show modal
+        function showModal() {
+            if (termsModalElement) {
+                termsModalElement.style.display = 'flex';
+                termsModalElement.style.alignItems = 'center';
+                termsModalElement.style.justifyContent = 'center';
+                termsModalElement.classList.add('show');
+                document.body.style.overflow = 'hidden';
+                
+                // Add backdrop
+                const backdrop = document.createElement('div');
+                backdrop.className = 'modal-backdrop fade show';
+                backdrop.id = 'modal-backdrop';
+                document.body.appendChild(backdrop);
+            }
+        }
+        
+        // Simple function to hide modal
+        function hideModal() {
+            if (termsModalElement) {
+                termsModalElement.style.display = 'none';
+                termsModalElement.classList.remove('show');
+                document.body.style.overflow = '';
+                
+                // Remove backdrop
+                const backdrop = document.getElementById('modal-backdrop');
+                if (backdrop) {
+                    backdrop.remove();
+                }
+            }
+        }
+        
+        // Handle checkbox click
+        if (acceptTermsCheckbox) {
+            acceptTermsCheckbox.addEventListener('click', function(e) {
+                if (!termsAccepted) {
+                    e.preventDefault();
+                    this.checked = false;
+                    showModal();
+                } else if (this.checked === false) {
+                    // If user unchecks the checkbox after accepting terms
+                    termsAccepted = false;
+                    sendVerificationBtn.disabled = true;
+                }
+            });
+            
+            // Also handle change event for unchecking
+            acceptTermsCheckbox.addEventListener('change', function() {
+                if (!this.checked && termsAccepted) {
+                    // User unchecked the checkbox
+                    termsAccepted = false;
+                    sendVerificationBtn.disabled = true;
+                }
+            });
+        }
+        
+        // Handle terms link click
+        if (termsLink) {
+            termsLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                showModal();
+            });
+        }
+        
+        // Handle accept button in modal
+        if (acceptTermsBtn) {
+            acceptTermsBtn.addEventListener('click', function() {
+                termsAccepted = true;
+                acceptTermsCheckbox.checked = true;
+                sendVerificationBtn.disabled = false;
+                hideModal();
+                
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Terms Accepted',
+                    text: 'Thank you for accepting the terms and conditions.',
+                    timer: 2000,
+                    timerProgressBar: true,
+                    showConfirmButton: false
+                });
+            });
+        }
+        
+        // Handle modal close button (only the X button in header)
+        const closeButton = termsModalElement?.querySelector('.btn-close');
+        if (closeButton) {
+            closeButton.addEventListener('click', function() {
+                if (!termsAccepted) {
+                    acceptTermsCheckbox.checked = false;
+                    sendVerificationBtn.disabled = true;
+                }
+                hideModal();
+            });
+        }
+        
+        // Handle clicking outside modal to close
+        if (termsModalElement) {
+            termsModalElement.addEventListener('click', function(e) {
+                if (e.target === termsModalElement) {
+                    if (!termsAccepted) {
+                        acceptTermsCheckbox.checked = false;
+                        sendVerificationBtn.disabled = true;
+                    }
+                    hideModal();
+                }
+            });
+        }
+        
+        // Initialize - button should be disabled
+        if (sendVerificationBtn) {
+            sendVerificationBtn.disabled = true;
+        }
 
         function startOtpTimer() {
             otpTimeLeft = OTP_TIMEOUT;
@@ -485,6 +920,15 @@
             if (otpTimerAlert) {
                 otpTimerAlert.className = 'alert alert-info';
                 otpTimerAlert.innerHTML = '<i class="fas fa-clock"></i> <span id="otpTimerText">Time remaining: <span id="otpCountdown">05:00</span></span>';
+            }
+            
+            // Reset terms checkbox and acceptance
+            if (acceptTermsCheckbox) {
+                acceptTermsCheckbox.checked = false;
+                termsAccepted = false;
+                if (sendVerificationBtn) {
+                    sendVerificationBtn.disabled = true;
+                }
             }
         }
 
