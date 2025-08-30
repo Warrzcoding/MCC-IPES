@@ -575,15 +575,15 @@
                 <div class="modal-body">
                     <div class="terms-content">
                         <h4>1. Acceptance of Terms</h4>
-                        <p>By accessing and using the Office Performance Evaluation System (OPES) at MCC Lawis, you acknowledge that you have read, understood, and agree to be bound by these Terms and Conditions.</p>
+                        <p>By accessing and using the Instructors Performance Evaluation System (IPES) at MCC, you acknowledge that you have read, understood, and agree to be bound by these Terms and Conditions.</p>
                         
                         <h4>2. System Purpose</h4>
-                        <p>OPES is designed exclusively for educational and administrative purposes within MCC Lawis. The system facilitates performance evaluation, data management, and academic administration for authorized users only.</p>
+                        <p>OPES is designed exclusively for educational and administrative purposes within Madridejos Community College. The system facilitates performance evaluation, data management, and academic administration for authorized users only.</p>
                         
                         <h4>3. User Eligibility</h4>
                         <p>Access to this system is restricted to:</p>
                         <ul>
-                            <li>Current students, faculty, and staff of MCC Lawis</li>
+                            <li>Current students</li>
                             <li>Users with valid @mcclawis.edu.ph email addresses</li>
                             <li>Individuals authorized by the institution's administration</li>
                         </ul>
@@ -615,7 +615,7 @@
                         </ul>
                         
                         <h4>6. System Availability</h4>
-                        <p>While we strive to maintain system availability, MCC Lawis reserves the right to:</p>
+                        <p>While we strive to maintain system availability, MCC reserves the right to:</p>
                         <ul>
                             <li>Perform scheduled maintenance that may temporarily limit access</li>
                             <li>Modify system features and functionality as needed</li>
@@ -623,7 +623,7 @@
                         </ul>
                         
                         <h4>7. Limitation of Liability</h4>
-                        <p>MCC Lawis and its representatives shall not be liable for:</p>
+                        <p>Madridejos Community College and its representatives shall not be liable for:</p>
                         <ul>
                             <li>Temporary system outages or technical difficulties</li>
                             <li>Data loss due to user error or system failures</li>
