@@ -537,13 +537,13 @@
         border-radius: 10px !important;
     }
     
-    /* Mobile responsive button layout */
-    .d-flex.justify-content-between {
+    /* Mobile responsive button layout - exclude student login form buttons */
+    .d-flex.justify-content-between:not(.align-items-center) {
         flex-direction: column !important;
         gap: 10px !important;
     }
     
-    .d-flex.justify-content-between .btn {
+    .d-flex.justify-content-between:not(.align-items-center) .btn {
         width: 100% !important;
     }
     .student-info, .alert {
@@ -690,42 +690,85 @@
         @media (max-width: 768px) {
             /* Keep student login buttons horizontal but make them more mobile-friendly */
             .d-flex.justify-content-between.align-items-center {
-                gap: 8px !important;
+                gap: 6px !important;
+                flex-direction: row !important;
+                flex-wrap: nowrap !important;
             }
             
             /* Make student login buttons more compact and appealing on mobile */
-            .d-flex.justify-content-between .btn-secondary,
-            .d-flex.justify-content-between .btn-outline-info {
+            .d-flex.justify-content-between.align-items-center .btn-secondary,
+            .d-flex.justify-content-between.align-items-center .btn-outline-info {
                 flex: 1 !important;
                 padding: 10px 8px !important;
                 font-size: 13px !important;
                 border-radius: 12px !important;
                 font-weight: 600 !important;
+                white-space: nowrap !important;
+                min-width: 0 !important;
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
+            }
+            
+            /* Adjust Back button to be slightly smaller */
+            .d-flex.justify-content-between.align-items-center .btn-secondary {
+                flex: 0.8 !important;
+            }
+            
+            /* Reset Password button gets more space */
+            .d-flex.justify-content-between.align-items-center .btn-outline-info {
+                flex: 1.2 !important;
+            }
+            
+            /* Keep icon visible for forgot password button */
+            
+            /* For very small screens, adjust sizing */
+            @media (max-width: 400px) {
+                .d-flex.justify-content-between.align-items-center .btn-secondary,
+                .d-flex.justify-content-between.align-items-center .btn-outline-info {
+                    font-size: 12px !important;
+                    padding: 9px 6px !important;
+                }
+                
+                .d-flex.justify-content-between.align-items-center {
+                    gap: 4px !important;
+                }
+            }
+            
+            @media (max-width: 350px) {
+                .d-flex.justify-content-between.align-items-center .btn-secondary,
+                .d-flex.justify-content-between.align-items-center .btn-outline-info {
+                    font-size: 11px !important;
+                    padding: 8px 4px !important;
+                }
+                
+                .d-flex.justify-content-between.align-items-center {
+                    gap: 3px !important;
+                }
             }
             
             /* Enhance back button styling */
-            .btn-secondary {
+            .d-flex.justify-content-between.align-items-center .btn-secondary {
                 background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%) !important;
                 border: none !important;
                 color: white !important;
                 transition: all 0.3s ease !important;
             }
             
-            .btn-secondary:hover {
+            .d-flex.justify-content-between.align-items-center .btn-secondary:hover {
                 transform: translateY(-2px) !important;
                 box-shadow: 0 8px 20px rgba(108, 117, 125, 0.3) !important;
                 color: white !important;
             }
             
             /* Enhance forgot password button styling */
-            .btn-outline-info {
+            .d-flex.justify-content-between.align-items-center .btn-outline-info {
                 background: linear-gradient(135deg, rgba(23, 162, 184, 0.1) 0%, rgba(23, 162, 184, 0.05) 100%) !important;
                 border: 2px solid #17a2b8 !important;
                 color: #17a2b8 !important;
                 transition: all 0.3s ease !important;
             }
             
-            .btn-outline-info:hover {
+            .d-flex.justify-content-between.align-items-center .btn-outline-info:hover {
                 background: linear-gradient(135deg, #17a2b8 0%, #138496 100%) !important;
                 transform: translateY(-2px) !important;
                 box-shadow: 0 8px 20px rgba(23, 162, 184, 0.3) !important;
@@ -1001,7 +1044,9 @@
                             <i class="fas fa-arrow-left"></i> Back
                         </a>
                         <a href="{{ route('password.request') }}" class="btn btn-outline-info">
-                            <i class="fas fa-key"></i> Forgot Password?
+                            <i class="fas fa-key"></i> 
+                            <span class="d-none d-md-inline">Forgot Password?</span>
+                            <span class="d-md-none">Reset Password</span>
                         </a>
                     </div>
                 </form>
