@@ -257,12 +257,17 @@
             margin: 1rem auto;
             max-width: 90%;
             width: 90%;
+            display: flex;
+            align-items: center;
+            min-height: calc(100vh - 2rem);
         }
         
         .modal-content {
             border-radius: 20px;
             border: none;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            width: 100%;
+            margin: auto;
         }
         
         .modal-header {
@@ -290,12 +295,14 @@
         .terms-content {
             line-height: 1.6;
             color: #333;
+            text-align: justify;
         }
         
         .terms-content h4 {
             color: #667eea;
             margin-top: 25px;
             margin-bottom: 15px;
+            text-align: left;
         }
         
         .terms-content h4:first-child {
@@ -323,9 +330,12 @@
         /* Mobile Modal Responsive Styles */
         @media (max-width: 767.98px) {
             .modal-dialog {
-                margin: 0.5rem auto;
+                margin: 1rem auto;
                 max-width: 85%;
                 width: 85%;
+                display: flex;
+                align-items: center;
+                min-height: calc(100vh - 2rem);
             }
             
             .modal-content {
@@ -359,12 +369,14 @@
             .terms-content {
                 font-size: 14px;
                 line-height: 1.5;
+                text-align: justify;
             }
             
             .terms-content h4 {
                 font-size: 1rem;
                 margin-top: 20px;
                 margin-bottom: 10px;
+                text-align: left;
             }
             
             .terms-content ul {
@@ -384,9 +396,12 @@
         /* Extra small devices */
         @media (max-width: 575.98px) {
             .modal-dialog {
-                margin: 0.5rem auto;
+                margin: 1rem auto;
                 max-width: 80%;
                 width: 80%;
+                display: flex;
+                align-items: center;
+                min-height: calc(100vh - 2rem);
             }
             
             .modal-body {
@@ -399,6 +414,7 @@
             
             .terms-content {
                 font-size: 13px;
+                text-align: justify;
             }
             
             .modal-footer .btn {
@@ -578,12 +594,12 @@
                         <p>By accessing and using the Instructors Performance Evaluation System (IPES) at MCC, you acknowledge that you have read, understood, and agree to be bound by these Terms and Conditions.</p>
                         
                         <h4>2. System Purpose</h4>
-                        <p>OPES is designed exclusively for educational and administrative purposes within Madridejos Community College. The system facilitates performance evaluation, data management, and academic administration for authorized users only.</p>
+                        <p>IPES is designed exclusively for educational and administrative purposes within Madridejos Community College. The system facilitates performance evaluation, data management, and academic administration for authorized users only.</p>
                         
                         <h4>3. User Eligibility</h4>
                         <p>Access to this system is restricted to:</p>
                         <ul>
-                            <li>Current students</li>
+                            <li>Current students of MCC</li>
                             <li>Users with valid @mcclawis.edu.ph email addresses</li>
                             <li>Individuals authorized by the institution's administration</li>
                         </ul>
