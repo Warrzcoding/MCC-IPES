@@ -633,7 +633,15 @@ if (!function_exists('getRatingStatus')) {
                                 @foreach($savedQuestions as $q)
                                     <tr>
                                         <td><strong>{{ $q->title }}</strong></td>
-                                        <td class="text-muted">{{ $q->description }}</td>
+                                        <td class="text-muted" style="max-width: 300px;">
+                                            <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: help;" 
+                                                 data-bs-toggle="tooltip" 
+                                                 data-bs-placement="top" 
+                                                 data-bs-html="true"
+                                                 title="{{ htmlspecialchars($q->description) }}">
+                                                {{ $q->description }}
+                                            </div>
+                                        </td>
                                         <td>
                                             <span class="badge {{ $q->staff_type == 'teaching' ? 'bg-primary' : 'bg-success' }}">
                                                 {{ ucfirst($q->staff_type) }}
@@ -1103,41 +1111,45 @@ if (!function_exists('getRatingStatus')) {
                     
                     // Build the detailed report HTML
                     let html = `
-                        <div style="padding: 32px; font-family: 'Times New Roman', serif; font-size: 12pt; max-width: 800px; margin: 0 auto;">
-                            <div style="text-align: center; margin-bottom: 0.5em; padding-bottom: 0.5em;">
-                                <div style='display:flex;align-items:center;justify-content:center;margin-bottom:1em;'>
-                                    <img src='/images/mcclogo.png' alt='Left Logo' style='width:70px;height:70px;margin-right:3em;' onerror='this.style.display="none"'>
+                        <style>
+                            @media print {
+                                tr { page-break-inside: avoid !important; }
+                                td { page-break-after: avoid !important; }
+                                .header-section { page-break-after: avoid !important; }
+                                .instructor-info { page-break-after: avoid !important; }
+                                .questions-table { page-break-before: avoid !important; }
+                            }
+                        </style>
+                        <div style="padding:15px;font-family:'Times New Roman', serif; font-size:12pt; max-width: 900px; margin: 0 auto;">
+                            <div class='header-section' style='text-align:center;margin-bottom:0.5em;padding-bottom:0;'>
+                                <div style='display:flex;align-items:center;justify-content:center;margin-bottom:0.3em;'>
+                                    <img src='/images/mcclogo.png' alt='Left Logo' style='width:50px;height:50px;margin-right:0.8em;' onerror='this.style.display="none"'>
                                     <div style='text-align:center;'>
-                                        <h2 style='margin:0;font-size:11pt;line-height:1.3;font-family:"Times New Roman", serif;'>Republic of the Philippines<br>
-                                        Region VII, Central Visayas<br>
-                                        Commission on Higher Education<br>
+                                        <h2 style='margin:0;font-size:10pt;line-height:1.1;font-family:"Times New Roman", serif;'>Republic of the Philippines<br>
                                         <strong>Madridejos Community College</strong><br>
                                         Crossing Bunakan, Madridejos, Cebu<br>
-                                        <br>
                                         <strong>Center For Guidance Services</strong><br>
-                                        <strong style='font-size:11pt;'>Staff Evaluation Report</strong><br>
+                                        <strong style='font-size:10pt;'>Staff Evaluation Report</strong><br>
                                         Academic Year: {{ $year->year }}</h2>
                                     </div>
-                                    <img src='/images/madlogo.png' alt='Right Logo' style='width:70px;height:70px;margin-left:3em;' onerror='this.style.display="none"'>
+                                    <img src='/images/madlogo.png' alt='Right Logo' style='width:50px;height:50px;margin-left:0.8em;' onerror='this.style.display="none"'>
                                 </div>
-                                <div style='color:#888;font-size:12pt;font-family:"Times New Roman", serif;'>Generated on: ${new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'})}</div>
                             </div>
                             
                             <!-- Instructor Information Line -->
-                            <div style='margin-bottom:2em;font-size:12pt;display:flex;justify-content:space-between;align-items:center;'>
+                            <div class='instructor-info' style='margin-bottom:0.5em;font-size:11pt;display:flex;justify-content:space-between;align-items:center;'>
                                 <div style='text-align:left;'><strong>Name of Instructor:</strong> ${staff.full_name}</div>
                                 <div style='text-align:right;'><strong>Department:</strong> ${staff.department}</div>
                             </div>
 
                             <!-- Questions and Ratings Table -->
-                            <table style='width:100%;border-collapse:collapse;margin-bottom:2em;border:1px solid #333;'>
-                                <thead>
-                                    <tr style='background:#f8f9fa;'>
-                                        <th style='border:1px solid #333;padding:12px;text-align:left;font-weight:bold;width:70%;'>Questionnaires</th>
-                                        <th style='border:1px solid #333;padding:12px;text-align:center;font-weight:bold;width:30%;'>Rating</th>
-                                    </tr>
-                                </thead>
+                            <table class='questions-table' style='width:100%;border-collapse:collapse;margin-bottom:1em;border:1px solid #333;'>
                                 <tbody>
+                                    <!-- Header Row (as regular tbody row to prevent repetition) -->
+                                    <tr style='background:#f8f9fa;page-break-inside:avoid;page-break-after:avoid;'>
+                                        <td style='border:1px solid #333;padding:12px;text-align:left;font-weight:bold;width:70%;'>Questionnaires</td>
+                                        <td style='border:1px solid #333;padding:12px;text-align:center;font-weight:bold;width:30%;'>Rating</td>
+                                    </tr>
                     `;
 
                     if (evaluations && evaluations.length > 0) {
@@ -1190,8 +1202,20 @@ if (!function_exists('getRatingStatus')) {
                                 </tbody>
                             </table>
                             
-                            <div style='margin-top:2em;text-align:center;color:#888;font-size:0.9em;border-top:1px solid #dee2e6;padding-top:1em;'>
-                                <p>This report was automatically generated by the Staff Evaluation System</p>
+                            <!-- Signature Section -->
+                            <div style='margin-top:2em;margin-bottom:2em;text-align:left;'>
+                                <div style='margin-bottom:2em;'>
+                                    Prepared by: _____________
+                                </div>
+                                <div style='margin-bottom:0.5em;'>
+                                    Reviewed and Noted by:
+                                </div>
+                                <div style='margin-bottom:0.5em;'>
+                                    <strong style='text-decoration:underline;'>DR. LIZA D. GARCIA</strong>
+                                </div>
+                                <div>
+                                    Guidance Counselor
+                                </div>
                             </div>
                         </div>
                     `;
@@ -1300,6 +1324,42 @@ document.querySelectorAll('.reuse-all-questions-form').forEach(form => {
         });
     });
 });
+
+// Initialize Bootstrap tooltips for truncated questions
+document.addEventListener('DOMContentLoaded', function() {
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl, {
+            boundary: 'viewport',
+            customClass: 'question-tooltip',
+            delay: { show: 300, hide: 100 }
+        });
+    });
+});
 </script>
+
+<style>
+/* Custom styling for question tooltips */
+.question-tooltip .tooltip-inner {
+    max-width: 400px;
+    text-align: left;
+    background-color: #333;
+    color: #fff;
+    font-size: 12px;
+    line-height: 1.4;
+    padding: 8px 12px;
+    border-radius: 6px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.question-tooltip .tooltip-arrow {
+    border-top-color: #333;
+}
+
+/* Ensure truncated text shows help cursor */
+[data-bs-toggle="tooltip"] {
+    cursor: help !important;
+}
+</style>
 
 <script> 
