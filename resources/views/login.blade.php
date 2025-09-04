@@ -490,6 +490,8 @@
             border-radius: 4px;
             transition: width 1s linear;
         }
+        
+
         /* Add this at the end of your <style> tag in login.blade.php */
 @media (max-width: 575.98px) {
     .login-card {
@@ -556,6 +558,44 @@
     .countdown-timer {
         font-size: 1.2rem !important;
         padding: 10px !important;
+    }
+}
+
+/* Mobile Footer - Only visible on mobile */
+@media (max-width: 767px) {
+    .mobile-footer {
+        position: fixed;
+        bottom: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 90%;
+        max-width: 350px;
+        text-align: center;
+        padding: 8px 10px;
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 9px;
+        line-height: 1.2;
+        z-index: 10;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+    
+    .mobile-footer:hover,
+    .mobile-footer:focus {
+        background: rgba(0, 0, 0, 0.3);
+        backdrop-filter: blur(5px);
+    }
+    
+    .mobile-footer p {
+        margin: 0;
+    }
+}
+
+/* Hide mobile footer on desktop */
+@media (min-width: 768px) {
+    .mobile-footer {
+        display: none;
     }
 }
 @media (max-width: 576px) {
@@ -973,6 +1013,11 @@
                     </a></p>
                 </div>
             @endif      
+    </div>
+
+    <!-- Mobile Footer - Only visible on mobile -->
+    <div class="mobile-footer">
+        <p>@2022 MCC | Instructors Performance Evaluation System | Developed by: Warren Ilustrisimo | Jenford Albaciete | Jerry Nasol | Cristina Ilustrisimo</p>
     </div>
 
     @if(session('lockout_timer'))
