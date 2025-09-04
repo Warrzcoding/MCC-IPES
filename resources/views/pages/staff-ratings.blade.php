@@ -9,6 +9,17 @@ function getRatingStatus($rating) {
     if ($rating >= 1) return ['status' => 'Below Average', 'color' => '#fd7e14', 'bg' => '#ffeaa7'];
     return ['status' => 'Poor', 'color' => '#dc3545', 'bg' => '#f8d7da'];
 }
+
+// Function to get adjectival descriptive rating
+function getAdjectivalRating($rating) {
+    if ($rating >= 4.5) return 'Outstanding';
+    if ($rating >= 4.0) return 'Very Satisfactory';
+    if ($rating >= 3.5) return 'Satisfactory';
+    if ($rating >= 3.0) return 'Fair';
+    if ($rating >= 2.5) return 'Poor';
+    if ($rating >= 2.0) return 'Very Poor';
+    return 'Unsatisfactory';
+}
 @endphp
 
 <style>
@@ -1145,41 +1156,45 @@ function getRatingStatus($rating) {
                     
                     // Build the detailed report HTML
                     let html = `
-                        <div style="padding:32px;font-family:'Times New Roman', serif; font-size:12pt; max-width: 900px; margin: 0 auto;">
-                            <div style='text-align:center;margin-bottom:2em;padding-bottom:1em;'>
-                                <div style='display:flex;align-items:center;justify-content:center;margin-bottom:1em;'>
-                                    <img src='/images/mcclogo.png' alt='Left Logo' style='width:70px;height:70px;margin-right:1.5em;' onerror='this.style.display="none"'>
+                        <style>
+                            @media print {
+                                tr { page-break-inside: avoid !important; }
+                                td { page-break-after: avoid !important; }
+                                .header-section { page-break-after: avoid !important; }
+                                .instructor-info { page-break-after: avoid !important; }
+                                .questions-table { page-break-before: avoid !important; }
+                            }
+                        </style>
+                        <div style="padding:15px;font-family:'Times New Roman', serif; font-size:12pt; max-width: 900px; margin: 0 auto;">
+                            <div class='header-section' style='text-align:center;margin-bottom:0.5em;padding-bottom:0;'>
+                                <div style='display:flex;align-items:center;justify-content:center;margin-bottom:0.3em;'>
+                                    <img src='/images/mcclogo.png' alt='Left Logo' style='width:50px;height:50px;margin-right:0.8em;' onerror='this.style.display="none"'>
                                     <div style='text-align:center;'>
-                                        <h2 style='margin:0;font-size:12pt;line-height:1.4;font-family:"Times New Roman", serif;'>Republic of the Philippines<br>
-                                        Region VII, Central Visayas<br>
-                                        Commission on Higher Education<br>
+                                        <h2 style='margin:0;font-size:10pt;line-height:1.1;font-family:"Times New Roman", serif;'>Republic of the Philippines<br>
                                         <strong>Madridejos Community College</strong><br>
                                         Crossing Bunakan, Madridejos, Cebu<br>
-                                        <br>
                                         <strong>Center For Guidance Services</strong><br>
-                                        <strong style='font-size:12pt;'>MCC Instructor's Performance Evaluation Results</strong><br>
+                                        <strong style='font-size:10pt;'>MCC Instructor's Performance Evaluation Results</strong><br>
                                         S.Y 2024-2025 - Semester 1</h2>
                                     </div>
-                                    <img src='/images/madlogo.png' alt='Right Logo' style='width:70px;height:70px;margin-left:1.5em;' onerror='this.style.display="none"'>
+                                    <img src='/images/madlogo.png' alt='Right Logo' style='width:50px;height:50px;margin-left:0.8em;' onerror='this.style.display="none"'>
                                 </div>
-                                <div style='color:#888;font-size:12pt;font-family:"Times New Roman", serif;'>Generated on: ${new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'})}</div>
                             </div>
                             
                             <!-- Instructor Information Line -->
-                            <div style='margin-bottom:2em;font-size:12pt;display:flex;justify-content:space-between;align-items:center;'>
+                            <div class='instructor-info' style='margin-bottom:0.5em;font-size:11pt;display:flex;justify-content:space-between;align-items:center;'>
                                 <div style='text-align:left;'><strong>Name of Instructor:</strong> ${staff.full_name}</div>
                                 <div style='text-align:right;'><strong>Department:</strong> ${staff.department}</div>
                             </div>
 
                             <!-- Questions and Ratings Table -->
-                            <table style='width:100%;border-collapse:collapse;margin-bottom:2em;border:1px solid #333;'>
-                                <thead>
-                                    <tr style='background:#f8f9fa;'>
-                                        <th style='border:1px solid #333;padding:12px;text-align:left;font-weight:bold;width:70%;'>Questionnaires</th>
-                                        <th style='border:1px solid #333;padding:12px;text-align:center;font-weight:bold;width:30%;'>Rating</th>
-                                    </tr>
-                                </thead>
+                            <table class='questions-table' style='width:100%;border-collapse:collapse;margin-bottom:1em;border:1px solid #333;'>
                                 <tbody>
+                                    <!-- Header Row (as regular tbody row to prevent repetition) -->
+                                    <tr style='background:#f8f9fa;page-break-inside:avoid;page-break-after:avoid;'>
+                                        <td style='border:1px solid #333;padding:12px;text-align:left;font-weight:bold;width:70%;'>Questionnaires</td>
+                                        <td style='border:1px solid #333;padding:12px;text-align:center;font-weight:bold;width:30%;'>Rating</td>
+                                    </tr>
                     `;
 
                     if (evaluations && evaluations.length > 0) {
@@ -1232,8 +1247,107 @@ function getRatingStatus($rating) {
                                 </tbody>
                             </table>
                             
-                            <div style='margin-top:2em;text-align:center;color:#888;font-size:0.9em;border-top:1px solid #dee2e6;padding-top:1em;'>
-                                <p>This report was automatically generated by the Staff Evaluation System</p>
+                            <!-- Summary Evaluation Table -->
+                            <div style='margin-top:2em;margin-bottom:2em;'>
+                                <h3 style='font-size:14pt;font-weight:bold;margin-bottom:1em;color:#333;border-bottom:2px solid #007bff;padding-bottom:0.5em;'>Summary Evaluation</h3>
+                                <table style='width:100%;border-collapse:collapse;border:1px solid #333;'>
+                                    <thead>
+                                        <tr style='background:#f8f9fa;'>
+                                            <th style='border:1px solid #333;padding:8px;text-align:left;font-weight:bold;width:25%;'>Criteria</th>
+                                            <th style='border:1px solid #333;padding:8px;text-align:center;font-weight:bold;width:12%;'>Scores</th>
+                                            <th style='border:1px solid #333;padding:8px;text-align:center;font-weight:bold;width:18%;'>Verbal Interpretation</th>
+                                            <th style='border:1px solid #333;padding:8px;text-align:center;font-weight:bold;width:45%;'>Descriptive Explanation</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                    `;
+
+                    // Calculate category averages for Summary Evaluation
+                    if (evaluations && evaluations.length > 0) {
+                        const categories = {};
+                        const categoryTotals = {};
+                        const categoryCounts = {};
+                        
+                        evaluations.forEach(eval => {
+                            const categoryName = eval.category;
+                            const rating = parseFloat(eval.average_rating || 0);
+                            
+                            if (!categoryTotals[categoryName]) {
+                                categoryTotals[categoryName] = 0;
+                                categoryCounts[categoryName] = 0;
+                            }
+                            
+                            categoryTotals[categoryName] += rating;
+                            categoryCounts[categoryName]++;
+                        });
+                        
+                        // Generate summary rows for each category
+                        let totalSum = 0;
+                        let totalCount = 0;
+                        
+                        Object.keys(categoryTotals).forEach(categoryName => {
+                            const average = categoryTotals[categoryName] / categoryCounts[categoryName];
+                            const verbalInterpretation = getAdjectivalRating(average);
+                            const descriptiveExplanation = getDescriptiveExplanation(verbalInterpretation);
+                            
+                            // Add to total calculation
+                            totalSum += average;
+                            totalCount++;
+                            
+                            html += `
+                                <tr>
+                                    <td style='border:1px solid #333;padding:8px;text-align:left;vertical-align:middle;'>${categoryName}</td>
+                                    <td style='border:1px solid #333;padding:8px;text-align:center;font-weight:bold;vertical-align:middle;'>${average.toFixed(2)}</td>
+                                    <td style='border:1px solid #333;padding:8px;text-align:center;font-weight:bold;vertical-align:middle;'>${verbalInterpretation}</td>
+                                    <td style='border:1px solid #333;padding:8px;text-align:left;font-style:italic;vertical-align:middle;line-height:1.3;'>${descriptiveExplanation}</td>
+                                </tr>
+                            `;
+                        });
+                        
+                        // Add Total row
+                        if (totalCount > 0) {
+                            const overallAverage = totalSum / totalCount;
+                            const overallVerbalInterpretation = getAdjectivalRating(overallAverage);
+                            const overallDescriptiveExplanation = getDescriptiveExplanation(overallVerbalInterpretation);
+                            
+                            html += `
+                                <tr style='background:#f0f8ff;'>
+                                    <td style='border:1px solid #333;padding:8px;text-align:left;vertical-align:middle;font-weight:bold;'>Total</td>
+                                    <td style='border:1px solid #333;padding:8px;text-align:center;font-weight:bold;vertical-align:middle;'>${overallAverage.toFixed(2)}</td>
+                                    <td style='border:1px solid #333;padding:8px;text-align:center;font-weight:bold;vertical-align:middle;'>${overallVerbalInterpretation}</td>
+                                    <td style='border:1px solid #333;padding:8px;text-align:left;font-weight:bold;vertical-align:middle;line-height:1.3;'>${overallDescriptiveExplanation}</td>
+                                </tr>
+                            `;
+                        }
+                    } else {
+                        html += `
+                            <tr>
+                                <td colspan="4" style='border:1px solid #333;padding:2em;text-align:center;color:#666;'>
+                                    <strong>No Evaluation Data Available</strong>
+                                </td>
+                            </tr>
+                        `;
+                    }
+
+                    html += `
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <!-- Signature Section -->
+                            <div style='margin-top:2em;margin-bottom:2em;text-align:left;'>
+                                <div style='margin-bottom:2em;'>
+                                    Prepared by: _____________
+                                </div>
+                                <div style='margin-bottom:0.5em;'>
+                                    Reviewed and Noted by:
+                                </div>
+                                <div style='margin-bottom:0.5em;'>
+                                    <strong style='text-decoration:underline;'>DR. LIZA D. GARCIA</strong>
+                                </div>
+                                <div>
+                                    Guidance Counselor
+                                </div>
                             </div>
                         </div>
                     `;
@@ -1296,7 +1410,38 @@ function getRatingStatus($rating) {
             });
     }
 
+    // Function to get adjectival descriptive rating (JavaScript version)
+    function getAdjectivalRating(rating) {
+        if (rating >= 4.5) return 'Outstanding';
+        if (rating >= 4.0) return 'Very Satisfactory';
+        if (rating >= 3.5) return 'Satisfactory';
+        if (rating >= 3.0) return 'Fair';
+        if (rating >= 2.5) return 'Poor';
+        if (rating >= 2.0) return 'Very Poor';
+        return 'Unsatisfactory';
+    }
 
+    // Function to get descriptive explanation based on verbal interpretation
+    function getDescriptiveExplanation(verbalInterpretation) {
+        switch(verbalInterpretation) {
+            case 'Outstanding':
+                return "The instructor's performance is exceptional<br>and represents extraordinary achievement.";
+            case 'Very Satisfactory':
+                return "Performance consistently exceeds expectations<br>and demonstrates high competency.";
+            case 'Satisfactory':
+                return "Performance meets expectations and shows<br>adequate competency in this area.";
+            case 'Fair':
+                return "Performance is acceptable but shows<br>room for improvement and development.";
+            case 'Poor':
+                return "Performance falls below expectations<br>and requires significant improvement.";
+            case 'Very Poor':
+                return "Performance is considerably below standards<br>and needs immediate attention.";
+            case 'Unsatisfactory':
+                return "Performance does not meet minimum requirements<br>and requires comprehensive improvement.";
+            default:
+                return "No evaluation data available<br>for this criteria.";
+        }
+    }
 
     // Save All Results functionality moved to sidebar dropdown in dashboard.blade.php
     document.addEventListener('DOMContentLoaded', function() {
