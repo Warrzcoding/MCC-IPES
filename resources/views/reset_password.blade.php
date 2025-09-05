@@ -12,8 +12,7 @@
     <link rel="preload" href="{{ asset('images/mainmcc.jpg') }}" as="image">
     <style>
         body {
-            background: url('{{ asset('images/mainmcc.jpg') }}') center/cover no-repeat;
-            background-attachment: fixed;
+            background: linear-gradient(135deg, #df9d9dff 0%, #ff0606ff 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
