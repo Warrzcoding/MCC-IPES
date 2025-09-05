@@ -12,16 +12,31 @@
     <link rel="preload" href="{{ asset('images/mainmcc.jpg') }}" as="image">
     <style>
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: url('{{ asset('images/mainmcc.jpg') }}') center/cover no-repeat;
+            background-attachment: fixed;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             height: 100dvh;
+            position: relative;
         }
         
-        /* Enhanced animated background with school image */
+        /* Add overlay directly to body */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.4) 0%, rgba(118, 75, 162, 0.4) 50%, rgba(240, 147, 251, 0.3) 100%);
+            z-index: -1;
+            pointer-events: none;
+        }
+        
+        /* Enhanced animated background with school image - now simplified */
         .bg-decorations {
             position: fixed;
             width: 100%;
@@ -30,21 +45,7 @@
             z-index: 0;
             top: 0;
             left: 0;
-            background: url('{{ asset('images/mainmcc.jpg') }}') center/cover no-repeat;
-            filter: blur(5px);
-            transform: scale(1.05);
             pointer-events: none;
-        }
-
-        .bg-decorations::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.4) 0%, rgba(118, 75, 162, 0.4) 50%, rgba(240, 147, 251, 0.3) 100%);
-            z-index: 0;
         }
 
         .bubble {
@@ -83,7 +84,7 @@
             transition: all 0.3s ease;
             margin: 0 auto;
             position: relative;
-            z-index: 1;
+            z-index: 2;
         }
         
         .reset-card:hover {
