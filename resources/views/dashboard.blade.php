@@ -880,7 +880,7 @@
                             <i class="fas fa-users"></i> Department
                         </a>
                         <a href="{{ route('dashboard', ['page' => 'overall-ratings']) }}" class="nav-dropdown-item {{ $page === 'overall-ratings' ? 'active' : '' }}">
-                            <i class="fas fa-chart-bar"></i> Overall
+                            <i class="fas fa-chart-bar"></i> Overall Ranking
                         </a>
                         <div style="border-top: 1px solid #e9ecef; margin: 8px 0;"></div>
                         <a href="#" class="nav-dropdown-item" id="sidebarSaveEvaluationsBtn" onclick="handleSaveEvaluations(event)">
