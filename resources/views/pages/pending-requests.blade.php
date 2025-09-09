@@ -171,17 +171,24 @@
                         <div class="search-container">
                             <div class="row align-items-center">
                                 <div class="col-md-8">
-                                    <label class="form-label fw-bold text-primary mb-2">
-                                        <i class="fas fa-search me-2"></i>
-                                        Search Pending Requests
-                                    </label>
-                                    <div class="search-input-group">
-                                        <i class="fas fa-search search-icon"></i>
-                                        <input type="text" id="pendingSearch" class="form-control" placeholder="Search by name, username, email, or school ID...">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <label class="form-label fw-bold text-primary mb-0">
+                                            <i class="fas fa-search me-2"></i>
+                                            Search Pending Requests
+                                        </label>
+                                    </div>
+                                    <div class="d-flex gap-2 align-items-center">
+                                        <div class="search-input-group flex-grow-1">
+                                            <i class="fas fa-search search-icon"></i>
+                                            <input type="text" id="pendingSearch" class="form-control" placeholder="Search by name, username, email, or school ID...">
+                                        </div>
+                                        <button id="approve-selected" class="btn btn-success" title="Approve selected rows">
+                                            <i class="fas fa-check-double me-1"></i> Approve Selected
+                                        </button>
                                     </div>
                                     <small class="text-muted mt-1 d-block">
                                         <i class="fas fa-lightbulb me-1"></i>
-                                        Tip: Use keywords to quickly find specific requests
+                                        Tip: Select rows and click "Approve Selected" to approve multiple requests
                                     </small>
                                 </div>
                                 <div class="col-md-4 text-end">
@@ -391,6 +398,57 @@ document.addEventListener('DOMContentLoaded', function() {
                 pendingTableDiv.innerHTML = '<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i>Error loading results. Please refresh the page.</div>';
             });
         }, 350));
+    }
+
+    // Bulk approve selected
+    const approveSelectedBtn = document.getElementById('approve-selected');
+    if (approveSelectedBtn) {
+        approveSelectedBtn.addEventListener('click', function() {
+            const checkboxes = document.querySelectorAll('#pendingRequestsTable .row-checkbox:checked');
+            if (checkboxes.length === 0) {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'No selection',
+                    text: 'Please select at least one request to approve.'
+                });
+                return;
+            }
+
+            Swal.fire({
+                title: 'Approve selected requests?',
+                text: `You are about to approve ${checkboxes.length} request(s).`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#28a745',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, approve',
+                cancelButtonText: 'Cancel',
+                reverseButtons: true
+            }).then((result) => {
+                if (!result.isConfirmed) return;
+                const form = document.getElementById('bulk-approve-form');
+                const container = document.getElementById('bulk-ids-container');
+                container.innerHTML = '';
+                checkboxes.forEach(cb => {
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'ids[]';
+                    input.value = cb.value;
+                    container.appendChild(input);
+                });
+                form.submit();
+            });
+        });
+
+        // Master select-all toggle
+        document.addEventListener('change', function(e) {
+            if (e.target && e.target.id === 'select-all') {
+                const checked = e.target.checked;
+                document.querySelectorAll('#pendingRequestsTable .row-checkbox').forEach(cb => {
+                    cb.checked = checked;
+                });
+            }
+        });
     }
 
     // Enhanced Rejected search with loading states

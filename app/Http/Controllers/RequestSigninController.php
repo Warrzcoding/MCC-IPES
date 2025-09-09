@@ -59,6 +59,51 @@ class RequestSigninController extends Controller
         }
     }
 
+    // Approve multiple requests
+    public function approveMultiple(Request $request)
+    {
+        $ids = $request->input('ids', []);
+        if (empty($ids) || !is_array($ids)) {
+            return redirect()->back()->with('message', 'No requests selected.')->with('message_type', 'info');
+        }
+
+        DB::beginTransaction();
+        try {
+            $requests = RequestSignin::whereIn('id', $ids)->get();
+
+            foreach ($requests as $req) {
+                // Create user based on request
+                User::create([
+                    'username' => $req->username,
+                    'email' => $req->email,
+                    'password' => $req->password, // Already hashed
+                    'full_name' => $req->full_name,
+                    'school_id' => $req->school_id,
+                    'course' => $req->course,
+                    'year_level' => $req->year_level,
+                    'section' => $req->section,
+                    'role' => $req->role === 'admin' ? 'student' : $req->role,
+                    'profile_image' => $req->profile_image,
+                    'status' => 'active',
+                    'is_main_admin' => $req->is_main_admin,
+                    'last_login' => $req->last_login,
+                    'last_active_at' => $req->last_active_at,
+                    'email_verified_at' => $req->email_verified_at,
+                    'remember_token' => $req->remember_token,
+                ]);
+
+                // Delete request after creating user
+                $req->delete();
+            }
+
+            DB::commit();
+            return redirect()->back()->with('message', count($requests) . ' request(s) approved!')->with('message_type', 'success');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('message', 'Error approving selected requests: ' . $e->getMessage())->with('message_type', 'danger');
+        }
+    }
+
     // Reject a request: mark as rejected
     public function reject($id)
     {

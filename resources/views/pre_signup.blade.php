@@ -658,7 +658,7 @@
                         <p>These terms may be updated periodically. Users will be notified of significant changes and continued use constitutes acceptance of modified terms.</p>
                         
                         <h4>10. Contact Information</h4>
-                        <p>For questions about these terms or the system, please contact the MCC Lawis IT Department or administration.</p>
+                        <p>For questions about these terms or the system, please contact the MCC | IT Department or Administration.</p>
                         
                         <p class="mt-4"><strong>Last Updated:</strong> {{ date('F d, Y') }}</p>
                         

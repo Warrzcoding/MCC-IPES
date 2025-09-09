@@ -33,7 +33,7 @@
             pointer-events: none;
         }
         
-        /* Enhanced animated background with school image - now simplified */
+        /* Enhanced animated background with school image */
         .bg-decorations {
             position: fixed;
             width: 100%;
@@ -42,7 +42,21 @@
             z-index: 0;
             top: 0;
             left: 0;
+            background: url('{{ asset('images/mainmcc.jpg') }}') center/cover no-repeat;
+            filter: blur(5px);
+            transform: scale(1.05);
             pointer-events: none;
+        }
+
+        .bg-decorations::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.4) 0%, rgba(118, 75, 162, 0.4) 50%, rgba(240, 147, 251, 0.3) 100%);
+            z-index: 0;
         }
 
         .bubble {

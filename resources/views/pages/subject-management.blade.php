@@ -474,12 +474,12 @@
     <input type="hidden" name="section" id="deleteSubjectSection">
 </form>
 
-<!-- CSV Upload Modal -->
+<!-- Upload Excel Modal -->
 <div class="modal fade" id="csvUploadModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title"><i class="fas fa-upload me-2"></i>Upload CSV - Assign Instructors</h5>
+                <h5 class="modal-title"><i class="fas fa-upload me-2"></i>Upload Excel - Assign Instructors</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <form id="csvUploadForm" enctype="multipart/form-data">
@@ -487,14 +487,13 @@
                 <div class="modal-body">
                     <div class="alert alert-info">
                         <i class="fas fa-info-circle me-2"></i>
-                        <strong>CSV Format:</strong> Subject Code, Staff ID, Semester, Year, Section<br>
-                        <small>Example: BSIT101,STF001,1,1,A</small>
+                        <strong>Expected Excel Layout:</strong> Includes instructor name (Family/First Name) and a table with columns Code, Descriptive Title, Section.
                     </div>
                     
                     <div class="mb-3">
-                        <label for="csvFile" class="form-label">Select CSV File</label>
-                        <input type="file" class="form-control" id="csvFile" name="csv_file" accept=".csv" required>
-                        <div class="form-text">Only CSV files are allowed. Maximum file size: 2MB</div>
+                        <label for="csvFile" class="form-label">Select Excel File</label>
+                        <input type="file" class="form-control" id="csvFile" name="excel_file" accept=".xlsx,.xls" required>
+                        <div class="form-text">Allowed types: .xlsx, .xls. Maximum file size: 2MB</div>
                     </div>
                     
                     <div class="mb-3">
@@ -504,10 +503,21 @@
                             <option value="2">Semester 2</option>
                         </select>
                     </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Department</label>
+                        <select class="form-control" id="targetDepartment" name="department" required>
+                            <option value="BSIT">BSIT</option>
+                            <option value="BSBA">BSBA</option>
+                            <option value="BSHM">BSHM</option>
+                            <option value="BEED">BEED</option>
+                            <option value="BSED">BSED</option>
+                        </select>
+                    </div>
                     
                     <div class="alert alert-warning">
                         <i class="fas fa-exclamation-triangle me-2"></i>
-                        <strong>Warning:</strong> This will update instructor assignments for existing subjects.
+                        <strong>Warning:</strong> This will update instructor assignments for existing subjects filtered by selected Semester and Department.
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -2098,7 +2108,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!fileInput.files[0]) {
                 Swal.fire({
                     title: 'No File Selected',
-                    text: 'Please select a CSV file to upload.',
+                    text: 'Please select an Excel file to upload.',
                     icon: 'warning',
                     confirmButtonText: 'OK',
                     confirmButtonColor: '#28a745'
@@ -2106,10 +2116,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
             
-            if (!fileInput.files[0].name.toLowerCase().endsWith('.csv')) {
+            const lower = fileInput.files[0].name.toLowerCase();
+            if (!(lower.endsWith('.xlsx') || lower.endsWith('.xls'))) {
                 Swal.fire({
                     title: 'Invalid File Type',
-                    text: 'Please select a CSV file only.',
+                    text: 'Please select an Excel file (.xlsx or .xls) only.',
                     icon: 'error',
                     confirmButtonText: 'OK',
                     confirmButtonColor: '#28a745'
@@ -2131,10 +2142,10 @@ document.addEventListener('DOMContentLoaded', function() {
             // Show confirmation
             const semester = semesterSelect.value;
             Swal.fire({
-                title: 'Confirm CSV Upload',
+                title: 'Confirm Excel Upload',
                 html: `
                     <div class="text-center">
-                        <p>Upload CSV for <strong>Semester ${semester}</strong>?</p>
+                        <p>Upload Excel for <strong>Semester ${semester}</strong> and <strong>Department ${document.getElementById('targetDepartment')?.value || ''}</strong>?</p>
                         <div class="alert alert-warning mt-3">
                             <i class="fas fa-exclamation-triangle me-2"></i>
                             This will update instructor assignments for existing subjects.
@@ -2151,11 +2162,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (result.isConfirmed) {
                     // Show loading
                     Swal.fire({
-                        title: 'Processing CSV File...',
+                        title: 'Processing Excel File...',
                         html: `
                             <div class="text-center">
                                 <i class="fas fa-spinner fa-spin text-success" style="font-size: 2rem; margin-bottom: 1rem;"></i>
-                                <p>Please wait while we process your CSV file.</p>
+                                <p>Please wait while we process your Excel file.</p>
                             </div>
                         `,
                         allowOutsideClick: false,

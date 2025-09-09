@@ -4,7 +4,7 @@
     @else
     <table class="table table-bordered align-middle">
         <thead class="table-light">
-            <tr>    
+            <tr>
                 <th>Profile</th>
                 <th>Full Name</th>
                 <th>Username</th>
@@ -14,7 +14,10 @@
                 <th>Year Level</th>
                 <th>Section</th>
                 <th>Requested At</th>
-                <th>Actions</th>
+                <th class="text-center">
+                    Actions
+                    <input type="checkbox" id="select-all" class="ms-2" title="Select all" />
+                </th>
             </tr>
         </thead>
         <tbody>
@@ -37,7 +40,8 @@
                 <td>{{ $request->section ?? '-' }}</td>
                 <td>{{ $request->created_at->format('Y-m-d H:i') }}</td>
                 <td class="text-center">
-                    <div class="d-flex gap-1 justify-content-center">
+                    <div class="d-flex gap-1 justify-content-center align-items-center">
+                        <input type="checkbox" class="me-2 row-checkbox" value="{{ $request->id }}" title="Select row" />
                         <form method="POST" action="{{ route('pending.requests.approve', $request->id) }}" class="approve-form">
                             @csrf
                             <button type="button" class="btn btn-success btn-sm approve-btn" 
@@ -63,6 +67,12 @@
     <div class="d-flex justify-content-center mt-3">
         {{ $pendingRequests->appends(request()->except('page'))->links() }}
     </div>
+
+    <!-- Hidden bulk approve form -->
+    <form id="bulk-approve-form" method="POST" action="{{ route('pending.requests.approveMultiple') }}" style="display:none;">
+        @csrf
+        <div id="bulk-ids-container"></div>
+    </form>
     @endif
 </div>
 
