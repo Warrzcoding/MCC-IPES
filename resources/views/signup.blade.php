@@ -750,6 +750,15 @@
                     </div>
                     <div class="password-strength-text" id="passwordStrengthText"></div>
                     <div class="password-suggestion" id="passwordSuggestion" style="display:none;">Must have 8+ characters, uppercase, lowercase, numbers, and symbols (max 25).</div>
+                    <div id="passwordRequirements" class="form-text mt-1" style="display:none;">
+                        <ul class="mb-0 small">
+                            <li id="req-length" class="text-danger">At least 8 characters</li>
+                            <li id="req-upper" class="text-danger">At least 1 uppercase letter</li>
+                            <li id="req-lower" class="text-danger">At least 1 lowercase letter</li>
+                            <li id="req-number" class="text-danger">At least 1 number</li>
+                            <li id="req-symbol" class="text-danger">At least 1 symbol</li>
+                        </ul>
+                    </div>
                     @error('password')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -1194,6 +1203,14 @@
             const suggestion = document.getElementById('passwordSuggestion');
             const confirmInput = document.getElementById('password_confirmation');
             const matchIndicator = document.getElementById('passwordMatchIndicator');
+            const reqBox = document.getElementById('passwordRequirements');
+            const reqs = {
+                length: document.getElementById('req-length'),
+                upper: document.getElementById('req-upper'),
+                lower: document.getElementById('req-lower'),
+                number: document.getElementById('req-number'),
+                symbol: document.getElementById('req-symbol')
+            };
 
             function checkPasswordStrength(pw) {
                 let score = 0;
@@ -1217,6 +1234,30 @@
                     requirements: requirements,
                     isStrong: score === 5 // All 5 requirements must be met
                 };
+            }
+            function updateRequirements(pw) {
+                const checks = {
+                    length: pw.length >= 8,
+                    upper: /[A-Z]/.test(pw),
+                    lower: /[a-z]/.test(pw),
+                    number: /[0-9]/.test(pw),
+                    symbol: /[^A-Za-z0-9]/.test(pw)
+                };
+                let allOk = true;
+                Object.entries(checks).forEach(([key, ok]) => {
+                    if (reqs[key]) {
+                        reqs[key].classList.toggle('text-success', ok);
+                        reqs[key].classList.toggle('text-danger', !ok);
+                    }
+                    if (!ok) allOk = false;
+                });
+                if (reqBox) {
+                    if (!pw) {
+                        reqBox.style.display = 'none';
+                    } else {
+                        reqBox.style.display = allOk ? 'none' : '';
+                    }
+                }
             }
             function updateStrengthMeter() {
                 const pw = passwordInput.value;
@@ -1276,10 +1317,17 @@
                 }
             }
             if (passwordInput) {
-                passwordInput.addEventListener('input', updateStrengthMeter);
-                passwordInput.addEventListener('input', updatePasswordMatch);
-                // Limit password length to 25 characters
-                passwordInput.addEventListener('input', function(e) {
+                passwordInput.addEventListener('focus', () => {
+                    if (reqBox && passwordInput.value) reqBox.style.display = '';
+                });
+                passwordInput.addEventListener('blur', () => {
+                    if (reqBox) reqBox.style.display = 'none';
+                });
+                passwordInput.addEventListener('input', (e) => {
+                    updateStrengthMeter();
+                    updatePasswordMatch();
+                    updateRequirements(passwordInput.value);
+                    // Limit password length to 25 characters
                     if (e.target.value.length > 25) {
                         e.target.value = e.target.value.substring(0, 25);
                     }

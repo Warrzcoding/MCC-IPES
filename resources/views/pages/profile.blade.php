@@ -210,21 +210,31 @@
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label">New Password</label>
-                            <input type="password" class="form-control @error('new_password') is-invalid @enderror" 
-                                   name="new_password">
+                            <input type="password" id="new_password" class="form-control @error('new_password') is-invalid @enderror" 
+                                   name="new_password" autocomplete="new-password">
                             @error('new_password')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
+                            <div id="passwordRequirements" class="form-text mt-1" style="{{ $errors->has('new_password') ? '' : 'display:none;' }}">
+                                <ul class="mb-0 small">
+                                    <li id="req-length" class="text-danger">At least 8 characters</li>
+                                    <li id="req-upper" class="text-danger">At least 1 uppercase letter</li>
+                                    <li id="req-lower" class="text-danger">At least 1 lowercase letter</li>
+                                    <li id="req-number" class="text-danger">At least 1 number</li>
+                                    <li id="req-symbol" class="text-danger">At least 1 symbol</li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                     
                     <div class="mb-3">
                         <label class="form-label">Confirm New Password</label>
-                        <input type="password" class="form-control @error('new_password_confirmation') is-invalid @enderror" 
-                               name="new_password_confirmation">
+                        <input type="password" id="new_password_confirmation" class="form-control @error('new_password_confirmation') is-invalid @enderror" 
+                               name="new_password_confirmation" autocomplete="new-password">
                         @error('new_password_confirmation')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
+                        <div id="passwordMatchText" class="small mt-1"></div>
                     </div>
                     
                     <div class="d-flex justify-content-end">
@@ -237,6 +247,84 @@
         </div>
     </div>
 </div>
+
+@push('scripts')
+<script>
+    (function() {
+        const newPw = document.getElementById('new_password');
+        const confirmPw = document.getElementById('new_password_confirmation');
+        const matchText = document.getElementById('passwordMatchText');
+        const reqBox = document.getElementById('passwordRequirements');
+        const reqs = {
+            length: document.getElementById('req-length'),
+            upper: document.getElementById('req-upper'),
+            lower: document.getElementById('req-lower'),
+            number: document.getElementById('req-number'),
+            symbol: document.getElementById('req-symbol')
+        };
+
+        function updateRequirements(pw) {
+            const checks = {
+                length: pw.length >= 8,
+                upper: /[A-Z]/.test(pw),
+                lower: /[a-z]/.test(pw),
+                number: /[0-9]/.test(pw),
+                symbol: /[^A-Za-z0-9]/.test(pw)
+            };
+            let allOk = true;
+            Object.entries(checks).forEach(([key, ok]) => {
+                if (reqs[key]) {
+                    reqs[key].classList.toggle('text-success', ok);
+                    reqs[key].classList.toggle('text-danger', !ok);
+                }
+                if (!ok) allOk = false;
+            });
+            if (reqBox) {
+                if (!pw) {
+                    reqBox.style.display = 'none';
+                } else {
+                    reqBox.style.display = allOk ? 'none' : '';
+                }
+            }
+        }
+
+        function updateMatch() {
+            if (!newPw || !confirmPw || !matchText) return;
+            const a = newPw.value;
+            const b = confirmPw.value;
+            if (!a && !b) {
+                matchText.textContent = '';
+                return;
+            }
+            if (a === b) {
+                matchText.textContent = 'Passwords match';
+                matchText.classList.remove('text-danger');
+                matchText.classList.add('text-success');
+            } else {
+                matchText.textContent = 'Passwords do not match';
+                matchText.classList.remove('text-success');
+                matchText.classList.add('text-danger');
+            }
+        }
+
+        if (newPw) {
+            newPw.addEventListener('focus', () => {
+                if (reqBox && newPw.value) reqBox.style.display = '';
+            });
+            newPw.addEventListener('blur', () => {
+                if (reqBox) reqBox.style.display = 'none';
+            });
+            newPw.addEventListener('input', () => {
+                updateRequirements(newPw.value);
+                updateMatch();
+            });
+        }
+        if (confirmPw) {
+            confirmPw.addEventListener('input', updateMatch);
+        }
+    })();
+</script>
+@endpush
 
 @if(Auth::user()->canManageAdmins())
 <!-- Admin Management Section -->

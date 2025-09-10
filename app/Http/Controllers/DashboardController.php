@@ -11,6 +11,7 @@ use App\Models\Question;
 use App\Models\Evaluation;
 use App\Models\Subject;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules\Password;
 use App\Models\RequestSignin;
 
 class DashboardController extends Controller
@@ -621,8 +622,8 @@ class DashboardController extends Controller
             'year_level' => $user->role === 'student' ? 'required|string|in:1st Year,2nd Year,3rd Year,4th Year' : 'nullable|string',
             'section' => $user->role === 'student' ? 'required|string|max:255' : 'nullable|string|max:255',
             'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'current_password' => 'nullable|string',
-            'new_password' => 'nullable|string|min:6|confirmed',
+            'current_password' => 'nullable|string|required_with:new_password',
+            'new_password' => ['nullable', 'string', 'confirmed', Password::min(8)->mixedCase()->numbers()->symbols()],
         ]);
         
         if ($validator->fails()) {
