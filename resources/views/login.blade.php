@@ -1025,7 +1025,7 @@
                                 <i class="fas fa-key"></i>
                             </span>
                             <input type="password" class="form-control" id="password" name="password"
-                                   placeholder="Enter your password" value="" autocomplete="new-password">
+                                   placeholder="Enter your mccipes password" value="" autocomplete="new-password">
                         </div>
                     </div>
 
@@ -1128,6 +1128,7 @@ Swal.fire({
 
         // SweetAlert for login errors
         @if (session('error'))
+        const isStudentLoginView = {{ ($show_login_form && $student_data) ? 'true' : 'false' }};
         Swal.fire({
             icon: 'error',
             title: 'Login Failed',
@@ -1136,15 +1137,61 @@ Swal.fire({
             timer: 4000,
             timerProgressBar: true,
             showConfirmButton: true
+        }).then(() => {
+            const lastRole = localStorage.getItem('lastRole');
+            if (!isStudentLoginView && lastRole === 'student-id') {
+                // Student ID check error: return to role selection
+                resetForm();
+            } else if (!isStudentLoginView) {
+                // Admin or unknown: keep admin form visible and focus email
+                const userTypeForm = document.getElementById('userTypeForm');
+                const adminForm = document.getElementById('adminLoginForm');
+                const studentIdForm = document.getElementById('studentIdForm');
+                const staffForm = document.getElementById('staffLoginForm');
+                if (userTypeForm && adminForm && studentIdForm && staffForm) {
+                    userTypeForm.style.display = 'none';
+                    adminForm.style.display = 'block';
+                    studentIdForm.style.display = 'none';
+                    staffForm.style.display = 'none';
+                }
+                const desktopSel = document.querySelector('.desktop-user-select');
+                if (desktopSel) desktopSel.style.display = 'none';
+                const mobileBtn = document.querySelector('.mobile-student-btn');
+                if (mobileBtn) mobileBtn.classList.remove('show-mobile');
+                const emailEl = document.getElementById('admin_email');
+                if (emailEl) emailEl.focus();
+            }
         });
         @endif
 
         // Add form submission handling for better UX
         document.addEventListener('DOMContentLoaded', function() {
+        // Remember last role on page load (e.g., after redirect)
+        const lastRole = localStorage.getItem('lastRole');
+        if (lastRole === 'admin') {
+            const userTypeForm = document.getElementById('userTypeForm');
+            const adminForm = document.getElementById('adminLoginForm');
+            const studentIdForm = document.getElementById('studentIdForm');
+            const staffForm = document.getElementById('staffLoginForm');
+            if (userTypeForm && adminForm && studentIdForm && staffForm) {
+                userTypeForm.style.display = 'none';
+                adminForm.style.display = 'block';
+                studentIdForm.style.display = 'none';
+                staffForm.style.display = 'none';
+            }
+            const desktopSel = document.querySelector('.desktop-user-select');
+            if (desktopSel) desktopSel.style.display = 'none';
+            const mobileBtn = document.querySelector('.mobile-student-btn');
+            if (mobileBtn) mobileBtn.classList.remove('show-mobile');
+            const emailEl = document.getElementById('admin_email');
+            if (emailEl) emailEl.focus();
+        }
+
         // Custom validation for admin login
         const adminLoginForm = document.getElementById('adminLoginForm');
         if (adminLoginForm) {
             adminLoginForm.addEventListener('submit', function(e) {
+                localStorage.setItem('lastRole', 'admin');
                 const email = document.getElementById('admin_email').value.trim();
                 const password = document.getElementById('admin_password').value.trim();
                 const errorBox = document.getElementById('adminErrorBox');
@@ -1160,6 +1207,9 @@ Swal.fire({
                     e.preventDefault();
                     errorBox.textContent = errorMsg;
                     errorBox.classList.remove('d-none');
+                    // Keep admin form shown and focus the first invalid field
+                    const firstInvalid = !email ? document.getElementById('admin_email') : document.getElementById('admin_password');
+                    if (firstInvalid) firstInvalid.focus();
                 } else {
                     errorBox.classList.add('d-none');
                 }
@@ -1209,18 +1259,21 @@ Swal.fire({
             document.querySelector('.desktop-user-select').style.display = 'none';
 
             if (userType === 'student') {
+                localStorage.setItem('lastRole', 'student-id');
                 userTypeForm.style.display = 'none';
                 studentIdForm.style.display = 'block';
                 adminLoginForm.style.display = 'none';
                 staffLoginForm.style.display = 'none';
                 document.getElementById('school_id').focus();
             } else if (userType === 'admin') {
+                localStorage.setItem('lastRole', 'admin');
                 userTypeForm.style.display = 'none';
                 adminLoginForm.style.display = 'block';
                 staffLoginForm.style.display = 'none';
                 studentIdForm.style.display = 'none';
                 document.getElementById('admin_email').focus();
             } else if (userType === 'staff') {
+                localStorage.setItem('lastRole', 'staff');
                 userTypeForm.style.display = 'none';
                 staffLoginForm.style.display = 'block';
                 adminLoginForm.style.display = 'none';
@@ -1230,9 +1283,13 @@ Swal.fire({
         }
 
         function clearAllForms() {
-            // Clear all input fields
+            // Preserve admin input on errors; only clear when explicitly resetting view
+            const adminEmail = document.getElementById('admin_email');
+            const adminPassword = document.getElementById('admin_password');
             const inputs = document.querySelectorAll('input[type="text"], input[type="email"], input[type="password"], select');
             inputs.forEach(input => {
+                if (adminEmail && input === adminEmail) return;
+                if (adminPassword && input === adminPassword) return;
                 input.value = '';
             });
             
@@ -1244,6 +1301,7 @@ Swal.fire({
         }
 
         function resetForm() {
+            localStorage.removeItem('lastRole');
             document.getElementById('userTypeForm').style.display = 'block';
             document.getElementById('studentIdForm').style.display = 'none';
             document.getElementById('adminLoginForm').style.display = 'none';
