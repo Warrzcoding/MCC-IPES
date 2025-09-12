@@ -341,19 +341,20 @@
     /* Mobile tab alignment - keep tabs horizontal */
     .custom-nav-tabs {
         flex-direction: row !important;
-        padding: 6px;
+        padding: 4px;
     }
     .custom-nav-tabs .nav-item {
         flex: 1;
         min-width: 0;
     }
     .custom-nav-tabs .nav-link {
-        padding: 12px 8px;
-        font-size: 0.9rem;
+        padding: 8px 6px;
+        font-size: 0.8rem;
         text-align: center;
+        gap: 6px;
     }
     .tab-icon {
-        font-size: 1.1rem;
+        font-size: 1rem;
     }
     
     /* Mobile header alignment */
@@ -649,13 +650,13 @@
                         <li class="nav-item">
                             <a class="nav-link active" id="teaching-tab" data-bs-toggle="tab" href="#teaching" role="tab" aria-controls="teaching" aria-selected="true">
                                 <i class="fas fa-chalkboard-teacher tab-icon"></i>
-                                <span>Teaching Staff</span>
+                                <span>Instructors</span>
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" id="non-teaching-tab" data-bs-toggle="tab" href="#non-teaching" role="tab" aria-controls="non-teaching" aria-selected="false">
                                 <i class="fas fa-users-cog tab-icon"></i>
-                                <span>Non-Teaching Staff</span>
+                                <span>Non-Teaching</span>
                             </a>
                         </li>
                     </ul>

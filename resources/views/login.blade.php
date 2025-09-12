@@ -840,7 +840,7 @@
                 <img src="{{ asset('images/mcclogo.png') }}" alt="MCC Logo" class="login-logo-img" style="width: 120px; height: 120px; object-fit: contain; padding: 5px; max-width: 100%; height: auto;">
             </div>
             <h2 style="margin-top: 0;">MCC | IPES</h2>
-            <p>Office Instructor's Evaluation System</p>
+            <p>Instructors Performance Evaluation System</p>
         </div>
 
         
