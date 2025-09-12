@@ -38,10 +38,30 @@
                     <strong>Student Management:</strong> This section allows administrators to add and manage student accounts.
                 </div>
                 
+                <style>
+                    /* Hover/focus glow for mini dashboard cards */
+                    .glow-card {
+                        border: 0;
+                        outline: none;
+                        transition: transform .2s ease, box-shadow .2s ease, filter .2s ease;
+                        will-change: transform, box-shadow;
+                        cursor: pointer;
+                    }
+                    .glow-card:hover,
+                    .glow-card:focus-visible,
+                    .glow-card:focus-within {
+                        transform: translateY(-4px) scale(1.02);
+                        box-shadow:
+                            0 8px 24px rgba(0,0,0,.15),
+                            0 0 0 4px rgba(var(--glow-rgb, 13,110,253), .35),
+                            0 0 24px rgba(var(--glow-rgb, 13,110,253), .45);
+                        filter: saturate(1.1);
+                    }
+                </style>
                 <!-- Evaluation Statistics -->
                 <div class="row mb-3">
                     <div class="col-md-2">
-                        <div class="card bg-primary text-white">
+                        <div class="card bg-primary text-white glow-card" tabindex="0" style="--glow-rgb: 13,110,253;">
                             <div class="card-body text-center">
                                 <h5 class="card-title">{{ $students->where('evaluation_count', 0)->count() }}</h5>
                                 <p class="card-text">Never Evaluated</p>
@@ -49,7 +69,7 @@
                         </div>
                     </div>
                     <div class="col-md-2">
-                        <div class="card bg-warning text-white">
+                        <div class="card bg-warning text-white glow-card" tabindex="0" style="--glow-rgb: 255,193,7;">
                             <div class="card-body text-center">
                                 @php
                                     $instructorInProgressCount = 0;
@@ -99,7 +119,7 @@
                         </div>
                     </div>
                     <div class="col-md-2">
-                        <div class="card text-white" style="background-color: #90EE90;">
+                        <div class="card text-white glow-card" tabindex="0" style="background-color: #90EE90; --glow-rgb: 144,238,144;">
                             <div class="card-body text-center">
                                 @php
                                     $instructorCompletedCount = 0;
@@ -149,7 +169,7 @@
                         </div>
                     </div>
                     <div class="col-md-2">
-                        <div class="card text-white" style="background-color: #ff8c00;">
+                        <div class="card text-white glow-card" tabindex="0" style="background-color: #ff8c00; --glow-rgb: 255,140,0;">
                             <div class="card-body text-center">
                                 @php
                                     $nonTeachingInProgressCount = 0;
@@ -174,7 +194,7 @@
                         </div>
                     </div>
                     <div class="col-md-2">
-                        <div class="card bg-success text-white">
+                        <div class="card bg-success text-white glow-card" tabindex="0" style="--glow-rgb: 25,135,84;">
                             <div class="card-body text-center">
                                 @php
                                     $nonTeachingCompletedCount = 0;
@@ -199,7 +219,7 @@
                         </div>
                     </div>
                     <div class="col-md-2">
-                        <div class="card bg-info text-white">
+                        <div class="card bg-info text-white glow-card" tabindex="0" style="--glow-rgb: 13,202,240;">
                             <div class="card-body text-center">
                                 @php
                                     $fullyCompletedCount = 0;
