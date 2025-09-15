@@ -68,7 +68,7 @@
                                     <th>Staff ID</th>
                                     <th>Full Name</th>
                                     <th>Email</th>
-                                    <th>Phone</th>
+                                    <th>Status</th>
                                     <th>Department</th>
                                     <th>Staff Type</th>
                                     <th>Created</th>
@@ -99,7 +99,7 @@
                                         <td>{{ $staff_member->staff_id }}</td>
                                         <td>{{ $staff_member->full_name }}</td>
                                         <td>{{ $staff_member->email }}</td>
-                                        <td>{{ $staff_member->phone }}</td>
+                                        <td>{{ ucfirst($staff_member->status ?? '') }}</td>
                                         <td>{{ $staff_member->department }}</td>
                                         <td>{{ ucfirst($staff_member->staff_type) }}</td>
                                         <td>{{ $staff_member->created_at ? $staff_member->created_at->format('Y-m-d') : '' }}</td>
@@ -117,14 +117,14 @@
                                             <button class="btn btn-sm btn-outline-primary" 
                                                     data-bs-toggle="modal" 
                                                     data-bs-target="#editModal"
-                                                    onclick="loadStaffData('{{ $staff_member->staff_id }}', '{{ addslashes($staff_member->full_name) }}', '{{ addslashes($staff_member->email) }}', '{{ addslashes($staff_member->phone) }}', '{{ addslashes($staff_member->department) }}', '{{ $staff_member->staff_type }}', '{{ $editImageUrl }}')">
+                                                    onclick="loadStaffData('{{ $staff_member->staff_id }}', '{{ addslashes($staff_member->full_name) }}', '{{ addslashes($staff_member->email) }}', '{{ addslashes($staff_member->status) }}', '{{ addslashes($staff_member->department) }}', '{{ $staff_member->staff_type }}', '{{ $editImageUrl }}')">
                                                 <i class="fas fa-edit"></i>
                                             </button>
                                             <button class="btn btn-sm btn-outline-danger" onclick="deleteStaff('{{ $staff_member->staff_id }}', '{{ addslashes($staff_member->full_name) }}')">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                             <button class="btn btn-sm btn-outline-info" 
-                                                    onclick="viewStaffData('{{ $staff_member->staff_id }}', '{{ addslashes($staff_member->full_name) }}', '{{ addslashes($staff_member->email) }}', '{{ addslashes($staff_member->phone) }}', '{{ addslashes($staff_member->department) }}', '{{ ucfirst($staff_member->staff_type) }}', '{{ $imageUrl }}')">
+                                                    onclick="viewStaffData('{{ $staff_member->staff_id }}', '{{ addslashes($staff_member->full_name) }}', '{{ addslashes($staff_member->email) }}', '{{ addslashes(ucfirst($staff_member->status)) }}', '{{ addslashes($staff_member->department) }}', '{{ ucfirst($staff_member->staff_type) }}', '{{ $imageUrl }}')">
                                                 <i class="fas fa-eye"></i>
                                             </button>
                                         </td>
@@ -164,8 +164,8 @@
 
                     <div class="mb-3">
                         <label for="staff_id" class="form-label">Staff ID</label>
-                        <input type="text" class="form-control" id="staff_id" name="staff_id" value="{{ old('staff_id') }}" required pattern="[A-Z]{2}[0-9]{4}" minlength="6" maxlength="6" inputmode="text" title="Enter a Staff ID in the format: two uppercase letters followed by four digits (e.g., WI3453)">
-                        <small class="form-text text-muted">Format: WI3453 (2 uppercase letters, 4 digits)</small>
+                        <input type="text" class="form-control" id="staff_id" name="staff_id" value="{{ old('staff_id') }}" readonly>
+                        <small class="form-text text-muted">Auto-generated from full name initials + 6 random digits (e.g., WI123456).</small>
                     </div>
 
                     <div class="mb-3">
@@ -179,9 +179,12 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="phone" class="form-label">Phone</label>
-                        <input type="text" class="form-control" id="phone" name="phone" value="{{ old('phone') }}" required pattern="09[0-9]{9}" minlength="11" maxlength="11" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'');" title="Enter an 11-digit number starting with 09 (e.g., 09000000000)">
-                        <small class="form-text text-muted">Format: 09000000000 (11 digits, numbers only)</small>
+                        <label for="status" class="form-label">Status</label>
+                        <select class="form-select" id="status" name="status" required>
+                            <option value="">Select Status</option>
+                            <option value="full-time" {{ old('status') == 'full-time' ? 'selected' : '' }}>Full time</option>
+                            <option value="part-time" {{ old('status') == 'part-time' ? 'selected' : '' }}>Part time</option>
+                        </select>
                     </div>
 
                     <div class="mb-3">
@@ -234,8 +237,8 @@
                     
                     <div class="mb-3">
                         <label for="editStaffId" class="form-label">Staff ID</label>
-                        <input type="text" class="form-control" id="editStaffId" name="staff_id" required pattern="[A-Z]{2}[0-9]{4}" minlength="6" maxlength="6" inputmode="text" title="Enter a Staff ID in the format: two uppercase letters followed by four digits (e.g., WI3453)">
-                        <small class="form-text text-muted">Format: WI3453 (2 uppercase letters, 4 digits)</small>
+                        <input type="text" class="form-control" id="editStaffId" name="staff_id" required pattern="[A-Z]{2}[0-9]{6}" minlength="8" maxlength="8" inputmode="text" title="Enter a Staff ID in the format: two uppercase letters followed by six digits (e.g., WI123456)" readonly>
+                        <small class="form-text text-muted">Format: WI123456 (2 uppercase letters, 6 digits)</small>
                     </div>
                     
                     <div class="mb-3">
@@ -249,8 +252,12 @@
                     </div>
                     
                     <div class="mb-3">
-                        <label for="editPhone" class="form-label">Phone</label>
-                        <input type="text" class="form-control" id="editPhone" name="phone" required>
+                        <label for="editStatus" class="form-label">Status</label>
+                        <select class="form-select" id="editStatus" name="status" required>
+                            <option value="">Select Status</option>
+                            <option value="full-time">Full time</option>
+                            <option value="part-time">Part time</option>
+                        </select>
                     </div>
                     
                     <div class="mb-3">
@@ -310,11 +317,11 @@
 // Department options based on staff type
 const departmentOptions = {
     teaching: [
-        { value: 'BSIT', text: 'BSIT - Bachelor of Science in Information Technology' },
-        { value: 'BSHM', text: 'BSHM - Bachelor of Science in Hospitality Management' },
-        { value: 'BSBA', text: 'BSBA - Bachelor of Science in Business Administration' },
-        { value: 'BSED', text: 'BSED - Bachelor of Science in Education' },
-        { value: 'BEED', text: 'BEED - Bachelor of Elementary Education' }
+        { value: 'BSIT', text: 'BSIT' },
+        { value: 'BSBA', text: 'BSBA' },
+        { value: 'BSHM', text: 'BSHM' },
+        { value: 'EDUC', text: 'EDUC' },
+        { value: 'GSEC', text: 'GSEC' }
     ],
     'non-teaching': [
         { value: 'HR', text: 'HR - Human Resources' },
@@ -384,7 +391,7 @@ function deleteStaff(id, name) {
     });
 }
 
-function viewStaffData(staffId, fullName, email, phone, department, staffType, imagePath) {
+function viewStaffData(staffId, fullName, email, status, department, staffType, imagePath) {
     // Use SweetAlert for viewing staff details
     const imageUrl = imagePath && imagePath.trim() !== '' ? imagePath : 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxjaXJjbGUgY3g9IjUwIiBjeT0iNTAiIHI9IjUwIiBmaWxsPSIjZTllY2VmIi8+Cjxzdmcgd2lkdGg9IjUwIiBoZWlnaHQ9IjUwIiB2aWV3Qm94PSIwIDAgMjQgMjQiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeD0iMjUiIHk9IjI1Ij4KPHBhdGggZD0iTTEyIDEyQzE0LjIxIDAgMjQtMS4yNyAyNC02cy05Ljc5LTYtMjQtNi0yNCAxLjI3LTI0IDYgOS43OSA2IDI0IDZ6IiBmaWxsPSIjNmM3NTdkIi8+CjxwYXRoIGQ9Ik0xMiAxMmM2LjYyNyAwIDEyLTUuMzczIDEyLTEycy01LjM3My0xMi0xMi0xMi0xMiA1LjM3My0xMiAxMiA1LjM3MyAxMiAxMiAxMnoiIGZpbGw9IiM2Yzc1N2QiLz4KPC9zdmc+Cjwvc3ZnPg==';
     
@@ -399,7 +406,7 @@ function viewStaffData(staffId, fullName, email, phone, department, staffType, i
             <div class="text-start">
                 <p><strong>Staff ID:</strong> ${staffId}</p>
                 <p><strong>Email:</strong> ${email}</p>
-                <p><strong>Phone:</strong> ${phone}</p>
+                <p><strong>Status:</strong> ${status}</p>
                 <p><strong>Department:</strong> ${department}</p>
                 <p><strong>Staff Type:</strong> ${staffType}</p>
             </div>
@@ -410,11 +417,11 @@ function viewStaffData(staffId, fullName, email, phone, department, staffType, i
     });
 }
 
-function loadStaffData(id, fullName, email, phone, department, staffType, imagePath) {
+function loadStaffData(id, fullName, email, status, department, staffType, imagePath) {
     document.getElementById('editStaffId').value = id;
     document.getElementById('editFullName').value = fullName;
     document.getElementById('editEmail').value = email;
-    document.getElementById('editPhone').value = phone;
+    document.getElementById('editStatus').value = status;
     document.getElementById('editStaffType').value = staffType;
     
     // Update department options based on staff type
@@ -422,7 +429,8 @@ function loadStaffData(id, fullName, email, phone, department, staffType, imageP
     
     // Set department value after options are updated
     setTimeout(function() {
-        document.getElementById('editDepartment').value = department;
+        const mappedDept = (department === 'BSED' || department === 'BEED') ? 'EDUC' : department;
+        document.getElementById('editDepartment').value = mappedDept;
     }, 100);
     
     // Set image preview - fix for image display
@@ -461,6 +469,30 @@ function previewEditImage(input) {
 
 document.addEventListener('DOMContentLoaded', function() {
     updateDepartmentOptions('staff_type', 'department');
+
+    // Auto-generate Staff ID from Full Name (first + middle initials + 6 random digits)
+    const fullNameInput = document.getElementById('full_name');
+    const staffIdInput = document.getElementById('staff_id');
+    function generateStaffIdFromName(name) {
+        if (!name) return '';
+        const parts = name.trim().split(/\s+/).filter(Boolean);
+        let initials = '';
+        if (parts.length >= 2) {
+            initials = (parts[0][0] + parts[1][0]).toUpperCase();
+        } else if (parts.length === 1) {
+            initials = (parts[0].slice(0, 2)).toUpperCase();
+            if (initials.length === 1) initials += 'X';
+        } else {
+            initials = 'XX';
+        }
+        const rand = Math.floor(Math.random() * 1000000).toString().padStart(6, '0');
+        return initials + rand;
+    }
+    if (fullNameInput && staffIdInput) {
+        fullNameInput.addEventListener('input', function() {
+            staffIdInput.value = generateStaffIdFromName(fullNameInput.value);
+        });
+    }
     // --- UI: Flex container for search and filter ---
     const searchFilterWrapper = document.createElement('div');
     searchFilterWrapper.className = 'd-flex flex-wrap align-items-center gap-3 mb-3';

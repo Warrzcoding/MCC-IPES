@@ -446,10 +446,9 @@ function getAdjectivalRating($rating) {
                        
                         <div class="nav nav-pills d-flex w-100" id="departmentTabs" role="tablist" style="gap: 0;">
                             @php
-                                $knownDepartments = ['BSIT','BSHM','BSBA','BSED','BEED'];
-                                $foundDepartments = \App\Models\Staff::where('staff_type','teaching')->pluck('department')->unique()->toArray();
-                                $departments = array_values(array_filter($knownDepartments, function($d) use ($foundDepartments) { return in_array($d, $foundDepartments); }));
-                                if (count($departments) === 0) { $departments = $knownDepartments; }
+                                $knownDepartments = ['BSIT','BSBA','BSHM','EDUC','GSEC'];
+                                // Always show all five tabs regardless of existing data
+                                $departments = $knownDepartments;
                             @endphp
                             @foreach($departments as $index => $dept)
                                 <button class="nav-link flex-fill text-center {{ $index === 0 ? 'active' : '' }}" data-department="{{ $dept }}" type="button" role="tab" aria-selected="{{ $index === 0 ? 'true' : 'false' }}" style="border-radius: 0; {{ $index === 0 ? 'border-top-left-radius: 0.375rem;' : '' }} {{ $index === count($departments) - 1 ? 'border-top-right-radius: 0.375rem;' : '' }}">
@@ -492,7 +491,8 @@ function getAdjectivalRating($rating) {
                                         $ratingInfo = getRatingStatus($staff->average_rating);
                                         $starRating = round($staff->average_rating);
                                     @endphp
-                                                                         <tr class="rating-card" data-department="{{ $staff->department }}">
+                                                                         @php $rowDept = in_array($staff->department, ['BSED','BEED']) ? 'EDUC' : $staff->department; @endphp
+                                            <tr class="rating-card" data-department="{{ $rowDept }}">
                                         <td class="text-center align-middle">
                                             @if(!empty($staff->image_path) && file_exists(public_path($staff->image_path)))
                                                 <img src="{{ asset($staff->image_path) }}" 
@@ -517,7 +517,7 @@ function getAdjectivalRating($rating) {
                                                     <i class="fas fa-envelope me-1"></i>{{ $staff->email }}
                                                 </small>
                                                 <br>
-                                                <span class="badge bg-secondary">{{ $staff->department }}</span>
+                                                <span class="badge bg-secondary">{{ $rowDept }}</span>
                                                 <span class="badge bg-info">{{ $staff->staff_type }}</span>
                                             </div>
                                         </td>

@@ -22,7 +22,7 @@ class StaffController extends Controller
             'staff_id' => 'required|string|max:255|unique:staff,staff_id',
             'full_name' => 'required|string|max:255',
             'email' => 'required|email|unique:staff,email',
-            'phone' => 'required|string|max:255',
+            'status' => 'required|in:full-time,part-time',
             'department' => 'required|string|max:255',
             'staff_type' => 'required|in:teaching,non-teaching',
             'staff_image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048'
@@ -65,7 +65,7 @@ class StaffController extends Controller
                 'staff_id' => $request->staff_id,
                 'full_name' => $request->full_name,
                 'email' => $request->email,
-                'phone' => $request->phone,
+                'status' => $request->status,
                 'department' => $request->department,
                 'staff_type' => $request->staff_type,
                 'image_path' => $image_path
@@ -88,7 +88,7 @@ class StaffController extends Controller
             'staff_id' => 'required|string|max:255',
             'full_name' => 'required|string|max:255',
             'email' => 'required|email|unique:staff,email,' . $request->original_staff_id . ',staff_id',
-            'phone' => 'required|string|max:255',
+            'status' => 'required|in:full-time,part-time',
             'department' => 'required|string|max:255',
             'staff_type' => 'required|in:teaching,non-teaching',
             'staff_image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048'
@@ -146,7 +146,7 @@ class StaffController extends Controller
                 'staff_id' => $request->staff_id,
                 'full_name' => $request->full_name,
                 'email' => $request->email,
-                'phone' => $request->phone,
+                'status' => $request->status,
                 'department' => $request->department,
                 'staff_type' => $request->staff_type
             ];
