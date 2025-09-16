@@ -24,7 +24,7 @@ class DashboardController extends Controller
         $allowed_pages = [
             'dashboard', 'add-students', 'add-staff', 'subject-management', 'academicyear',
             'questionnaires', 'staff-ratings', 'department-ratings', 'overall-ratings', 'profile', 'staff-list',
-            'evaluates', 'pending-requests', 'rejected-requests' // <-- Ensure this is included
+            'evaluates', 'pending-requests', 'rejected-requests', 'login-monitor' // <-- Ensure this is included
         ];
 
         if (!in_array($page, $allowed_pages)) {
@@ -188,7 +188,8 @@ class DashboardController extends Controller
             'staff-list' => 'Staff List',
             'evaluates' => 'Evaluates Staff',
             'pending-requests' => 'Pending Requests',
-            'rejected-requests' => 'Rejected Requests' // <-- Add this
+            'rejected-requests' => 'Rejected Requests',
+            'login-monitor' => 'Login Monitor'
         ];
 
         $current_title = $page_titles[$page];

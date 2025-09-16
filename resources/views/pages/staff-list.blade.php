@@ -42,25 +42,25 @@
         margin: 0 auto;
     }
     .modal-staff-image {
-        width: 100px;
-        height: 100px;
+        width: 160px;
+        height: 160px;
         border-radius: 50%;
         object-fit: cover;
-        border: 3px solid #ddd;
+        border: 5px solid #ddd;
         margin-bottom: 15px;
     }
     .modal-default-avatar {
-        width: 100px;
-        height: 100px;
+        width: 160px;
+        height: 160px;
         border-radius: 50%;
         background-color: #f8f9fa;
         display: flex;
         align-items: center;
         justify-content: center;
-        border: 3px solid #ddd;
+        border: 5px solid #ddd;
         color: #6c757d;
         font-weight: bold;
-        font-size: 36px;
+        font-size: 56px;
         margin: 0 auto 15px auto;
     }
     
@@ -592,7 +592,7 @@
                                     }
                                 }
                             @endphp
-                            <div class="staff-item" onclick="showStaffDetails('{{ $staff->full_name }}', '{{ $staff->email }}', '{{ $staff->phone }}', '{{ $staff->department }}', '{{ $staff->staff_type }}', '{{ $imagePath }}')">
+                            <div class="staff-item" onclick="showStaffDetails('{{ $staff->full_name }}', '{{ $staff->email }}', '{{ ucfirst($staff->status ?? '') }}', '{{ $staff->department }}', '{{ $staff->staff_type }}', '{{ $imagePath }}')">
                                 <div class="staff-image-container">
                                     @if ($imagePath)
                                         <img src="{{ $imagePath }}" alt="{{ $staff->full_name }}" class="staff-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
@@ -604,11 +604,11 @@
                                 <div class="staff-details">
                                     <div class="staff-name">{{ $staff->full_name }}</div>
                                     <div class="staff-email">{{ $staff->email }}</div>
-                                    <div class="staff-phone">{{ $staff->phone }}</div>
                                     <div class="staff-department">{{ $staff->department }}</div>
                                     <span class="staff-type-badge {{ $staff->staff_type == 'teaching' ? 'staff-type-teaching' : 'staff-type-non-teaching' }}">
                                         {{ ucfirst(str_replace('-', ' ', $staff->staff_type)) }}
                                     </span>
+                                    <span class="badge bg-secondary ms-2 staff-status">{{ ucfirst($staff->status ?? '') }}</span>
                                 </div>
                             </div>
                         @endforeach
@@ -648,7 +648,7 @@
                                     }
                                 }
                             @endphp
-                            <div class="staff-item" onclick="showStaffDetails('{{ $staff->full_name }}', '{{ $staff->email }}', '{{ $staff->phone }}', '{{ $staff->department }}', '{{ $staff->staff_type }}', '{{ $imagePath }}')">
+                            <div class="staff-item" onclick="showStaffDetails('{{ $staff->full_name }}', '{{ $staff->email }}', '{{ ucfirst($staff->status ?? '') }}', '{{ $staff->department }}', '{{ $staff->staff_type }}', '{{ $imagePath }}')">
                                 <div class="staff-image-container">
                                     @if ($imagePath)
                                         <img src="{{ $imagePath }}" alt="{{ $staff->full_name }}" class="staff-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
@@ -660,9 +660,9 @@
                                 <div class="staff-details">
                                     <div class="staff-name">{{ $staff->full_name }}</div>
                                     <div class="staff-email">{{ $staff->email }}</div>
-                                    <div class="staff-phone">{{ $staff->phone }}</div>
                                     <div class="staff-department">{{ $staff->department }}</div>
                                     <span class="staff-type-badge staff-type-teaching">{{ $staff->staff_type }}</span>
+                                    <span class="badge bg-secondary ms-2 staff-status">{{ ucfirst($staff->status ?? '') }}</span>
                                 </div>
                             </div>
                         @endforeach
@@ -702,7 +702,7 @@
                                     }
                                 }
                             @endphp
-                            <div class="staff-item" onclick="showStaffDetails('{{ $staff->full_name }}', '{{ $staff->email }}', '{{ $staff->phone }}', '{{ $staff->department }}', '{{ $staff->staff_type }}', '{{ $imagePath }}')">
+                            <div class="staff-item" onclick="showStaffDetails('{{ $staff->full_name }}', '{{ $staff->email }}', '{{ ucfirst($staff->status ?? '') }}', '{{ $staff->department }}', '{{ $staff->staff_type }}', '{{ $imagePath }}')">
                                 <div class="staff-image-container">
                                     @if ($imagePath)
                                         <img src="{{ $imagePath }}" alt="{{ $staff->full_name }}" class="staff-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
@@ -714,9 +714,9 @@
                                 <div class="staff-details">
                                     <div class="staff-name">{{ $staff->full_name }}</div>
                                     <div class="staff-email">{{ $staff->email }}</div>
-                                    <div class="staff-phone">{{ $staff->phone }}</div>
                                     <div class="staff-department">{{ $staff->department }}</div>
                                     <span class="staff-type-badge staff-type-non-teaching">{{ $staff->staff_type }}</span>
+                                    <span class="badge bg-secondary ms-2 staff-status">{{ ucfirst($staff->status ?? '') }}</span>
                                 </div>
                             </div>
                         @endforeach
@@ -734,7 +734,8 @@
         <div class="text-center mb-4">
             <div id="overlayImageContainer" class="mb-3"></div>
             <h3 id="overlayName" class="fw-bold mb-2"></h3>
-            <span id="overlayType" class="badge fs-6"></span>
+            <span id="overlayType" class="badge fs-6 me-2"></span>
+            <span id="overlayStatus" class="badge fs-6"></span>
         </div>
         <div class="row">
             <div class="col-12">
@@ -745,13 +746,7 @@
                         <span id="overlayEmail" class="fw-semibold"></span>
                     </div>
                 </div>
-                <div class="d-flex align-items-center mb-3">
-                    <i class="fas fa-phone fa-fw text-primary me-3" style="width: 20px;"></i>
-                    <div>
-                        <small class="text-muted d-block">Phone</small>
-                        <span id="overlayPhone" class="fw-semibold"></span>
-                    </div>
-                </div>
+
                 <div class="d-flex align-items-center">
                     <i class="fas fa-building fa-fw text-primary me-3" style="width: 20px;"></i>
                     <div>
@@ -782,11 +777,12 @@ function filterStaff() {
                 var item = items[i];
                 var name = item.querySelector('.staff-name').textContent || '';
                 var email = item.querySelector('.staff-email').textContent || '';
-                var phone = item.querySelector('.staff-phone').textContent || '';
+                var statusEl = item.querySelector('.staff-status');
+                var status = statusEl ? statusEl.textContent : '';
                 var department = item.querySelector('.staff-department').textContent || '';
                 var type = item.querySelector('.staff-type-badge').textContent || '';
                 
-                var text = (name + ' ' + email + ' ' + phone + ' ' + department + ' ' + type).toLowerCase();
+                var text = (name + ' ' + email + ' ' + status + ' ' + department + ' ' + type).toLowerCase();
                 
                 if (text.indexOf(filter) > -1) {
                     item.style.display = "flex";
@@ -799,10 +795,13 @@ function filterStaff() {
 }
 
 // Show staff details overlay
-function showStaffDetails(name, email, phone, department, type, image) {
+function showStaffDetails(name, email, status, department, type, image) {
     document.getElementById('overlayName').textContent = name;
     document.getElementById('overlayEmail').textContent = email;
-    document.getElementById('overlayPhone').textContent = phone;
+    var statusBadge = document.getElementById('overlayStatus');
+    var statusLower = (status || '').toLowerCase();
+    statusBadge.textContent = status;
+    statusBadge.className = 'badge fs-6 ' + (statusLower === 'full-time' ? 'bg-success' : statusLower === 'part-time' ? 'bg-warning text-dark' : 'bg-secondary');
     document.getElementById('overlayDepartment').textContent = department;
     
     var typeBadge = document.getElementById('overlayType');

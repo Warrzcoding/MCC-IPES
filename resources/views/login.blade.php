@@ -391,6 +391,40 @@
             color: #764ba2;
             text-decoration: underline;
         }
+
+        /* Animated Forgot Password link */
+        .forgot-link {
+            position: relative;
+            display: inline-block;
+            color: #17a2b8;
+            font-weight: 600;
+            text-decoration: none;
+            transition: color .25s ease, transform .2s ease;
+        }
+        .forgot-link::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: -3px;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #17a2b8, #20c997, #667eea);
+            border-radius: 2px;
+            transition: width .25s ease, left .25s ease;
+        }
+        .forgot-link:hover {
+            color: #138496;
+            transform: translateY(-1px);
+        }
+        .forgot-link:hover::after {
+            width: 100%;
+            left: 0;
+        }
+        .forgot-link:focus-visible {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(23,162,184,.25);
+            border-radius: 6px;
+        }
         .form-label {
             font-weight: 600;
             color: #333;
@@ -890,7 +924,7 @@
                     <button type="submit" name="verify_student_id" class="btn btn-success" id="verifyStudentIdBtn">
                         <i class="fas fa-search"></i> Verify Student ID
                     </button>
-                    <button type="button" class="btn btn-secondary" onclick="resetForm()">
+                    <button type="button" class="btn btn-secondary d-block w-100 mt-2" onclick="resetForm()">
                         <i class="fas fa-arrow-left"></i> Back
                     </button>
                     <!-- Student Signup Link -->
@@ -939,12 +973,14 @@
                         </div>
                     @endif
 
-                    <button type="submit" name="login" class="btn btn-primary">
-                        <i class="fas fa-sign-in-alt"></i> Login as Administrator
-                    </button>
-                    <button type="button" class="btn btn-secondary" onclick="resetForm()">
-                        <i class="fas fa-arrow-left"></i> Back
-                    </button>
+                    <div class="d-grid gap-2">
+                        <button type="submit" name="login" class="btn btn-primary">
+                            <i class="fas fa-sign-in-alt"></i> Login as Administrator
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="resetForm()">
+                            <i class="fas fa-arrow-left"></i> Back
+                        </button>
+                    </div>
                 </form>
 
                 <!-- Staff Login Form (Initially Hidden) -->
@@ -1036,17 +1072,17 @@
                         </div>
                     @endif
 
-                    <button type="submit" name="login" class="btn btn-primary">
-                        <i class="fas fa-sign-in-alt"></i> Login as Student
-                    </button>
-                    <div class="d-flex justify-content-between align-items-center mt-3">
+                    <div class="d-grid gap-2">
+                        <button type="submit" name="login" class="btn btn-primary">
+                            <i class="fas fa-sign-in-alt"></i> Login as Student
+                        </button>
                         <a href="{{ route('clear.student.verification') }}" class="btn btn-secondary">
                             <i class="fas fa-arrow-left"></i> Back
                         </a>
-                        <a href="{{ route('password.request') }}" class="btn btn-outline-info">
-                            <i class="fas fa-key"></i> 
-                            <span class="d-none d-md-inline">Forgot Password?</span>
-                            <span class="d-md-none">Reset Password</span>
+                    </div>
+                    <div class="text-center mt-2">
+                        <a href="{{ route('password.request') }}" class="forgot-link">
+                            Forgot Password?
                         </a>
                     </div>
                 </form>
@@ -1414,6 +1450,20 @@ Swal.fire({
                 // Prevent dash at wrong position
                 if (char === '-' && this.value.length !== 4) {
                     e.preventDefault();
+                }
+            });
+
+            // Submit Student ID form when pressing Enter
+            schoolIdInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const form = document.getElementById('studentIdForm');
+                    const submitBtn = document.getElementById('verifyStudentIdBtn');
+                    // Use HTML5 validation before submitting
+                    if (form && (typeof form.reportValidity !== 'function' || form.reportValidity())) {
+                        if (submitBtn) submitBtn.click();
+                        else form.submit();
+                    }
                 }
             });
         }

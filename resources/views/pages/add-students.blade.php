@@ -611,12 +611,56 @@
                   @php
     $pendingCount = isset($pendingRequestsCount) ? $pendingRequestsCount : 0;
 @endphp
-<a href="{{ route('dashboard', ['page' => 'pending-requests']) }}" class="btn btn-warning position-relative me-2" id="requestNotificationBtn" type="button">
+<a href="{{ route('dashboard', ['page' => 'pending-requests']) }}" class="btn btn-warning position-relative me-2" id="requestNotificationBtn" type="button" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-placement="top-end" data-bs-custom-class="popover-sm" data-bs-content="Pending Request">
     <i class="fas fa-bell {{ $pendingCount > 0 ? 'shake-animate' : '' }}"></i>
     <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger {{ $pendingCount > 0 ? 'shake-animate' : '' }}" style="font-size: 0.75em;">
         {{ $pendingCount }}
     </span>
 </a>
+<a href="{{ route('dashboard', ['page' => 'login-monitor']) }}" class="btn btn-warning position-relative me-2" id="loginMonitoringBtn" type="button" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-placement="top-end" data-bs-custom-class="popover-sm" data-bs-content="Monitor Login">
+    <i class="fas fa-user-shield {{ ($newLoginAttemptsCount ?? 0) > 0 ? 'shake-animate' : '' }}"></i>
+    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger {{ ($newLoginAttemptsCount ?? 0) > 0 ? 'shake-animate' : '' }}" style="font-size: 0.75em;">
+        {{ $newLoginAttemptsCount ?? 0 }}
+    </span>
+</a>
+<style>
+/* Small modal-style bubble for popovers */
+.popover.popover-sm {
+  max-width: 220px;
+  box-shadow: 0 8px 24px rgba(0,0,0,.25);
+  border: 0;
+  border-radius: .5rem;
+  /* Bootstrap 5 CSS variables (supported in 5.2+) */
+  --bs-popover-bg: #2b2f36;           /* dark slate */
+  --bs-popover-border-color: rgba(0,0,0,.3);
+  --bs-popover-body-color: #ffffff;
+  --bs-popover-arrow-color: #2b2f36;
+  --bs-popover-arrow-border: rgba(0,0,0,.3);
+  /* Fallbacks for older versions */
+  background-color: var(--bs-popover-bg);
+  color: var(--bs-popover-body-color);
+}
+.popover.popover-sm .popover-body {
+  padding: .5rem .75rem;
+  font-size: .85rem;
+}
+/* Arrow color for top/right placement */
+.popover.popover-sm[data-popper-placement^="top"] .popover-arrow::after { border-top-color: #2b2f36; }
+.popover.popover-sm[data-popper-placement^="top"] .popover-arrow::before { border-top-color: rgba(0,0,0,.3); }
+</style>
+<script>
+// Initialize Bootstrap popovers for hover and focus
+document.addEventListener('DOMContentLoaded', function () {
+    var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
+    popoverTriggerList.forEach(function (el) {
+        new bootstrap.Popover(el, {
+            trigger: 'hover focus',
+            placement: 'top', // base placement; "top-end" handled via data attribute if supported
+            container: 'body'
+        });
+    });
+});
+</script>
                     <select class="form-select me-2" id="statusFilter" style="width: auto;">
                         <option value="">All Status</option>
                         <option value="Never Evaluated">Never Evaluated</option>

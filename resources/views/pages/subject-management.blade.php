@@ -160,12 +160,12 @@
                                                 <button class="btn btn-sm btn-outline-danger" onclick="confirmDeleteSubject('{{ $subject->sub_code }}', '{{ addslashes($subject->sub_name) }}', '{{ $subject->section ?? '' }}')">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
-                                                <button class="btn btn-sm btn-outline-success" 
+                                                <!--<button class="btn btn-sm btn-outline-success" 
                                                          data-bs-toggle="modal" 
                                                          data-bs-target="#addModal" 
                                                          onclick="duplicateSubjectData('{{ $subject->sub_code }}', '{{ addslashes($subject->sub_name) }}', '{{ addslashes($subject->sub_department) }}', '{{ $subject->sub_year }}', '{{ $subject->section ?? '' }}', '{{ $subject->semester ?? '' }}', '{{ $subject->instructor_staff_id ?? '' }}', '{{ $subject->subject_type ?? 'Major' }}')">
                                                      <i class="fas fa-copy"></i>
-                                                 </button>
+                                                 </button>-->
                                             </td>
                                         </tr>
                                     @endforeach
@@ -197,7 +197,7 @@
                                             <th>Department</th>
                                             <th>Year</th>
                                             <th>Section</th>
-                                            <th>Instructor</th>
+                                            <th>Assigned Instructor</th>
                                             <th>Subject Type</th>
                                             <th>Actions</th>
                                         </tr>
@@ -237,12 +237,12 @@
                                                         <button class="btn btn-sm btn-outline-danger" onclick="confirmDeleteSubject('{{ $subject->sub_code }}', '{{ addslashes($subject->sub_name) }}', '{{ $subject->section ?? '' }}')">
                                                             <i class="fas fa-trash"></i>
                                                         </button>
-                                                        <button class="btn btn-sm btn-outline-success" 
+                                                       <!--<button class="btn btn-sm btn-outline-success" 
                                                                 data-bs-toggle="modal" 
                                                                 data-bs-target="#addModal" 
                                                                 onclick="duplicateSubjectData('{{ $subject->sub_code }}', '{{ addslashes($subject->sub_name) }}', '{{ addslashes($subject->sub_department) }}', '{{ $subject->sub_year }}', '{{ $subject->section ?? '' }}', '{{ $subject->semester ?? '' }}', '{{ $subject->instructor_staff_id ?? '' }}', '{{ $subject->subject_type ?? 'Major' }}')">
                                                             <i class="fas fa-copy"></i>
-                                                        </button>
+                                                        </button>-->
                                                     </td>
                                                 </tr>
                                             @endforeach

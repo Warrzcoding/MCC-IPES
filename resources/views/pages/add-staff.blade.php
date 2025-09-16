@@ -67,9 +67,9 @@
                                     <th>Profile</th>
                                     <th>Staff ID</th>
                                     <th>Full Name</th>
-                                    <th>Email</th>
-                                    <th>Status</th>
+                                    <th>Email</th>                                
                                     <th>Department</th>
+                                     <th>Status</th>
                                     <th>Staff Type</th>
                                     <th>Created</th>
                                     <th>Actions</th>
@@ -98,9 +98,9 @@
                                         </td>
                                         <td>{{ $staff_member->staff_id }}</td>
                                         <td>{{ $staff_member->full_name }}</td>
-                                        <td>{{ $staff_member->email }}</td>
-                                        <td>{{ ucfirst($staff_member->status ?? '') }}</td>
+                                        <td>{{ $staff_member->email }}</td>                                  
                                         <td>{{ $staff_member->department }}</td>
+                                        <td>{{ ucfirst($staff_member->status ?? '') }}</td>
                                         <td>{{ ucfirst($staff_member->staff_type) }}</td>
                                         <td>{{ $staff_member->created_at ? $staff_member->created_at->format('Y-m-d') : '' }}</td>
                                         <td>
@@ -327,17 +327,21 @@ const departmentOptions = {
         { value: 'HR', text: 'HR - Human Resources' },
        // { value: 'IT', text: 'IT - Information Technology' },
        // { value: 'Finance', text: 'Finance' },
-        { value: 'Marketing', text: 'Marketing' },
-        { value: 'Academic Affairs', text: 'Academic Affairs' },
-        { value: 'Student Services', text: 'Student Services' },
-        { value: 'Registrar', text: 'Registrar' },
-        { value: 'Library', text: 'Library' },
-        { value: 'Maintenance', text: 'Maintenance/Utility' },
+        { value: 'Watchman', text: 'Watchman' },
+        { value: 'Office Staff', text: 'Office Staff' },
+        { value: 'Utility', text: 'Utility' },
+        { value: 'Purchaser/Payroll', text: 'Purchaser/Payroll' },
+        { value: 'Electrician', text: 'Electrician' },
+        { value: 'Clinic Staff', text: 'Clinic Staff' },
         { value: 'Security', text: 'Security' },
-        { value: 'Accounting', text: 'Accounting' },
-        { value: 'Admissions', text: 'Admissions' },
-        { value: 'Canteen', text: 'Canteen' },
-        { value: 'Clinic', text: 'Clinic' }
+        { value: 'Library Staff', text: 'Library Staff' },
+        { value: 'Registrar Staff', text: 'Registrar Staff' },
+        { value: 'Admin Staff', text: 'Admin Staff' },
+        { value: 'VP Office Staff', text: 'VP Office Staff' },
+        { value: 'BSIT Staff', text: 'BSIT Staff' },
+        { value: 'SAS Staff', text: 'SAS Staff' },
+        { value: 'IT Endocer', text: 'IT Endocer' },
+        { value: 'Encoder', text: 'Encoder' }
     ]
 };
 

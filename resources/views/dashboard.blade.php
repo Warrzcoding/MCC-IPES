@@ -864,6 +864,10 @@
                 <a href="{{ route('dashboard', ['page' => 'questionnaires']) }}" class="nav-link {{ $page === 'questionnaires' ? 'active' : '' }}">
                     <i class="fas fa-clipboard-list"></i> Questionnaires
                 </a>
+
+                <a href="{{ route('dashboard', ['page' => 'login-monitor']) }}" class="nav-link {{ $page === 'login-monitor' ? 'active' : '' }}">
+                    <i class="fas fa-user-shield"></i> Login Monitor
+                </a>
                 
                 <div class="nav-dropdown">
                     <div class="nav-link nav-dropdown-toggle {{ in_array($page, ['staff-ratings', 'department-ratings', 'overall-ratings']) ? 'active' : '' }}" onclick="toggleDropdown(this)">
