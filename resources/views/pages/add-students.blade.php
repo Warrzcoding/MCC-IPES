@@ -617,7 +617,7 @@
         {{ $pendingCount }}
     </span>
 </a>
-<a href="{{ route('dashboard', ['page' => 'login-monitor']) }}" class="btn btn-warning position-relative me-2" id="loginMonitoringBtn" type="button" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-placement="top-end" data-bs-custom-class="popover-sm" data-bs-content="Monitor Login">
+<a href="{{ route('dashboard.login-monitor') }}" class="btn btn-warning position-relative me-2" id="loginMonitoringBtn" type="button" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-placement="top-end" data-bs-custom-class="popover-sm" data-bs-content="Monitor Login">
     <i class="fas fa-user-shield {{ ($newLoginAttemptsCount ?? 0) > 0 ? 'shake-animate' : '' }}"></i>
     <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger {{ ($newLoginAttemptsCount ?? 0) > 0 ? 'shake-animate' : '' }}" style="font-size: 0.75em;">
         {{ $newLoginAttemptsCount ?? 0 }}

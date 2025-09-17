@@ -201,9 +201,21 @@ class DashboardController extends Controller
         $questionnaires_data = null;
         $admins = null;
         $years = null;
+        $loginAttempts = null;
         
         if ($page === 'add-staff') {
             $staff = Staff::orderBy('full_name')->get();
+        }
+        
+        if ($page === 'add-students') {
+            // quick badge count for recent login attempts
+            $newLoginAttemptsCount = \App\Models\LoginAttempt::where('created_at', '>=', now()->subDay())->count();
+        }
+
+        if ($page === 'login-monitor') {
+            $loginAttempts = \App\Models\LoginAttempt::with('user')
+                ->orderByDesc('created_at')
+                ->paginate(15);
         }
         
         if ($page === 'subject-management') {
@@ -450,6 +462,8 @@ class DashboardController extends Controller
                     'admins' => $admins,
                     'years' => $years,
                     'pendingRequestsCount' => $pendingRequestsCount, // pass to view
+                    'newLoginAttemptsCount' => $newLoginAttemptsCount ?? 0,
+                    'loginAttempts' => $loginAttempts ?? null,
                 ]
             ));
         }
@@ -605,7 +619,8 @@ class DashboardController extends Controller
             'staffPerformanceStatsPerSemester', // pass semester data to view
             'pendingRequestsCount',
             'pendingRequests',
-            'rejectedRequests' // Always include this
+            'rejectedRequests', // Always include this
+            'loginAttempts'
         ));
     }
 

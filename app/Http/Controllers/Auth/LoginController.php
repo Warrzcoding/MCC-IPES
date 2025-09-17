@@ -86,6 +86,9 @@ public function login(Request $request)
         'user_type' => 'required|in:student,admin,staff'
     ]);
 
+    // Emit an auth.failed-like record as early as possible if email not found
+    // Note: The main failed logging occurs later; this is just an early hook if needed.
+
     // reCAPTCHA verification
     $failedAttempts = Session::get('failed_attempts', 0);
     $captchaType = $this->recaptchaService->determineCaptchaType($failedAttempts, $request->user_type);
@@ -168,6 +171,19 @@ public function login(Request $request)
         $verifiedStudentEmail = Session::get('verified_student_email');
         
         if (!$verifiedStudentId || !$verifiedStudentEmail) {
+            // Record as failed because verification is missing
+            try {
+                $maybeUser = User::where('email', $request->email)->first();
+                \App\Models\LoginAttempt::create([
+                    'user_id'   => $maybeUser?->id,
+                    'email'     => $request->email,
+                    'ip_address'=> $request->ip(),
+                    'user_agent'=> $request->userAgent(),
+                    'status'    => 'failed',
+                ]);
+            } catch (\Throwable $e) {
+                \Log::warning('LoginAttempt logging (student no verification) failed: ' . $e->getMessage());
+            }
             return redirect()->route('login')->with('error', 'Please verify your student ID first.');
         }
         
@@ -180,6 +196,22 @@ public function login(Request $request)
                 $lockoutUntil = now()->addSeconds($lockoutDuration);
                 Session::put('lockout_time', $lockoutUntil);
                 Session::put('permanent_lockout', true);
+
+                // Record lockout as failed attempt as well
+                try {
+                    $maybeUser = User::where('school_id', $verifiedStudentId)
+                                     ->where('role', 'student')
+                                     ->first();
+                    \App\Models\LoginAttempt::create([
+                        'user_id'   => $maybeUser?->id,
+                        'email'     => $request->email,
+                        'ip_address'=> $request->ip(),
+                        'user_agent'=> $request->userAgent(),
+                        'status'    => 'failed',
+                    ]);
+                } catch (\Throwable $e) {
+                    \Log::warning('LoginAttempt logging (student mismatch lockout) failed: ' . $e->getMessage());
+                }
                 
                 $student = User::where('school_id', $verifiedStudentId)
                                ->where('role', 'student')
@@ -232,6 +264,15 @@ public function login(Request $request)
     if (!$user || !Hash::check($request->password, $user->password)) {
         $failedAttempts++;
         Session::put('failed_attempts', $failedAttempts);
+
+        // Log failed attempt
+        \App\Models\LoginAttempt::create([
+            'user_id' => $user?->id,
+            'email' => $request->email,
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+            'status' => 'failed',
+        ]);
 
         if ($failedAttempts >= 3) {
             $lockoutUntil = now()->addSeconds($lockoutDuration);
@@ -350,6 +391,15 @@ public function login(Request $request)
 
     Auth::login($user, $request->filled('remember'));
 
+    // Log successful attempt
+    \App\Models\LoginAttempt::create([
+        'user_id' => $user->id,
+        'email' => $user->email,
+        'ip_address' => $request->ip(),
+        'user_agent' => $request->userAgent(),
+        'status' => 'success',
+    ]);
+
     // Set success message and redirect flag
     $welcomeMessage = 'Welcome back, ' . $user->full_name . '!';
     
@@ -383,6 +433,20 @@ public function login(Request $request)
      */
     private function handleCaptchaError(Request $request, $message)
     {
+        // Record as a failed attempt for captcha/security related early returns
+        try {
+            $maybeUser = User::where('email', $request->email)->first();
+            \App\Models\LoginAttempt::create([
+                'user_id'   => $maybeUser?->id,
+                'email'     => $request->email,
+                'ip_address'=> $request->ip(),
+                'user_agent'=> $request->userAgent(),
+                'status'    => 'failed',
+            ]);
+        } catch (\Throwable $e) {
+            \Log::warning('LoginAttempt logging (captcha error) failed: ' . $e->getMessage());
+        }
+
         if ($request->user_type === 'student') {
             // For students, preserve the login form state
             $verifiedStudentId = Session::get('verified_student_id');

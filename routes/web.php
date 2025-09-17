@@ -46,6 +46,11 @@ Route::get('/password/reset', [PasswordResetController::class, 'showResetForm'])
 // Dashboard Routes (protected by auth middleware)
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    // Login monitor page (reuses dashboard layout with page=login-monitor)
+    Route::get('/dashboard/login-monitor', function() {
+        return redirect()->route('dashboard', ['page' => 'login-monitor']);
+    })->name('dashboard.login-monitor');
     
     // Evaluation Routes
     Route::get('/evaluations', [EvaluationController::class, 'showForm'])->name('evaluations.form');
