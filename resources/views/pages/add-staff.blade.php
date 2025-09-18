@@ -184,6 +184,8 @@
                             <option value="">Select Status</option>
                             <option value="full-time" {{ old('status') == 'full-time' ? 'selected' : '' }}>Full time</option>
                             <option value="part-time" {{ old('status') == 'part-time' ? 'selected' : '' }}>Part time</option>
+                            <option value="jo" {{ old('status') == 'jo' ? 'selected' : '' }}>JO</option>
+                            <option value="cos" {{ old('status') == 'cos' ? 'selected' : '' }}>COS</option>
                         </select>
                     </div>
 
@@ -257,6 +259,8 @@
                             <option value="">Select Status</option>
                             <option value="full-time">Full time</option>
                             <option value="part-time">Part time</option>
+                            <option value="jo">JO</option>
+                            <option value="cos">COS</option>
                         </select>
                     </div>
                     
@@ -321,7 +325,7 @@ const departmentOptions = {
         { value: 'BSBA', text: 'BSBA' },
         { value: 'BSHM', text: 'BSHM' },
         { value: 'EDUC', text: 'EDUC' },
-        { value: 'GSEC', text: 'GSEC' }
+        { value: 'GEC', text: 'GEC' }
     ],
     'non-teaching': [
         { value: 'HR', text: 'HR - Human Resources' },

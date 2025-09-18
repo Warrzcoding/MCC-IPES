@@ -208,14 +208,25 @@ class DashboardController extends Controller
         }
         
         if ($page === 'add-students') {
-            // quick badge count for recent login attempts
-            $newLoginAttemptsCount = \App\Models\LoginAttempt::where('created_at', '>=', now()->subDay())->count();
+            // Count new login attempts since admin last saw login-monitor; fallback to last 24h
+            $lastSeen = optional(Auth::user())->login_monitor_last_seen_at ?? null;
+            $newLoginAttemptsCount = \App\Models\LoginAttempt::when($lastSeen, function ($q) use ($lastSeen) {
+                    $q->where('created_at', '>', $lastSeen);
+                }, function ($q) {
+                    $q->where('created_at', '>=', now()->subDay());
+                })
+                ->count();
         }
 
         if ($page === 'login-monitor') {
             $loginAttempts = \App\Models\LoginAttempt::with('user')
                 ->orderByDesc('created_at')
                 ->paginate(15);
+
+            // Mark as seen for admins
+            if (Auth::check() && Auth::user()->isAdmin()) {
+                Auth::user()->forceFill(['login_monitor_last_seen_at' => now()])->save();
+            }
         }
         
         if ($page === 'subject-management') {

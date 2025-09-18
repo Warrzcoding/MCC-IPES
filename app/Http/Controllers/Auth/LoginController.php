@@ -391,7 +391,18 @@ public function login(Request $request)
 
     Auth::login($user, $request->filled('remember'));
 
-
+    // Log successful attempt (so monitor badge can reflect activity)
+    try {
+        \App\Models\LoginAttempt::create([
+            'user_id'   => $user->id,
+            'email'     => $user->email,
+            'ip_address'=> $request->ip(),
+            'user_agent'=> $request->userAgent(),
+            'status'    => 'success',
+        ]);
+    } catch (\Throwable $e) {
+        \Log::warning('LoginAttempt logging (success) failed: ' . $e->getMessage());
+    }
 
     // Set success message and redirect flag
     $welcomeMessage = 'Welcome back, ' . $user->full_name . '!';
