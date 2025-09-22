@@ -165,10 +165,21 @@
               @endforelse
             </ul>
 
-            @if(isset($loginAttempts) && method_exists($loginAttempts, 'links'))
-              <div class="d-flex justify-content-end mt-3">
-                {{ $loginAttempts->links() }}
-              </div>
+            @if(isset($loginAttempts) && method_exists($loginAttempts, 'hasPages') && $loginAttempts->hasPages())
+              <nav class="mt-3" aria-label="Timeline pagination">
+                <ul class="pagination justify-content-end mb-0">
+                  <li class="page-item {{ $loginAttempts->onFirstPage() ? 'disabled' : '' }}">
+                    <a class="page-link" href="{{ $loginAttempts->previousPageUrl() }}" rel="prev">
+                      <i class="fas fa-chevron-left me-1"></i> Previous
+                    </a>
+                  </li>
+                  <li class="page-item {{ $loginAttempts->hasMorePages() ? '' : 'disabled' }}">
+                    <a class="page-link" href="{{ $loginAttempts->nextPageUrl() }}" rel="next">
+                      Next <i class="fas fa-chevron-right ms-1"></i>
+                    </a>
+                  </li>
+                </ul>
+              </nav>
             @endif
           </div>
 
@@ -214,13 +225,24 @@
                     </tr>
                   @endforelse
                 </tbody>
-                @if(isset($loginAttempts) && method_exists($loginAttempts, 'links'))
+                @if(isset($loginAttempts) && method_exists($loginAttempts, 'hasPages') && $loginAttempts->hasPages())
                 <tfoot>
                   <tr>
                     <td colspan="7">
-                      <div class="d-flex justify-content-end">
-                        {{ $loginAttempts->links() }}
-                      </div>
+                      <nav aria-label="Table pagination">
+                        <ul class="pagination justify-content-end mb-0">
+                          <li class="page-item {{ $loginAttempts->onFirstPage() ? 'disabled' : '' }}">
+                            <a class="page-link" href="{{ $loginAttempts->previousPageUrl() }}" rel="prev">
+                              <i class="fas fa-chevron-left me-1"></i> Previous
+                            </a>
+                          </li>
+                          <li class="page-item {{ $loginAttempts->hasMorePages() ? '' : 'disabled' }}">
+                            <a class="page-link" href="{{ $loginAttempts->nextPageUrl() }}" rel="next">
+                              Next <i class="fas fa-chevron-right ms-1"></i>
+                            </a>
+                          </li>
+                        </ul>
+                      </nav>
                     </td>
                   </tr>
                 </tfoot>
