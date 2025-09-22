@@ -33,13 +33,13 @@
                      Staff Members Managements
                 </h5>
             </div>
-            <div class="card-body">
+           <!-- <div class="card-body">
                 <div class="alert alert-info">
                     <i class="fas fa-info-circle me-2"></i>
                     <strong>Staff Management:</strong> This section allows administrators to add and manage teaching staff members.
                 </div>
                 
-            </div>
+            </div>-->
         </div>
     </div>
 </div>
@@ -100,7 +100,13 @@
                                         <td>{{ $staff_member->full_name }}</td>
                                         <td>{{ $staff_member->email }}</td>                                  
                                         <td>{{ $staff_member->department }}</td>
-                                        <td>{{ ucfirst($staff_member->status ?? '') }}</td>
+                                        <td>
+                                            @php
+                                                $statusValue = strtolower($staff_member->status ?? '');
+                                                $statusDisplay = in_array($statusValue, ['jo','cos']) ? strtoupper($statusValue) : ucfirst($statusValue);
+                                            @endphp
+                                            {{ $statusDisplay }}
+                                        </td>
                                         <td>{{ ucfirst($staff_member->staff_type) }}</td>
                                         <td>{{ $staff_member->created_at ? $staff_member->created_at->format('Y-m-d') : '' }}</td>
                                         <td>
@@ -124,7 +130,7 @@
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                             <button class="btn btn-sm btn-outline-info" 
-                                                    onclick="viewStaffData('{{ $staff_member->staff_id }}', '{{ addslashes($staff_member->full_name) }}', '{{ addslashes($staff_member->email) }}', '{{ addslashes(ucfirst($staff_member->status)) }}', '{{ addslashes($staff_member->department) }}', '{{ ucfirst($staff_member->staff_type) }}', '{{ $imageUrl }}')">
+                                                    onclick="viewStaffData('{{ $staff_member->staff_id }}', '{{ addslashes($staff_member->full_name) }}', '{{ addslashes($staff_member->email) }}', '{{ addslashes($staff_member->status) }}', '{{ addslashes($staff_member->department) }}', '{{ ucfirst($staff_member->staff_type) }}', '{{ $imageUrl }}')">
                                                 <i class="fas fa-eye"></i>
                                             </button>
                                         </td>
@@ -161,21 +167,21 @@
                         <input type="file" class="form-control" id="staff_image" name="staff_image" accept="image/*" onchange="previewImage(this)">
                         <small class="form-text text-muted">Optional. Supported formats: JPG, JPEG, PNG, GIF</small>
                     </div>
-
+                   
+                    <div class="mb-3">
+                        <label for="full_name" class="form-label">Full Name</label>
+                        <input type="text" class="form-control" id="full_name" name="full_name" value="{{ old('full_name') }}" required>
+                    </div>
                     <div class="mb-3">
                         <label for="staff_id" class="form-label">Staff ID</label>
                         <input type="text" class="form-control" id="staff_id" name="staff_id" value="{{ old('staff_id') }}" readonly>
                         <small class="form-text text-muted">Auto-generated from full name initials + 6 random digits (e.g., WI123456).</small>
                     </div>
-
-                    <div class="mb-3">
-                        <label for="full_name" class="form-label">Full Name</label>
-                        <input type="text" class="form-control" id="full_name" name="full_name" value="{{ old('full_name') }}" required>
-                    </div>
-
+ 
                     <div class="mb-3">
                         <label for="email" class="form-label">Email</label>
                         <input type="email" class="form-control" id="email" name="email" value="{{ old('email') }}" required>
+                        <small class="form-text text-muted">Tip: Type @ to auto-complete @gmail.com</small>
                     </div>
 
                     <div class="mb-3">
@@ -237,20 +243,21 @@
                         <small class="form-text text-muted">Leave empty to keep current image</small>
                     </div>
                     
-                    <div class="mb-3">
-                        <label for="editStaffId" class="form-label">Staff ID</label>
-                        <input type="text" class="form-control" id="editStaffId" name="staff_id" required pattern="[A-Z]{2}[0-9]{6}" minlength="8" maxlength="8" inputmode="text" title="Enter a Staff ID in the format: two uppercase letters followed by six digits (e.g., WI123456)" readonly>
-                        <small class="form-text text-muted">Format: WI123456 (2 uppercase letters, 6 digits)</small>
-                    </div>
+                    
                     
                     <div class="mb-3">
                         <label for="editFullName" class="form-label">Full Name</label>
                         <input type="text" class="form-control" id="editFullName" name="full_name" required>
                     </div>
-                    
+                    <div class="mb-3">
+                        <label for="editStaffId" class="form-label">Staff ID</label>
+                        <input type="text" class="form-control" id="editStaffId" name="staff_id" required pattern="[A-Z]{2}[0-9]{6}" minlength="8" maxlength="8" inputmode="text" title="Enter a Staff ID in the format: two uppercase letters followed by six digits (e.g., WI123456)" readonly>
+                        <small class="form-text text-muted">Format: WI123456 (2 uppercase letters, 6 digits)</small>
+                    </div>
                     <div class="mb-3">
                         <label for="editEmail" class="form-label">Email</label>
                         <input type="email" class="form-control" id="editEmail" name="email" required>
+                        <small class="form-text text-muted">Tip: Type @ to auto-complete @gmail.com</small>
                     </div>
                     
                     <div class="mb-3">
@@ -318,6 +325,31 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
+// Email auto-complete: when user types '@', append '@gmail.com' if no domain yet
+function setupEmailAutocomplete(inputId) {
+    const input = document.getElementById(inputId);
+    if (!input) return;
+    input.addEventListener('input', function(e) {
+        const val = input.value;
+        const atIndex = val.indexOf('@');
+        if (atIndex !== -1) {
+            const local = val.slice(0, atIndex);
+            const domain = val.slice(atIndex + 1);
+            // If just '@' typed or domain empty, set gmail.com
+            if (domain === '') {
+                input.value = local + '@gmail.com';
+                // Move caret to end
+                input.setSelectionRange(input.value.length, input.value.length);
+            }
+        }
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    setupEmailAutocomplete('email');
+    setupEmailAutocomplete('editEmail');
+});
+
 // Department options based on staff type
 const departmentOptions = {
     teaching: [
@@ -402,6 +434,10 @@ function deleteStaff(id, name) {
 function viewStaffData(staffId, fullName, email, status, department, staffType, imagePath) {
     // Use SweetAlert for viewing staff details
     const imageUrl = imagePath && imagePath.trim() !== '' ? imagePath : 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxjaXJjbGUgY3g9IjUwIiBjeT0iNTAiIHI9IjUwIiBmaWxsPSIjZTllY2VmIi8+Cjxzdmcgd2lkdGg9IjUwIiBoZWlnaHQ9IjUwIiB2aWV3Qm94PSIwIDAgMjQgMjQiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeD0iMjUiIHk9IjI1Ij4KPHBhdGggZD0iTTEyIDEyQzE0LjIxIDAgMjQtMS4yNyAyNC02cy05Ljc5LTYtMjQtNi0yNCAxLjI3LTI0IDYgOS43OSA2IDI0IDZ6IiBmaWxsPSIjNmM3NTdkIi8+CjxwYXRoIGQ9Ik0xMiAxMmM2LjYyNyAwIDEyLTUuMzczIDEyLTEycy01LjM3My0xMi0xMi0xMi0xMiA1LjM3My0xMiAxMiA1LjM3MyAxMiAxMiAxMnoiIGZpbGw9IiM2Yzc1N2QiLz4KPC9zdmc+Cjwvc3ZnPg==';
+
+    // Normalize and display status: JO/COS in uppercase, others capitalized
+    const statusNorm = (status || '').toString().trim().toLowerCase();
+    const statusDisplay = ['jo','cos'].includes(statusNorm) ? statusNorm.toUpperCase() : (statusNorm ? statusNorm.charAt(0).toUpperCase() + statusNorm.slice(1) : '');
     
     Swal.fire({
         html: `
@@ -414,7 +450,7 @@ function viewStaffData(staffId, fullName, email, status, department, staffType, 
             <div class="text-start">
                 <p><strong>Staff ID:</strong> ${staffId}</p>
                 <p><strong>Email:</strong> ${email}</p>
-                <p><strong>Status:</strong> ${status}</p>
+                <p><strong>Status:</strong> ${statusDisplay}</p>
                 <p><strong>Department:</strong> ${department}</p>
                 <p><strong>Staff Type:</strong> ${staffType}</p>
             </div>

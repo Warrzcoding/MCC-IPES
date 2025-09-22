@@ -18,11 +18,16 @@ class StaffController extends Controller
 
     public function store(Request $request)
     {
+        // Normalize status to lowercase for validation consistency
+        if ($request->has('status')) {
+            $request->merge(['status' => strtolower($request->input('status'))]);
+        }
+
         $validator = Validator::make($request->all(), [
             'staff_id' => 'required|string|max:255|unique:staff,staff_id',
             'full_name' => 'required|string|max:255',
             'email' => 'required|email|unique:staff,email',
-            'status' => 'required|in:full-time,part-time',
+            'status' => 'required|in:full-time,part-time,jo,cos',
             'department' => 'required|string|max:255',
             'staff_type' => 'required|in:teaching,non-teaching',
             'staff_image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048'
@@ -84,11 +89,16 @@ class StaffController extends Controller
 
     public function update(Request $request)
     {
+        // Normalize status to lowercase for validation consistency
+        if ($request->has('status')) {
+            $request->merge(['status' => strtolower($request->input('status'))]);
+        }
+
         $validator = Validator::make($request->all(), [
             'staff_id' => 'required|string|max:255',
             'full_name' => 'required|string|max:255',
             'email' => 'required|email|unique:staff,email,' . $request->original_staff_id . ',staff_id',
-            'status' => 'required|in:full-time,part-time',
+            'status' => 'required|in:full-time,part-time,jo,cos',
             'department' => 'required|string|max:255',
             'staff_type' => 'required|in:teaching,non-teaching',
             'staff_image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048'
