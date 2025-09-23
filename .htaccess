@@ -1,15 +1,31 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
-    
-    # Allow access to these directories
+    RewriteBase /MCC-IPES/
+
+    # Protect hidden files from being viewed
     <FilesMatch "^\.">
         Order allow,deny
         Deny from all
     </FilesMatch>
 
-    # Redirect to public folder
+    # Protect sensitive files
+    <FilesMatch "^(artisan|composer.json|package.json|webpack.mix.js|.env|.git)">
+        Order allow,deny
+        Deny from all
+    </FilesMatch>
+
+    # Handle front controller
+    RewriteCond %{REQUEST_URI} !(public/|index.php)
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^(.*)$ public/$1 [L]
+
+    # Redirect if accessing "public" directly
+    RewriteRule ^public/(.*)$ $1 [L]
 </IfModule>
+
+# Disable directory browsing
+Options -Indexes
 
 # Enable access control
 <Files .env>
@@ -22,12 +38,21 @@
     Deny from all
 </Files>
 
-# Disable directory browsing 
-Options -Indexes
-
-# Allow cross-origin
+# Security headers
 <IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-XSS-Protection "1; mode=block"
+    Header set X-Frame-Options "SAMEORIGIN"
     Header set Access-Control-Allow-Origin "*"
+</IfModule>
+
+# PHP settings
+<IfModule mod_php.c>
+    php_value upload_max_filesize 64M
+    php_value post_max_size 64M
+    php_value max_execution_time 300
+    php_value max_input_time 300
+</IfModule>
 </IfModule>
 
 
