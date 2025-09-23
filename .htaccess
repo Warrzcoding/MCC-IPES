@@ -1,26 +1,59 @@
+# Enable error display for debugging
+php_flag display_errors On
+php_value error_reporting E_ALL
+
 <IfModule mod_rewrite.c>
     RewriteEngine On
-    Options +FollowSymLinks
+    Options +FollowSymLinks -MultiViews
 
-    # Enable error reporting for debugging
-    php_flag display_errors on
-    php_value error_reporting E_ALL
+    # Handle HTTPS redirection first
+    RewriteCond %{HTTPS} off
+    RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [L,R=301]
 
-    # Simple redirect to public folder
+    # Handle missing www
+    RewriteCond %{HTTP_HOST} !^www\. [NC]
+    RewriteRule ^(.*)$ https://www.%{HTTP_HOST}/$1 [L,R=301]
+
+    # Handle authorization header
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # Redirect to public folder if not already there
+    RewriteCond %{REQUEST_URI} !^/public/
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^(.*)$ public/$1 [L]
 </IfModule>
 
-# Allow .htaccess processing
-<Directory "/public_html/MCC-IPES">
-    AllowOverride All
-</Directory>
+# Set default charset
+AddDefaultCharset UTF-8
 
-# Force HTTPS and www
-RewriteEngine On
-RewriteCond %{HTTPS} off [OR]
-RewriteCond %{HTTP_HOST} !^www\. [NC]
-RewriteRule ^(.*)$ https://www.mcc-pes.com/MCC-IPES/$1 [L,R=301]
+# Allow cross-origin requests
+<IfModule mod_headers.c>
+    Header set Access-Control-Allow-Origin "*"
 </IfModule>
 
+# Disable directory listing
+Options -Indexes
 
-AddDefaultCharset UTF-8
+# Protect sensitive files
+<FilesMatch "^\.env|composer\.json|package\.json|composer\.lock|package-lock\.json">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Set security headers
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-XSS-Protection "1; mode=block"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# PHP settings
+<IfModule mod_php.c>
+    php_value upload_max_filesize 64M
+    php_value post_max_size 64M
+    php_value max_execution_time 300
+    php_value max_input_time 300
+</IfModule>

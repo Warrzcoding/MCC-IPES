@@ -6,17 +6,24 @@
     RewriteCond %{HTTP:Authorization} .
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 
-    # Redirect everything to index.php
+     # Handle X-XSRF-Token Header
+    RewriteCond %{HTTP:X-XSRF-TOKEN} .
+    RewriteRule .* - [E=HTTP_X_XSRF_TOKEN:%{HTTP:X-XSRF-TOKEN}]
+
+    # Send everything to index.php
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
-
-    # Enable error display for debugging
-    php_flag display_errors on
-    php_value error_reporting E_ALL
 </IfModule>
 
-    # Handle X-XSRF-Token Header
+# Enable error display for debugging
+php_flag display_errors On
+php_value error_reporting E_ALL
+
+# Set PHP configuration
+php_value max_execution_time 300
+php_value max_input_time 300
+php_value memory_limit 256M
     RewriteCond %{HTTP:x-xsrf-token} .
     RewriteRule .* - [E=HTTP_X_XSRF_TOKEN:%{HTTP:X-XSRF-Token}]
 
