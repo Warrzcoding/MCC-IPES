@@ -22,7 +22,7 @@
     Deny from all
 </Files>
 
-# Disable directory browsing
+# Disable directory browsing 
 Options -Indexes
 
 # Allow cross-origin
@@ -30,5 +30,5 @@ Options -Indexes
     Header set Access-Control-Allow-Origin "*"
 </IfModule>
 
-# Set default charset
+
 AddDefaultCharset UTF-8
