@@ -5,7 +5,7 @@
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
-
+ 
      # Handle X-XSRF-Token Header
     RewriteCond %{HTTP:X-XSRF-TOKEN} .
     RewriteRule .* - [E=HTTP_X_XSRF_TOKEN:%{HTTP:X-XSRF-TOKEN}]
