@@ -36,9 +36,25 @@
 </style>
 
 @php
+  // Build base collection from paginator or array
   $collection = isset($loginAttempts) ? (method_exists($loginAttempts, 'getCollection') ? $loginAttempts->getCollection() : collect($loginAttempts)) : collect();
+
+  // Deduplicate attempts by a stable fingerprint to avoid double-success display
+  $collection = $collection->unique(function ($item) {
+      return strtolower(
+          ($item->status ?? '-') . '|' .
+          ($item->email ?? '-') . '|' .
+          ($item->ip_address ?? '-') . '|' .
+          ($item->user_agent ?? '-') . '|' .
+          optional($item->created_at)->format('Y-m-d H:i:s')
+      );
+  })->values();
+
+  // Page-level counts (based on deduped items)
   $pageSuccess = $collection->where('status', 'success')->count();
   $pageFailed  = $collection->where('status', 'failed')->count();
+
+  // Keep the global total from paginator if available
   $totalCount  = isset($loginAttempts) && method_exists($loginAttempts, 'total') ? $loginAttempts->total() : $collection->count();
 @endphp
 

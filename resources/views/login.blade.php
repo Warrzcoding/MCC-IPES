@@ -1202,9 +1202,11 @@ Swal.fire({
 
         // Add form submission handling for better UX
         document.addEventListener('DOMContentLoaded', function() {
-        // Remember last role on page load (e.g., after redirect)
+        // Remember last role on page load, but only persist when returning from an error/failed submit
         const lastRole = localStorage.getItem('lastRole');
-        if (lastRole === 'admin') {
+        const hasError = @json(session()->has('error') || session()->has('id_error'));
+        const isInitialSelect = @json(!$show_student_form && !$show_login_form);
+        if (lastRole === 'admin' && (hasError || !isInitialSelect)) {
             const userTypeForm = document.getElementById('userTypeForm');
             const adminForm = document.getElementById('adminLoginForm');
             const studentIdForm = document.getElementById('studentIdForm');
@@ -1221,6 +1223,9 @@ Swal.fire({
             if (mobileBtn) mobileBtn.classList.remove('show-mobile');
             const emailEl = document.getElementById('admin_email');
             if (emailEl) emailEl.focus();
+        } else if (isInitialSelect) {
+            // Fresh visit: clear any leftover choice to show role selection
+            localStorage.removeItem('lastRole');
         }
 
         // Custom validation for admin login
