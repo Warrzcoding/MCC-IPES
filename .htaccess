@@ -1,30 +1,25 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
-    
-    # Allow the server to follow symlinks
     Options +FollowSymLinks
 
-    # Basic rewrite rule to public folder
-    RewriteCond %{REQUEST_URI} !^/public/
+    # Enable error reporting for debugging
+    php_flag display_errors on
+    php_value error_reporting E_ALL
+
+    # Simple redirect to public folder
     RewriteRule ^(.*)$ public/$1 [L]
 </IfModule>
 
-# Ensure basic access is allowed
-<Directory "public_html/MCC-IPES">
-    Require all granted
-    Allow from all
-    Order allow,deny
-    Allow from all
+# Allow .htaccess processing
+<Directory "/public_html/MCC-IPES">
+    AllowOverride All
 </Directory>
 
-# Basic protection for sensitive files
-<Files ~ "^\.env|composer.json|package.json">
-    Order allow,deny
-    Deny from all
-</Files>
-
-# Set default charset
-AddDefaultCharset UTF-8
+# Force HTTPS and www
+RewriteEngine On
+RewriteCond %{HTTPS} off [OR]
+RewriteCond %{HTTP_HOST} !^www\. [NC]
+RewriteRule ^(.*)$ https://www.mcc-pes.com/MCC-IPES/$1 [L,R=301]
 </IfModule>
 
 

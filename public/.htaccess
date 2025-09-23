@@ -6,17 +6,15 @@
     RewriteCond %{HTTP:Authorization} .
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 
-    # Send everything to index.php
+    # Redirect everything to index.php
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
-</IfModule>
 
-# Ensure access is allowed
-<Directory "${DOCUMENT_ROOT}">
-    Allow from all
-    Require all granted
-</Directory>
+    # Enable error display for debugging
+    php_flag display_errors on
+    php_value error_reporting E_ALL
+</IfModule>
 
     # Handle X-XSRF-Token Header
     RewriteCond %{HTTP:x-xsrf-token} .
