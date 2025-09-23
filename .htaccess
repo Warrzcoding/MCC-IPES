@@ -1,58 +1,30 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
-    RewriteBase /MCC-IPES/
+    
+    # Allow the server to follow symlinks
+    Options +FollowSymLinks
 
-    # Protect hidden files from being viewed
-    <FilesMatch "^\.">
-        Order allow,deny
-        Deny from all
-    </FilesMatch>
-
-    # Protect sensitive files
-    <FilesMatch "^(artisan|composer.json|package.json|webpack.mix.js|.env|.git)">
-        Order allow,deny
-        Deny from all
-    </FilesMatch>
-
-    # Handle front controller
-    RewriteCond %{REQUEST_URI} !(public/|index.php)
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteCond %{REQUEST_FILENAME} !-f
+    # Basic rewrite rule to public folder
+    RewriteCond %{REQUEST_URI} !^/public/
     RewriteRule ^(.*)$ public/$1 [L]
-
-    # Redirect if accessing "public" directly
-    RewriteRule ^public/(.*)$ $1 [L]
 </IfModule>
 
-# Disable directory browsing
-Options -Indexes
+# Ensure basic access is allowed
+<Directory "public_html/MCC-IPES">
+    Require all granted
+    Allow from all
+    Order allow,deny
+    Allow from all
+</Directory>
 
-# Enable access control
-<Files .env>
+# Basic protection for sensitive files
+<Files ~ "^\.env|composer.json|package.json">
     Order allow,deny
     Deny from all
 </Files>
 
-<Files .env.*.php>
-    Order allow,deny
-    Deny from all
-</Files>
-
-# Security headers
-<IfModule mod_headers.c>
-    Header set X-Content-Type-Options "nosniff"
-    Header set X-XSS-Protection "1; mode=block"
-    Header set X-Frame-Options "SAMEORIGIN"
-    Header set Access-Control-Allow-Origin "*"
-</IfModule>
-
-# PHP settings
-<IfModule mod_php.c>
-    php_value upload_max_filesize 64M
-    php_value post_max_size 64M
-    php_value max_execution_time 300
-    php_value max_input_time 300
-</IfModule>
+# Set default charset
+AddDefaultCharset UTF-8
 </IfModule>
 
 
