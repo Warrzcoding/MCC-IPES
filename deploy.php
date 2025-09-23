@@ -3,11 +3,32 @@
 class Deployer {
     private $output = '';
     private $basePath;
-    private $envBackupPath = '/home/YOUR_HOSTINGER_USERNAME/env_backup/.env.production';  // Adjust this path
-
+    private $envProductionPath;
+    private $envTemplate = '.env.example';
+    
     public function __construct() {
         $this->basePath = dirname(__FILE__);
+        // Automatically detect Hostinger environment and set paths
+        $this->envProductionPath = $this->detectEnvPath();
         $this->log("Deployment started at " . date('Y-m-d H:i:s'));
+    }
+
+    private function detectEnvPath() {
+        // Try to detect Hostinger's environment
+        $possiblePaths = [
+            '/home/u123456789/domains/mcc-pes.com/public_html/MCC-IPES/.env',  // Adjust domain
+            $this->basePath . '/.env.production',
+            $this->basePath . '/.env'
+        ];
+
+        foreach ($possiblePaths as $path) {
+            if (file_exists($path)) {
+                $this->log("Found environment file at: " . $path);
+                return $path;
+            }
+        }
+
+        $this->log("Warning: No existing environment file found");
     }
 
     private function log($message) {
@@ -27,19 +48,29 @@ class Deployer {
     private function preserveEnvironmentFile() {
         $envPath = $this->basePath . '/.env';
         
-        // If we have an existing .env file, back it up
+        // If we have an existing .env file, create a backup
         if (file_exists($envPath)) {
             $this->log("Backing up existing .env file...");
-            copy($envPath, $envPath . '.backup');
+            copy($envPath, $envPath . '.backup.' . date('Y-m-d-His'));
         }
-          
-        // If we have a production env backup, restore it
-        if (file_exists($this->envBackupPath)) {
-            $this->log("Restoring production .env file...");
-            copy($this->envBackupPath, $envPath);
+        
+        // If we have our production .env, use it
+        if (file_exists($this->envProductionPath) && $this->envProductionPath !== $envPath) {
+            $this->log("Restoring production .env file from: " . $this->envProductionPath);
+            copy($this->envProductionPath, $envPath);
+            chmod($envPath, 0600); // Secure the env file
             return true;
         }
         
+        // If we have a template, create a new .env
+        if (file_exists($this->basePath . '/' . $this->envTemplate)) {
+            $this->log("Creating new .env file from template...");
+            copy($this->basePath . '/' . $this->envTemplate, $envPath);
+            chmod($envPath, 0600);
+            return true;
+        }
+        
+        $this->log("Warning: Could not find any environment file to use");
         return false;
     }
 
@@ -79,49 +110,80 @@ class Deployer {
         try {
             // Ensure we're in the right directory
             chdir($this->basePath);
+            
+            $this->log("Starting deployment in: " . $this->basePath);
+
+            // Create storage directory if it doesn't exist
+            if (!file_exists($this->basePath . '/storage')) {
+                mkdir($this->basePath . '/storage', 0755, true);
+            }
 
             // Preserve environment file before any operations
-            $this->preserveEnvironmentFile();
+            if (!$this->preserveEnvironmentFile()) {
+                $this->log("WARNING: Could not set up environment file!");
+            }
 
-            // Clear any existing optimizations
-            $this->runCommand('php artisan clear-compiled');
-            $this->runCommand('php artisan cache:clear');
-            $this->runCommand('php artisan config:clear');
-            $this->runCommand('php artisan view:clear');
-            $this->runCommand('php artisan route:clear');
+            // Clear all caches first
+            $this->log("Clearing all caches...");
+            $clearCommands = [
+                'php artisan clear-compiled',
+                'php artisan cache:clear',
+                'php artisan config:clear',
+                'php artisan view:clear',
+                'php artisan route:clear'
+            ];
 
-            // Install dependencies and optimize
+            foreach ($clearCommands as $command) {
+                $this->runCommand($command);
+            }
+
+            // Install dependencies
+            $this->log("Installing dependencies...");
             $this->runCommand('composer install --no-dev --optimize-autoloader');
             
-            // Set up storage
+            // Set up storage link
             if (!file_exists($this->basePath . '/public/storage')) {
+                $this->log("Creating storage link...");
                 $this->runCommand('php artisan storage:link');
             }
 
             // Set proper permissions
             $this->setPermissions();
 
-            // Verify database connection
-            if ($this->testDatabaseConnection()) {
-                // Generate caches only if database connection works
+            // Test database connection and handle environment
+            $dbConnected = $this->testDatabaseConnection();
+            
+            if ($dbConnected) {
+                $this->log("Database connection successful, generating caches...");
+                
+                // Run migrations if needed
+                if ($this->shouldRunMigrations()) {
+                    $this->runCommand('php artisan migrate --force');
+                }
+
+                // Generate caches
                 $this->runCommand('php artisan config:cache');
                 $this->runCommand('php artisan route:cache');
                 $this->runCommand('php artisan view:cache');
                 $this->runCommand('php artisan optimize');
             } else {
-                $this->log("WARNING: Database connection failed, skipping cache generation");
+                $this->log("WARNING: Database connection failed! Please check your .env configuration");
+                $this->log("Skipping migrations and cache generation...");
             }
 
             $this->log("Deployment completed successfully!");
             return true;
 
         } catch (Exception $e) {
-            $this->log("Error during deployment: " . $e->getMessage());
+            $this->log("ERROR during deployment: " . $e->getMessage());
             return false;
         } finally {
             // Save deployment log
             $logPath = $this->basePath . '/storage/logs/deploy.log';
             file_put_contents($logPath, $this->output, FILE_APPEND);
+            
+            // Output final status
+            $this->log("Deployment process finished. Check deploy.log for details.");
         }
     }
 
