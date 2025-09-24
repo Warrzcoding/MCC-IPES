@@ -308,6 +308,30 @@
             transform: translateY(-2px);
             box-shadow: 0 10px 20px rgba(108, 117, 125, 0.3);
         }
+        
+        /* Icon-only back button */
+        .btn-back-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: #6c757d; /* same as secondary */
+            color: #fff;
+            border: none;
+            box-shadow: 0 6px 12px rgba(108, 117, 125, 0.25);
+            transition: transform .2s ease, box-shadow .2s ease, background-color .2s ease;
+        }
+        .btn-back-icon:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 18px rgba(108, 117, 125, 0.35);
+            background: #5b646b;
+            color: #fff;
+        }
+        .btn-back-icon i { font-size: 16px; }
+        /* Avoid stretching when inside Bootstrap .d-grid containers */
+        .d-grid .btn-back-icon { justify-self: start; }
         .btn-success {
             background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
             border: none;
@@ -924,9 +948,11 @@
                     <button type="submit" name="verify_student_id" class="btn btn-success" id="verifyStudentIdBtn">
                         <i class="fas fa-search"></i> Verify Student ID
                     </button>
-                    <button type="button" class="btn btn-secondary d-block w-100 mt-2" onclick="resetForm()">
-                        <i class="fas fa-arrow-left"></i> Back
-                    </button>
+                    <div class="mt-2">
+                        <button type="button" class="btn-back-icon" onclick="resetForm()" aria-label="Back">
+                            <i class="fas fa-arrow-left"></i>
+                        </button>
+                    </div>
                     <!-- Student Signup Link -->
                     <div class="signup-link">
                         <p>Don't have an account? <a href="{{ route('pre_signup') }}">
@@ -977,8 +1003,8 @@
                         <button type="submit" name="login" class="btn btn-primary">
                             <i class="fas fa-sign-in-alt"></i> Login as Administrator
                         </button>
-                        <button type="button" class="btn btn-secondary" onclick="resetForm()">
-                            <i class="fas fa-arrow-left"></i> Back
+                        <button type="button" class="btn-back-icon" onclick="resetForm()" aria-label="Back">
+                            <i class="fas fa-arrow-left"></i>
                         </button>
                     </div>
                 </form>
@@ -1023,8 +1049,8 @@
                     <button type="submit" name="login" class="btn btn-primary">
                         <i class="fas fa-sign-in-alt"></i> Login as Staff
                     </button>
-                    <button type="button" class="btn btn-secondary" onclick="resetForm()">
-                        <i class="fas fa-arrow-left"></i> Back
+                    <button type="button" class="btn-back-icon" onclick="resetForm()" aria-label="Back">
+                        <i class="fas fa-arrow-left"></i>
                     </button>
                 </form>
             @endif
@@ -1076,8 +1102,8 @@
                         <button type="submit" name="login" class="btn btn-primary">
                             <i class="fas fa-sign-in-alt"></i> Login as Student
                         </button>
-                        <a href="{{ route('clear.student.verification') }}" class="btn btn-secondary">
-                            <i class="fas fa-arrow-left"></i> Back
+                        <a href="{{ route('clear.student.verification') }}" class="btn-back-icon" aria-label="Back">
+                            <i class="fas fa-arrow-left"></i>
                         </a>
                     </div>
                     <div class="text-center mt-2">
