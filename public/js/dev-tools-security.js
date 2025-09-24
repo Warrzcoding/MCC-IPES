@@ -5,7 +5,7 @@
     console.log("Security script loaded but blanking behavior disabled");
     
     // Original code is commented out to preserve it
-    /*
+    
     let threshold = 160;
     let wasBlanked = false;
     let originalHTML = '';
@@ -38,7 +38,7 @@
         }
     }
     setInterval(checkDevTools, 500);
-    */
+    
 })();
 
 
