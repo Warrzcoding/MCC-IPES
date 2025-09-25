@@ -1,0 +1,7 @@
+# Temporary redirect from project root to Laravel public folder
+# Use this only if the domain document root points to the repo root (public_html/repo)
+
+RewriteEngine On
+# Avoid double redirect when already under /public
+RewriteCond %{REQUEST_URI} !^/public/
+RewriteRule ^(.*)$ public/$1 [L,QSA]
