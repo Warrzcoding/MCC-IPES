@@ -921,7 +921,7 @@
                                 <option value="">Choose your role...</option>
                                 <option value="student">Student</option>
                                 <option value="admin">Administrator</option>
-                                <!--<option value="staff">Staff</option>-->
+                                <option value="staff">DepartmentLoader</option>
                             </select>
                         </div>
                     </form>
