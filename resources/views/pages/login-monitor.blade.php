@@ -117,7 +117,7 @@
             <div class="row g-2 align-items-end">
               <div class="col-md-6">
                 <label class="form-label fw-bold text-primary mb-1"><i class="fas fa-search me-2"></i>Search</label>
-                <input id="lm-search" type="text" class="form-control" placeholder="Search by user, email, IP or agent...">
+                <input id="lm-search" type="text" class="form-control" placeholder="Search by user, email, IP, location or agent...">
               </div>
               <div class="col-md-3">
                 <label class="form-label fw-bold text-primary mb-1">Status</label>
@@ -167,9 +167,16 @@
                         <span class="mx-2">|</span>
                         <i class="fas fa-network-wired me-1"></i> {{ $ip }}
                         <span class="mx-2">|</span>
+                        <i class="fas fa-map-marker-alt me-1"></i> {{ $attempt->location ?? 'Unknown' }}
+                        <span class="mx-2">|</span>
                         <i class="far fa-clock me-1"></i> {{ $when }}
                       </div>
                       <div class="ua-muted truncate-2 mt-1"><i class="fas fa-desktop me-1"></i>{{ \Illuminate\Support\Str::limit($ua, 160) }}</div>
+                    </div>
+                    <div class="align-self-start">
+                      <button class="btn btn-sm btn-outline-primary view-details" data-id="{{ $attempt->id ?? $loop->index }}" data-email="{{ $email }}" data-ip="{{ $ip }}" data-location="{{ $attempt->location ?? 'Unknown' }}" data-latitude="{{ $attempt->latitude ?? '' }}" data-longitude="{{ $attempt->longitude ?? '' }}" data-usertype="{{ $attempt->user->usertype ?? 'N/A' }}" data-ua="{{ $ua }}">
+                        <i class="fas fa-eye"></i> View
+                      </button>
                     </div>
                   </div>
                 </li>
@@ -209,9 +216,11 @@
                     <th>User</th>
                     <th>Email</th>
                     <th>IP Address</th>
+                    <th>Location</th>
                     <th>User Agent</th>
                     <th>Result</th>
                     <th>When</th>
+                    <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -220,11 +229,12 @@
                       $name = $attempt->user->full_name ?? '-';
                       $ua = $attempt->user_agent ?? '-';
                     @endphp
-                    <tr class="lm-item" data-status="{{ $attempt->status }}" data-text="{{ strtolower(trim(($name.' ') . (($attempt->email ?? '-') . ' ') . (($attempt->ip_address ?? '-') . ' ') . ($ua))) }}">
+                    <tr class="lm-item" data-status="{{ $attempt->status }}" data-text="{{ strtolower(trim(($name.' ') . (($attempt->email ?? '-') . ' ') . (($attempt->ip_address ?? '-') . ' ') . ($ua) . ' ' . ($attempt->location ?? ''))) }}">
                       <td>{{ ($loginAttempts->firstItem() ?? 1) + $loop->index }}</td>
                       <td class="truncate-1" title="{{ $name }}">{{ $name }}</td>
                       <td>{{ $attempt->email ?? '-' }}</td>
                       <td>{{ $attempt->ip_address ?? '-' }}</td>
+                      <td>{{ $attempt->location ?? '-' }}</td>
                       <td class="truncate-1" title="{{ $ua }}">{{ \Illuminate\Support\Str::limit($ua, 80) }}</td>
                       <td>
                         @if($attempt->status === 'success')
@@ -234,17 +244,22 @@
                         @endif
                       </td>
                       <td>{{ $attempt->created_at?->diffForHumans() }}</td>
+                      <td>
+                        <button class="btn btn-sm btn-outline-primary view-details" data-id="{{ $attempt->id ?? $loop->index }}" data-email="{{ $attempt->email ?? '-' }}" data-ip="{{ $attempt->ip_address ?? '-' }}" data-location="{{ $attempt->location ?? 'Unknown' }}" data-latitude="{{ $attempt->latitude ?? '' }}" data-longitude="{{ $attempt->longitude ?? '' }}" data-usertype="{{ $attempt->user->usertype ?? 'N/A' }}" data-ua="{{ $ua }}">
+                          <i class="fas fa-eye"></i> View
+                        </button>
+                      </td>
                     </tr>
                   @empty
                     <tr>
-                      <td colspan="7" class="text-center text-muted">No login attempts recorded yet.</td>
+                      <td colspan="9" class="text-center text-muted">No login attempts recorded yet.</td>
                     </tr>
                   @endforelse
                 </tbody>
                 @if(isset($loginAttempts) && method_exists($loginAttempts, 'hasPages') && $loginAttempts->hasPages())
                 <tfoot>
                   <tr>
-                    <td colspan="7">
+                    <td colspan="9">
                       <nav aria-label="Table pagination">
                         <ul class="pagination justify-content-end mb-0">
                           <li class="page-item {{ $loginAttempts->onFirstPage() ? 'disabled' : '' }}">
@@ -279,10 +294,255 @@
   </div>
 </div>
 
+{{-- Details Modal --}}
+<div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="detailsModalLabel">Login Attempt Details</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-5">
+            <h6>Attempt Information</h6>
+            <table class="table table-sm">
+              <tr>
+                <th>Email:</th>
+                <td id="modal-email">-</td>
+              </tr>
+              <tr>
+                <th>IP Address:</th>
+                <td id="modal-ip">-</td>
+              </tr>
+              <tr>
+                <th>Location:</th>
+                <td id="modal-location">-</td>
+              </tr>
+              <tr>
+                <th>User Type:</th>
+                <td id="modal-usertype">-</td>
+              </tr>
+              <tr>
+                <th>User Agent:</th>
+                <td id="modal-ua">-</td>
+              </tr>
+            </table>
+          </div>
+          <div class="col-md-7">
+            <h6>Geolocation Mapping</h6>
+            <div id="map" style="height: 400px; width: 100%; border-radius: 8px; overflow: hidden; position: relative; background: #f8f9fa;"></div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Map Styling -->
+<style>
+  /* Ensure map container has proper dimensions */
+  #map {
+    min-height: 400px !important;
+    position: relative !important;
+  }
+  
+  /* Fix for Leaflet in modals */
+  .modal.show #map .leaflet-container {
+    height: 600px !important;
+  }
+
+  /* Fix for Mapbox in modals */
+  .modal.show #map .mapboxgl-map {
+    height: 600px !important;
+  }
+  
+  /* Loading state */
+  #map:empty::before {
+    content: "Loading map...";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #6c757d;
+    font-size: 14px;
+  }
+</style>
+
+<!-- Enhanced Mapping with Multiple Providers -->
+@if(config('services.google_maps.api_key'))
+<script src="https://maps.googleapis.com/maps/api/js?key={{ config('services.google_maps.api_key') }}"></script>
+@elseif(config('services.mapbox.access_token'))
+<!-- Mapbox GL JS (High-quality satellite imagery) -->
+<script src='https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js'></script>
+<link href='https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css' rel='stylesheet' />
+@else
+<!-- Multiple Free Mapping Providers with Satellite Support -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<!-- Esri Leaflet for ArcGIS satellite imagery -->
+<script src="https://unpkg.com/esri-leaflet@3.0.10/dist/esri-leaflet.js"></script>
+@endif
 <script>
   (function(){
     const $ = (s,ctx=document)=>ctx.querySelector(s);
     const $$ = (s,ctx=document)=>Array.from(ctx.querySelectorAll(s));
+
+    let map;
+    let marker;
+
+    function initMap(lat, lng) {
+      console.log('Initializing map with coordinates:', lat, lng);
+      
+      if (!lat || !lng || lat === 'null' || lng === 'null') {
+        $('#map').innerHTML = '<div class="d-flex align-items-center justify-content-center h-100"><p class="text-muted mb-0"><i class="fas fa-map-marker-alt me-2"></i>Location data not available</p></div>';
+        return;
+      }
+      
+      const latitude = parseFloat(lat);
+      const longitude = parseFloat(lng);
+      
+      if (isNaN(latitude) || isNaN(longitude)) {
+        $('#map').innerHTML = '<div class="d-flex align-items-center justify-content-center h-100"><p class="text-muted mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Invalid coordinates</p></div>';
+        return;
+      }
+      
+      // Clear any existing map content
+      $('#map').innerHTML = '';
+      
+      console.log('Using coordinates:', latitude, longitude);
+      
+      // Check if Google Maps is available
+      if (typeof google !== 'undefined' && google.maps) {
+        // Use Google Maps
+        const location = { lat: latitude, lng: longitude };
+        map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 12,
+          center: location,
+          mapTypeControl: true,
+          streetViewControl: true,
+          fullscreenControl: true
+        });
+        marker = new google.maps.Marker({
+          position: location,
+          map: map,
+          title: 'Login Location'
+        });
+      } else if (typeof mapboxgl !== 'undefined') {
+        // Use Mapbox GL JS (High-quality satellite imagery)
+        mapboxgl.accessToken = '{{ config("services.mapbox.access_token") }}';
+        $('#map').innerHTML = ''; // Clear any existing content
+        
+        map = new mapboxgl.Map({
+          container: 'map',
+          style: 'mapbox://styles/mapbox/satellite-streets-v12', // Satellite view by default
+          center: [longitude, latitude],
+          zoom: 12
+        });
+        
+        // Add navigation controls
+        map.addControl(new mapboxgl.NavigationControl());
+        
+        // Add style switcher
+        map.on('load', function() {
+          // Add layer switcher
+          const layerList = document.createElement('div');
+          layerList.className = 'mapboxgl-ctrl mapboxgl-ctrl-group';
+          layerList.style.position = 'absolute';
+          layerList.style.top = '10px';
+          layerList.style.right = '10px';
+          layerList.style.background = 'white';
+          layerList.style.borderRadius = '4px';
+          layerList.style.padding = '5px';
+          layerList.innerHTML = `
+            <select onchange="map.setStyle('mapbox://styles/mapbox/' + this.value)" style="border:none;background:transparent;">
+              <option value="satellite-streets-v12" selected>Satellite</option>
+              <option value="streets-v12">Streets</option>
+              <option value="outdoors-v12">Outdoors</option>
+              <option value="light-v11">Light</option>
+              <option value="dark-v11">Dark</option>
+            </select>
+          `;
+          document.getElementById('map').appendChild(layerList);
+        });
+        
+        // Add marker
+        marker = new mapboxgl.Marker()
+          .setLngLat([longitude, latitude])
+          .setPopup(new mapboxgl.Popup().setHTML(`
+            <div class="text-center">
+              <strong>Login Location</strong><br>
+              <small class="text-muted">Lat: ${latitude.toFixed(6)}<br>Lng: ${longitude.toFixed(6)}</small>
+            </div>
+          `))
+          .addTo(map);
+      } else if (typeof L !== 'undefined') {
+        // Use Enhanced Leaflet with Multiple Providers
+        console.log('Initializing Leaflet map');
+        $('#map').innerHTML = ''; // Clear any existing content
+        
+        try {
+          map = L.map('map', {
+            center: [latitude, longitude],
+            zoom: 12,
+            zoomControl: true,
+            attributionControl: true
+          });
+        
+        // Define multiple tile layers
+        const baseLayers = {
+          "OpenStreetMap": L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          }),
+          
+          "Satellite (Esri)": L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            attribution: '© <a href="https://www.esri.com/">Esri</a>, DigitalGlobe, GeoEye, Earthstar Geographics, CNES/Airbus DS, USDA, USGS, AeroGRID, IGN, and the GIS User Community'
+          }),
+          
+          "Terrain": L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+            attribution: '© <a href="https://opentopomap.org/">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
+          }),
+          
+          "CartoDB Positron": L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+            attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors © <a href="https://carto.com/attributions">CARTO</a>'
+          }),
+          
+          "Stamen Toner": L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner/{z}/{x}/{y}{r}.png', {
+            attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> — Map data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          })
+        };
+        
+        // Add default layer (Satellite)
+        baseLayers["Satellite (Esri)"].addTo(map);
+        
+        // Add layer control for switching between map types
+        L.control.layers(baseLayers).addTo(map);
+        
+          // Add marker with enhanced popup
+          marker = L.marker([latitude, longitude])
+            .addTo(map)
+            .bindPopup(`
+              <div class="text-center">
+                <strong>Login Location</strong><br>
+                <small class="text-muted">Lat: ${latitude.toFixed(6)}<br>Lng: ${longitude.toFixed(6)}</small>
+              </div>
+            `)
+            .openPopup();
+            
+          console.log('Leaflet map initialized successfully');
+          
+        } catch (error) {
+          console.error('Error initializing Leaflet map:', error);
+          $('#map').innerHTML = '<div class="d-flex align-items-center justify-content-center h-100"><p class="text-muted mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Error loading map</p></div>';
+        }
+      } else {
+        // No mapping library available
+        $('#map').innerHTML = '<div class="d-flex align-items-center justify-content-center h-100"><p class="text-muted mb-0"><i class="fas fa-exclamation-triangle me-2"></i>No mapping service available</p></div>';
+      }
+    }
 
     const search = $('#lm-search');
     const status = $('#lm-status');
@@ -314,5 +574,81 @@
         $('#tab-table').classList.toggle('d-none', tab !== 'table');
       });
     });
+
+    // View details modal
+    const viewButtons = $$('.view-details');
+    viewButtons.forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const email = btn.getAttribute('data-email');
+        const ip = btn.getAttribute('data-ip');
+        const location = btn.getAttribute('data-location');
+        const usertype = btn.getAttribute('data-usertype');
+        const ua = btn.getAttribute('data-ua');
+        const lat = btn.getAttribute('data-latitude');
+        const lng = btn.getAttribute('data-longitude');
+
+        $('#modal-email').textContent = email;
+        $('#modal-ip').textContent = ip;
+        $('#modal-location').textContent = location;
+        $('#modal-usertype').textContent = usertype;
+        $('#modal-ua').textContent = ua;
+
+        // Show modal first, then initialize map when modal is fully shown
+        const modal = new bootstrap.Modal($('#detailsModal'));
+        
+        // Store coordinates for later use
+        $('#detailsModal').setAttribute('data-lat', lat);
+        $('#detailsModal').setAttribute('data-lng', lng);
+        
+        modal.show();
+      });
+    });
+
+    // Handle modal events for proper map initialization
+    const detailsModal = $('#detailsModal');
+    if (detailsModal) {
+      detailsModal.addEventListener('shown.bs.modal', function() {
+        // Modal is fully shown, now initialize the map
+        const lat = this.getAttribute('data-lat');
+        const lng = this.getAttribute('data-lng');
+        
+        if (lat && lng) {
+          // Small delay to ensure DOM is ready
+          setTimeout(() => {
+            initMap(lat, lng);
+            
+            // Force map resize after initialization (for Leaflet)
+            if (map && typeof map.invalidateSize === 'function') {
+              setTimeout(() => map.invalidateSize(), 100);
+            }
+            
+            // Force map resize for Mapbox
+            if (map && typeof map.resize === 'function') {
+              setTimeout(() => map.resize(), 100);
+            }
+          }, 100);
+        }
+      });
+      
+      // Clean up map when modal is hidden
+      detailsModal.addEventListener('hidden.bs.modal', function() {
+        if (map) {
+          // Clean up map instance
+          if (typeof map.remove === 'function') {
+            map.remove(); // Leaflet cleanup
+          } else if (typeof map.destroy === 'function') {
+            map.destroy(); // Other map libraries
+          }
+          map = null;
+          marker = null;
+        }
+        
+        // Clear map container
+        const mapContainer = $('#map');
+        if (mapContainer) {
+          mapContainer.innerHTML = '';
+        }
+      });
+    }
   })();
 </script>

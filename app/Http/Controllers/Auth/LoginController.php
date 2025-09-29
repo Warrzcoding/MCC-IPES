@@ -8,15 +8,18 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Services\RecaptchaService;
+use App\Services\GeolocationService;
 use Carbon\Carbon;
 
 class LoginController extends Controller
 {
     protected $recaptchaService;
+    protected $geolocationService;
 
-    public function __construct(RecaptchaService $recaptchaService)
+    public function __construct(RecaptchaService $recaptchaService, GeolocationService $geolocationService)
     {
         $this->recaptchaService = $recaptchaService;
+        $this->geolocationService = $geolocationService;
     }
 
    /* public function showLoginForm()
@@ -172,18 +175,8 @@ public function login(Request $request)
         
         if (!$verifiedStudentId || !$verifiedStudentEmail) {
             // Record as failed because verification is missing
-            try {
-                $maybeUser = User::where('email', $request->email)->first();
-                \App\Models\LoginAttempt::create([
-                    'user_id'   => $maybeUser?->id,
-                    'email'     => $request->email,
-                    'ip_address'=> $request->ip(),
-                    'user_agent'=> $request->userAgent(),
-                    'status'    => 'failed',
-                ]);
-            } catch (\Throwable $e) {
-                \Log::warning('LoginAttempt logging (student no verification) failed: ' . $e->getMessage());
-            }
+            $maybeUser = User::where('email', $request->email)->first();
+            $this->createLoginAttempt($request, $maybeUser, 'failed');
             return redirect()->route('login')->with('error', 'Please verify your student ID first.');
         }
         
@@ -198,20 +191,10 @@ public function login(Request $request)
                 Session::put('permanent_lockout', true);
 
                 // Record lockout as failed attempt as well
-                try {
-                    $maybeUser = User::where('school_id', $verifiedStudentId)
-                                     ->where('role', 'student')
-                                     ->first();
-                    \App\Models\LoginAttempt::create([
-                        'user_id'   => $maybeUser?->id,
-                        'email'     => $request->email,
-                        'ip_address'=> $request->ip(),
-                        'user_agent'=> $request->userAgent(),
-                        'status'    => 'failed',
-                    ]);
-                } catch (\Throwable $e) {
-                    \Log::warning('LoginAttempt logging (student mismatch lockout) failed: ' . $e->getMessage());
-                }
+                $maybeUser = User::where('school_id', $verifiedStudentId)
+                                 ->where('role', 'student')
+                                 ->first();
+                $this->createLoginAttempt($request, $maybeUser, 'failed');
                 
                 $student = User::where('school_id', $verifiedStudentId)
                                ->where('role', 'student')
@@ -266,13 +249,7 @@ public function login(Request $request)
         Session::put('failed_attempts', $failedAttempts);
 
         // Log failed attempt
-        \App\Models\LoginAttempt::create([
-            'user_id' => $user?->id,
-            'email' => $request->email,
-            'ip_address' => $request->ip(),
-            'user_agent' => $request->userAgent(),
-            'status' => 'failed',
-        ]);
+        $this->createLoginAttempt($request, $user, 'failed');
 
         if ($failedAttempts >= 3) {
             $lockoutUntil = now()->addSeconds($lockoutDuration);
@@ -392,17 +369,7 @@ public function login(Request $request)
     Auth::login($user, $request->filled('remember'));
 
     // Log successful attempt (so monitor badge can reflect activity)
-    try {
-        \App\Models\LoginAttempt::create([
-            'user_id'   => $user->id,
-            'email'     => $user->email,
-            'ip_address'=> $request->ip(),
-            'user_agent'=> $request->userAgent(),
-            'status'    => 'success',
-        ]);
-    } catch (\Throwable $e) {
-        \Log::warning('LoginAttempt logging (success) failed: ' . $e->getMessage());
-    }
+    $this->createLoginAttempt($request, $user, 'success');
 
     // Set success message and redirect flag
     $welcomeMessage = 'Welcome back, ' . $user->full_name . '!';
@@ -438,18 +405,8 @@ public function login(Request $request)
     private function handleCaptchaError(Request $request, $message)
     {
         // Record as a failed attempt for captcha/security related early returns
-        try {
-            $maybeUser = User::where('email', $request->email)->first();
-            \App\Models\LoginAttempt::create([
-                'user_id'   => $maybeUser?->id,
-                'email'     => $request->email,
-                'ip_address'=> $request->ip(),
-                'user_agent'=> $request->userAgent(),
-                'status'    => 'failed',
-            ]);
-        } catch (\Throwable $e) {
-            \Log::warning('LoginAttempt logging (captcha error) failed: ' . $e->getMessage());
-        }
+        $maybeUser = User::where('email', $request->email)->first();
+        $this->createLoginAttempt($request, $maybeUser, 'failed');
 
         if ($request->user_type === 'student') {
             // For students, preserve the login form state
@@ -482,6 +439,30 @@ public function login(Request $request)
                 'error' => $message,
                 'captcha_error' => true
             ]);
+        }
+    }
+
+    /**
+     * Create a login attempt record with geolocation data
+     */
+    private function createLoginAttempt(Request $request, ?User $user, string $status): void
+    {
+        try {
+            // Get geolocation data
+            $locationData = $this->geolocationService->getLocationData($request->ip());
+            
+            \App\Models\LoginAttempt::create([
+                'user_id' => $user?->id,
+                'email' => $request->email,
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+                'status' => $status,
+                'latitude' => $locationData['latitude'],
+                'longitude' => $locationData['longitude'],
+                'location' => $locationData['location'],
+            ]);
+        } catch (\Throwable $e) {
+            \Log::warning("LoginAttempt logging failed: " . $e->getMessage());
         }
     }
 } 

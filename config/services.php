@@ -42,4 +42,12 @@ return [
         'secret_key_v3' => env('RECAPTCHA_SECRET_KEY_V3'),
     ],
 
+    'google_maps' => [
+        'api_key' => env('GOOGLE_MAPS_API_KEY'),
+    ],
+
+    'mapbox' => [
+        'access_token' => env('MAPBOX_ACCESS_TOKEN'),
+    ],
+
 ];

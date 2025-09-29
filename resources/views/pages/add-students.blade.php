@@ -57,6 +57,22 @@
                             0 0 24px rgba(var(--glow-rgb, 13,110,253), .45);
                         filter: saturate(1.1);
                     }
+
+                    /* Active glow for buttons with notifications */
+                    .glow-active {
+                        transform: translateY(-2px) scale(1.01);
+                        box-shadow:
+                            0 6px 20px rgba(0,0,0,.15),
+                            0 0 0 3px rgba(var(--glow-rgb, 255,193,7), .4),
+                            0 0 20px rgba(var(--glow-rgb, 255,193,7), .5);
+                        filter: saturate(1.2);
+                        animation: pulse-glow 2s ease-in-out infinite;
+                    }
+
+                    @keyframes pulse-glow {
+                        0%, 100% { box-shadow: 0 6px 20px rgba(0,0,0,.15), 0 0 0 3px rgba(255,193,7, .4), 0 0 20px rgba(255,193,7, .5); }
+                        50% { box-shadow: 0 6px 20px rgba(0,0,0,.15), 0 0 0 4px rgba(255,193,7, .6), 0 0 30px rgba(255,193,7, .7); }
+                    }
                 </style>
                 <!-- Evaluation Statistics -->
                 <div class="row mb-3">
@@ -617,11 +633,8 @@
         {{ $pendingCount }}
     </span>
 </a>
-<a href="{{ route('dashboard', ['page' => 'login-monitor']) }}" class="btn btn-warning position-relative me-2" id="loginMonitoringBtn" type="button" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-placement="top-end" data-bs-custom-class="popover-sm" data-bs-content="Monitor Login">
-    <i id="loginMonitorIcon" class="fas fa-user-shield {{ ($newLoginAttemptsCount ?? 0) > 1 ? 'shake-animate' : '' }}"></i>
-    <span id="loginMonitorBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger {{ ($newLoginAttemptsCount ?? 0) > 1 ? 'shake-animate' : '' }}" style="font-size: 0.75em;">
-        <span id="loginMonitorCount">{{ $newLoginAttemptsCount ?? 0 }}</span>
-    </span>
+<a href="{{ route('dashboard', ['page' => 'login-monitor']) }}" class="btn btn-warning me-2 {{ ($newLoginAttemptsCount ?? 0) > 0 ? 'glow-active' : '' }}" id="loginMonitoringBtn" type="button" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-placement="top-end" data-bs-custom-class="popover-sm" data-bs-content="Monitor Login">
+    <i id="loginMonitorIcon" class="fas fa-user-shield"></i>
 </a>
 <style>
 /* Small modal-style bubble for popovers */

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class LoginAttempt extends Model
 {
     protected $fillable = [
-        'user_id', 'email', 'ip_address', 'user_agent', 'status',
+        'user_id', 'email', 'ip_address', 'user_agent', 'status', 'latitude', 'longitude', 'location',
     ];
 
     public function user()
