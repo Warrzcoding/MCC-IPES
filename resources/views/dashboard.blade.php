@@ -16,8 +16,8 @@
         :root {
             --primary-color: #667eea;
             --secondary-color: #764ba2;
-            --accent-color: #f093fb;
-            --sidebar-width: 250px;
+             --accent-color: #f093fb;
+            --sidebar-width: 220px;
             --header-height: 75px;
             --footer-height: 80px;
             --text-dark: #2d3436;
@@ -293,16 +293,17 @@
         }
         
         .sidebar .nav-link {
-            padding: 15px 25px;
+            padding: 12px 20px;
             color: var(--text-dark);
             display: flex;
             align-items: center;
             text-decoration: none;
             transition: all 0.3s ease;
             border-left: 4px solid transparent;
-            margin: 2px 15px;
+            margin: 2px 12px;
             border-radius: 12px;
             font-weight: 500;
+            font-size: 14px;
         }
         
         .sidebar .nav-link:hover {
@@ -363,16 +364,16 @@
         }
         
         .nav-dropdown-item {
-            padding: 12px 20px 12px 45px;
+            padding: 10px 18px 10px 40px;
             color: var(--text-dark);
             display: flex;
             align-items: center;
             text-decoration: none;
             transition: all 0.3s ease;
             border-radius: 8px;
-            margin: 5px;
+            margin: 4px;
             font-weight: 500;
-            font-size: 14px;
+            font-size: 13px;
         }
         
         .nav-dropdown-item:hover {
@@ -401,7 +402,7 @@
         .main-content {
             margin-left: var(--sidebar-width);
             margin-top: var(--header-height);
-            padding: 35px;
+            padding: 24px;
             min-height: calc(100vh - var(--header-height) - var(--footer-height));
             transition: margin-left 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
@@ -415,10 +416,21 @@
             background: var(--gradient-card);
             border-radius: 20px;
             box-shadow: var(--shadow-medium);
-            padding: 35px;
+            padding: 24px;
             margin-bottom: 30px;
             border: 1px solid rgba(255,255,255,0.2);
            
+        }
+        
+        .page-full-width {
+            width: 100%;
+            max-width: 100%;
+        }
+        
+        .page-full-width .container,
+        .page-full-width .container-fluid,
+        .page-full-width .row {
+            max-width: 100%;
         }
         
         .page-header {
@@ -431,7 +443,7 @@
         }
         
         #page-title {
-            font-size: 24px;
+            font-size: 20px;
             font-weight: 700;
             color: var(--text-dark);
             margin: 0;
@@ -464,7 +476,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 0 25px;
         }
@@ -741,8 +753,10 @@
     flex-direction: row;
 }
 .toggle-btn {
-    margin-right: 10px;
+    margin-right: 8px;
     margin-left: 0;
+    padding: 10px 16px;
+    font-size: 14px;
 }
 .school-logo {
     height: 52px;
@@ -910,9 +924,9 @@
     
     <!-- Main Content -->
     <main class="main-content" id="mainContent">
-        <div class="content-card">
+        <div class="content-card page-full-width">
              <div class="d-flex justify-content-between align-items-center mb-4">
-                <h1 id="page-title" class="h3 mb-0">{{ $current_title }}</h1>
+                <h1 id="page-title" class="mb-0">{{ $current_title }}</h1>
                 <div class="text-muted">
                     <i class="fas fa-calendar-alt"></i> {{ date('F d, Y') }}
                 </div>

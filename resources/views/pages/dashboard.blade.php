@@ -145,7 +145,7 @@ if (Auth::user()->isAdmin()) {
 }
 @endphp
 
-<div class="row">
+<div class="row page-full-width">
     @if(Auth::user()->isAdmin())
         <!-- Admin Dashboard -->
         <div class="col-xl-3 col-md-6 mb-4">

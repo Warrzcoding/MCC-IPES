@@ -569,7 +569,7 @@
     60% { transform: translateY(-5px); }
 }
 </style>
-<div class="row">
+<div class="row page-full-width">
     <div class="col-12">
         <div class="card border-0 shadow-sm" style="position: relative;">
             <div class="card-header bg-transparent border-0">

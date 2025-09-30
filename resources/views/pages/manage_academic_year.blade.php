@@ -592,7 +592,7 @@ if (!function_exists('getRatingStatus')) {
         margin-top: 2em;
     }
 </style>
-<div class="row mb-4">
+<div class="row page-full-width mb-4">
     <div class="col-12">
         <h4 class="mb-0">
             <i class="fas fa-cogs me-2"></i>Manage Academic Year: <span class="fw-bold">{{ $year->year }}</span>

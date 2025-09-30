@@ -23,7 +23,7 @@
     </script>
 @endif
 
-<div class="row">
+<div class="row page-full-width">
     <div class="col-12">
         <div class="card border-0 shadow-sm">
             <div class="card-header bg-transparent border-0">
@@ -729,7 +729,7 @@
 }
 </style>
 
-<div class="row">
+<div class="row page-full-width">
     <!-- Students List -->
     <div class="col-12">
         <div class="card shadow mb-4">

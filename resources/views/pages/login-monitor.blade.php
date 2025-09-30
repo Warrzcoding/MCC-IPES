@@ -58,7 +58,7 @@
   $totalCount  = isset($loginAttempts) && method_exists($loginAttempts, 'total') ? $loginAttempts->total() : $collection->count();
 @endphp
 
-<div class="row">
+<div class="row page-full-width">
   <div class="col-12">
     <div class="enhanced-card">
       <div class="card-body p-0">

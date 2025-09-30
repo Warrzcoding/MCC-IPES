@@ -359,7 +359,7 @@ function getRatingStatus($rating) {
     }
 </style>
 
-<div class="container-fluid py-4">
+<div class="container-fluid page-full-width py-4">
     <!-- Overall Header -->
     <div class="overall-header">
         <div class="overall-title">
