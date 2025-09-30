@@ -39,6 +39,51 @@
                 </div>
                 
                 <style>
+                    /* Responsive dashboard cards with uniform height */
+                    .dashboard-cards-row {
+                        display: flex;
+                        flex-wrap: wrap;
+                        gap: 1rem;
+                        margin-bottom: 1.5rem;
+                    }
+                    
+                    .dashboard-card-col {
+                        flex: 1;
+                        min-width: 180px;
+                        max-width: 220px;
+                    }
+                    
+                    /* Responsive breakpoints for cards */
+                    @media (max-width: 1400px) {
+                        .dashboard-card-col {
+                            min-width: 160px;
+                            max-width: 200px;
+                        }
+                    }
+                    
+                    @media (max-width: 1200px) {
+                        .dashboard-card-col {
+                            min-width: 140px;
+                            max-width: 180px;
+                        }
+                    }
+                    
+                    @media (max-width: 992px) {
+                        .dashboard-card-col {
+                            min-width: 280px;
+                            max-width: 100%;
+                            flex: 1 1 calc(50% - 0.5rem);
+                        }
+                    }
+                    
+                    @media (max-width: 768px) {
+                        .dashboard-card-col {
+                            min-width: 100%;
+                            max-width: 100%;
+                            flex: 1 1 100%;
+                        }
+                    }
+
                     /* Hover/focus glow for mini dashboard cards */
                     .glow-card {
                         border: 0;
@@ -46,7 +91,57 @@
                         transition: transform .2s ease, box-shadow .2s ease, filter .2s ease;
                         will-change: transform, box-shadow;
                         cursor: pointer;
+                        height: 100%;
+                        display: flex;
+                        flex-direction: column;
                     }
+                    
+                    .glow-card .card-body {
+                        flex: 1;
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: center;
+                        align-items: center;
+                        padding: 1rem 0.75rem;
+                        min-height: 100px;
+                    }
+                    
+                    .glow-card .card-title {
+                        font-size: 1.75rem;
+                        font-weight: 700;
+                        margin-bottom: 0.5rem;
+                        line-height: 1.2;
+                    }
+                    
+                    .glow-card .card-text {
+                        font-size: 0.85rem;
+                        font-weight: 500;
+                        margin-bottom: 0;
+                        line-height: 1.3;
+                        text-align: center;
+                        word-wrap: break-word;
+                        hyphens: auto;
+                    }
+                    
+                    /* Responsive font sizes */
+                    @media (max-width: 1200px) {
+                        .glow-card .card-title {
+                            font-size: 1.5rem;
+                        }
+                        .glow-card .card-text {
+                            font-size: 0.8rem;
+                        }
+                    }
+                    
+                    @media (max-width: 992px) {
+                        .glow-card .card-title {
+                            font-size: 1.75rem;
+                        }
+                        .glow-card .card-text {
+                            font-size: 0.9rem;
+                        }
+                    }
+                    
                     .glow-card:hover,
                     .glow-card:focus-visible,
                     .glow-card:focus-within {
@@ -75,8 +170,8 @@
                     }
                 </style>
                 <!-- Evaluation Statistics -->
-                <div class="row mb-3">
-                    <div class="col-md-2">
+                <div class="dashboard-cards-row">
+                    <div class="dashboard-card-col">
                         <div class="card bg-primary text-white glow-card" tabindex="0" style="--glow-rgb: 13,110,253;">
                             <div class="card-body text-center">
                                 <h5 class="card-title">{{ $students->where('evaluation_count', 0)->count() }}</h5>
@@ -84,7 +179,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-2">
+                    <div class="dashboard-card-col">
                         <div class="card bg-warning text-white glow-card" tabindex="0" style="--glow-rgb: 255,193,7;">
                             <div class="card-body text-center">
                                 @php
@@ -134,7 +229,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-2">
+                    <div class="dashboard-card-col">
                         <div class="card text-white glow-card" tabindex="0" style="background-color: #90EE90; --glow-rgb: 144,238,144;">
                             <div class="card-body text-center">
                                 @php
@@ -184,7 +279,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-2">
+                    <div class="dashboard-card-col">
                         <div class="card text-white glow-card" tabindex="0" style="background-color: #ff8c00; --glow-rgb: 255,140,0;">
                             <div class="card-body text-center">
                                 @php
@@ -209,7 +304,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-2">
+                    <div class="dashboard-card-col">
                         <div class="card bg-success text-white glow-card" tabindex="0" style="--glow-rgb: 25,135,84;">
                             <div class="card-body text-center">
                                 @php
@@ -234,7 +329,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-2">
+                    <div class="dashboard-card-col">
                         <div class="card bg-info text-white glow-card" tabindex="0" style="--glow-rgb: 13,202,240;">
                             <div class="card-body text-center">
                                 @php
@@ -289,7 +384,6 @@
                             </div>
                         </div>
                     </div>
-
                 </div>
                 
             </div>
