@@ -111,6 +111,61 @@
     </div>
 @endif
 
+<style>
+    /* Questionnaire table layout enhancements */
+    #questionsTable {
+        table-layout: auto;
+    }
+
+    #questionsTable thead th {
+        white-space: nowrap;
+        font-weight: 600;
+    }
+
+    #questionsTable tbody td {
+        vertical-align: middle;
+    }
+
+    #questionsTable .category-cell {
+        width: 1%;
+    }
+
+    #questionsTable .category-cell .category-tag {
+        display: inline-block;
+        max-width: 220px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    #questionsTable .description-cell {
+        max-width: 320px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    #questionsTable .meta-cell,
+    #questionsTable .actions-cell {
+        width: 1%;
+        white-space: nowrap;
+    }
+
+    #questionsTable .actions-cell .btn {
+        padding-inline: 0.65rem;
+    }
+
+    @media (max-width: 992px) {
+        #questionsTable .category-cell .category-tag {
+            max-width: 160px;
+        }
+
+        #questionsTable .description-cell {
+            max-width: 220px;
+        }
+    }
+</style>
+
 <div class="row">
     <div class="col-12">
         <div class="card border-0 shadow-sm">
@@ -242,38 +297,42 @@
                             <tbody>
                                 @foreach($questions as $question)
                                     <tr>
-                                        <td><strong>{{ $question->title }}</strong></td>
-                                        <td class="text-muted" style="max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" 
+                                        <td class="category-cell">
+                                            <span class="category-tag fw-semibold" title="{{ $question->title }}">{{ $question->title }}</span>
+                                        </td>
+                                        <td class="description-cell text-muted"
                                             title="{{ $question->description }}" data-bs-toggle="tooltip" data-bs-placement="top">
                                             {{ $question->description }}
                                         </td>
-                                        <td>
+                                        <td class="meta-cell">
                                             <span class="badge {{ $question->staff_type == 'teaching' ? 'bg-primary' : 'bg-success' }}">
                                                 {{ ucfirst($question->staff_type) }}
                                             </span>
                                         </td>
-                                        <td>
+                                        <td class="meta-cell">
                                             <small class="text-muted">{{ $question->response_type }}</small>
                                         </td>
-                                        <td>
+                                        <td class="meta-cell">
                                             <span class="badge {{ $question->is_open ? 'bg-success' : 'bg-secondary' }}">
                                                 {{ $question->is_open ? 'Open' : 'Closed' }}
                                             </span>
                                         </td>
-                                        <td>
-                                            <button class="btn btn-sm btn-outline-primary @if($questionnaire_status) disabled-custom @endif"
-                                                    data-bs-toggle="modal" 
-                                                    data-bs-target="#editQuestionModal"
-                                                    @if($questionnaire_status) disabled tabindex="-1" aria-disabled="true" @else onclick="loadQuestionData({{ $question->id }}, '{{ addslashes($question->title) }}', '{{ addslashes($question->description) }}', '{{ addslashes($question->response_type) }}')" @endif
-                                            >
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-outline-danger @if($questionnaire_status) disabled-custom @endif" 
-                                                    onclick="confirmDeleteQuestion({{ $question->id }}, '{{ addslashes($question->title) }}');"
-                                                    @if($questionnaire_status) disabled tabindex="-1" aria-disabled="true" @endif
-                                            >
-                                                <i class="fas fa-trash"></i>
-                                            </button>
+                                        <td class="actions-cell">
+                                            <div class="d-inline-flex align-items-center gap-1">
+                                                <button class="btn btn-sm btn-outline-primary @if($questionnaire_status) disabled-custom @endif"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#editQuestionModal"
+                                                        @if($questionnaire_status) disabled tabindex="-1" aria-disabled="true" @else onclick="loadQuestionData({{ $question->id }}, '{{ addslashes($question->title) }}', '{{ addslashes($question->description) }}', '{{ addslashes($question->response_type) }}')" @endif
+                                                >
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-danger @if($questionnaire_status) disabled-custom @endif"
+                                                        onclick="confirmDeleteQuestion({{ $question->id }}, '{{ addslashes($question->title) }}');"
+                                                        @if($questionnaire_status) disabled tabindex="-1" aria-disabled="true" @endif
+                                                >
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </div>
                                         </td>
                                     </tr>
                                 @endforeach
