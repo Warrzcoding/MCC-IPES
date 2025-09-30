@@ -921,7 +921,7 @@
                             <select class="form-select" id="user_type" name="user_type" onchange="handleUserTypeChange()" required>
                                 <option value="">Choose your role...</option>
                                 <option value="student">Students</option>
-                                <option value="admin">Administrator</option>
+                                <option value="admin">Administratoccr</option>
                                 <!--<option value="staff">CSVLoader</option>-->
                             </select>
                         </div>
