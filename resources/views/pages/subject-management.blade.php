@@ -319,9 +319,9 @@
             <div class="card-header py-3 d-flex justify-content-between align-items-center">
                 <h6 class="m-0 font-weight-bold text-primary">Subject List</h6>
                 <div>
-                    <button class="btn btn-success me-2" id="csvUploadBtn" onclick="openCSVUpload()">
+                    <!--<button class="btn btn-success me-2" id="csvUploadBtn" onclick="openCSVUpload()">
                         <i class="fas fa-upload"></i> Upload CSV
-                    </button>
+                    </button>-->
                     <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal">
                         <i class="fas fa-plus"></i> Add Subject
                     </button>
