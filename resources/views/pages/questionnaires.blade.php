@@ -149,11 +149,19 @@
         white-space: nowrap;
     }
 
-    #questionsTable .status-badge {
-        display: inline-block;
+    #questionsTable .status-cell {
+        width: auto;
+    }
+
+    #questionsTable .status-cell .status-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
         padding-inline: 0.85rem;
         padding-block: 0.35rem;
         border-radius: 999px;
+        min-width: 88px;
+        white-space: nowrap;
     }
 
     #questionsTable .actions-cell {
@@ -322,8 +330,8 @@
                                         <td class="meta-cell">
                                             <small class="text-muted">{{ $question->response_type }}</small>
                                         </td>
-                                        <td class="meta-cell">
-                                            <span class="badge {{ $question->is_open ? 'bg-success' : 'bg-secondary' }}">
+                                        <td class="meta-cell status-cell">
+                                            <span class="badge status-badge {{ $question->is_open ? 'bg-success' : 'bg-secondary' }}">
                                                 {{ $question->is_open ? 'Open' : 'Closed' }}
                                             </span>
                                         </td>
