@@ -469,55 +469,60 @@
 /* Responsive Questionnaires Table Styles */
 #questionsTable {
     font-size: 0.875rem;
-    table-layout: auto;
+    table-layout: fixed;
     width: 100%;
 }
 
 #questionsTable th,
 #questionsTable td {
     vertical-align: middle;
-    padding: 0.75rem 0.5rem;
+    padding: 0.75rem 0.3rem;
 }
 
-/* Content-fit column widths - no wasted space */
+/* Minimal column widths - exact fit for content */
 #questionsTable th:nth-child(1), #questionsTable td:nth-child(1) { /* Category */
-    width: 1%;
+    width: 120px;
     white-space: nowrap;
 }
 
 #questionsTable th:nth-child(2), #questionsTable td:nth-child(2) { /* Description */
     width: auto;
-    max-width: 400px;
     word-wrap: break-word;
     overflow-wrap: break-word;
 }
 
 #questionsTable th:nth-child(3), #questionsTable td:nth-child(3) { /* Staff Type */
-    width: 1%;
+    width: 80px;
     white-space: nowrap;
+    text-align: center;
 }
 
 #questionsTable th:nth-child(4), #questionsTable td:nth-child(4) { /* Response Type */
-    width: 1%;
+    width: 100px;
     white-space: nowrap;
+    text-align: center;
 }
 
 #questionsTable th:nth-child(5), #questionsTable td:nth-child(5) { /* Status */
-    width: 1%;
+    width: 60px;
     white-space: nowrap;
+    text-align: center;
 }
 
 #questionsTable th:nth-child(6), #questionsTable td:nth-child(6) { /* Action */
-    width: 1%;
+    width: 80px;
     white-space: nowrap;
+    text-align: center;
+    padding: 0.75rem 0.1rem;
 }
 
-/* Action buttons styling */
+/* Action buttons styling - compact */
 #questionsTable .btn {
-    font-size: 0.75rem;
-    padding: 0.25rem 0.5rem;
-    margin: 0 0.1rem;
+    font-size: 0.7rem;
+    padding: 0.2rem 0.3rem;
+    margin: 0 0.05rem;
     white-space: nowrap;
+    min-width: auto;
 }
 
 /* Badge styling */
