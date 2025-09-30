@@ -44,6 +44,252 @@
 .subject-type-major { background-color: #007bff; } /* Primary Blue */
 .subject-type-minor { background-color: #e91e63; } /* Pink/Magenta */
 .subject-type-bridging { background-color: #fd7e14; } /* Orange */
+
+/* Responsive table styles for zoom compatibility */
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+#subjectTable1, #subjectTable2 {
+    min-width: 100%;
+    white-space: nowrap;
+    font-size: 0.875rem;
+}
+
+#subjectTable1 th, #subjectTable1 td,
+#subjectTable2 th, #subjectTable2 td {
+    padding: 0.5rem 0.3rem;
+    vertical-align: middle;
+    border: 1px solid #dee2e6;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Subject Code column */
+#subjectTable1 th:nth-child(1), #subjectTable1 td:nth-child(1),
+#subjectTable2 th:nth-child(1), #subjectTable2 td:nth-child(1) {
+    width: 120px;
+    min-width: 120px;
+    max-width: 120px;
+}
+
+/* Subject Name column */
+#subjectTable1 th:nth-child(2), #subjectTable1 td:nth-child(2),
+#subjectTable2 th:nth-child(2), #subjectTable2 td:nth-child(2) {
+    width: 200px;
+    min-width: 200px;
+    max-width: 200px;
+}
+
+/* Department column */
+#subjectTable1 th:nth-child(3), #subjectTable1 td:nth-child(3),
+#subjectTable2 th:nth-child(3), #subjectTable2 td:nth-child(3) {
+    width: 100px;
+    min-width: 100px;
+    max-width: 100px;
+    text-align: center;
+}
+
+/* Year column */
+#subjectTable1 th:nth-child(4), #subjectTable1 td:nth-child(4),
+#subjectTable2 th:nth-child(4), #subjectTable2 td:nth-child(4) {
+    width: 80px;
+    min-width: 80px;
+    max-width: 80px;
+    text-align: center;
+}
+
+/* Section column */
+#subjectTable1 th:nth-child(5), #subjectTable1 td:nth-child(5),
+#subjectTable2 th:nth-child(5), #subjectTable2 td:nth-child(5) {
+    width: 90px;
+    min-width: 90px;
+    max-width: 90px;
+    text-align: center;
+}
+
+/* Assigned Instructor column */
+#subjectTable1 th:nth-child(6), #subjectTable1 td:nth-child(6),
+#subjectTable2 th:nth-child(6), #subjectTable2 td:nth-child(6) {
+    width: 150px;
+    min-width: 150px;
+    max-width: 150px;
+}
+
+/* Subject Type column */
+#subjectTable1 th:nth-child(7), #subjectTable1 td:nth-child(7),
+#subjectTable2 th:nth-child(7), #subjectTable2 td:nth-child(7) {
+    width: 100px;
+    min-width: 100px;
+    max-width: 100px;
+    text-align: center;
+}
+
+/* Actions column */
+#subjectTable1 th:nth-child(8), #subjectTable1 td:nth-child(8),
+#subjectTable2 th:nth-child(8), #subjectTable2 td:nth-child(8) {
+    width: 100px;
+    min-width: 100px;
+    max-width: 100px;
+    text-align: center;
+}
+
+/* Action buttons styling */
+#subjectTable1 .btn-sm, #subjectTable2 .btn-sm {
+    padding: 0.2rem 0.4rem;
+    font-size: 0.75rem;
+    margin: 0 1px;
+    white-space: nowrap;
+}
+
+/* Responsive adjustments for different zoom levels */
+@media (max-width: 1400px) {
+    #subjectTable1, #subjectTable2 {
+        font-size: 0.8rem;
+    }
+    
+    #subjectTable1 th, #subjectTable1 td,
+    #subjectTable2 th, #subjectTable2 td {
+        padding: 0.4rem 0.25rem;
+    }
+    
+    #subjectTable1 .btn-sm, #subjectTable2 .btn-sm {
+        padding: 0.15rem 0.3rem;
+        font-size: 0.7rem;
+    }
+    
+    .dept-badge {
+        font-size: 0.65rem;
+        padding: 0.2rem 0.4rem;
+    }
+    
+    .badge {
+        font-size: 0.65rem;
+        padding: 0.2rem 0.4rem;
+    }
+}
+
+@media (max-width: 1200px) {
+    #subjectTable1, #subjectTable2 {
+        font-size: 0.75rem;
+    }
+    
+    #subjectTable1 th, #subjectTable1 td,
+    #subjectTable2 th, #subjectTable2 td {
+        padding: 0.3rem 0.2rem;
+    }
+    
+    #subjectTable1 .btn-sm, #subjectTable2 .btn-sm {
+        padding: 0.1rem 0.25rem;
+        font-size: 0.65rem;
+    }
+    
+    .dept-badge {
+        font-size: 0.6rem;
+        padding: 0.15rem 0.3rem;
+    }
+    
+    .badge {
+        font-size: 0.6rem;
+        padding: 0.15rem 0.3rem;
+    }
+}
+
+@media (max-width: 992px) {
+    #subjectTable1, #subjectTable2 {
+        font-size: 0.7rem;
+    }
+    
+    #subjectTable1 th, #subjectTable1 td,
+    #subjectTable2 th, #subjectTable2 td {
+        padding: 0.25rem 0.15rem;
+    }
+    
+    #subjectTable1 .btn-sm, #subjectTable2 .btn-sm {
+        padding: 0.1rem 0.2rem;
+        font-size: 0.6rem;
+    }
+    
+    /* Stack action buttons vertically on smaller screens */
+    #subjectTable1 td:nth-child(8) .btn-sm,
+    #subjectTable2 td:nth-child(8) .btn-sm {
+        display: block;
+        margin: 1px 0;
+        width: 100%;
+    }
+    
+    .dept-badge {
+        font-size: 0.55rem;
+        padding: 0.1rem 0.25rem;
+    }
+    
+    .badge {
+        font-size: 0.55rem;
+        padding: 0.1rem 0.25rem;
+    }
+}
+
+@media (max-width: 768px) {
+    #subjectTable1, #subjectTable2 {
+        font-size: 0.65rem;
+    }
+    
+    #subjectTable1 th, #subjectTable1 td,
+    #subjectTable2 th, #subjectTable2 td {
+        padding: 0.2rem 0.1rem;
+    }
+    
+    #subjectTable1 .btn-sm, #subjectTable2 .btn-sm {
+        padding: 0.05rem 0.15rem;
+        font-size: 0.55rem;
+    }
+    
+    .dept-badge {
+        font-size: 0.5rem;
+        padding: 0.05rem 0.2rem;
+    }
+    
+    .badge {
+        font-size: 0.5rem;
+        padding: 0.05rem 0.2rem;
+    }
+}
+
+/* Ensure table doesn't break layout */
+.table-responsive {
+    border: 1px solid #dee2e6;
+    border-radius: 0.375rem;
+}
+
+/* Header styling */
+#subjectTable1 thead th, #subjectTable2 thead th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    border-bottom: 2px solid #dee2e6;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+/* Hover effects */
+#subjectTable1 tbody tr:hover, #subjectTable2 tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+/* Text truncation for long content */
+#subjectTable1 td, #subjectTable2 td {
+    max-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Allow text wrapping only for action buttons */
+#subjectTable1 td:nth-child(8), #subjectTable2 td:nth-child(8) {
+    white-space: normal;
+}
 </style>
 
 <div class="row">
