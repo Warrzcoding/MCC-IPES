@@ -922,7 +922,7 @@
                                 <option value="">Choose your role...</option>
                                 <option value="student">Student</option>
                                 <option value="admin">Administrator</option>
-                                <option value="staff">CSVLoader</option>
+                                <!--<option value="staff">CSVLoader</option>-->
                             </select>
                         </div>
                     </form>
