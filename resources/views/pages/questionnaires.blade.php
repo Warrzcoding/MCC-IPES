@@ -465,6 +465,219 @@
     cursor: not-allowed;
     pointer-events: auto !important;
 }
+
+/* Responsive Questionnaires Table Styles */
+#questionsTable {
+    font-size: 0.875rem;
+    table-layout: fixed;
+    width: 100%;
+}
+
+#questionsTable th,
+#questionsTable td {
+    vertical-align: middle;
+    padding: 0.75rem 0.5rem;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+/* Fixed column widths for questionnaires table */
+#questionsTable th:nth-child(1), #questionsTable td:nth-child(1) { /* Category */
+    min-width: 120px;
+    max-width: 120px;
+    width: 120px;
+}
+
+#questionsTable th:nth-child(2), #questionsTable td:nth-child(2) { /* Description */
+    min-width: 250px;
+    max-width: 250px;
+    width: 250px;
+}
+
+#questionsTable th:nth-child(3), #questionsTable td:nth-child(3) { /* Staff Type */
+    min-width: 100px;
+    max-width: 100px;
+    width: 100px;
+}
+
+#questionsTable th:nth-child(4), #questionsTable td:nth-child(4) { /* Response Type */
+    min-width: 120px;
+    max-width: 120px;
+    width: 120px;
+}
+
+#questionsTable th:nth-child(5), #questionsTable td:nth-child(5) { /* Status */
+    min-width: 80px;
+    max-width: 80px;
+    width: 80px;
+}
+
+#questionsTable th:nth-child(6), #questionsTable td:nth-child(6) { /* Action */
+    min-width: 120px;
+    max-width: 120px;
+    width: 120px;
+}
+
+/* Action buttons styling */
+#questionsTable .btn {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    margin: 0 0.1rem;
+    white-space: nowrap;
+}
+
+/* Badge styling */
+#questionsTable .badge {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    white-space: nowrap;
+}
+
+/* Text truncation for long content */
+#questionsTable td {
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+/* Sticky header */
+#questionsTable thead th {
+    position: sticky;
+    top: 0;
+    background-color: #f8f9fa;
+    z-index: 10;
+    border-bottom: 2px solid #dee2e6;
+}
+
+/* Hover effects */
+#questionsTable tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+/* Responsive breakpoints */
+@media (max-width: 1400px) {
+    #questionsTable {
+        font-size: 0.8rem;
+    }
+    
+    #questionsTable th,
+    #questionsTable td {
+        padding: 0.6rem 0.4rem;
+    }
+    
+    #questionsTable .btn {
+        font-size: 0.7rem;
+        padding: 0.2rem 0.4rem;
+    }
+    
+    #questionsTable .badge {
+        font-size: 0.7rem;
+        padding: 0.2rem 0.4rem;
+    }
+}
+
+@media (max-width: 1200px) {
+    #questionsTable {
+        font-size: 0.75rem;
+    }
+    
+    #questionsTable th,
+    #questionsTable td {
+        padding: 0.5rem 0.3rem;
+    }
+    
+    #questionsTable .btn {
+        font-size: 0.65rem;
+        padding: 0.15rem 0.3rem;
+    }
+    
+    #questionsTable .badge {
+        font-size: 0.65rem;
+        padding: 0.15rem 0.3rem;
+    }
+}
+
+@media (max-width: 992px) {
+    #questionsTable {
+        font-size: 0.7rem;
+    }
+    
+    #questionsTable th,
+    #questionsTable td {
+        padding: 0.4rem 0.25rem;
+    }
+    
+    #questionsTable .btn {
+        font-size: 0.6rem;
+        padding: 0.1rem 0.25rem;
+        display: block;
+        width: 100%;
+        margin: 0.1rem 0;
+    }
+    
+    #questionsTable .badge {
+        font-size: 0.6rem;
+        padding: 0.1rem 0.25rem;
+    }
+    
+    /* Stack action buttons vertically on smaller screens */
+    #questionsTable td:nth-child(6) {
+        text-align: center;
+    }
+}
+
+@media (max-width: 768px) {
+    #questionsTable {
+        font-size: 0.65rem;
+    }
+    
+    #questionsTable th,
+    #questionsTable td {
+        padding: 0.3rem 0.2rem;
+    }
+    
+    #questionsTable .btn {
+        font-size: 0.55rem;
+        padding: 0.05rem 0.2rem;
+    }
+    
+    #questionsTable .badge {
+        font-size: 0.55rem;
+        padding: 0.05rem 0.2rem;
+    }
+}
+
+/* Ensure table is horizontally scrollable on very small screens */
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Additional responsive header styling */
+.card-header .d-flex {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+@media (max-width: 768px) {
+    .card-header .d-flex {
+        flex-direction: column;
+        align-items: flex-start !important;
+    }
+    
+    .card-header .d-flex .gap-2 {
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    .card-header .btn {
+        font-size: 0.8rem;
+        padding: 0.4rem 0.8rem;
+    }
+    
+    .card-header .badge {
+        font-size: 0.7rem;
+    }
+}
 </style>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
