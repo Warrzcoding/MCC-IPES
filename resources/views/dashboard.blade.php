@@ -897,9 +897,9 @@
             
             @if(Auth::user()->isStudent())
                 <div class="nav-section-title" style="margin-top: 20px;">Evaluation</div>
-                <a href="{{ route('dashboard', ['page' => 'staff-list']) }}" class="nav-link {{ $page === 'staff-list' ? 'active' : '' }}">
+               <!--<a href="{{ route('dashboard', ['page' => 'staff-list']) }}" class="nav-link {{ $page === 'staff-list' ? 'active' : '' }}">
                     <i class="fas fa-users"></i> All Staff
-                </a>
+                </a>-->
                 
                 <a href="{{ route('dashboard', ['page' => 'evaluates']) }}" class="nav-link {{ $page === 'evaluates' ? 'active' : '' }}">
                     <i class="fas fa-clipboard-check"></i> Evaluate Staff
