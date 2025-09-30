@@ -351,7 +351,7 @@
                                     @endif"
                                 title="@if($questionnaire_status)You can only archive questions when the questionnaire is closed.@endif"
                             >
-                                <i class="fas fa-save me-1"></i>Save & Arcddve All Questions
+                                <i class="fas fa-save me-1"></i>Save & Arcddvfdfdfe All Questions
                             </button>
                         </form>
                     </div>
