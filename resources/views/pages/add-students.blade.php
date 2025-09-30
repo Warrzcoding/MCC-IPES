@@ -39,48 +39,43 @@
                 </div>
                 
                 <style>
-                    /* Responsive dashboard cards with uniform height */
+                    /* Responsive dashboard cards with uniform height - ALWAYS SINGLE ROW */
                     .dashboard-cards-row {
                         display: flex;
-                        flex-wrap: wrap;
-                        gap: 1rem;
+                        flex-wrap: nowrap; /* Prevent wrapping to keep all cards in one line */
+                        gap: 0.5rem; /* Reduced gap to save space */
                         margin-bottom: 1.5rem;
+                        overflow-x: auto; /* Allow horizontal scroll if needed on very small screens */
                     }
                     
                     .dashboard-card-col {
-                        flex: 1;
-                        min-width: 180px;
-                        max-width: 220px;
+                        flex: 1 1 0; /* Equal flex basis for all cards */
+                        min-width: 0; /* Allow cards to shrink below content size */
+                        max-width: none; /* Remove max-width restriction */
                     }
                     
-                    /* Responsive breakpoints for cards */
+                    /* Responsive breakpoints for cards - but always keep in single row */
                     @media (max-width: 1400px) {
-                        .dashboard-card-col {
-                            min-width: 160px;
-                            max-width: 200px;
+                        .dashboard-cards-row {
+                            gap: 0.4rem;
                         }
                     }
                     
                     @media (max-width: 1200px) {
-                        .dashboard-card-col {
-                            min-width: 140px;
-                            max-width: 180px;
+                        .dashboard-cards-row {
+                            gap: 0.3rem;
                         }
                     }
                     
                     @media (max-width: 992px) {
-                        .dashboard-card-col {
-                            min-width: 280px;
-                            max-width: 100%;
-                            flex: 1 1 calc(50% - 0.5rem);
+                        .dashboard-cards-row {
+                            gap: 0.25rem;
                         }
                     }
                     
                     @media (max-width: 768px) {
-                        .dashboard-card-col {
-                            min-width: 100%;
-                            max-width: 100%;
-                            flex: 1 1 100%;
+                        .dashboard-cards-row {
+                            gap: 0.2rem;
                         }
                     }
 
@@ -102,43 +97,66 @@
                         flex-direction: column;
                         justify-content: center;
                         align-items: center;
-                        padding: 1rem 0.75rem;
-                        min-height: 100px;
+                        padding: 0.75rem 0.5rem;
+                        min-height: 80px;
                     }
                     
                     .glow-card .card-title {
-                        font-size: 1.75rem;
+                        font-size: 1.5rem;
                         font-weight: 700;
-                        margin-bottom: 0.5rem;
-                        line-height: 1.2;
+                        margin-bottom: 0.3rem;
+                        line-height: 1.1;
                     }
                     
                     .glow-card .card-text {
-                        font-size: 0.85rem;
+                        font-size: 0.75rem;
                         font-weight: 500;
                         margin-bottom: 0;
-                        line-height: 1.3;
+                        line-height: 1.2;
                         text-align: center;
                         word-wrap: break-word;
                         hyphens: auto;
+                        overflow-wrap: break-word;
                     }
                     
-                    /* Responsive font sizes */
-                    @media (max-width: 1200px) {
+                    /* Responsive font sizes - scale down more aggressively */
+                    @media (max-width: 1400px) {
                         .glow-card .card-title {
-                            font-size: 1.5rem;
+                            font-size: 1.3rem;
                         }
                         .glow-card .card-text {
-                            font-size: 0.8rem;
+                            font-size: 0.7rem;
+                        }
+                    }
+                    
+                    @media (max-width: 1200px) {
+                        .glow-card .card-title {
+                            font-size: 1.2rem;
+                        }
+                        .glow-card .card-text {
+                            font-size: 0.65rem;
                         }
                     }
                     
                     @media (max-width: 992px) {
                         .glow-card .card-title {
-                            font-size: 1.75rem;
+                            font-size: 1.1rem;
                         }
                         .glow-card .card-text {
-                            font-size: 0.9rem;
+                            font-size: 0.6rem;
+                        }
+                    }
+                    
+                    @media (max-width: 768px) {
+                        .glow-card .card-title {
+                            font-size: 1rem;
+                        }
+                        .glow-card .card-text {
+                            font-size: 0.55rem;
+                        }
+                        .glow-card .card-body {
+                            padding: 0.5rem 0.25rem;
+                            min-height: 60px;
                         }
                     }
                     
