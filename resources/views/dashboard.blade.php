@@ -864,11 +864,11 @@
             @if(Auth::user()->isAdmin())
                 <div class="nav-section-title" style="margin-top: 20px;">Administration</div>
                 <a href="{{ route('dashboard', ['page' => 'add-students']) }}" class="nav-link {{ $page === 'add-students' ? 'active' : '' }}">
-                    <i class="fas fa-user-plus"></i> Add Students
+                    <i class="fas fa-user-plus"></i> Students
                 </a>
                 
                 <a href="{{ route('dashboard', ['page' => 'add-staff']) }}" class="nav-link {{ $page === 'add-staff' ? 'active' : '' }}">
-                    <i class="fas fa-chalkboard-teacher"></i> Add Staff
+                    <i class="fas fa-chalkboard-teacher"></i> Staff
                 </a>
                 
                 <a href="{{ route('dashboard', ['page' => 'subject-management']) }}" class="nav-link {{ $page === 'subject-management' ? 'active' : '' }}">
