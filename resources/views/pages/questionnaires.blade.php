@@ -149,6 +149,17 @@
         white-space: nowrap;
     }
 
+    #questionsTable thead th:not(:nth-child(2)),
+    #questionsTable tbody td:not(:nth-child(2)) {
+        width: 1%;
+    }
+
+    #questionsTable tbody td:nth-child(5) .badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding-inline: 0.75rem;
+    }
 
     #questionsTable .actions-cell {
         width: 1%;
