@@ -127,15 +127,15 @@
     }
 
     #questionsTable .category-cell {
-        width: 1%;
+        width: auto;
     }
 
     #questionsTable .category-cell .category-tag {
         display: inline-block;
-        max-width: 220px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+        max-width: 100%;
+        white-space: normal;
+        word-break: break-word;
+        line-height: 1.4;
     }
 
     #questionsTable .description-cell {
@@ -145,7 +145,17 @@
         text-overflow: ellipsis;
     }
 
-    #questionsTable .meta-cell,
+    #questionsTable .meta-cell {
+        white-space: nowrap;
+    }
+
+    #questionsTable .status-badge {
+        display: inline-block;
+        padding-inline: 0.85rem;
+        padding-block: 0.35rem;
+        border-radius: 999px;
+    }
+
     #questionsTable .actions-cell {
         width: 1%;
         white-space: nowrap;
