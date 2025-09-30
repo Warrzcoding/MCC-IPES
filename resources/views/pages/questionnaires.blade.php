@@ -469,7 +469,7 @@
 /* Responsive Questionnaires Table Styles */
 #questionsTable {
     font-size: 0.875rem;
-    table-layout: fixed;
+    table-layout: auto;
     width: 100%;
 }
 
@@ -477,45 +477,39 @@
 #questionsTable td {
     vertical-align: middle;
     padding: 0.75rem 0.5rem;
+}
+
+/* Content-fit column widths - no wasted space */
+#questionsTable th:nth-child(1), #questionsTable td:nth-child(1) { /* Category */
+    width: 1%;
+    white-space: nowrap;
+}
+
+#questionsTable th:nth-child(2), #questionsTable td:nth-child(2) { /* Description */
+    width: auto;
+    max-width: 400px;
     word-wrap: break-word;
     overflow-wrap: break-word;
 }
 
-/* Optimized column widths based on content and heading text length */
-#questionsTable th:nth-child(1), #questionsTable td:nth-child(1) { /* Category */
-    min-width: 140px;
-    max-width: 140px;
-    width: 140px;
-}
-
-#questionsTable th:nth-child(2), #questionsTable td:nth-child(2) { /* Description */
-    min-width: 350px;
-    max-width: 350px;
-    width: 350px;
-}
-
 #questionsTable th:nth-child(3), #questionsTable td:nth-child(3) { /* Staff Type */
-    min-width: 85px;
-    max-width: 85px;
-    width: 85px;
+    width: 1%;
+    white-space: nowrap;
 }
 
 #questionsTable th:nth-child(4), #questionsTable td:nth-child(4) { /* Response Type */
-    min-width: 110px;
-    max-width: 110px;
-    width: 110px;
+    width: 1%;
+    white-space: nowrap;
 }
 
 #questionsTable th:nth-child(5), #questionsTable td:nth-child(5) { /* Status */
-    min-width: 65px;
-    max-width: 65px;
-    width: 65px;
+    width: 1%;
+    white-space: nowrap;
 }
 
 #questionsTable th:nth-child(6), #questionsTable td:nth-child(6) { /* Action */
-    min-width: 90px;
-    max-width: 90px;
-    width: 90px;
+    width: 1%;
+    white-space: nowrap;
 }
 
 /* Action buttons styling */
@@ -553,7 +547,7 @@
     background-color: #f8f9fa;
 }
 
-/* Responsive breakpoints */
+/* Responsive breakpoints with auto-sizing */
 @media (max-width: 1400px) {
     #questionsTable {
         font-size: 0.8rem;
@@ -561,17 +555,18 @@
     
     #questionsTable th,
     #questionsTable td {
-        padding: 0.6rem 0.4rem;
+        padding: 0.6rem 0.3rem;
     }
     
     #questionsTable .btn {
         font-size: 0.7rem;
-        padding: 0.2rem 0.4rem;
+        padding: 0.2rem 0.3rem;
+        margin: 0 0.05rem;
     }
     
     #questionsTable .badge {
         font-size: 0.7rem;
-        padding: 0.2rem 0.4rem;
+        padding: 0.2rem 0.3rem;
     }
 }
 
@@ -582,17 +577,18 @@
     
     #questionsTable th,
     #questionsTable td {
-        padding: 0.5rem 0.3rem;
+        padding: 0.5rem 0.25rem;
     }
     
     #questionsTable .btn {
         font-size: 0.65rem;
-        padding: 0.15rem 0.3rem;
+        padding: 0.15rem 0.25rem;
+        margin: 0 0.05rem;
     }
     
     #questionsTable .badge {
         font-size: 0.65rem;
-        padding: 0.15rem 0.3rem;
+        padding: 0.15rem 0.25rem;
     }
 }
 
@@ -603,25 +599,26 @@
     
     #questionsTable th,
     #questionsTable td {
-        padding: 0.4rem 0.25rem;
+        padding: 0.4rem 0.2rem;
     }
     
     #questionsTable .btn {
         font-size: 0.6rem;
-        padding: 0.1rem 0.25rem;
+        padding: 0.1rem 0.2rem;
         display: block;
         width: 100%;
-        margin: 0.1rem 0;
+        margin: 0.05rem 0;
     }
     
     #questionsTable .badge {
         font-size: 0.6rem;
-        padding: 0.1rem 0.25rem;
+        padding: 0.1rem 0.2rem;
     }
     
-    /* Stack action buttons vertically on smaller screens */
+    /* Stack action buttons vertically and center them */
     #questionsTable td:nth-child(6) {
         text-align: center;
+        white-space: normal;
     }
 }
 
@@ -632,17 +629,17 @@
     
     #questionsTable th,
     #questionsTable td {
-        padding: 0.3rem 0.2rem;
+        padding: 0.3rem 0.15rem;
     }
     
     #questionsTable .btn {
         font-size: 0.55rem;
-        padding: 0.05rem 0.2rem;
+        padding: 0.05rem 0.15rem;
     }
     
     #questionsTable .badge {
         font-size: 0.55rem;
-        padding: 0.05rem 0.2rem;
+        padding: 0.05rem 0.15rem;
     }
 }
 
