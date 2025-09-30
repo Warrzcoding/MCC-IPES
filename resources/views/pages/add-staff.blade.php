@@ -57,6 +57,246 @@
                 </div>
             </div>
             <div class="card-body">
+                <style>
+                    /* Responsive table styles for zoom compatibility */
+                    .table-responsive {
+                        overflow-x: auto;
+                        -webkit-overflow-scrolling: touch;
+                    }
+                    
+                    #staffTable {
+                        min-width: 100%;
+                        white-space: nowrap;
+                        font-size: 0.875rem;
+                    }
+                    
+                    #staffTable th,
+                    #staffTable td {
+                        padding: 0.5rem 0.3rem;
+                        vertical-align: middle;
+                        border: 1px solid #dee2e6;
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                    }
+                    
+                    /* Profile image column */
+                    #staffTable th:nth-child(1),
+                    #staffTable td:nth-child(1) {
+                        width: 60px;
+                        min-width: 60px;
+                        max-width: 60px;
+                        text-align: center;
+                    }
+                    
+                    /* Staff ID column */
+                    #staffTable th:nth-child(2),
+                    #staffTable td:nth-child(2) {
+                        width: 100px;
+                        min-width: 100px;
+                        max-width: 100px;
+                    }
+                    
+                    /* Full Name column */
+                    #staffTable th:nth-child(3),
+                    #staffTable td:nth-child(3) {
+                        width: 150px;
+                        min-width: 150px;
+                        max-width: 150px;
+                    }
+                    
+                    /* Email column */
+                    #staffTable th:nth-child(4),
+                    #staffTable td:nth-child(4) {
+                        width: 180px;
+                        min-width: 180px;
+                        max-width: 180px;
+                    }
+                    
+                    /* Department column */
+                    #staffTable th:nth-child(5),
+                    #staffTable td:nth-child(5) {
+                        width: 120px;
+                        min-width: 120px;
+                        max-width: 120px;
+                    }
+                    
+                    /* Status column */
+                    #staffTable th:nth-child(6),
+                    #staffTable td:nth-child(6) {
+                        width: 80px;
+                        min-width: 80px;
+                        max-width: 80px;
+                    }
+                    
+                    /* Staff Type column */
+                    #staffTable th:nth-child(7),
+                    #staffTable td:nth-child(7) {
+                        width: 100px;
+                        min-width: 100px;
+                        max-width: 100px;
+                    }
+                    
+                    /* Created column */
+                    #staffTable th:nth-child(8),
+                    #staffTable td:nth-child(8) {
+                        width: 90px;
+                        min-width: 90px;
+                        max-width: 90px;
+                    }
+                    
+                    /* Actions column */
+                    #staffTable th:nth-child(9),
+                    #staffTable td:nth-child(9) {
+                        width: 120px;
+                        min-width: 120px;
+                        max-width: 120px;
+                        text-align: center;
+                    }
+                    
+                    /* Action buttons styling */
+                    #staffTable .btn-sm {
+                        padding: 0.2rem 0.4rem;
+                        font-size: 0.75rem;
+                        margin: 0 1px;
+                        white-space: nowrap;
+                    }
+                    
+                    /* Profile image responsive */
+                    #staffTable img {
+                        width: 35px !important;
+                        height: 35px !important;
+                        border-radius: 50%;
+                        object-fit: cover;
+                    }
+                    
+                    /* Responsive adjustments for different zoom levels */
+                    @media (max-width: 1400px) {
+                        #staffTable {
+                            font-size: 0.8rem;
+                        }
+                        
+                        #staffTable th,
+                        #staffTable td {
+                            padding: 0.4rem 0.25rem;
+                        }
+                        
+                        #staffTable .btn-sm {
+                            padding: 0.15rem 0.3rem;
+                            font-size: 0.7rem;
+                        }
+                        
+                        #staffTable img {
+                            width: 30px !important;
+                            height: 30px !important;
+                        }
+                    }
+                    
+                    @media (max-width: 1200px) {
+                        #staffTable {
+                            font-size: 0.75rem;
+                        }
+                        
+                        #staffTable th,
+                        #staffTable td {
+                            padding: 0.3rem 0.2rem;
+                        }
+                        
+                        #staffTable .btn-sm {
+                            padding: 0.1rem 0.25rem;
+                            font-size: 0.65rem;
+                        }
+                        
+                        #staffTable img {
+                            width: 28px !important;
+                            height: 28px !important;
+                        }
+                    }
+                    
+                    @media (max-width: 992px) {
+                        #staffTable {
+                            font-size: 0.7rem;
+                        }
+                        
+                        #staffTable th,
+                        #staffTable td {
+                            padding: 0.25rem 0.15rem;
+                        }
+                        
+                        #staffTable .btn-sm {
+                            padding: 0.1rem 0.2rem;
+                            font-size: 0.6rem;
+                        }
+                        
+                        #staffTable img {
+                            width: 25px !important;
+                            height: 25px !important;
+                        }
+                        
+                        /* Stack action buttons vertically on smaller screens */
+                        #staffTable td:nth-child(9) .btn-sm {
+                            display: block;
+                            margin: 1px 0;
+                            width: 100%;
+                        }
+                    }
+                    
+                    @media (max-width: 768px) {
+                        #staffTable {
+                            font-size: 0.65rem;
+                        }
+                        
+                        #staffTable th,
+                        #staffTable td {
+                            padding: 0.2rem 0.1rem;
+                        }
+                        
+                        #staffTable .btn-sm {
+                            padding: 0.05rem 0.15rem;
+                            font-size: 0.55rem;
+                        }
+                        
+                        #staffTable img {
+                            width: 22px !important;
+                            height: 22px !important;
+                        }
+                    }
+                    
+                    /* Ensure table doesn't break layout */
+                    .table-responsive {
+                        border: 1px solid #dee2e6;
+                        border-radius: 0.375rem;
+                    }
+                    
+                    /* Header styling */
+                    #staffTable thead th {
+                        background-color: #f8f9fa;
+                        font-weight: 600;
+                        border-bottom: 2px solid #dee2e6;
+                        position: sticky;
+                        top: 0;
+                        z-index: 10;
+                    }
+                    
+                    /* Hover effects */
+                    #staffTable tbody tr:hover {
+                        background-color: #f8f9fa;
+                    }
+                    
+                    /* Text truncation for long content */
+                    #staffTable td {
+                        max-width: 0;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        white-space: nowrap;
+                    }
+                    
+                    /* Allow text wrapping only for action buttons */
+                    #staffTable td:nth-child(9) {
+                        white-space: normal;
+                    }
+                </style>
+                
                 @if($staff->isEmpty())
                     <p class="text-muted text-center py-4">No staff found.</p>
                 @else
