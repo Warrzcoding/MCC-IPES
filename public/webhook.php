@@ -7,7 +7,7 @@
 // Configuration
 $secret = 'your_webhook_secret_here'; // Change this to match your GitHub webhook secret
 $repo_path = '/path/to/your/repository'; // This will be the path on your Hostinger server
-$branch = 'main'; // or 'master' - change to your main branch name
+$branch = 'master'; // or 'master' - change to your main branch name
 
 // Log file for debugging
 $log_file = __DIR__ . '/webhook.log';
