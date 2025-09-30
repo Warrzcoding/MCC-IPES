@@ -7,7 +7,7 @@
      <title>{{ $current_title }} -Instructors Performance Evaluation System</title>
 
      <!-- Favicon -->
-     <link rel="icon" type="image/png" href="{{ asset('images/mcclogo.png') }}">
+     <link rel="icon" type="image/png" href="{{ asset('images/mccicon.jpg') }}">
 
      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
      <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
@@ -785,7 +785,7 @@
             <i class="fas fa-bars"></i>
         </button>
         <a href="{{ route('dashboard') }}" class="logo" id="mainLogo" style="transition:width 0.3s,opacity 0.3s;">
-            <img src="{{ asset('images/mcclogo.png') }}" alt="MCC Logo" class="school-logo">
+            <img src="{{ asset('images/mccicin.jpg') }}" alt="MCC Logo" class="school-logo">
             <div class="logo-container">
                 <span class="logo-text" style="transition:opacity 0.3s;">MCC-IPES</span>
             </div>

@@ -1168,7 +1168,7 @@ function getAdjectivalRating($rating) {
                         <div style="padding:15px;font-family:'Times New Roman', serif; font-size:12pt; max-width: 900px; margin: 0 auto;">
                             <div class='header-section' style='text-align:center;margin-bottom:0.5em;padding-bottom:0;'>
                                 <div style='display:flex;align-items:center;justify-content:center;margin-bottom:0.3em;'>
-                                    <img src='/images/mcclogo.png' alt='Left Logo' style='width:50px;height:50px;margin-right:0.8em;' onerror='this.style.display="none"'>
+                                    <img src='/images/mccicin.jpg' alt='Left Logo' style='width:50px;height:50px;margin-right:0.8em;' onerror='this.style.display="none"'>
                                     <div style='text-align:center;'>
                                         <h2 style='margin:0;font-size:10pt;line-height:1.1;font-family:"Times New Roman", serif;'>Republic of the Philippines<br>
                                         <strong>Madridejos Community College</strong><br>

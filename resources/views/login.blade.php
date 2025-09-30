@@ -28,6 +28,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Office Instructors Evaluation System</title>
+    <link rel="icon" type="image/png" href="{{ asset('images/mccicon.jpg') }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -895,7 +896,7 @@
     <div class="login-card">
         <div class="login-header">
             <div class="logo" style="box-shadow: 0 4px 16px rgb(253, 253, 253); display: flex; align-items: center; justify-content: center; margin-bottom: 10px;">
-                <img src="{{ asset('images/mcclogo.png') }}" alt="MCC Logo" class="login-logo-img" style="width: 120px; height: 120px; object-fit: contain; padding: 5px; max-width: 100%; height: auto;">
+                <img src="{{ asset('images/mccicin.jpg') }}" alt="MCC Logo" class="login-logo-img" style="width: 120px; height: 120px; object-fit: contain; padding: 5px; max-width: 100%; height: auto;">
             </div>
             <h2 style="margin-top: 0;">MCC | IPES</h2>
             <p>Instructors Performance Evaluation System</p>
@@ -921,7 +922,7 @@
                                 <option value="">Choose your role...</option>
                                 <option value="student">Student</option>
                                 <option value="admin">Administrator</option>
-                                <option value="staff">DepartmentLoader</option>
+                                <option value="staff">CSVLoader</option>
                             </select>
                         </div>
                     </form>
@@ -1047,7 +1048,7 @@
                     @endif
 
                     <button type="submit" name="login" class="btn btn-primary">
-                        <i class="fas fa-sign-in-alt"></i> Login as Staff
+                        <i class="fas fa-sign-in-alt"></i> Login as CSVLoader
                     </button>
                     <button type="button" class="btn-back-icon" onclick="resetForm()" aria-label="Back">
                         <i class="fas fa-arrow-left"></i>

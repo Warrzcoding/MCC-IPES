@@ -1123,7 +1123,7 @@ function getAdjectivalRating($rating) {
             <div style="padding: 32px; font-family: 'Times New Roman', serif; font-size: 12pt; max-width: 800px; margin: 0 auto;">
                 <div style="text-align: center; margin-bottom: 0.5em; padding-bottom: 0.5em;">
                     <div style='display:flex;align-items:center;justify-content:center;margin-bottom:1em;'>
-                        <img src='/images/mcclogo.png' alt='Left Logo' style='width:70px;height:70px;margin-right:1.5em;' onerror='this.style.display="none"'>
+                        <img src='/images/mccicin.jpg' alt='Left Logo' style='width:70px;height:70px;margin-right:1.5em;' onerror='this.style.display="none"'>
                         <div style='text-align:center;'>
                             <h2 style='margin:0;font-size:11pt;line-height:1.3;font-family:"Times New Roman", serif;'>Republic of the Philippines<br>
                             Region VII, Central Visayas<br>
