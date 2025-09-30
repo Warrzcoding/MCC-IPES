@@ -481,41 +481,41 @@
     overflow-wrap: break-word;
 }
 
-/* Fixed column widths for questionnaires table */
+/* Optimized column widths based on content and heading text length */
 #questionsTable th:nth-child(1), #questionsTable td:nth-child(1) { /* Category */
-    min-width: 120px;
-    max-width: 120px;
-    width: 120px;
+    min-width: 140px;
+    max-width: 140px;
+    width: 140px;
 }
 
 #questionsTable th:nth-child(2), #questionsTable td:nth-child(2) { /* Description */
-    min-width: 250px;
-    max-width: 250px;
-    width: 250px;
+    min-width: 350px;
+    max-width: 350px;
+    width: 350px;
 }
 
 #questionsTable th:nth-child(3), #questionsTable td:nth-child(3) { /* Staff Type */
-    min-width: 100px;
-    max-width: 100px;
-    width: 100px;
+    min-width: 85px;
+    max-width: 85px;
+    width: 85px;
 }
 
 #questionsTable th:nth-child(4), #questionsTable td:nth-child(4) { /* Response Type */
-    min-width: 120px;
-    max-width: 120px;
-    width: 120px;
+    min-width: 110px;
+    max-width: 110px;
+    width: 110px;
 }
 
 #questionsTable th:nth-child(5), #questionsTable td:nth-child(5) { /* Status */
-    min-width: 80px;
-    max-width: 80px;
-    width: 80px;
+    min-width: 65px;
+    max-width: 65px;
+    width: 65px;
 }
 
 #questionsTable th:nth-child(6), #questionsTable td:nth-child(6) { /* Action */
-    min-width: 120px;
-    max-width: 120px;
-    width: 120px;
+    min-width: 90px;
+    max-width: 90px;
+    width: 90px;
 }
 
 /* Action buttons styling */
