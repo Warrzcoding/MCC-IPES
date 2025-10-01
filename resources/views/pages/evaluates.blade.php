@@ -279,7 +279,7 @@
     width: 100%;
 }
 .evaluation-form-inner {
-    max-width: 600px;
+    max-width: 800px;
     width: 100%;
 }
 .evaluated-badge-red {
@@ -326,15 +326,15 @@
     font-size: 1.1em;
 }
 @media (max-width: 576px) {
-    /* Center the card on mobile */
+    /* Center the card on mobile with equal margins */
     .card {
-        max-width: 95%;
+        width: 98%;
         margin: 0 auto;
     }
 
     /* Reduce padding on tab-content for mobile */
     .tab-content {
-        padding: 20px;
+        padding: 15px;
     }
 
     .response-options-group {
@@ -432,6 +432,11 @@
     .completion-stats .text-center h3 {
         font-size: 1.5rem !important;
     }
+
+    /* Make content wider on mobile with equal spacing */
+    .evaluation-form-inner {
+        max-width: 100%;
+    }
 }
 
 /* Additional mobile fix with higher specificity */
@@ -462,7 +467,7 @@
     align-items: center !important;
     gap: 0.5rem !important;
     justify-content: flex-start !important;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
 }
 .form-check-label {
     padding: 2px 8px;
