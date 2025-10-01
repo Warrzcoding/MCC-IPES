@@ -183,6 +183,49 @@
             flex-direction: column;
             gap: 1rem;
         }
+        .form-navigation {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            width: 100%;
+            margin-top: 1.2rem;
+        }
+        .form-navigation .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            font-weight: 600;
+            letter-spacing: 0.2px;
+            border-radius: 10px;
+            padding: 0.4rem 0.95rem;
+            min-height: 46px;
+            flex: 0 0 auto;
+            min-width: 108px;
+            transition: all 0.2s ease;
+        }
+        .form-navigation .nav-btn i {
+            font-size: 1rem;
+        }
+        .form-navigation .nav-btn-icon-only {
+            display: inline-flex;
+            width: 44px;
+            min-width: 44px;
+            height: 44px;
+            padding: 0;
+            border-radius: 50%;
+            flex: 0 0 44px;
+        }
+        .form-navigation .nav-btn-fill {
+            flex: 1 1 auto;
+            min-width: 0;
+        }
+        .form-navigation .nav-btn-submit {
+            padding: 0.35rem 0.85rem;
+            min-height: 44px;
+            font-size: 0.96rem;
+        }
         .form-horizontal .form-label {
             font-size: 0.98rem;
             font-weight: 600;
@@ -283,16 +326,19 @@
             display: flex;
             gap: 8px;
             width: 100%;
+            justify-content: center;
+            flex-wrap: wrap;
         }
         .upload-btn {
             border-color: #667eea;
             color: #667eea;
             font-size: 12px;
-            padding: 6px 10px;
+            padding: 6px 14px;
             border-radius: 6px;
             transition: all 0.3s ease;
             cursor: pointer;
-            flex: 1;
+            flex: 0 0 auto;
+            min-width: 160px;
             text-align: center;
         }
         .upload-btn:hover {
@@ -303,118 +349,7 @@
         .upload-btn i {
             margin-right: 4px;
         }
-        .camera-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            z-index: 9999;
-            justify-content: center;
-            align-items: center;
-        }
-        .camera-modal.show {
-            display: flex;
-        }
-        .camera-container {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            max-width: 400px;
-            width: 90%;
-            text-align: center;
-            position: relative;
-        }
-        .camera-video {
-            width: 100%;
-            max-width: 300px;
-            height: 200px;
-            border-radius: 8px;
-            margin: 10px 0;
-            background: #f0f0f0;
-            object-fit: cover;
-        }
-        .camera-controls {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            margin-top: 15px;
-            flex-wrap: wrap;
-        }
-        .camera-btn {
-            padding: 8px 16px;
-            border-radius: 6px;
-            border: none;
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.3s ease;
-            touch-action: manipulation;
-        }
-        .camera-switch {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: rgba(0,0,0,0.5);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 35px;
-            height: 35px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 12px;
-        }
-        
-        /* Mobile-specific enhancements */
-        @media (max-width: 768px) {
-            .camera-modal {
-                padding: 10px;
-            }
-            .camera-container {
-                max-width: 95vw;
-                max-height: 90vh;
-                padding: 15px;
-            }
-            .camera-video {
-                max-width: 100%;
-                height: auto;
-                min-height: 200px;
-                max-height: 60vh;
-            }
-            .camera-controls {
-                gap: 8px;
-            }
-            .camera-btn {
-                min-width: 80px;
-                padding: 10px 15px;
-                font-size: 16px;
-            }
-            .camera-switch {
-                top: 10px;
-                right: 10px;
-                width: 40px;
-                height: 40px;
-                font-size: 14px;
-            }
-        }
-        .camera-btn.capture {
-            background: #667eea;
-            color: white;
-        }
-        .camera-btn.capture:hover {
-            background: #5a67d8;
-        }
-        .camera-btn.cancel {
-            background: #f1f3f5;
-            color: #333;
-        }
-        .camera-btn.cancel:hover {
-            background: #e9ecef;
-        }
+
         .password-strength {
             margin-top: 6px;
             margin-bottom: 2px;
@@ -624,16 +559,14 @@
                             <img id="previewImg" src="https://ui-avatars.com/api/?name=Profile&background=cccccc&color=555555&rounded=true&size=70" alt="Preview">
                         </div>
                         <div class="upload-button-container">
+                              <p class="text-muted small mb-0" style="line-height: 1.4;">Upload photo (JPEG or PNG, max 2 MB).</p>                                                              
                             <div class="upload-buttons-row">
-                                <button type="button" class="btn btn-outline-primary btn-sm upload-btn" id="cameraBtn">
-                                    <i class="fas fa-camera"></i> Camera
-                                </button>
                                 <label for="profileImageInput" class="btn btn-outline-primary btn-sm upload-btn">
                                     <i class="fas fa-folder-open"></i> Choose File
                                 </label>
                             </div>
-                            <input type="file" class="d-none @error('profile_image') is-invalid @enderror" 
-                                   name="profile_image" accept="image/*" id="profileImageInput">
+                          
+                            <input type="file" class="d-none @error('profile_image') is-invalid @enderror"  name="profile_image" accept="image/*" id="profileImageInput">
                             @error('profile_image')
                                 <div class="invalid-feedback d-block">{{ $message }}</div>
                             @enderror
@@ -737,6 +670,7 @@
                 </div>
             </div>
             <input type="hidden" name="role" value="student">
+            
             <!-- Step 3: Password -->
             <div class="step-group" id="step3" style="display:none;">
                 <div class="mb-3">
@@ -775,14 +709,14 @@
                 </div>
             </div>
             <!-- Navigation Buttons -->
-            <div class="d-flex justify-content-between mt-4">
-                <button type="button" class="btn btn-secondary" id="prevBtn" style="display:none; min-width: 90px;">
+            <div class="form-navigation">
+                <button type="button" class="btn btn-secondary nav-btn" id="prevBtn" aria-label="Go to previous step">
                     <i class="fas fa-arrow-left"></i> Back
                 </button>
-                <button type="button" class="btn btn-primary" id="nextBtn" style="min-width: 90px;">
+                <button type="button" class="btn btn-primary nav-btn nav-btn-fill" id="nextBtn" aria-label="Go to next step">
                     Next <i class="fas fa-arrow-right"></i>
                 </button>
-                <button type="submit" class="btn btn-primary" id="submitBtn" style="display:none; min-width: 90px;">
+                <button type="submit" class="btn btn-primary nav-btn nav-btn-fill nav-btn-submit" id="submitBtn">
                     <i class="fas fa-user-plus"></i> Submit Request
                 </button>
             </div>
@@ -794,25 +728,6 @@
         </div>
     </div>
 
-    <!-- Camera Modal -->
-    <div class="camera-modal" id="cameraModal">
-        <div class="camera-container">
-            <h5 style="margin-bottom: 15px; color: #333;">Take a Photo</h5>
-            <button type="button" class="camera-switch" id="switchCameraBtn" style="display: none;" title="Switch Camera">
-                <i class="fas fa-sync-alt"></i>
-            </button>
-            <video id="cameraVideo" class="camera-video" autoplay muted playsinline></video>
-            <canvas id="cameraCanvas" style="display: none;"></canvas>
-            <div class="camera-controls">
-                <button type="button" class="camera-btn capture" id="captureBtn">
-                    <i class="fas fa-camera"></i> Capture
-                </button>
-                <button type="button" class="camera-btn cancel" id="cancelCameraBtn">
-                    <i class="fas fa-times"></i> Cancel
-                </button>
-            </div>
-        </div>
-    </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         @if (session('success'))
@@ -869,232 +784,7 @@
             }
 
             // Camera functionality
-            const cameraBtn = document.getElementById('cameraBtn');
-            const cameraModal = document.getElementById('cameraModal');
-            const cameraVideo = document.getElementById('cameraVideo');
-            const cameraCanvas = document.getElementById('cameraCanvas');
-            const captureBtn = document.getElementById('captureBtn');
-            const cancelCameraBtn = document.getElementById('cancelCameraBtn');
-            const switchCameraBtn = document.getElementById('switchCameraBtn');
-            let cameraStream = null;
-            let currentFacingMode = 'user'; // 'user' = front camera, 'environment' = rear camera
-            let isMobileDevice = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
-            // Function to start camera with specified facing mode
-            function startCamera(facingMode) {
-                const videoConstraints = {
-                    video: {
-                        width: { ideal: isMobileDevice ? 640 : 300 },
-                        height: { ideal: isMobileDevice ? 480 : 200 },
-                        facingMode: facingMode
-                    }
-                };
-
-                navigator.mediaDevices.getUserMedia(videoConstraints)
-                    .then(function(stream) {
-                        cameraStream = stream;
-                        cameraVideo.srcObject = stream;
-                        cameraModal.classList.add('show');
-                        
-                        // Show camera switch button on mobile devices
-                        if (isMobileDevice && switchCameraBtn) {
-                            switchCameraBtn.style.display = 'flex';
-                        }
-                    })
-                    .catch(function(error) {
-                        console.error('Error accessing camera:', error);
-                        handleCameraError(error);
-                    });
-            }
-
-            // Handle camera errors
-            function handleCameraError(error) {
-                let errorMessage = 'Unable to access camera. ';
-                let solutions = '';
-                
-                switch(error.name) {
-                    case 'NotAllowedError':
-                        errorMessage = 'Camera permission denied.';
-                        solutions = '<br><br><strong>Mobile Tips:</strong><br>• Look for camera permission request<br>• Check browser settings<br>• Allow camera access<br>• Try refreshing the page';
-                        break;
-                    case 'NotFoundError':
-                        errorMessage = 'No camera found on this device.';
-                        solutions = '<br><br><strong>Solutions:</strong><br>• Check if camera is connected<br>• Try switching cameras<br>• Use the "Choose File" option instead';
-                        break;
-                    case 'NotReadableError':
-                        errorMessage = 'Camera is being used by another application.';
-                        solutions = '<br><br><strong>Solutions:</strong><br>• Close other camera apps<br>• Refresh the page<br>• Restart your browser/device';
-                        break;
-                    case 'OverconstrainedError':
-                        errorMessage = 'Camera settings not supported.';
-                        solutions = '<br><br><strong>Mobile Solutions:</strong><br>• Try different browser<br>• Clear browser cache<br>• Use the "Choose File" option instead';
-                        break;
-                    case 'SecurityError':
-                        errorMessage = 'Security error accessing camera.';
-                        solutions = '<br><br><strong>Solutions:</strong><br>• Use HTTPS<br>• Check browser security settings<br>• Use the "Choose File" option instead';
-                        break;
-                    default:
-                        errorMessage = 'Unknown camera error occurred.';
-                        solutions = '<br><br><strong>Solutions:</strong><br>• Try refreshing the page<br>• Use a different browser<br>• Use the "Choose File" option instead';
-                }
-                
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Camera Access Failed',
-                    html: errorMessage + solutions,
-                    confirmButtonColor: '#667eea',
-                });
-            }
-
-            // Open camera modal
-            cameraBtn.addEventListener('click', function() {
-                // Check if camera is supported
-                if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Camera Not Supported',
-                        html: 'Your browser doesn\'t support camera access.<br><br><strong>Solutions:</strong><br>• Update your browser<br>• Use Chrome, Firefox, or Safari<br>• Use the "Choose File" option instead',
-                        confirmButtonColor: '#667eea',
-                    });
-                    return;
-                }
-
-                // Check if HTTPS (required for camera access)
-                if (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'HTTPS Required',
-                        html: 'Camera access requires HTTPS for security.<br><br><strong>Solutions:</strong><br>• Use HTTPS version of the site<br>• Use the "Choose File" option instead',
-                        confirmButtonColor: '#667eea',
-                    });
-                    return;
-                }
-
-                startCamera(currentFacingMode);
-            });
-
-            // Capture photo
-            captureBtn.addEventListener('click', function() {
-                const context = cameraCanvas.getContext('2d');
-                cameraCanvas.width = 300;
-                cameraCanvas.height = 200;
-                context.drawImage(cameraVideo, 0, 0, 300, 200);
-                
-                cameraCanvas.toBlob(function(blob) {
-                    // Create a File object from the blob
-                    const file = new File([blob], 'camera-photo.jpg', { type: 'image/jpeg' });
-                    
-                    // Create a FileList-like object
-                    const dataTransfer = new DataTransfer();
-                    dataTransfer.items.add(file);
-                    profileImageInput.files = dataTransfer.files;
-                    
-                    // Update preview image
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        previewImg.src = e.target.result;
-                    };
-                    reader.readAsDataURL(file);
-                    
-                    // Close camera modal
-                    closeCameraModal();
-                    
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Photo Captured!',
-                        text: 'Your photo has been captured successfully.',
-                        confirmButtonColor: '#667eea',
-                        timer: 2000,
-                        showConfirmButton: false
-                    });
-                }, 'image/jpeg', 0.8);
-            });
-
-            // Cancel camera
-            cancelCameraBtn.addEventListener('click', function() {
-                closeCameraModal();
-            });
-
-            // Switch camera (mobile only)
-            switchCameraBtn.addEventListener('click', function() {
-                // Stop current stream
-                if (cameraStream) {
-                    cameraStream.getTracks().forEach(track => track.stop());
-                }
-                
-                // Switch facing mode
-                currentFacingMode = currentFacingMode === 'user' ? 'environment' : 'user';
-                
-                // Start camera with new facing mode
-                const videoConstraints = {
-                    video: {
-                        width: { ideal: 640 },
-                        height: { ideal: 480 },
-                        facingMode: currentFacingMode
-                    }
-                };
-
-                navigator.mediaDevices.getUserMedia(videoConstraints)
-                    .then(function(stream) {
-                        cameraStream = stream;
-                        cameraVideo.srcObject = stream;
-                        
-                        // Show feedback
-                        const cameraType = currentFacingMode === 'user' ? 'Front' : 'Rear';
-                        Swal.fire({
-                            toast: true,
-                            position: 'top-end',
-                            icon: 'success',
-                            title: `Switched to ${cameraType} Camera`,
-                            showConfirmButton: false,
-                            timer: 1500
-                        });
-                    })
-                    .catch(function(error) {
-                        console.error('Error switching camera:', error);
-                        
-                        // Switch back to previous mode if failed
-                        currentFacingMode = currentFacingMode === 'user' ? 'environment' : 'user';
-                        
-                        // Try to restart with original mode
-                        startCamera(currentFacingMode);
-                        
-                        Swal.fire({
-                            toast: true,
-                            position: 'top-end',
-                            icon: 'error',
-                            title: 'Camera switch failed',
-                            showConfirmButton: false,
-                            timer: 2000
-                        });
-                    });
-            });
-
-            // Close camera modal when clicking outside
-            cameraModal.addEventListener('click', function(e) {
-                if (e.target === cameraModal) {
-                    closeCameraModal();
-                }
-            });
-
-            // Function to close camera modal
-            function closeCameraModal() {
-                if (cameraStream) {
-                    cameraStream.getTracks().forEach(track => track.stop());
-                    cameraStream = null;
-                }
-                cameraModal.classList.remove('show');
-                
-                // Hide switch camera button
-                if (switchCameraBtn) {
-                    switchCameraBtn.style.display = 'none';
-                }
-                
-                // Reset to front camera for next use
-                currentFacingMode = 'user';
-            }
-
-            // School ID formatting
             const schoolIdInput = document.getElementById('school_id');
             let schoolIdDuplicate = false;
             if (schoolIdInput) {
@@ -1176,9 +866,35 @@
                     }
                 });
                 stepLabel.textContent = stepLabels[step - 1];
-                prevBtn.style.display = (step > 1) ? '' : 'none';
-                nextBtn.style.display = (step < totalSteps) ? '' : 'none';
-                submitBtn.style.display = (step === totalSteps) ? '' : 'none';
+
+                const isIntermediateStep = step > 1 && step < totalSteps;
+
+                // Previous button
+                const showPrev = step > 1;
+                prevBtn.style.display = showPrev ? 'inline-flex' : 'none';
+                prevBtn.classList.toggle('nav-btn-icon-only', showPrev);
+                prevBtn.classList.remove('nav-btn-fill');
+                prevBtn.classList.toggle('btn-outline-primary', showPrev);
+                prevBtn.classList.toggle('btn-secondary', !showPrev);
+                prevBtn.innerHTML = showPrev
+                    ? '<i class="fas fa-arrow-left"></i>'
+                    : '<i class="fas fa-arrow-left"></i> Back';
+
+                // Next button
+                const showNext = step < totalSteps;
+                nextBtn.style.display = showNext ? 'inline-flex' : 'none';
+                nextBtn.classList.toggle('nav-btn-icon-only', isIntermediateStep);
+                nextBtn.classList.toggle('nav-btn-fill', !isIntermediateStep && showNext);
+                nextBtn.setAttribute('aria-label', showNext ? 'Go to next step' : 'Next step hidden');
+                nextBtn.innerHTML = isIntermediateStep
+                    ? '<i class="fas fa-arrow-right"></i>'
+                    : 'Next <i class="fas fa-arrow-right"></i>';
+
+                // Submit button
+                const showSubmit = step === totalSteps;
+                submitBtn.style.display = showSubmit ? 'inline-flex' : 'none';
+                submitBtn.classList.remove('nav-btn-icon-only');
+                submitBtn.classList.toggle('nav-btn-fill', showSubmit);
             }
             prevBtn.addEventListener('click', function() {
                 if (currentStep > 1) {

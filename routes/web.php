@@ -26,7 +26,7 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::post('/verify-student-id', [LoginController::class, 'verifyStudentId'])->name('verify.student.id');
 Route::get('/clear-student-verification', [LoginController::class, 'clearStudentVerification'])->name('clear.student.verification');
 
-// Pre-signup Routes
+//login Routes
 Route::get('/pre-signup', [PreSignupController::class, 'showForm'])->name('pre_signup');
 Route::post('/pre-signup/send-verification', [PreSignupController::class, 'sendVerification'])->name('pre_signup.send_verification');
 Route::post('/pre-signup/verify-otp', [PreSignupController::class, 'verifyOtp'])->name('pre_signup.verify_otp');
