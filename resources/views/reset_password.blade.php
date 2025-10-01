@@ -624,10 +624,10 @@
                 localPart = localPart
                     .replace(/[^A-Za-z.]/g, '')
                     .replace(/\.{2,}/g, '.')
-                    .replace(/^\./, '')
-                    .replace(/\.$/, '');
+                    .replace(/^\./, '');
 
                 if (atIndex !== -1) {
+                    localPart = localPart.replace(/\.$/, '');
                     input.value = localPart ? `${localPart}@mcclawis.edu.ph` : '';
                 } else {
                     input.value = localPart;
