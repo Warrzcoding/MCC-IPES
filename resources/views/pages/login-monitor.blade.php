@@ -227,15 +227,18 @@
                   @forelse(($loginAttempts ?? []) as $attempt)
                     @php
                       $name = $attempt->user->full_name ?? '-';
+                      $email = $attempt->email ?? '-';
                       $ua = $attempt->user_agent ?? '-';
+                      $location = $attempt->location ?? '-';
+                      $ipAddress = $attempt->ip_address ?? '-';
                     @endphp
-                    <tr class="lm-item" data-status="{{ $attempt->status }}" data-text="{{ strtolower(trim(($name.' ') . (($attempt->email ?? '-') . ' ') . (($attempt->ip_address ?? '-') . ' ') . ($ua) . ' ' . ($attempt->location ?? ''))) }}">
+                    <tr class="lm-item" data-status="{{ $attempt->status }}" data-text="{{ strtolower(trim(($name.' ') . ($email.' ') . ($ipAddress.' ') . ($ua) . ' ' . ($location))) }}">
                       <td>{{ ($loginAttempts->firstItem() ?? 1) + $loop->index }}</td>
-                      <td class="truncate-1" title="{{ $name }}">{{ $name }}</td>
-                      <td>{{ $attempt->email ?? '-' }}</td>
-                      <td>{{ $attempt->ip_address ?? '-' }}</td>
-                      <td>{{ $attempt->location ?? '-' }}</td>
-                      <td class="truncate-1" title="{{ $ua }}">{{ \Illuminate\Support\Str::limit($ua, 80) }}</td>
+                      <td class="text-nowrap" title="{{ $name }}">{{ $name }}</td>
+                      <td class="text-nowrap" title="{{ $email }}">{{ \Illuminate\Support\Str::limit($email, 60) }}</td>
+                      <td>{{ $ipAddress }}</td>
+                      <td class="text-nowrap" title="{{ $location }}">{{ \Illuminate\Support\Str::limit($location, 60) }}</td>
+                      <td class="text-nowrap" title="{{ $ua }}">{{ \Illuminate\Support\Str::limit($ua, 80) }}</td>
                       <td>
                         @if($attempt->status === 'success')
                           <span class="badge bg-success">Success</span>
