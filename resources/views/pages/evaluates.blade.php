@@ -337,6 +337,7 @@
         width: 100%;
         text-align: left;
         justify-content: flex-start;
+        white-space: normal;
     }
     
     /* Mobile tab alignment - keep tabs horizontal */
