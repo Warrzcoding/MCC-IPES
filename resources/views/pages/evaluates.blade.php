@@ -326,6 +326,17 @@
     font-size: 1.1em;
 }
 @media (max-width: 576px) {
+    /* Center the card on mobile */
+    .card {
+        max-width: 95%;
+        margin: 0 auto;
+    }
+
+    /* Reduce padding on tab-content for mobile */
+    .tab-content {
+        padding: 20px;
+    }
+
     .response-options-group {
         flex-direction: column !important;
         align-items: flex-start !important;
