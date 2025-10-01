@@ -261,7 +261,6 @@
     cursor: pointer;
     border: 1px solid #e2e8f0;
     margin-bottom: 0;
-    white-space: nowrap;
 }
 .form-check-label:hover {
     background: #f7fafc;
@@ -337,7 +336,6 @@
         width: 100%;
         text-align: left;
         justify-content: flex-start;
-        white-space: normal;
     }
     
     /* Mobile tab alignment - keep tabs horizontal */
@@ -453,7 +451,7 @@
     align-items: center !important;
     gap: 0.5rem !important;
     justify-content: flex-start !important;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
 }
 .form-check-label {
     padding: 2px 8px;
@@ -463,7 +461,6 @@
     cursor: pointer;
     border: 1px solid #e2e8f0;
     margin-bottom: 0;
-    white-space: nowrap;
 }
 .form-check-input {
     margin-right: 4px;
@@ -696,7 +693,7 @@
                                                             @if($question->description)
                                                                 <p class="text-muted small">{{ $question->description }}</p>
                                                             @endif
-                                                            <div class="d-flex gap-3 justify-content-center response-options-group">
+                                                            <div class="d-flex flex-wrap gap-3 justify-content-center response-options-group">
                                                                 @php
                                                                     $options = \App\Models\ResponseOption::where('response_type', $question->response_type)->orderBy('option_order')->get();
                                                                 @endphp
@@ -748,7 +745,7 @@
                                                             @if($question->description)
                                                                 <p class="text-muted small">{{ $question->description }}</p>
                                                             @endif
-                                                            <div class="d-flex gap-3 justify-content-center response-options-group">
+                                                            <div class="d-flex flex-wrap gap-3 justify-content-center response-options-group">
                                                                 @php
                                                                     $options = \App\Models\ResponseOption::where('response_type', $question->response_type)->orderBy('option_order')->get();
                                                                 @endphp
