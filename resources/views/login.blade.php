@@ -1133,7 +1133,7 @@
             position: fixed; z-index: 9999; top: 0; left: 0; width: 100vw; height: 100vh;
             background: rgba(102,126,234,0.95); display: flex; flex-direction: column; align-items: center; justify-content: center;
             color: #fff; font-size: 1.5rem; text-align: center;">
-            <div style="background: rgba(255,255,255,0.1); padding: 40px 30px; border-radius: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.2);">
+            <div style="background: rgba(255,255,255,0.1); padding: clamp(20px, 5vw, 36px) clamp(18px, 6vw, 28px); border-radius: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.2); width: min(88vw, 420px); max-width: 420px;">
                 <i class="fas fa-lock fa-3x mb-3"></i>
                 <h3 class="mb-3">Account Locked</h3>
                 <p class="mb-2">Too many failed login attempts.<br>
