@@ -1125,7 +1125,7 @@
 
     <!-- Mobile Footer - Only visible on mobile -->
     <div class="mobile-footer">
-        <p>@2025 MCC | Instructors Performance Evaluation System | Developed by: Warren Ilustrisimo | Jenford Albaciete | Jerry Nasol | Cristina Ilustrisimo</p>
+        <p>@{{ date('Y') }} MCC | Instructors Performance Evaluation System | Developed by: Warren Ilustrisimo | Jenford Albaciete | Jerry Nasol | Cristina Ilustrisimo</p>
     </div>
 
     @if(session('lockout_timer'))
