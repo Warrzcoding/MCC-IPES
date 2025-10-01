@@ -31,6 +31,10 @@ class LoginController extends Controller
     }*/
 public function showLoginForm(Request $request)
     {
+        if (Auth::check()) {
+            return redirect()->route('dashboard');
+        }
+
         // Clear any existing student verification if accessing login page directly
         // unless we're showing the login form after ID verification
         if (!Session::has('show_login_form')) {
