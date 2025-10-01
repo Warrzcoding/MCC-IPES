@@ -111,66 +111,7 @@
     </div>
 @endif
 
-<style>
-    /* Questionnaire table layout enhancements */
-    #questionsTable {
-        table-layout: auto;
-    }
-
-    #questionsTable thead th {
-        white-space: nowrap;
-        font-weight: 600;
-    }
-
-    #questionsTable tbody td {
-        vertical-align: middle;
-    }
-
-    #questionsTable .category-cell {
-        width: auto;
-    }
-
-    #questionsTable .category-cell .category-tag {
-        display: inline-block;
-        max-width: 100%;
-        white-space: normal;
-        word-break: break-word;
-        line-height: 1.4;
-    }
-
-    #questionsTable .description-cell {
-        max-width: 320px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-    #questionsTable .meta-cell {
-        white-space: nowrap;
-    }
-
-
-    #questionsTable .actions-cell {
-        width: 1%;
-        white-space: nowrap;
-    }
-
-    #questionsTable .actions-cell .btn {
-        padding-inline: 0.65rem;
-    }
-
-    @media (max-width: 992px) {
-        #questionsTable .category-cell .category-tag {
-            max-width: 160px;
-        }
-
-        #questionsTable .description-cell {
-            max-width: 220px;
-        }
-    }
-</style>
-
-<div class="row page-full-width">
+<div class="row">
     <div class="col-12">
         <div class="card border-0 shadow-sm">
             <div class="card-header bg-transparent border-0">
@@ -189,7 +130,7 @@
     </div>
 </div>
 
-<div class="row page-full-width">
+<div class="row">
     <!-- Questions List -->
     <div class="col-12">
         <div class="card shadow mb-4">
@@ -301,42 +242,38 @@
                             <tbody>
                                 @foreach($questions as $question)
                                     <tr>
-                                        <td class="category-cell">
-                                            <span class="category-tag fw-semibold" title="{{ $question->title }}">{{ $question->title }}</span>
-                                        </td>
-                                        <td class="description-cell text-muted"
+                                        <td><strong>{{ $question->title }}</strong></td>
+                                        <td class="text-muted" style="max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" 
                                             title="{{ $question->description }}" data-bs-toggle="tooltip" data-bs-placement="top">
                                             {{ $question->description }}
                                         </td>
-                                        <td class="meta-cell">
+                                        <td>
                                             <span class="badge {{ $question->staff_type == 'teaching' ? 'bg-primary' : 'bg-success' }}">
                                                 {{ ucfirst($question->staff_type) }}
                                             </span>
                                         </td>
-                                        <td class="meta-cell">
+                                        <td>
                                             <small class="text-muted">{{ $question->response_type }}</small>
                                         </td>
-                                        <td class="meta-cell">
+                                        <td>
                                             <span class="badge {{ $question->is_open ? 'bg-success' : 'bg-secondary' }}">
                                                 {{ $question->is_open ? 'Open' : 'Closed' }}
                                             </span>
                                         </td>
-                                        <td class="actions-cell">
-                                            <div class="d-inline-flex align-items-center gap-1">
-                                                <button class="btn btn-sm btn-outline-primary @if($questionnaire_status) disabled-custom @endif"
-                                                        data-bs-toggle="modal"
-                                                        data-bs-target="#editQuestionModal"
-                                                        @if($questionnaire_status) disabled tabindex="-1" aria-disabled="true" @else onclick="loadQuestionData({{ $question->id }}, '{{ addslashes($question->title) }}', '{{ addslashes($question->description) }}', '{{ addslashes($question->response_type) }}')" @endif
-                                                >
-                                                    <i class="fas fa-edit"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-outline-danger @if($questionnaire_status) disabled-custom @endif"
-                                                        onclick="confirmDeleteQuestion({{ $question->id }}, '{{ addslashes($question->title) }}');"
-                                                        @if($questionnaire_status) disabled tabindex="-1" aria-disabled="true" @endif
-                                                >
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
-                                            </div>
+                                        <td>
+                                            <button class="btn btn-sm btn-outline-primary @if($questionnaire_status) disabled-custom @endif"
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target="#editQuestionModal"
+                                                    @if($questionnaire_status) disabled tabindex="-1" aria-disabled="true" @else onclick="loadQuestionData({{ $question->id }}, '{{ addslashes($question->title) }}', '{{ addslashes($question->description) }}', '{{ addslashes($question->response_type) }}')" @endif
+                                            >
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-danger @if($questionnaire_status) disabled-custom @endif" 
+                                                    onclick="confirmDeleteQuestion({{ $question->id }}, '{{ addslashes($question->title) }}');"
+                                                    @if($questionnaire_status) disabled tabindex="-1" aria-disabled="true" @endif
+                                            >
+                                                <i class="fas fa-trash"></i>
+                                            </button>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -355,7 +292,7 @@
                                     @endif"
                                 title="@if($questionnaire_status)You can only archive questions when the questionnaire is closed.@endif"
                             >
-                                <i class="fas fa-save me-1"></i>Save & Arcddvfdfdfe All Questions
+                                <i class="fas fa-save me-1"></i>Save & Archive All Questions
                             </button>
                         </form>
                     </div>
@@ -527,221 +464,6 @@
     opacity: 0.6;
     cursor: not-allowed;
     pointer-events: auto !important;
-}
-
-/* Responsive Questionnaires Table Styles */
-#questionsTable {
-    font-size: 0.875rem;
-    table-layout: fixed;
-    width: 100%;
-}
-
-#questionsTable th,
-#questionsTable td {
-    vertical-align: middle;
-    padding: 0.75rem 0.3rem;
-}
-
-/* Minimal column widths - exact fit for content */
-#questionsTable th:nth-child(1), #questionsTable td:nth-child(1) { /* Category */
-    width: 120px;
-    white-space: nowrap;
-}
-
-#questionsTable th:nth-child(2), #questionsTable td:nth-child(2) { /* Description */
-    width: auto;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-}
-
-#questionsTable th:nth-child(3), #questionsTable td:nth-child(3) { /* Staff Type */
-    width: 80px;
-    white-space: nowrap;
-    text-align: center;
-}
-
-#questionsTable th:nth-child(4), #questionsTable td:nth-child(4) { /* Response Type */
-    width: 100px;
-    white-space: nowrap;
-    text-align: center;
-}
-
-#questionsTable th:nth-child(5), #questionsTable td:nth-child(5) { /* Status */
-    width: 60px;
-    white-space: nowrap;
-    text-align: center;
-}
-
-#questionsTable th:nth-child(6), #questionsTable td:nth-child(6) { /* Action */
-    width: 80px;
-    white-space: nowrap;
-    text-align: center;
-    padding: 0.75rem 0.1rem;
-}
-
-/* Action buttons styling - compact */
-#questionsTable .btn {
-    font-size: 0.7rem;
-    padding: 0.2rem 0.3rem;
-    margin: 0 0.05rem;
-    white-space: nowrap;
-    min-width: auto;
-}
-
-/* Badge styling */
-#questionsTable .badge {
-    font-size: 0.75rem;
-    padding: 0.25rem 0.5rem;
-    white-space: nowrap;
-}
-
-/* Text truncation for long content */
-#questionsTable td {
-    text-overflow: ellipsis;
-    overflow: hidden;
-}
-
-/* Sticky header */
-#questionsTable thead th {
-    position: sticky;
-    top: 0;
-    background-color: #f8f9fa;
-    z-index: 10;
-    border-bottom: 2px solid #dee2e6;
-}
-
-/* Hover effects */
-#questionsTable tbody tr:hover {
-    background-color: #f8f9fa;
-}
-
-/* Responsive breakpoints with auto-sizing */
-@media (max-width: 1400px) {
-    #questionsTable {
-        font-size: 0.8rem;
-    }
-    
-    #questionsTable th,
-    #questionsTable td {
-        padding: 0.6rem 0.3rem;
-    }
-    
-    #questionsTable .btn {
-        font-size: 0.7rem;
-        padding: 0.2rem 0.3rem;
-        margin: 0 0.05rem;
-    }
-    
-    #questionsTable .badge {
-        font-size: 0.7rem;
-        padding: 0.2rem 0.3rem;
-    }
-}
-
-@media (max-width: 1200px) {
-    #questionsTable {
-        font-size: 0.75rem;
-    }
-    
-    #questionsTable th,
-    #questionsTable td {
-        padding: 0.5rem 0.25rem;
-    }
-    
-    #questionsTable .btn {
-        font-size: 0.65rem;
-        padding: 0.15rem 0.25rem;
-        margin: 0 0.05rem;
-    }
-    
-    #questionsTable .badge {
-        font-size: 0.65rem;
-        padding: 0.15rem 0.25rem;
-    }
-}
-
-@media (max-width: 992px) {
-    #questionsTable {
-        font-size: 0.7rem;
-    }
-    
-    #questionsTable th,
-    #questionsTable td {
-        padding: 0.4rem 0.2rem;
-    }
-    
-    #questionsTable .btn {
-        font-size: 0.6rem;
-        padding: 0.1rem 0.2rem;
-        display: block;
-        width: 100%;
-        margin: 0.05rem 0;
-    }
-    
-    #questionsTable .badge {
-        font-size: 0.6rem;
-        padding: 0.1rem 0.2rem;
-    }
-    
-    /* Stack action buttons vertically and center them */
-    #questionsTable td:nth-child(6) {
-        text-align: center;
-        white-space: normal;
-    }
-}
-
-@media (max-width: 768px) {
-    #questionsTable {
-        font-size: 0.65rem;
-    }
-    
-    #questionsTable th,
-    #questionsTable td {
-        padding: 0.3rem 0.15rem;
-    }
-    
-    #questionsTable .btn {
-        font-size: 0.55rem;
-        padding: 0.05rem 0.15rem;
-    }
-    
-    #questionsTable .badge {
-        font-size: 0.55rem;
-        padding: 0.05rem 0.15rem;
-    }
-}
-
-/* Ensure table is horizontally scrollable on very small screens */
-.table-responsive {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-}
-
-/* Additional responsive header styling */
-.card-header .d-flex {
-    flex-wrap: wrap;
-    gap: 0.5rem;
-}
-
-@media (max-width: 768px) {
-    .card-header .d-flex {
-        flex-direction: column;
-        align-items: flex-start !important;
-    }
-    
-    .card-header .d-flex .gap-2 {
-        width: 100%;
-        justify-content: space-between;
-    }
-    
-    .card-header .btn {
-        font-size: 0.8rem;
-        padding: 0.4rem 0.8rem;
-    }
-    
-    .card-header .badge {
-        font-size: 0.7rem;
-    }
 }
 </style>
 
