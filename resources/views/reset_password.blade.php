@@ -392,7 +392,9 @@
                         <span class="input-group-text bg-white"><i class="fab fa-microsoft text-primary"></i></span>
                         <input type="email" class="form-control" id="ms365_email" name="ms365_email" 
                                placeholder="firstname.lastname@mcclawis.edu.ph" required autofocus 
-                               pattern="^[a-zA-Z]+\.[a-zA-Z]+@mcclawis\.edu\.ph$" 
+                               pattern="^[A-Za-z]+\.[A-Za-z]+@mcclawis\.edu\.ph$" 
+                               inputmode="email"
+                               autocomplete="email"
                                title="Email must be in the format firstname.lastname@mcclawis.edu.ph">
                     </div>
                 </div>
@@ -431,9 +433,7 @@
                 
                 <!-- Horizontal button layout -->
                 <div class="d-flex justify-content-between gap-2 mt-2">
-                    <a href="{{ route('login') }}" class="btn btn-outline-secondary flex-fill" style="min-width: 0;">
-                        <i class="fas fa-arrow-left me-1"></i> Back to Login
-                    </a>
+                   
                     <button type="button" class="btn btn-outline-primary flex-fill" id="resendOtpBtn" style="display:none; min-width: 0;">
                         <i class="fas fa-redo me-1"></i> Resend Code
                     </button>
@@ -481,7 +481,7 @@
                     <div id="passwordMatchIndicator" class="password-match-indicator"></div>
                 </div>
                 
-                <button type="submit" class="btn btn-warning" id="resetPasswordBtn">
+                <button type="submit" class="btn btn-success" id="resetPasswordBtn">
                     <i class="fas fa-save"></i> Reset Password
                 </button>
             </form>
@@ -511,6 +511,8 @@
             const otpForm = document.getElementById('resetOtpForm');
             const passwordForm = document.getElementById('resetPasswordForm');
             const step1 = document.getElementById('resetStep1');
+            const emailInput = document.getElementById('ms365_email');
+            const allowedEmailPattern = /^[A-Za-z]+\.[A-Za-z]+@mcclawis\.edu\.ph$/;
             const step2 = document.getElementById('resetStep2');
             const step3 = document.getElementById('resetStep3');
             const step4 = document.getElementById('resetStep4');
@@ -604,10 +606,67 @@
                 }
             }
 
+            function handleEmailDomainAutofill(event) {
+                const inputValue = event.target.value;
+                const atIndex = inputValue.indexOf('@');
+                if (atIndex !== -1) {
+                    const localPart = inputValue.slice(0, atIndex);
+                    event.target.value = `${localPart}@mcclawis.edu.ph`;
+                }
+            }
+
+            function enforceEmailPattern(event) {
+                const input = event.target;
+                let value = input.value.replace(/\s+/g, '');
+                const atIndex = value.indexOf('@');
+                let localPart = atIndex === -1 ? value : value.slice(0, atIndex);
+
+                localPart = localPart
+                    .replace(/[^A-Za-z.]/g, '')
+                    .replace(/\.{2,}/g, '.')
+                    .replace(/^\./, '')
+                    .replace(/\.$/, '');
+
+                if (atIndex !== -1) {
+                    input.value = localPart ? `${localPart}@mcclawis.edu.ph` : '';
+                } else {
+                    input.value = localPart;
+                }
+
+                if (atIndex !== -1 && localPart) {
+                    if (!allowedEmailPattern.test(input.value)) {
+                        input.setCustomValidity('Email must be in the format firstname.lastname@mcclawis.edu.ph');
+                    } else {
+                        input.setCustomValidity('');
+                    }
+                } else {
+                    input.setCustomValidity('');
+                }
+            }
+
+            function validateEmailBeforeSubmit(inputElement) {
+                const value = inputElement.value.trim();
+                if (!allowedEmailPattern.test(value)) {
+                    inputElement.setCustomValidity('Email must be in the format firstname.lastname@mcclawis.edu.ph');
+                    inputElement.reportValidity();
+                    return false;
+                }
+                inputElement.setCustomValidity('');
+                return true;
+            }
+
+            if (emailInput) {
+                emailInput.addEventListener('blur', handleEmailDomainAutofill);
+                emailInput.addEventListener('input', enforceEmailPattern, { passive: true });
+            }
+
             // Step 1: Send verification email (Temporary bypass for testing)
             if(emailForm) {
                 emailForm.addEventListener('submit', function(e) {
                     e.preventDefault();
+                    if (!validateEmailBeforeSubmit(emailInput)) {
+                        return;
+                    }
                     const email = document.getElementById('ms365_email').value;
                     
                     // Show loading state
@@ -699,6 +758,7 @@
                             
                             // Hide resend button
                             resendOtpBtn.style.display = 'none';
+                            resendOtpBtn.innerHTML = '<i class="fas fa-redo me-1"></i> Resend Code';
                             
                             Swal.fire({
                                 icon: 'success',
