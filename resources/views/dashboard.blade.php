@@ -486,6 +486,7 @@
             font-weight: 500;
             text-align: center;
             word-break: break-word;
+            font-size: 12px;
         }
         
         .footer-links {
@@ -507,11 +508,11 @@
             display: flex;
             align-items: center;
             gap: 5px;
-            font-size: 13px;
+            font-size: 11px;
         }
         
         .developer-link i {
-            font-size: 14px !important;
+            font-size: 12px !important;
             margin-right: 4px;
         }
         
@@ -528,7 +529,7 @@
             bottom: 80px;
             transform: translateX(-50%);
             display: flex;
-            gap: 40px;
+            gap: 30px;
             z-index: 2000;
             pointer-events: none;
         }
@@ -539,8 +540,8 @@
             pointer-events: auto;
         }
         .dev-float-img {
-            width: 80px;
-            height: 80px;
+            width: 60px;
+            height: 60px;
             border-radius: 50%;
             border: 4px solid #fff;
             box-shadow: 0 8px 24px rgba(102,126,234,0.18);
@@ -555,16 +556,16 @@
             box-shadow: 0 12px 32px rgba(102,126,234,0.25);
         }
         .dev-float-label {
-            margin-top: 10px;
+            margin-top: 8px;
             background: rgba(102,126,234,0.9);
             color: #fff;
-            padding: 6px 18px;
+            padding: 2px 8px;
             border-radius: 16px;
-            font-size: 14px;
+            font-size: 10px;
             font-weight: 500;
             box-shadow: 0 2px 8px rgba(102,126,234,0.10);
             text-align: center;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.3px;
             white-space: nowrap;
         }
         @keyframes floatY {
@@ -585,8 +586,12 @@
                 height: 44px;
             }
             .dev-float-label {
-                font-size: 11px;
-                padding: 2px 6px;
+                font-size: 10px;
+                padding: 1px 4px;
+            }
+            .dev-float-name {
+                font-size: 9px;
+                padding: 1px 4px 0px 4px;
             }
         }
         @media (max-width: 480px) {
@@ -602,8 +607,12 @@
                 height: 44px;
             }
             .dev-float-label {
-                font-size: 11px;
-                padding: 2px 6px;
+                font-size: 10px;
+                padding: 1px 4px;
+            }
+            .dev-float-name {
+                font-size: 9px;
+                padding: 1px 4px 0px 4px;
             }
         }
         
@@ -776,7 +785,7 @@
 }
 .dev-float-name {
     color: #fff !important;
-    font-size: 13px;
+    font-size: 10px;
     font-weight: 600;
     display: block;
     margin-top: 2px;
@@ -784,7 +793,7 @@
     text-align: center;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     border-radius: 12px;
-    padding: 3px 14px 2px 14px;
+    padding: 2px 8px 1px 8px;
     box-shadow: 0 2px 8px rgba(102,126,234,0.10);
     letter-spacing: 0.2px;
     transition: background 0.3s;
