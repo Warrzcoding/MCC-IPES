@@ -17,9 +17,9 @@
             --primary-color: #667eea;
             --secondary-color: #764ba2;
              --accent-color: #f093fb;
-            --sidebar-width: 220px;
-            --header-height: 75px;
-            --footer-height: 80px;
+            --sidebar-width: 200px;
+            --header-height: 50px;
+            --footer-height: 40px;
             --text-dark: #2d3436;
             --text-light: #636e72;
             --border-light: #e9ecef;
@@ -55,7 +55,7 @@
             z-index: 1030;
             display: flex;
             align-items: center;
-            padding: 0 25px;
+            padding: 0 20px;
             box-shadow: var(--shadow-heavy);
             backdrop-filter: blur(10px);
         }
@@ -78,13 +78,13 @@
         
         .header .logo {
             color: white;
-            font-size: 28px;
+            font-size: 18px;
             font-weight: 700;
             text-decoration: none;
-            margin-right: 25px;
+            margin-right: 20px;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             transition: all 0.3s ease;
             position: relative;
             z-index: 1;
@@ -97,7 +97,7 @@
         }
         
         .header .logo i {
-            font-size: 32px;
+            font-size: 22px;
             background: linear-gradient(45deg, #fff, #f0f8ff);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -112,7 +112,7 @@
         }
         
         .logo-subtitle {
-            font-size: 11px;
+            font-size: 9px;
             font-weight: 400;
             color: rgba(255, 255, 255, 0.85);
             line-height: 1.2;
@@ -124,11 +124,11 @@
             background: rgba(255,255,255,0.15);
             border: 1px solid rgba(255,255,255,0.2);
             color: white;
-            font-size: 18px;
-            margin-right: 25px;
+            font-size: 14px;
+            margin-right: 20px;
             cursor: pointer;
-            padding: 12px 16px;
-            border-radius: 12px;
+            padding: 8px 10px;
+            border-radius: 10px;
             transition: all 0.3s ease;
             backdrop-filter: blur(10px);
             position: relative;
@@ -150,10 +150,10 @@
         .user-info {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
             cursor: pointer;
-            padding: 8px 15px;
-            border-radius: 50px;
+            padding: 5px 10px;
+            border-radius: 40px;
             background: rgba(255,255,255,0.15);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255,255,255,0.2);
@@ -172,10 +172,10 @@
         }
         
         .user-avatar {
-            width: 45px;
-            height: 45px;
+            width: 30px;
+            height: 30px;
             border-radius: 50%;
-            border: 3px solid rgba(255,255,255,0.8);
+            border: 2px solid rgba(255,255,255,0.8);
             object-fit: cover;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
             transition: all 0.3s ease;
@@ -193,13 +193,13 @@
         
         .user-name {
             font-weight: 600;
-            font-size: 14px;
+            font-size: 11px;
             margin: 0;
             text-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
         
         .user-role {
-            font-size: 12px;
+            font-size: 10px;
             opacity: 0.9;
             margin: 0;
             font-weight: 400;
@@ -270,22 +270,22 @@
         }
         
         .sidebar-brand {
-            padding: 25px 20px;
+            padding: 20px 16px;
             border-bottom: 1px solid var(--border-light);
             background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
             text-align: center;
             font-weight: 600;
-            font-size: 16px;
+            font-size: 13px;
         }
         
         .nav-section {
-            padding: 20px 0;
+            padding: 16px 0;
         }
         
         .nav-section-title {
-            padding: 0 25px 10px;
-            font-size: 12px;
+            padding: 0 20px 8px;
+            font-size: 10px;
             font-weight: 600;
             color: var(--text-light);
             text-transform: uppercase;
@@ -293,17 +293,17 @@
         }
         
         .sidebar .nav-link {
-            padding: 12px 20px;
+            padding: 10px 16px;
             color: var(--text-dark);
             display: flex;
             align-items: center;
             text-decoration: none;
             transition: all 0.3s ease;
             border-left: 4px solid transparent;
-            margin: 2px 12px;
-            border-radius: 12px;
+            margin: 2px 10px;
+            border-radius: 10px;
             font-weight: 500;
-            font-size: 14px;
+            font-size: 11px;
         }
         
         .sidebar .nav-link:hover {
@@ -364,16 +364,16 @@
         }
         
         .nav-dropdown-item {
-            padding: 10px 18px 10px 40px;
+            padding: 8px 14px 8px 32px;
             color: var(--text-dark);
             display: flex;
             align-items: center;
             text-decoration: none;
             transition: all 0.3s ease;
-            border-radius: 8px;
-            margin: 4px;
+            border-radius: 6px;
+            margin: 3px;
             font-weight: 500;
-            font-size: 13px;
+            font-size: 10px;
         }
         
         .nav-dropdown-item:hover {
@@ -402,7 +402,7 @@
         .main-content {
             margin-left: var(--sidebar-width);
             margin-top: var(--header-height);
-            padding: 24px;
+            padding: 19px;
             min-height: calc(100vh - var(--header-height) - var(--footer-height));
             transition: margin-left 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
@@ -414,12 +414,12 @@
         /* Content Card */
         .content-card {
             background: var(--gradient-card);
-            border-radius: 20px;
+            border-radius: 16px;
             box-shadow: var(--shadow-medium);
-            padding: 24px;
-            margin-bottom: 30px;
+            padding: 19px;
+            margin-bottom: 24px;
             border: 1px solid rgba(255,255,255,0.2);
-           
+
         }
         
         .page-full-width {
@@ -437,13 +437,13 @@
             display: flex;
             justify-content: between;
             align-items: center;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
             border-bottom: 2px solid var(--border-light);
         }
-        
+
         #page-title {
-            font-size: 20px;
+            font-size: 16px;
             font-weight: 700;
             color: var(--text-dark);
             margin: 0;
@@ -467,7 +467,7 @@
             left: 0;
             right: 0;
             z-index: 1030;
-            padding: 20px 0;
+            padding: 12px 0;
             box-shadow: 0 -4px 20px rgba(102, 126, 234, 0.15);
             backdrop-filter: blur(10px);
         }
@@ -759,8 +759,8 @@
     font-size: 14px;
 }
 .school-logo {
-    height: 52px;
-    width: 52px;
+    height: 40px;
+    width: 40px;
     object-fit: cover;
     background: radial-gradient(circle at 50% 50%, #fff 60%, #667eea 100%, #764ba2 120%);
     border-radius: 50%;
