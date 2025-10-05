@@ -12,77 +12,65 @@
     <link rel="preload" href="{{ asset('images/mainmcc.jpg') }}" as="image">
     <style>
         body {
-            background: linear-gradient(135deg, #df9d9dff 0%, #ff0606ff 100%);
+            background: linear-gradient(135deg, #5a189a 0%, #d0006f 100%);
+            background-attachment: fixed;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            perspective: 1000px; /* adds depth for 3D transforms */
             position: relative;
-        }
-        
-        /* Add overlay directly to body */
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.4) 0%, rgba(118, 75, 162, 0.4) 50%, rgba(240, 147, 251, 0.3) 100%);
-            z-index: -1;
-            pointer-events: none;
-        }
-        
-        /* Enhanced animated background with school image */
-        .bg-decorations {
-            position: fixed;
-            width: 100%;
-            height: 100%;
             overflow: hidden;
-            z-index: 0;
+        }
+
+        /* Floating Cubes Animation */
+        .floating-cubes {
+            position: absolute;
             top: 0;
             left: 0;
-            background: url('{{ asset('images/mainmcc.jpg') }}') center/cover no-repeat;
-            filter: blur(5px);
-            transform: scale(1.05);
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
             pointer-events: none;
+            transform-style: preserve-3d; /* allow children to render in 3D space */
         }
-
-        .bg-decorations::before {
-            content: '';
+        .cube {
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.4) 0%, rgba(118, 75, 162, 0.4) 50%, rgba(240, 147, 251, 0.3) 100%);
-            z-index: 0;
-        }
-
-        .bubble {
-            position: absolute;
-            border-radius: 50%;
+            width: 20px;
+            height: 20px;
             background: rgba(255, 255, 255, 0.15);
-            animation: float 10s linear infinite;
-            pointer-events: none;
-            z-index: 1;
-            bottom: -120px;
+            border-radius: 5px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25), inset 0 0 10px rgba(255,255,255,0.25);
+            animation: floatCube 18s infinite ease-in-out;
+            transform: translateZ(-200px) rotateX(15deg) rotateY(20deg); /* push back slightly */
         }
-
-        .bubble:nth-child(1) { width: 80px; height: 80px; left: 10%; animation-duration: 11s; animation-delay: 0s; }
-        .bubble:nth-child(2) { width: 100px; height: 100px; left: 20%; animation-duration: 12s; animation-delay: 1s; }
-        .bubble:nth-child(3) { width: 60px; height: 60px; left: 35%; animation-duration: 9s; animation-delay: 2s; }
-        .bubble:nth-child(4) { width: 120px; height: 120px; left: 50%; animation-duration: 13s; animation-delay: 0.5s; }
-        .bubble:nth-child(5) { width: 90px; height: 90px; left: 65%; animation-duration: 10s; animation-delay: 1.5s; }
-        .bubble:nth-child(6) { width: 70px; height: 70px; left: 80%; animation-duration: 11.5s; animation-delay: 2.5s; }
-
-        @keyframes float {
-            0% { transform: translateY(0) scale(0.8); opacity: 0; }
-            10% { opacity: 0.7; }
-            50% { opacity: 0.9; }
-            90% { opacity: 0.7; }
-            100% { transform: translateY(-110vh) scale(1.1); opacity: 0; }
+        .cube:nth-child(1) { top: 10%; left: 10%; animation-delay: 0s; width: 25px; height: 25px; background: rgba(142, 45, 226, 0.2); }
+        .cube:nth-child(2) { top: 20%; right: 10%; animation-delay: 2s; width: 20px; height: 20px; background: rgba(255, 20, 147, 0.2); }
+        .cube:nth-child(3) { bottom: 30%; left: 20%; animation-delay: 4s; width: 30px; height: 30px; background: rgba(255, 255, 255, 0.2); }
+        .cube:nth-child(4) { bottom: 10%; right: 20%; animation-delay: 6s; width: 22px; height: 22px; background: rgba(218, 112, 214, 0.2); }
+        .cube:nth-child(5) { top: 50%; left: 50%; animation-delay: 8s; width: 28px; height: 28px; background: rgba(142, 45, 226, 0.25); }
+        .cube:nth-child(6) { top: 70%; right: 30%; animation-delay: 10s; width: 18px; height: 18px; background: rgba(255, 20, 147, 0.18); }
+        .cube:nth-child(7) { bottom: 50%; left: 70%; animation-delay: 12s; width: 26px; height: 26px; background: rgba(255, 255, 255, 0.22); }
+        .cube:nth-child(8) { top: 30%; left: 80%; animation-delay: 14s; width: 24px; height: 24px; background: rgba(218, 112, 214, 0.2); }
+        .cube:nth-child(9) { top: 5%; right: 5%; animation-delay: 16s; width: 20px; height: 20px; background: rgba(74, 0, 224, 0.2); }
+        .cube:nth-child(10) { bottom: 5%; left: 5%; animation-delay: 18s; width: 32px; height: 32px; background: rgba(255, 20, 147, 0.25); }
+        .cube:nth-child(11) { top: 80%; left: 30%; animation-delay: 20s; width: 19px; height: 19px; background: rgba(255, 255, 255, 0.2); }
+        .cube:nth-child(12) { bottom: 20%; right: 50%; animation-delay: 22s; width: 27px; height: 27px; background: rgba(142, 45, 226, 0.2); }
+        @keyframes floatCube {
+            0%, 100% {
+                transform: translateZ(-200px) translateY(0) translateX(0) rotateX(15deg) rotateY(20deg) rotateZ(0deg);
+            }
+            25% {
+                transform: translateZ(-220px) translateY(-30px) translateX(20px) rotateX(35deg) rotateY(60deg) rotateZ(90deg);
+            }
+            50% {
+                transform: translateZ(-260px) translateY(-60px) translateX(0) rotateX(75deg) rotateY(120deg) rotateZ(180deg);
+            }
+            75% {
+                transform: translateZ(-220px) translateY(-30px) translateX(-20px) rotateX(35deg) rotateY(200deg) rotateZ(270deg);
+            }
         }
         .signup-card {
             background: #fff;
@@ -100,7 +88,6 @@
             flex-direction: column;
             align-items: center;
             position: relative; /* ensure it layers above background */
-            z-index: 2; /* above .bg-decorations (0) and .bubble (1) */
         }
         .signup-header {
             text-align: center;
@@ -504,16 +491,20 @@
     </style>
 </head>
 <body>
-    <!--Bubbles bg-->
-    <div class="bg-decorations">
-        <div class="bubble"></div>
-        <div class="bubble"></div>
-        <div class="bubble"></div>
-        <div class="bubble"></div>
-        <div class="bubble"></div>
-        <div class="bubble"></div>
+    <div class="floating-cubes">
+        <div class="cube"></div>
+        <div class="cube"></div>
+        <div class="cube"></div>
+        <div class="cube"></div>
+        <div class="cube"></div>
+        <div class="cube"></div>
+        <div class="cube"></div>
+        <div class="cube"></div>
+        <div class="cube"></div>
+        <div class="cube"></div>
+        <div class="cube"></div>
+        <div class="cube"></div>
     </div>
-
     <div class="signup-card">
         <div class="signup-header">
             <div class="logo">

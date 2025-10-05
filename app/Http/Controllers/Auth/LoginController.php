@@ -379,15 +379,8 @@ public function login(Request $request)
     $welcomeMessage = 'Welcome back, ' . $user->full_name . '!';
     
     // Redirect based on role with success message
-    if ($user->role === 'admin') {
-        return redirect()->route('login', ['login_success' => 1]);
-    } elseif ($user->role === 'student') {
-        return redirect()->route('login', ['login_success' => 1]);
-    } elseif ($user->role === 'staff') {
-        return redirect()->route('login', ['login_success' => 1]);
-    } else {
-        return redirect()->route('login', ['login_success' => 1]);
-    }
+    Session::flash('login_success', true);
+    return redirect()->route('dashboard');
 }
 
     public function logout()

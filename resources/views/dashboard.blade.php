@@ -1009,6 +1009,20 @@
     
     <!-- SweetAlert2 CDN -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+@if (session('login_success'))
+<script>
+Swal.fire({
+    icon: 'success',
+    title: 'Login Successful!',
+    text: 'Welcome back, {{ Auth::user()->full_name }}!',
+    confirmButtonText: 'Continue',
+    confirmButtonColor: '#667eea',
+    timer: 3000,
+    timerProgressBar: true,
+    showConfirmButton: true
+});
+</script>
+@endif
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
