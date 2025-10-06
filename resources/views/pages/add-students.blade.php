@@ -69,33 +69,33 @@
                     .page-full-width .btn,
                     .page-full-width button[type="submit"],
                     .page-full-width .btn-group .btn {
-                        font-size: 0.7rem;
-                        padding: 0.3rem 0.5rem;
+                        font-size: 0.66rem;
+                        padding: 0.26rem 0.44rem;
                     }
                     .page-full-width .btn-group-actions .btn {
-                        padding: 0.2rem 0.4rem;
-                        height: 1.55rem;
-                        min-width: 1.55rem;
+                        padding: 0.16rem 0.32rem;
+                        height: 1.4rem;
+                        min-width: 1.4rem;
                         display: inline-flex;
                         align-items: center;
                         justify-content: center;
                     }
                     .page-full-width .btn-group-actions .btn i {
-                        font-size: 0.65rem;
+                        font-size: 0.58rem;
                     }
                     .page-full-width .table thead th {
-                        font-size: 0.74rem;
+                        font-size: 0.68rem;
                     }
                     .page-full-width .table th,
                     .page-full-width .table td {
-                        font-size: 0.68rem;
-                        padding: 0.22rem 0.32rem;
+                        font-size: 0.6rem;
+                        padding: 0.16rem 0.2rem;
                     }
                     .page-full-width .badge,
                     .page-full-width .status-container span,
                     .page-full-width .status-container .text-info,
                     .page-full-width .status-container .text-secondary {
-                        font-size: 0.6rem;
+                        font-size: 0.56rem;
                     }
                     .page-full-width .fs-5,
                     .page-full-width .fs-6,
@@ -104,8 +104,8 @@
                     }
                     .page-full-width .filter-toolbar .form-select,
                     .page-full-width .filter-toolbar .form-control {
-                        font-size: 0.7rem;
-                        padding: 0.28rem 0.45rem;
+                        font-size: 0.66rem;
+                        padding: 0.24rem 0.4rem;
                     }
                     .page-full-width .modal-title,
                     .page-full-width .modal-body,
@@ -113,9 +113,10 @@
                     .page-full-width .modal-body input,
                     .page-full-width .modal-body select,
                     .page-full-width .modal-body p {
-                        font-size: 0.72rem;
+                        font-size: 0.68rem;
                     }
                     .page-full-width .modal-dialog {
+                        width: 80vw;
                         max-width: 420px;
                         margin: 1rem auto;
                     }
@@ -125,15 +126,16 @@
                         max-height: 95vh;
                         display: flex;
                         flex-direction: column;
+                        font-size: 0.68rem;
                     }
                     .page-full-width .modal-header,
                     .page-full-width .modal-footer {
-                        padding: 0.5rem 0.65rem;
+                        padding: 0.45rem 0.6rem;
                     }
                     .page-full-width .modal-body {
-                        padding: 0.7rem;
+                        padding: 0.6rem;
                         flex: 1 1 auto;
-                        max-height: calc(95vh - 5.5rem);
+                        max-height: calc(95vh - 5.1rem);
                         overflow-y: auto;
                     }
                     body .swal2-popup.view-modal-narrow {
@@ -701,14 +703,16 @@
 }
 
 #studentsTable {
-  min-width: 1300px; /* Ensure minimum width for all columns */
-  table-layout: auto; /* Allow natural column sizing */
+  min-width: 100%;
+  table-layout: auto;
+  white-space: nowrap;
+  font-size: 0.68rem;
 }
 
 #studentsTable th,
 #studentsTable td {
   vertical-align: middle;
-  padding: 0.75rem 0.5rem;
+  padding: 0.2rem 0.18rem;
 }
 
 /* Only truncate the MS Email column (4th column) */
@@ -722,31 +726,35 @@
 /* Specific column widths */
 #studentsTable th:nth-child(1), /* Profile */
 #studentsTable td:nth-child(1) {
-  width: 80px;
-  min-width: 80px;
+  width: 60px;
+  min-width: 60px;
+  max-width: 60px;
+  text-align: center;
 }
 
 #studentsTable th:nth-child(2), /* Full Name */
 #studentsTable td:nth-child(2) {
-  min-width: 150px;
+  min-width: 140px;
+  max-width: 140px;
 }
 
 #studentsTable th:nth-child(3), /* Username */
 #studentsTable td:nth-child(3) {
-  min-width: 100px;
+  min-width: 110px;
+  max-width: 110px;
 }
 
 #studentsTable th:nth-child(4), /* MS Email - Keep fixed width for truncation */
 #studentsTable td:nth-child(4) {
-  width: 140px;
-  min-width: 140px;
-  max-width: 140px;
+  width: 160px;
+  min-width: 160px;
+  max-width: 160px;
 }
 
 /* Email truncation for better display */
 .email-truncate {
   display: inline-block;
-  max-width: 130px;
+  max-width: 150px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -755,28 +763,46 @@
 
 #studentsTable th:nth-child(5), /* School ID */
 #studentsTable td:nth-child(5) {
-  min-width: 100px;
+  min-width: 90px;
+  max-width: 90px;
 }
 
 #studentsTable th:nth-child(6), /* Course */
 #studentsTable td:nth-child(6) {
-  min-width: 80px;
+  min-width: 85px;
+  max-width: 85px;
 }
 
 #studentsTable th:nth-child(7), /* Year Level */
 #studentsTable td:nth-child(7) {
-  min-width: 90px;
+  min-width: 80px;
+  max-width: 80px;
 }
 
 #studentsTable th:nth-child(8), /* Section */
 #studentsTable td:nth-child(8) {
   min-width: 80px;
+  max-width: 80px;
+}
+
+#studentsTable th:nth-child(10), /* Evaluation Status */
+#studentsTable td:nth-child(10) {
+  min-width: 160px;
+  max-width: 200px;
+  white-space: normal;
 }
 
 #studentsTable th:nth-child(11), /* Actions */
 #studentsTable td:nth-child(11) {
-  width: 140px;
-  min-width: 140px;
+  width: 120px;
+  min-width: 120px;
+  max-width: 120px;
+  text-align: center;
+}
+
+/* Adjusted button group spacing */
+.btn-group-actions {
+  gap: 0.2rem !important;
 }
 
 /* Mobile responsive adjustments */
@@ -949,6 +975,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                     <th>Year Level</th>
                                     <th>Section</th>
                                     <th>Evaluation Status</th>
+                                  
                                     <th class="actions-column">Actions</th>
                                 </tr>
                             </thead>

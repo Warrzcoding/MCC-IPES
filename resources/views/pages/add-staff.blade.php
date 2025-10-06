@@ -51,7 +51,7 @@
             <div class="card-header py-3 d-flex justify-content-between align-items-center">
                 <h6 class="m-0 font-weight-bold text-primary">Staff List</h6>
                 <div>
-                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal">
+                    <button class="btn btn-primary btn-compact-action" data-bs-toggle="modal" data-bs-target="#addModal">
                         <i class="fas fa-plus"></i> Add Staff
                     </button>
                 </div>
@@ -67,12 +67,12 @@
                     #staffTable {
                         min-width: 100%;
                         white-space: nowrap;
-                        font-size: 0.875rem;
+                        font-size: 0.7rem;
                     }
                     
                     #staffTable th,
                     #staffTable td {
-                        padding: 0.5rem 0.3rem;
+                        padding: 0.22rem 0.16rem;
                         vertical-align: middle;
                         border: 1px solid #dee2e6;
                         white-space: nowrap;
@@ -156,55 +156,106 @@
                     
                     /* Action buttons styling */
                     #staffTable .btn-sm {
-                        padding: 0.2rem 0.4rem;
-                        font-size: 0.75rem;
+                        padding: 0.16rem 0.32rem;
+                        font-size: 0.68rem;
                         margin: 0 1px;
                         white-space: nowrap;
                     }
                     
                     /* Profile image responsive */
                     #staffTable img {
-                        width: 35px !important;
-                        height: 35px !important;
+                        width: 30px !important;
+                        height: 30px !important;
                         border-radius: 50%;
                         object-fit: cover;
+                    }
+                    
+                    /* Compact action button for header */
+                    .btn-compact-action {
+                        font-size: 0.68rem;
+                        padding: 0.24rem 0.55rem;
+                        border-radius: 0.35rem;
+                        display: inline-flex;
+                        align-items: center;
+                        gap: 0.35rem;
+                    }
+                    .btn-compact-action i {
+                        font-size: 0.62rem;
+                    }
+                    
+                    .refresh-btn-enhanced {
+                        height: 28px !important;
+                        font-weight: 600;
+                        font-size: 0.65rem !important;
+                        padding: 0.24rem 0.55rem !important;
+                    }
+                    .refresh-btn-enhanced i,
+                    .refresh-btn-enhanced span {
+                        font-size: 0.65rem !important;
+                    }
+                    
+                    .search-box {
+                        font-size: 0.66rem;
+                    }
+                    .search-box input {
+                        font-size: 0.66rem !important;
+                        padding-left: 36px !important;
+                        padding-top: 0.28rem !important;
+                        padding-bottom: 0.28rem !important;
+                    }
+                    .search-box i {
+                        font-size: 0.62rem !important;
+                    }
+                    
+                    .staff-type-filter {
+                        font-size: 0.64rem !important;
+                        padding: 0.24rem 1.5rem 0.24rem 0.45rem !important;
+                        min-height: 1.8rem !important;
+                    }
+                    
+                    /* Modal compaction */
+                    .modal-compact {
+                        width: 80vw;
+                        max-width: 420px;
+                    }
+                    .modal-compact .modal-content {
+                        font-size: 0.7rem;
+                    }
+                    .modal-compact .modal-title {
+                        font-size: 0.78rem;
+                        font-weight: 600;
+                    }
+                    .modal-compact .form-label,
+                    .modal-compact .form-text {
+                        font-size: 0.66rem;
+                    }
+                    .modal-compact .form-control,
+                    .modal-compact .form-select {
+                        font-size: 0.68rem;
+                        padding: 0.35rem 0.5rem;
+                    }
+                    .modal-compact .modal-footer .btn {
+                        font-size: 0.68rem;
+                        padding: 0.3rem 0.55rem;
+                    }
+                    .modal-compact .form-control::placeholder {
+                        font-size: 0.66rem;
                     }
                     
                     /* Responsive adjustments for different zoom levels */
                     @media (max-width: 1400px) {
                         #staffTable {
-                            font-size: 0.8rem;
+                            font-size: 0.66rem;
                         }
                         
                         #staffTable th,
                         #staffTable td {
-                            padding: 0.4rem 0.25rem;
+                            padding: 0.18rem 0.14rem;
                         }
                         
                         #staffTable .btn-sm {
-                            padding: 0.15rem 0.3rem;
-                            font-size: 0.7rem;
-                        }
-                        
-                        #staffTable img {
-                            width: 30px !important;
-                            height: 30px !important;
-                        }
-                    }
-                    
-                    @media (max-width: 1200px) {
-                        #staffTable {
-                            font-size: 0.75rem;
-                        }
-                        
-                        #staffTable th,
-                        #staffTable td {
-                            padding: 0.3rem 0.2rem;
-                        }
-                        
-                        #staffTable .btn-sm {
-                            padding: 0.1rem 0.25rem;
-                            font-size: 0.65rem;
+                            padding: 0.14rem 0.26rem;
+                            font-size: 0.64rem;
                         }
                         
                         #staffTable img {
@@ -213,24 +264,45 @@
                         }
                     }
                     
-                    @media (max-width: 992px) {
+                    @media (max-width: 1200px) {
                         #staffTable {
-                            font-size: 0.7rem;
+                            font-size: 0.64rem;
                         }
                         
                         #staffTable th,
                         #staffTable td {
-                            padding: 0.25rem 0.15rem;
+                            padding: 0.16rem 0.12rem;
                         }
                         
                         #staffTable .btn-sm {
-                            padding: 0.1rem 0.2rem;
+                            padding: 0.12rem 0.22rem;
                             font-size: 0.6rem;
                         }
                         
                         #staffTable img {
-                            width: 25px !important;
-                            height: 25px !important;
+                            width: 26px !important;
+                            height: 26px !important;
+                        }
+                    }
+                    
+                    @media (max-width: 992px) {
+                        #staffTable {
+                            font-size: 0.6rem;
+                        }
+                        
+                        #staffTable th,
+                        #staffTable td {
+                            padding: 0.14rem 0.1rem;
+                        }
+                        
+                        #staffTable .btn-sm {
+                            padding: 0.1rem 0.18rem;
+                            font-size: 0.56rem;
+                        }
+                        
+                        #staffTable img {
+                            width: 24px !important;
+                            height: 24px !important;
                         }
                         
                         /* Stack action buttons vertically on smaller screens */
@@ -243,17 +315,17 @@
                     
                     @media (max-width: 768px) {
                         #staffTable {
-                            font-size: 0.65rem;
+                            font-size: 0.56rem;
                         }
                         
                         #staffTable th,
                         #staffTable td {
-                            padding: 0.2rem 0.1rem;
+                            padding: 0.12rem 0.08rem;
                         }
                         
                         #staffTable .btn-sm {
-                            padding: 0.05rem 0.15rem;
-                            font-size: 0.55rem;
+                            padding: 0.05rem 0.14rem;
+                            font-size: 0.5rem;
                         }
                         
                         #staffTable img {
@@ -301,7 +373,7 @@
                     <p class="text-muted text-center py-4">No staff found.</p>
                 @else
                     <div class="table-responsive">
-                        <table class="table table-bordered" id="staffTable">
+                        <table class="table table-bordered table-sm" id="staffTable">
                             <thead>
                                 <tr>
                                     <th>Profile</th>
@@ -389,7 +461,7 @@
 
 <!-- Add Staff Modal -->
 <div class="modal fade" id="addModal" tabindex="-1">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-compact">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Add New Staff</h5>
@@ -463,7 +535,7 @@
 
 <!-- Edit Staff Modal -->
 <div class="modal fade" id="editModal" tabindex="-1">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-compact">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Edit Staff</h5>
@@ -779,15 +851,17 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     // --- UI: Flex container for search and filter ---
     const searchFilterWrapper = document.createElement('div');
-    searchFilterWrapper.className = 'd-flex flex-wrap align-items-center gap-3 mb-3';
+    searchFilterWrapper.className = 'd-flex flex-wrap align-items-center gap-2 mb-2';
     // --- Search box with icon ---
     const searchBox = document.createElement('div');
     searchBox.className = 'search-box mb-0';
-    searchBox.style.flex = '1 1 250px';
-    searchBox.style.minWidth = '220px';
+    searchBox.style.flex = '1 1 220px';
+    searchBox.style.minWidth = '200px';
     searchBox.style.position = 'relative';
+    searchBox.style.fontSize = '0.66rem';
     const searchIcon = document.createElement('i');
     searchIcon.className = 'fas fa-search search-icon';
+    searchIcon.style.fontSize = '0.62rem';
     searchIcon.style.position = 'absolute';
     searchIcon.style.left = '15px';
     searchIcon.style.top = '50%';
@@ -798,13 +872,16 @@ document.addEventListener('DOMContentLoaded', function() {
     searchInput.id = 'searchInput';
     searchInput.className = 'form-control';
     searchInput.placeholder = 'Search staff by name, department, or email...';
-    searchInput.style.paddingLeft = '45px';
-    searchInput.style.borderRadius = '25px';
-    searchInput.style.border = '2px solid #e9ecef';
+    searchInput.style.fontSize = '0.66rem';
+    searchInput.style.paddingLeft = '34px';
+    searchInput.style.paddingTop = '0.28rem';
+    searchInput.style.paddingBottom = '0.28rem';
+    searchInput.style.borderRadius = '20px';
+    searchInput.style.border = '1.3px solid #e9ecef';
     searchInput.style.boxShadow = 'none';
     searchInput.addEventListener('focus', function() {
         searchInput.style.borderColor = '#007bff';
-        searchInput.style.boxShadow = '0 0 0 0.2rem rgba(0,123,255,.25)';
+        searchInput.style.boxShadow = '0 0 0 0.15rem rgba(0,123,255,.2)';
     });
     searchInput.addEventListener('blur', function() {
         searchInput.style.borderColor = '#e9ecef';
@@ -814,10 +891,13 @@ document.addEventListener('DOMContentLoaded', function() {
     searchBox.appendChild(searchInput);
     // --- Staff type filter select ---
     const filterDiv = document.createElement('div');
-    filterDiv.style.minWidth = '200px';
+    filterDiv.style.minWidth = '180px';
     const staffTypeSelect = document.createElement('select');
     staffTypeSelect.id = 'staffTypeFilter';
-    staffTypeSelect.className = 'form-select';
+    staffTypeSelect.className = 'form-select staff-type-filter';
+    staffTypeSelect.style.fontSize = '0.62rem';
+    staffTypeSelect.style.padding = '0.24rem 1.5rem 0.24rem 0.45rem';
+    staffTypeSelect.style.minHeight = '1.8rem';
     staffTypeSelect.innerHTML = `
       <option value="">All Staff Types</option>
       <option value="Teaching">Teaching</option>
@@ -831,10 +911,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const refreshButton = document.createElement('button');
     refreshButton.type = 'button';
     refreshButton.className = 'btn btn-primary ms-2 shadow-sm d-flex align-items-center gap-2 rounded-pill refresh-btn-enhanced';
-    refreshButton.style.height = '40px';
-    refreshButton.style.fontWeight = 'bold';
-    refreshButton.style.fontSize = '1rem';
-    refreshButton.innerHTML = '<i class="fas fa-sync-alt fa-spin-on-hover"></i> <span>Refresh</span>';
+    refreshButton.style.height = '28px';
+    refreshButton.style.fontWeight = '600';
+    refreshButton.style.fontSize = '0.65rem';
+    refreshButton.style.padding = '0.24rem 0.55rem';
+    refreshButton.innerHTML = '<i class="fas fa-sync-alt fa-spin-on-hover" style="font-size:0.62rem;"></i> <span style="font-size:0.65rem;">Refresh</span>';
     refreshButton.onclick = function() {
         location.reload();
     };
