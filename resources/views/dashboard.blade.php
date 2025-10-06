@@ -150,11 +150,11 @@
         .user-info {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 8px;
             cursor: pointer;
-            padding: 5px 10px;
-            border-radius: 40px;
-            background: rgba(255,255,255,0.15);
+            padding: 4px 8px;
+            border-radius: 30px;
+            background: rgba(255,255,255,0.12);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255,255,255,0.2);
             transition: all 0.3s ease;
@@ -166,24 +166,24 @@
         }
         
         .user-info:hover {
-            background: rgba(255,255,255,0.25);
+            background: rgba(255,255,255,0.2);
             transform: translateY(-2px);
-            box-shadow: 0 4px 20px rgba(255,255,255,0.2);
+            box-shadow: 0 4px 14px rgba(255,255,255,0.2);
         }
         
         .user-avatar {
-            width: 30px;
-            height: 30px;
+            width: 26px;
+            height: 26px;
             border-radius: 50%;
             border: 2px solid rgba(255,255,255,0.8);
             object-fit: cover;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            box-shadow: 0 3px 12px rgba(0,0,0,0.18);
             transition: all 0.3s ease;
         }
         
         .user-avatar:hover {
             border-color: white;
-            box-shadow: 0 6px 25px rgba(0,0,0,0.3);
+            box-shadow: 0 5px 18px rgba(0,0,0,0.28);
         }
         
         .user-details {
@@ -193,14 +193,14 @@
         
         .user-name {
             font-weight: 600;
-            font-size: 11px;
+            font-size: 10px;
             margin: 0;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.08);
         }
         
         .user-role {
-            font-size: 10px;
-            opacity: 0.9;
+            font-size: 9px;
+            opacity: 0.85;
             margin: 0;
             font-weight: 400;
         }
@@ -210,31 +210,33 @@
             background: rgba(255,255,255,0.95);
             backdrop-filter: blur(20px);
             border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 15px;
+            border-radius: 12px;
             box-shadow: var(--shadow-heavy);
-            padding: 15px 0;
-            margin-top: 10px;
-            min-width: 220px;
+            padding: 10px 0;
+            margin-top: 8px;
+            min-width: 170px;
         }
         
         .dropdown-item {
-            padding: 12px 20px;
+            padding: 8px 16px;
             color: var(--text-dark);
             transition: all 0.3s ease;
             border-radius: 0;
+            font-size: 12px;
         }
         
         .dropdown-item:hover {
             background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
-            margin: 0 10px;
-            border-radius: 8px;
+            margin: 0 6px;
+            border-radius: 6px;
         }
         
         .dropdown-header {
-            padding: 15px 20px 10px;
+            padding: 10px 16px 8px;
             border-bottom: 1px solid var(--border-light);
-            margin-bottom: 10px;
+            margin-bottom: 6px;
+            font-size: 11px;
         }
         
         /* Sidebar Styles */

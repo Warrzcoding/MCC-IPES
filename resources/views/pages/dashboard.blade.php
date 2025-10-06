@@ -145,6 +145,65 @@ if (Auth::user()->isAdmin()) {
 }
 @endphp
 
+<style>
+    .page-full-width {
+        width: 100%;
+    }
+    .page-full-width .card-body {
+        padding: 0.75rem 1rem;
+    }
+    .page-full-width .text-xs {
+        font-size: 0.65rem;
+    }
+    .page-full-width .h5,
+    .page-full-width .h5.mb-0,
+    .page-full-width .h5.mb-0.font-weight-bold {
+        font-size: 1.05rem;
+    }
+    .page-full-width h6,
+    .page-full-width .card-header h6 {
+        font-size: 0.9rem;
+    }
+    .page-full-width .btn,
+    .page-full-width .btn-group .btn {
+        font-size: 0.75rem;
+        padding: 0.35rem 0.6rem;
+    }
+    .page-full-width .fa-2x {
+        font-size: 1.65rem;
+    }
+    .page-full-width .analytics-card {
+        min-height: 260px;
+        max-width: 98%;
+        margin: 0 auto;
+    }
+    .page-full-width .analytics-card .card-body {
+        padding: 0.65rem;
+    }
+    .page-full-width .analytics-section {
+        max-width: 98%;
+        margin: 0 auto;
+        padding-left: 0.25rem;
+        padding-right: 0.25rem;
+    }
+    .page-full-width .circular-card {
+        width: 100px !important;
+        height: 100px !important;
+    }
+    .page-full-width .circular-card .h5,
+    .page-full-width .circular-card .h5.mb-0 {
+        font-size: 0.95rem;
+    }
+    .page-full-width .circular-card .text-xs {
+        font-size: 0.55rem;
+    }
+    @media (max-width: 992px) {
+        .page-full-width {
+            max-width: 100%;
+        }
+    }
+</style>
+
 <div class="row page-full-width">
     @if(Auth::user()->isAdmin())
         <!-- Admin Dashboard -->
@@ -214,7 +273,7 @@ if (Auth::user()->isAdmin()) {
         
         <!-- DATA ANALYTICS CHARTS (Admin Only) -->
         @if(Auth::user()->isAdmin())
-        <div class="row mb-4" style="background: linear-gradient(135deg, #f8fafc 0%, #e3e6f3 100%); border-radius: 18px; box-shadow: 0 8px 32px rgba(102, 126, 234, 0.10); padding: 18px 8px 8px 8px;">
+        <div class="row mb-4 analytics-section" style="background: linear-gradient(135deg, #f8fafc 0%, #e3e6f3 100%); border-radius: 18px; box-shadow: 0 8px 32px rgba(102, 126, 234, 0.10); padding: 18px 8px 8px 8px;">
            
             <div class="col-lg-6 col-md-12 mb-4 d-flex align-items-stretch">
                 <div class="card shadow-lg w-100 h-100 border-0 analytics-card" style="min-height: 320px; max-height: 340px; border-radius: 18px; transition: box-shadow 0.3s;">
