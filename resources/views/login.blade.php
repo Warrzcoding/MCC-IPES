@@ -33,13 +33,9 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
-    <!-- reCAPTCHA Scripts -->
-    @if(config('services.recaptcha.site_key_v2') || config('services.recaptcha.site_key_v3'))
-        @if(isset($captchaType) && $captchaType === 'checkbox' && config('services.recaptcha.site_key_v2'))
-            <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-        @elseif(config('services.recaptcha.site_key_v3'))
-            <script src="https://www.google.com/recaptcha/api.js?render={{ config('services.recaptcha.site_key_v3') }}" async defer></script>
-        @endif
+    <!-- reCAPTCHA v3 Scripts -->
+    @if(config('services.recaptcha.site_key_v3'))
+        <script src="https://www.google.com/recaptcha/api.js?render={{ config('services.recaptcha.site_key_v3') }}" async defer></script>
     @endif
     <style>
         body {
@@ -372,6 +368,16 @@
         .signup-link a:hover {
             color: #764ba2;
             text-decoration: underline;
+        }
+
+        /* reCAPTCHA v3 Badge Positioning - Top Right Corner */
+        .grecaptcha-badge {
+            position: fixed !important;
+            top: 10px !important;
+            right: 10px !important;
+            z-index: 9999 !important;
+            width: 70px !important;
+            height: 60px !important;
         }
 
         /* Animated Forgot Password link */
@@ -945,7 +951,7 @@
                     <input type="hidden" name="user_type" value="student">
                     <div class="mb-3">
                         <label for="school_id" class="form-label">
-                            <i class="fas fa-id-card"></i> School ID
+                            <i class="fas fa-id-card"></i> School IDt
                         </label>
                         <div class="input-group">
                             <span class="input-group-text">
@@ -1603,8 +1609,8 @@
             }
         });
 
-        // reCAPTCHA v3 Integration
-        @if(config('services.recaptcha.site_key_v3') && (!isset($captchaType) || $captchaType === 'v3'))
+        // reCAPTCHA v3 Integration (v3 Only)
+        @if(config('services.recaptcha.site_key_v3'))
         function executeRecaptchaV3(form) {
             return new Promise((resolve, reject) => {
                 if (typeof grecaptcha === 'undefined') {
@@ -1612,7 +1618,7 @@
                     resolve();
                     return;
                 }
-                
+
                 grecaptcha.ready(function() {
                     grecaptcha.execute('{{ config('services.recaptcha.site_key_v3') }}', {action: 'login'})
                         .then(function(token) {
@@ -1683,31 +1689,7 @@
             });
         });
 
-        // reCAPTCHA v2 (Checkbox) Integration
-        @if(isset($captchaType) && $captchaType === 'checkbox')
-        document.addEventListener('DOMContentLoaded', function() {
-            const loginForms = document.querySelectorAll('form[action*="login"]');
-            
-            loginForms.forEach(form => {
-                form.addEventListener('submit', function(e) {
-                    const recaptchaResponse = form.querySelector('[name="g-recaptcha-response"]');
-                    
-                    if (recaptchaResponse && !recaptchaResponse.value) {
-                        e.preventDefault();
-                        
-                        Swal.fire({
-                            icon: 'warning',
-                            title: 'reCAPTCHA Required',
-                            text: 'Please complete the reCAPTCHA verification.',
-                            confirmButtonColor: '#667eea'
-                        });
-                        
-                        return false;
-                    }
-                });
-            });
-        });
-        @endif
+
     </script>
   <script src="{{ asset('js/dev-tools-security.js') }}?v=<?php echo time(); ?>"></script>
 </body>
