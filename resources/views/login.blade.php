@@ -122,20 +122,20 @@
         .login-header h2 {
             color: #333;
             font-weight: 700;
-            margin-bottom: 10px;
-            font-size: 1.8rem;
+            margin-bottom: 8px;
+            font-size: 1.44rem;
         }
         .login-header p {
             color: #666;
-            font-size: 14px;
+            font-size: 11px;
         }
         /* Enhanced input styling with green hover and spinning gradient focus */
         .form-control, .form-select {
-            border-radius: 15px;
+            border-radius: 12px;
             border: 2px solid #e9ecef;
-            padding: 15px 20px;
-            margin-bottom: 20px;
-            font-size: 16px;
+            padding: 12px 16px;
+            margin-bottom: 16px;
+            font-size: 13px;
             transition: all 0.3s ease;
             position: relative;
             background: #fff;
@@ -241,12 +241,12 @@
         .btn-primary {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border: none;
-            border-radius: 15px;
-            padding: 15px 25px;
+            border-radius: 12px;
+            padding: 12px 20px;
             font-weight: 600;
             width: 100%;
-            margin-bottom: 15px;
-            font-size: 16px;
+            margin-bottom: 12px;
+            font-size: 13px;
             transition: all 0.3s ease;
         }
         .btn-primary:hover {
@@ -256,8 +256,8 @@
         .btn-secondary {
             background: #6c757d;
             border: none;
-            border-radius: 15px;
-            padding: 12px 20px;
+            border-radius: 12px;
+            padding: 10px 16px;
             font-weight: 600;
             transition: all 0.3s ease;
         }
@@ -292,11 +292,11 @@
         .btn-success {
             background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
             border: none;
-            border-radius: 15px;
-            padding: 15px 25px;
+            border-radius: 12px;
+            padding: 12px 20px;
             font-weight: 600;
             width: 100%;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             transition: all 0.3s ease;
         }
         .btn-success:hover {
@@ -307,8 +307,8 @@
             border: 2px solid #17a2b8;
             color: #17a2b8;
             background: transparent;
-            border-radius: 15px;
-            padding: 12px 20px;
+            border-radius: 12px;
+            padding: 10px 16px;
             font-weight: 600;
             transition: all 0.3s ease;
             text-decoration: none;
@@ -573,9 +573,9 @@
         font-size: 1.2rem !important;
     }
     .form-control, .form-select {
-        font-size: 15px !important;
-        padding: 10px 12px !important;
-        border-radius: 10px !important;
+        font-size: 12px !important;
+        padding: 8px 10px !important;
+        border-radius: 8px !important;
     }
     
     /* Mobile responsive focus effects */
@@ -597,9 +597,9 @@
         box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.15) !important;
     }
     .btn, .btn-primary, .btn-success, .btn-secondary, .btn-outline-info {
-        font-size: 15px !important;
-        padding: 12px 10px !important;
-        border-radius: 10px !important;
+        font-size: 12px !important;
+        padding: 10px 8px !important;
+        border-radius: 8px !important;
     }
     
     /* Mobile responsive button layout - exclude student login form buttons */
@@ -612,13 +612,13 @@
         width: 100% !important;
     }
     .student-info, .alert {
-        padding: 12px !important;
-        font-size: 15px !important;
-        border-radius: 10px !important;
+        padding: 10px !important;
+        font-size: 12px !important;
+        border-radius: 8px !important;
     }
     .signup-link {
-        font-size: 14px !important;
-        padding-top: 10px !important;
+        font-size: 11px !important;
+        padding-top: 8px !important;
     }
     .countdown-timer {
         font-size: 1.2rem !important;
