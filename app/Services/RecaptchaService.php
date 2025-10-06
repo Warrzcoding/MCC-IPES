@@ -77,55 +77,22 @@ class RecaptchaService
 
     /**
      * Determine which reCAPTCHA type to use based on context
+     * Uses v3 only - no fallback to v2
      */
     public function determineCaptchaType($failedAttempts, $userRole, $isPasswordReset = false)
     {
-        // Check if reCAPTCHA keys are configured
-        $hasV2Key = !empty(config('services.recaptcha.site_key_v2'));
+        // Check if reCAPTCHA v3 key is configured
         $hasV3Key = !empty(config('services.recaptcha.site_key_v3'));
-        
-        // If no keys are configured, return null (no captcha)
-        if (!$hasV2Key && !$hasV3Key) {
-            Log::info('reCAPTCHA: No keys configured, skipping verification');
+
+        // If v3 key is not configured, return null (no captcha)
+        if (!$hasV3Key) {
+            Log::info('reCAPTCHA: v3 key not configured, skipping verification');
             return null;
         }
 
-        // For password reset, always use checkbox for security if available
-        if ($isPasswordReset) {
-            return $hasV2Key ? 'checkbox' : ($hasV3Key ? 'v3' : null);
-        }
-
-        // For admin/staff, use more strict security
-        if (in_array($userRole, ['admin', 'staff'])) {
-            if ($failedAttempts >= 1 && $hasV2Key) {
-                Log::info("reCAPTCHA: Using checkbox for {$userRole} with {$failedAttempts} failed attempts");
-                return 'checkbox';
-            }
-            if ($hasV3Key) {
-                Log::info("reCAPTCHA: Using v3 for {$userRole} with {$failedAttempts} failed attempts");
-                return 'v3';
-            }
-            return $hasV2Key ? 'checkbox' : null;
-        }
-
-        // For students, be more lenient
-        if ($userRole === 'student') {
-            if ($failedAttempts >= 2 && $hasV2Key) {
-                Log::info("reCAPTCHA: Using checkbox for {$userRole} with {$failedAttempts} failed attempts");
-                return 'checkbox';
-            }
-            if ($hasV3Key) {
-                Log::info("reCAPTCHA: Using v3 for {$userRole} with {$failedAttempts} failed attempts");
-                return 'v3';
-            }
-            return $hasV2Key ? 'checkbox' : null;
-        }
-
-        // Default to v3 if available, otherwise v2, otherwise null
-        if ($hasV3Key) {
-            return 'v3';
-        }
-        return $hasV2Key ? 'checkbox' : null;
+        // Always use v3 for all cases
+        Log::info("reCAPTCHA: Using v3 for {$userRole} with {$failedAttempts} failed attempts");
+        return 'v3';
     }
 
     /**

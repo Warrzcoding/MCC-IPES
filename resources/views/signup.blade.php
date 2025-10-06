@@ -10,6 +10,10 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- Preload school image for instant loading -->
     <link rel="preload" href="{{ asset('images/mainmcc.jpg') }}" as="image">
+    <!-- reCAPTCHA v3 Scripts -->
+    @if(config('services.recaptcha.site_key_v3'))
+        <script src="https://www.google.com/recaptcha/api.js?render={{ config('services.recaptcha.site_key_v3') }}" async defer></script>
+    @endif
     <style>
         body {
             background: linear-gradient(135deg, #5a189a 0%, #d0006f 100%);
@@ -22,6 +26,16 @@
             perspective: 1000px; /* adds depth for 3D transforms */
             position: relative;
             overflow: hidden;
+        }
+
+        /* reCAPTCHA v3 Badge Positioning - Top Right Corner */
+        .grecaptcha-badge {
+            position: fixed !important;
+            top: 10px !important;
+            right: 10px !important;
+            z-index: 9999 !important;
+            width: 70px !important;
+            height: 60px !important;
         }
 
         /* Floating Cubes Animation */
