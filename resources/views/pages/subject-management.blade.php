@@ -18,11 +18,20 @@
 @endif
 
 <style>
+:root {
+    --subject-text-size-base: 0.8rem;
+    --subject-text-size-heading: 1rem;
+    --subject-text-size-subheading: 0.9rem;
+    --subject-text-size-label: 0.75rem;
+    --subject-text-size-button: 0.75rem;
+    --subject-text-size-table: 0.8rem;
+}
+
 /* Department Color Badges */
 .dept-badge {
     display: inline-block;
-    padding: 0.25rem 0.5rem;
-    font-size: 0.75rem;
+    padding: 0.2rem 0.45rem;
+    font-size: calc(var(--subject-text-size-label) - 0.05rem);
     font-weight: 600;
     line-height: 1;
     text-align: center;
@@ -34,32 +43,70 @@
     letter-spacing: 0.5px;
 }
 
-.dept-bsba { background-color: #28a745; } /* Green */
-.dept-bshm { background-color: #dc3545; } /* Red */
-.dept-bsed { background-color: #003366; } /* Dark Blue */
-.dept-beed { background-color: #87ceeb; color: #333; } /* Light Blue with dark text */
-.dept-bsit { background-color: #6c757d; } /* Gray */
+.dept-bsba { background-color: #28a745; }
+.dept-bshm { background-color: #dc3545; }
+.dept-bsed { background-color: #003366; }
+.dept-beed { background-color: #87ceeb; color: #333; }
+.dept-bsit { background-color: #6c757d; }
 
 /* Subject Type Enhanced Colors */
-.subject-type-major { background-color: #007bff; } /* Primary Blue */
-.subject-type-minor { background-color: #e91e63; } /* Pink/Magenta */
-.subject-type-bridging { background-color: #fd7e14; } /* Orange */
+.subject-type-major { background-color: #007bff; }
+.subject-type-minor { background-color: #e91e63; }
+.subject-type-bridging { background-color: #fd7e14; }
 
-/* Responsive table styles for zoom compatibility */
+/* Global text sizing */
+.page-full-width,
+.page-full-width .card,
+.page-full-width .card-body,
+.page-full-width .card-header,
+.page-full-width .nav,
+.page-full-width table,
+.page-full-width .modal {
+    font-size: var(--subject-text-size-base);
+}
+
+.page-full-width h5,
+.page-full-width .card-header h5 {
+    font-size: var(--subject-text-size-heading);
+}
+
+.page-full-width h6,
+.page-full-width .card-header h6,
+.page-full-width .nav-link {
+    font-size: var(--subject-text-size-subheading);
+}
+
+.page-full-width label,
+.page-full-width .form-label,
+.page-full-width .form-text,
+.page-full-width .badge,
+.page-full-width small {
+    font-size: var(--subject-text-size-label);
+}
+
+.page-full-width .btn,
+.page-full-width .btn-sm,
+.page-full-width button {
+    font-size: var(--subject-text-size-button);
+}
+
+/* Responsive table styles */
 .table-responsive {
+    border: 1px solid #dee2e6;
+    border-radius: 0.375rem;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
 }
 
 #subjectTable1, #subjectTable2 {
-    min-width: 100%;
+    min-width: 1100px;
     white-space: nowrap;
-    font-size: 0.875rem;
+    font-size: var(--subject-text-size-table);
 }
 
 #subjectTable1 th, #subjectTable1 td,
 #subjectTable2 th, #subjectTable2 td {
-    padding: 0.5rem 0.3rem;
+    padding: 0.4rem 0.25rem;
     vertical-align: middle;
     border: 1px solid #dee2e6;
     white-space: nowrap;
@@ -138,122 +185,105 @@
 
 /* Action buttons styling */
 #subjectTable1 .btn-sm, #subjectTable2 .btn-sm {
-    padding: 0.2rem 0.4rem;
-    font-size: 0.75rem;
+    padding: 0.18rem 0.32rem;
+    font-size: calc(var(--subject-text-size-button) - 0.05rem);
     margin: 0 1px;
     white-space: nowrap;
 }
 
-/* Responsive adjustments for different zoom levels */
+/* Responsive adjustments */
 @media (max-width: 1400px) {
-    #subjectTable1, #subjectTable2 {
-        font-size: 0.8rem;
+    :root {
+        --subject-text-size-base: 0.78rem;
+        --subject-text-size-heading: 0.95rem;
+        --subject-text-size-subheading: 0.85rem;
+        --subject-text-size-label: 0.7rem;
+        --subject-text-size-button: 0.72rem;
+        --subject-text-size-table: 0.78rem;
     }
-    
+
     #subjectTable1 th, #subjectTable1 td,
     #subjectTable2 th, #subjectTable2 td {
-        padding: 0.4rem 0.25rem;
+        padding: 0.35rem 0.22rem;
     }
-    
-    #subjectTable1 .btn-sm, #subjectTable2 .btn-sm {
-        padding: 0.15rem 0.3rem;
-        font-size: 0.7rem;
-    }
-    
-    .dept-badge {
-        font-size: 0.65rem;
-        padding: 0.2rem 0.4rem;
-    }
-    
+
+    .dept-badge,
     .badge {
-        font-size: 0.65rem;
-        padding: 0.2rem 0.4rem;
+        font-size: calc(var(--subject-text-size-label) - 0.05rem);
+        padding: 0.18rem 0.35rem;
     }
 }
 
 @media (max-width: 1200px) {
-    #subjectTable1, #subjectTable2 {
-        font-size: 0.75rem;
+    :root {
+        --subject-text-size-base: 0.75rem;
+        --subject-text-size-heading: 0.9rem;
+        --subject-text-size-subheading: 0.8rem;
+        --subject-text-size-label: 0.68rem;
+        --subject-text-size-button: 0.7rem;
+        --subject-text-size-table: 0.75rem;
     }
-    
+
     #subjectTable1 th, #subjectTable1 td,
     #subjectTable2 th, #subjectTable2 td {
         padding: 0.3rem 0.2rem;
     }
-    
+
     #subjectTable1 .btn-sm, #subjectTable2 .btn-sm {
         padding: 0.1rem 0.25rem;
-        font-size: 0.65rem;
-    }
-    
-    .dept-badge {
-        font-size: 0.6rem;
-        padding: 0.15rem 0.3rem;
-    }
-    
-    .badge {
-        font-size: 0.6rem;
-        padding: 0.15rem 0.3rem;
     }
 }
 
 @media (max-width: 992px) {
-    #subjectTable1, #subjectTable2 {
-        font-size: 0.7rem;
+    :root {
+        --subject-text-size-base: 0.72rem;
+        --subject-text-size-heading: 0.85rem;
+        --subject-text-size-subheading: 0.78rem;
+        --subject-text-size-label: 0.65rem;
+        --subject-text-size-button: 0.66rem;
+        --subject-text-size-table: 0.72rem;
     }
-    
+
     #subjectTable1 th, #subjectTable1 td,
     #subjectTable2 th, #subjectTable2 td {
-        padding: 0.25rem 0.15rem;
+        padding: 0.26rem 0.16rem;
     }
-    
+
     #subjectTable1 .btn-sm, #subjectTable2 .btn-sm {
         padding: 0.1rem 0.2rem;
-        font-size: 0.6rem;
     }
-    
-    /* Stack action buttons vertically on smaller screens */
+
     #subjectTable1 td:nth-child(8) .btn-sm,
     #subjectTable2 td:nth-child(8) .btn-sm {
         display: block;
         margin: 1px 0;
         width: 100%;
     }
-    
-    .dept-badge {
-        font-size: 0.55rem;
-        padding: 0.1rem 0.25rem;
-    }
-    
-    .badge {
-        font-size: 0.55rem;
-        padding: 0.1rem 0.25rem;
-    }
 }
 
 @media (max-width: 768px) {
-    #subjectTable1, #subjectTable2 {
-        font-size: 0.65rem;
+    :root {
+        --subject-text-size-base: 0.68rem;
+        --subject-text-size-heading: 0.8rem;
+        --subject-text-size-subheading: 0.72rem;
+        --subject-text-size-label: 0.6rem;
+        --subject-text-size-button: 0.62rem;
+        --subject-text-size-table: 0.68rem;
     }
-    
+
     #subjectTable1 th, #subjectTable1 td,
     #subjectTable2 th, #subjectTable2 td {
         padding: 0.2rem 0.1rem;
     }
-    
+
     #subjectTable1 .btn-sm, #subjectTable2 .btn-sm {
         padding: 0.05rem 0.15rem;
-        font-size: 0.55rem;
     }
-    
-    .dept-badge {
-        font-size: 0.5rem;
-        padding: 0.05rem 0.2rem;
-    }
-    
+
+    .dept-badge,
     .badge {
-        font-size: 0.5rem;
-        padding: 0.05rem 0.2rem;
+        font-size: calc(var(--subject-text-size-label) - 0.05rem);
+        padding: 0.05rem 0.18rem;
     }
 }
 
@@ -289,6 +319,34 @@
 /* Allow text wrapping only for action buttons */
 #subjectTable1 td:nth-child(8), #subjectTable2 td:nth-child(8) {
     white-space: normal;
+}
+
+/* Modal sizing */
+#addModal .modal-dialog,
+#editModal .modal-dialog {
+    max-width: 520px;
+}
+
+#addModal .modal-content,
+#editModal .modal-content {
+    font-size: var(--subject-text-size-base);
+}
+
+#addModal .modal-title,
+#editModal .modal-title {
+    font-size: var(--subject-text-size-subheading);
+}
+
+#addModal .form-control,
+#addModal .form-select,
+#editModal .form-control,
+#editModal .form-select {
+    font-size: var(--subject-text-size-base);
+}
+
+#addModal .modal-footer .btn,
+#editModal .modal-footer .btn {
+    font-size: var(--subject-text-size-button);
 }
 </style>
 
@@ -805,14 +863,31 @@
 .filter-container {
     background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
     border-radius: 10px;
-    padding: 15px;
+    padding: 12px;
     margin-bottom: 20px;
     border: 1px solid #dee2e6;
+}
+
+.filter-container .form-select {
+    font-size: var(--subject-text-size-base);
+    padding: 0.25rem 0.5rem;
+    height: 1.8rem;
 }
 
 .search-box input:focus {
     transform: scale(1.02);
     transition: all 0.3s ease;
+}
+
+.search-box .form-control {
+    font-size: calc(var(--subject-text-size-base) - 0.05rem);
+    padding: 0.28rem 0.6rem 0.28rem 2.1rem;
+    height: 1.85rem;
+}
+
+.search-box .search-icon {
+    font-size: calc(var(--subject-text-size-base) + 0.02rem);
+    left: 12px;
 }
 
 .form-select:focus {
@@ -863,7 +938,8 @@
 .nav-tabs .nav-link {
     border: 2px solid transparent;
     border-radius: 8px 8px 0 0;
-    padding: 12px 20px;
+    padding: 8px 16px;
+    font-size: calc(var(--subject-text-size-subheading) - 0.05rem);
     font-weight: 600;
     color: #6c757d;
     background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
@@ -913,8 +989,8 @@
 }
 
 .nav-tabs .nav-link i {
-    margin-right: 8px;
-    font-size: 1.1em;
+    margin-right: 6px;
+    font-size: calc(var(--subject-text-size-subheading) + 0.05rem);
     transition: transform 0.3s ease;
 }
 
@@ -1590,7 +1666,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const searchIcon = document.createElement('i');
     searchIcon.className = 'fas fa-search search-icon';
     searchIcon.style.position = 'absolute';
-    searchIcon.style.left = '15px';
+    searchIcon.style.left = '12px';
     searchIcon.style.top = '50%';
     searchIcon.style.transform = 'translateY(-50%)';
     searchIcon.style.color = '#6c757d';
@@ -1600,8 +1676,8 @@ document.addEventListener('DOMContentLoaded', function() {
     searchInput.id = 'searchInput';
     searchInput.className = 'form-control';
     searchInput.placeholder = 'Search subjects by name, code, department, or year...';
-    searchInput.style.paddingLeft = '45px';
-    searchInput.style.borderRadius = '25px';
+    searchInput.style.paddingLeft = '34px';
+    searchInput.style.borderRadius = '20px';
     searchInput.style.border = '2px solid #e9ecef';
     searchInput.style.boxShadow = 'none';
     
@@ -1674,9 +1750,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // --- Clear filters button ---
     const clearButton = document.createElement('button');
     clearButton.type = 'button';
-    clearButton.className = 'btn btn-outline-primary ms-2 shadow-sm d-flex align-items-center gap-2';
-    clearButton.style.height = '40px';
-    clearButton.innerHTML = '<i class="fas fa-times"></i> <span>Clear Filters</span>';
+    clearButton.className = 'btn btn-outline-primary btn-sm ms-2 shadow-sm d-flex align-items-center gap-2';
+    clearButton.style.height = '32px';
+    clearButton.style.fontSize = 'var(--subject-text-size-button)';
+    clearButton.innerHTML = '<i class="fas fa-times" style="font-size: calc(var(--subject-text-size-button) + 0.05rem);"></i><span>Clear Filters</span>';
     clearButton.title = 'Clear all filters';
     clearButton.onclick = function() {
         searchInput.value = '';

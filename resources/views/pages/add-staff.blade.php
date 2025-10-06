@@ -67,12 +67,12 @@
                     #staffTable {
                         min-width: 100%;
                         white-space: nowrap;
-                        font-size: 0.7rem;
+                        font-size: 0.66rem;
                     }
                     
                     #staffTable th,
                     #staffTable td {
-                        padding: 0.22rem 0.16rem;
+                        padding: 0.2rem 0.14rem;
                         vertical-align: middle;
                         border: 1px solid #dee2e6;
                         white-space: nowrap;
@@ -216,30 +216,30 @@
                     /* Modal compaction */
                     .modal-compact {
                         width: 80vw;
-                        max-width: 420px;
+                        max-width: 380px;
                     }
                     .modal-compact .modal-content {
                         font-size: 0.7rem;
                     }
                     .modal-compact .modal-title {
-                        font-size: 0.78rem;
+                        font-size: 0.76rem;
                         font-weight: 600;
                     }
                     .modal-compact .form-label,
                     .modal-compact .form-text {
-                        font-size: 0.66rem;
+                        font-size: 0.64rem;
                     }
                     .modal-compact .form-control,
                     .modal-compact .form-select {
-                        font-size: 0.68rem;
-                        padding: 0.35rem 0.5rem;
+                        font-size: 0.66rem;
+                        padding: 0.32rem 0.48rem;
                     }
                     .modal-compact .modal-footer .btn {
-                        font-size: 0.68rem;
-                        padding: 0.3rem 0.55rem;
+                        font-size: 0.66rem;
+                        padding: 0.28rem 0.5rem;
                     }
                     .modal-compact .form-control::placeholder {
-                        font-size: 0.66rem;
+                        font-size: 0.64rem;
                     }
                     
                     /* Responsive adjustments for different zoom levels */
