@@ -909,7 +909,7 @@
             <div class="logo" style="box-shadow: 0 4px 16px rgb(253, 253, 253); display: flex; align-items: center; justify-content: center; margin-bottom: 10px;">
                 <img src="{{ asset('images/mccicin.jpg') }}" alt="MCC Logo" class="login-logo-img" style="width: 120px; height: 120px; object-fit: contain; padding: 5px; max-width: 100%; height: auto;">
             </div>
-            <h2 style="margin-top: 0;">MCC | IPES</h2>
+            <h2 style="margin-top: 0;">MCC | IPESdd</h2>
             <p>Instructors Performance Evaluation System</p>
         </div>
 
