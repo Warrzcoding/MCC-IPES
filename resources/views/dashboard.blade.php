@@ -17,7 +17,7 @@
             --primary-color: #667eea;
             --secondary-color: #764ba2;
              --accent-color: #f093fb;
-            --sidebar-width: 200px;
+            --sidebar-width: 195px;
             --header-height: 50px;
             --footer-height: 40px;
             --text-dark: #2d3436;

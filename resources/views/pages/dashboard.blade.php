@@ -180,6 +180,9 @@ if (Auth::user()->isAdmin()) {
     .page-full-width .analytics-card .card-body {
         padding: 0.65rem;
     }
+    .page-full-width .analytics-card .card-header h6 {
+        font-size: 0.82rem;
+    }
     .page-full-width .analytics-section {
         max-width: 98%;
         margin: 0 auto;

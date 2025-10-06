@@ -33,6 +33,136 @@
                 </h5>
             </div>
             <div class="card-body">
+                <style>
+                    /* Maintain page width while compacting forms, tables, and modals */
+                    .page-full-width .card-header h5 {
+                        font-size: 0.95rem;
+                    }
+                    .page-full-width .card-header i {
+                        font-size: 1rem;
+                    }
+                    .page-full-width .card-body {
+                        font-size: 0.75rem;
+                        padding: 0.65rem 0.8rem;
+                    }
+                    .page-full-width .alert,
+                    .page-full-width .alert p,
+                    .page-full-width .alert strong {
+                        font-size: 0.74rem;
+                    }
+                    .page-full-width label,
+                    .page-full-width span,
+                    .page-full-width p,
+                    .page-full-width .form-text,
+                    .page-full-width .form-label {
+                        font-size: 0.74rem;
+                    }
+                    .page-full-width .form-control,
+                    .page-full-width .form-select,
+                    .page-full-width input[type="text"],
+                    .page-full-width input[type="email"],
+                    .page-full-width input[type="number"],
+                    .page-full-width input[type="password"] {
+                        font-size: 0.74rem;
+                        padding: 0.36rem 0.55rem;
+                    }
+                    .page-full-width .btn,
+                    .page-full-width button[type="submit"],
+                    .page-full-width .btn-group .btn {
+                        font-size: 0.7rem;
+                        padding: 0.3rem 0.5rem;
+                    }
+                    .page-full-width .btn-group-actions .btn {
+                        padding: 0.2rem 0.4rem;
+                        height: 1.55rem;
+                        min-width: 1.55rem;
+                        display: inline-flex;
+                        align-items: center;
+                        justify-content: center;
+                    }
+                    .page-full-width .btn-group-actions .btn i {
+                        font-size: 0.65rem;
+                    }
+                    .page-full-width .table thead th {
+                        font-size: 0.74rem;
+                    }
+                    .page-full-width .table th,
+                    .page-full-width .table td {
+                        font-size: 0.68rem;
+                        padding: 0.22rem 0.32rem;
+                    }
+                    .page-full-width .badge,
+                    .page-full-width .status-container span,
+                    .page-full-width .status-container .text-info,
+                    .page-full-width .status-container .text-secondary {
+                        font-size: 0.6rem;
+                    }
+                    .page-full-width .fs-5,
+                    .page-full-width .fs-6,
+                    .page-full-width .card-title {
+                        font-size: calc(0.9rem + 0.05rem);
+                    }
+                    .page-full-width .filter-toolbar .form-select,
+                    .page-full-width .filter-toolbar .form-control {
+                        font-size: 0.7rem;
+                        padding: 0.28rem 0.45rem;
+                    }
+                    .page-full-width .modal-title,
+                    .page-full-width .modal-body,
+                    .page-full-width .modal-body label,
+                    .page-full-width .modal-body input,
+                    .page-full-width .modal-body select,
+                    .page-full-width .modal-body p {
+                        font-size: 0.72rem;
+                    }
+                    .page-full-width .modal-dialog {
+                        max-width: 420px;
+                        margin: 1rem auto;
+                    }
+                    .page-full-width .modal-content {
+                        border-radius: 0.6rem;
+                        overflow: hidden;
+                        max-height: 95vh;
+                        display: flex;
+                        flex-direction: column;
+                    }
+                    .page-full-width .modal-header,
+                    .page-full-width .modal-footer {
+                        padding: 0.5rem 0.65rem;
+                    }
+                    .page-full-width .modal-body {
+                        padding: 0.7rem;
+                        flex: 1 1 auto;
+                        max-height: calc(95vh - 5.5rem);
+                        overflow-y: auto;
+                    }
+                    body .swal2-popup.view-modal-narrow {
+                        width: 340px !important;
+                        max-width: 90vw;
+                        max-height: 92vh;
+                        padding: 0.85rem 1rem;
+                        border-radius: 0.7rem;
+                    }
+                    body .swal2-popup.view-modal-narrow .swal2-html-container {
+                        font-size: 0.68rem;
+                        text-align: left;
+                        max-height: calc(92vh - 6rem);
+                        overflow-y: auto;
+                    }
+                    body .swal2-popup.view-modal-narrow h5 {
+                        font-size: 0.9rem;
+                        margin-bottom: 0.65rem;
+                    }
+                    body .swal2-popup.view-modal-narrow img {
+                        width: 72px !important;
+                        height: 72px !important;
+                        border-width: 2px !important;
+                    }
+                    body .swal2-popup.view-modal-narrow .swal2-confirm {
+                        font-size: 0.68rem;
+                        padding: 0.32rem 0.75rem;
+                    }
+                </style>
                 <div class="alert alert-info">
                     <i class="fas fa-info-circle me-2"></i>
                     <strong>Student Management:</strong> This section allows administrators to add and manage student accounts.
@@ -427,7 +557,7 @@
 .evaluation-status-compact {
   min-width: 230px;
   width: 230px;
-  padding: 0.5rem 0.5rem;
+  padding: 0.35rem 0.4rem;
 }
 
 .evaluation-status-compact .status-container {
@@ -807,7 +937,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     <p class="text-muted text-center py-4">No students found.</p>
                 @else
                     <div class="table-responsive">
-                        <table class="table table-bordered" id="studentsTable">
+                        <table class="table table-bordered table-sm" id="studentsTable">
                             <thead>
                                 <tr>
                                     <th>Profile</th>
@@ -819,7 +949,6 @@ document.addEventListener('DOMContentLoaded', function () {
                                     <th>Year Level</th>
                                     <th>Section</th>
                                     <th>Evaluation Status</th>
-                                    <th>Added</th>
                                     <th class="actions-column">Actions</th>
                                 </tr>
                             </thead>
@@ -860,16 +989,16 @@ document.addEventListener('DOMContentLoaded', function () {
                                                 $distinctStaffIds = $evaluations->pluck('staff_id')->unique();
                                                 $teachingCount = \App\Models\Staff::whereIn('id', $distinctStaffIds)->where('staff_type', 'teaching')->count();
                                                 $nonTeachingCount = \App\Models\Staff::whereIn('id', $distinctStaffIds)->where('staff_type', 'non-teaching')->count();
-                                                
+
                                                 // Get total available staff for this student
                                                 $currentAcademicYear = \App\Models\AcademicYear::where('is_active', 1)->first();
                                                 $totalTeachingStaff = 0;
                                                 $totalNonTeachingStaff = 0;
-                                                
+
                                                 if ($currentAcademicYear) {
                                                     // Get active semester for filtering
                                                     $activeSemester = $currentAcademicYear ? (string) $currentAcademicYear->semester : null;
-                                                    
+
                                                     // Get instructor names for student's specific course, year level, section, and active semester
                                                     $instructorNames = \App\Models\Subject::whereRaw('LOWER(TRIM(sub_department)) = ?', [strtolower(trim($student->course))])
                                                         ->whereRaw('LOWER(TRIM(sub_year)) = ?', [strtolower(trim($student->year_level))])
@@ -889,14 +1018,14 @@ document.addEventListener('DOMContentLoaded', function () {
                                                         ->where('assign_instructor', '!=', '')
                                                         ->distinct('assign_instructor')
                                                         ->pluck('assign_instructor');
-                                                    
+
                                                     // Count actual teaching staff records that match these instructor names
                                                     $totalTeachingStaff = \App\Models\Staff::whereIn('full_name', $instructorNames)
                                                         ->where('staff_type', 'teaching')
                                                         ->count();
                                                     $totalNonTeachingStaff = \App\Models\Staff::where('staff_type', 'non-teaching')->count();
                                                 }
-                                                
+
                                                 // Determine completion status for each category
                                                 $instructorsComplete = ($totalTeachingStaff > 0 && $teachingCount >= $totalTeachingStaff);
                                                 $nonTeachingComplete = ($totalNonTeachingStaff > 0 && $nonTeachingCount >= $totalNonTeachingStaff);
@@ -907,20 +1036,20 @@ document.addEventListener('DOMContentLoaded', function () {
                                                     <tr>
                                                         <td style="width: 50%; padding: 0 1px 2px 0; text-align: center;">
                                                             @if($instructorsComplete)
-                                                                <span class="badge" style="background-color: #90EE90; color: #000; font-size: 0.7rem; padding: 0.3em 0.2em; width: 100%; display: block; min-width: 80px; box-sizing: border-box;">Instructor Done</span>
+                                                                <span class="badge" style="background-color: #90EE90; color: #000; font-size: 0.7rem; padding: 0.3em 0.2em; width: 100%; display: block; min-width: 80px; box-sizing: border-box;">Done</span>
                                                             @elseif($teachingCount > 0)
-                                                                <span class="badge bg-warning" style="font-size: 0.7rem; padding: 0.3em 0.2em; width: 100%; display: block; min-width: 80px; box-sizing: border-box;">Instructor In Progress</span>
+                                                                <span class="badge bg-warning" style="font-size: 0.7rem; padding: 0.3em 0.2em; width: 100%; display: block; min-width: 80px; box-sizing: border-box;">Progress</span>
                                                             @else
-                                                                <span class="badge bg-primary" style="font-size: 0.7rem; padding: 0.3em 0.2em; width: 100%; display: block; min-width: 80px; box-sizing: border-box;">Never Evaluated</span>
+                                                                <span class="badge bg-primary" style="font-size: 0.7rem; padding: 0.3em 0.2em; width: 100%; display: block; min-width: 80px; box-sizing: border-box;">Never</span>
                                                             @endif
                                                         </td>
                                                         <td style="width: 50%; padding: 0 0 2px 1px; text-align: center;">
                                                             @if($nonTeachingComplete)
-                                                                <span class="badge bg-success" style="font-size: 0.7rem; padding: 0.3em 0.2em; width: 100%; display: block; min-width: 80px; box-sizing: border-box;">Non-teaching Done</span>
+                                                                <span class="badge bg-success" style="font-size: 0.7rem; padding: 0.3em 0.2em; width: 100%; display: block; min-width: 80px; box-sizing: border-box;">Done</span>
                                                             @elseif($nonTeachingCount > 0)
-                                                                <span class="badge" style="background-color: #ff8c00; color: #fff; font-size: 0.7rem; padding: 0.3em 0.2em; width: 100%; display: block; min-width: 80px; box-sizing: border-box;">Non-teaching In Progress</span>
+                                                                <span class="badge" style="background-color: #ff8c00; color: #fff; font-size: 0.7rem; padding: 0.3em 0.2em; width: 100%; display: block; min-width: 80px; box-sizing: border-box;">Progress</span>
                                                             @else
-                                                                <span class="badge bg-primary" style="font-size: 0.7rem; padding: 0.3em 0.2em; width: 100%; display: block; min-width: 80px; box-sizing: border-box;">Never Evaluated</span>
+                                                                <span class="badge bg-primary" style="font-size: 0.7rem; padding: 0.3em 0.2em; width: 100%; display: block; min-width: 80px; box-sizing: border-box;">Never</span>
                                                             @endif
                                                         </td>
                                                     </tr>
@@ -939,7 +1068,6 @@ document.addEventListener('DOMContentLoaded', function () {
                                                 </table>
                                             </div>
                                         </td>
-                                        <td>{{ $student->created_at ? $student->created_at->format('Y-m-d') : '' }}</td>
                                         <td class="actions-column">
                                             @php
                                                 $editImageUrl = '';
@@ -1139,7 +1267,10 @@ function viewStudentData(fullName, username, email, schoolId, course, yearLevel,
         `,
         confirmButtonText: 'Close',
         confirmButtonColor: '#3085d6',
-        width: '500px'
+        width: '420px',
+        customClass: {
+            popup: 'view-modal-narrow'
+        }
     });
 }
 
