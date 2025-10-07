@@ -2,7 +2,6 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\SignupController;
 use App\Http\Controllers\PreSignupController;
@@ -126,18 +125,6 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/dashboard/pending-requests/{id}/delete', [RequestSigninController::class, 'delete'])->name('pending.requests.delete');
     Route::post('/dashboard/pending-requests/approve-multiple', [RequestSigninController::class, 'approveMultiple'])->name('pending.requests.approveMultiple');
 });
-
-// Maintenance route for refreshing cached configuration (remove after use)
-Route::get('/maintenance/config-refresh', function () {
-    Artisan::call('config:clear');
-    Artisan::call('cache:clear');
-    Artisan::call('config:cache');
-
-    return response()->json([
-        'status' => 'success',
-        'message' => 'Configuration and cache refreshed successfully.',
-    ]);
-})->name('maintenance.config-refresh');
 
 // reCAPTCHA setup and test routes
 Route::get('/recaptcha/setup', function () {
