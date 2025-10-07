@@ -126,6 +126,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/dashboard/pending-requests/approve-multiple', [RequestSigninController::class, 'approveMultiple'])->name('pending.requests.approveMultiple');
 });
 
+
 // reCAPTCHA setup and test routes
 Route::get('/recaptcha/setup', function () {
     return view('recaptcha-setup');
