@@ -1561,13 +1561,67 @@
                 }
             });
 
+            // reCAPTCHA v3 Integration
+            @if(config('services.recaptcha.site_key_v3'))
+            function executeRecaptchaV3(form, action) {
+                return new Promise((resolve, reject) => {
+                    // Check if grecaptcha is loaded
+                    if (typeof grecaptcha === 'undefined') {
+                        console.error('reCAPTCHA script not loaded');
+                        reject(new Error('reCAPTCHA script not loaded. Please check your internet connection.'));
+                        return;
+                    }
+
+                    // Add timeout to prevent hanging
+                    const timeout = setTimeout(() => {
+                        reject(new Error('reCAPTCHA verification timeout'));
+                    }, 10000); // 10 second timeout
+
+                    grecaptcha.ready(function() {
+                        console.log('reCAPTCHA ready, executing...');
+                        grecaptcha.execute('{{ config('services.recaptcha.site_key_v3') }}', {action: action})
+                            .then(function(token) {
+                                clearTimeout(timeout);
+                                console.log('reCAPTCHA token received:', token.substring(0, 20) + '...');
+                                
+                                // Add token to form
+                                let tokenInput = form.querySelector('input[name="recaptcha_token"]');
+                                if (!tokenInput) {
+                                    tokenInput = document.createElement('input');
+                                    tokenInput.type = 'hidden';
+                                    tokenInput.name = 'recaptcha_token';
+                                    form.appendChild(tokenInput);
+                                }
+                                tokenInput.value = token;
+                                console.log('Token added to form successfully');
+                                resolve();
+                            })
+                            .catch(function(error) {
+                                clearTimeout(timeout);
+                                console.error('reCAPTCHA v3 execution error:', error);
+                                reject(error);
+                            });
+                    });
+                });
+            }
+            @else
+            // Fallback function when reCAPTCHA v3 is not configured
+            function executeRecaptchaV3(form, action) {
+                return new Promise((resolve) => {
+                    console.log('reCAPTCHA v3 not configured, proceeding without verification');
+                    resolve();
+                });
+            }
+            @endif
+
             // Prevent form submission if validation fails
             const signupForm = document.getElementById('signupForm');
             if (signupForm) {
                 signupForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
                     // Validate full name
                     if (!validateFullName()) {
-                        e.preventDefault();
                         Swal.fire({
                             icon: 'error',
                             title: 'Invalid Full Name',
@@ -1580,7 +1634,6 @@
                     
                     // Validate username
                     if (!validateUsername()) {
-                        e.preventDefault();
                         Swal.fire({
                             icon: 'error',
                             title: 'Invalid Username',
@@ -1594,7 +1647,6 @@
                     const pw = passwordInput.value;
                     const result = checkPasswordStrength(pw);
                     if (!result.isStrong) {
-                        e.preventDefault();
                         let missingRequirements = [];
                         if (!result.requirements.length) missingRequirements.push('8-25 characters');
                         if (!result.requirements.uppercase) missingRequirements.push('uppercase letter');
@@ -1614,7 +1666,6 @@
                     // Check for duplicate School ID before submit
                     const schoolId = schoolIdInput.value;
                     if (schoolIdDuplicate) {
-                        e.preventDefault();
                         Swal.fire({
                             icon: 'error',
                             title: 'Duplicate School ID',
@@ -1624,6 +1675,35 @@
                         schoolIdInput.focus();
                         return false;
                     }
+
+                    // All validations passed, execute reCAPTCHA and submit
+                    const submitBtn = document.getElementById('submitBtn');
+                    const originalText = submitBtn.innerHTML;
+                    
+                    // Show loading state
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
+                    submitBtn.disabled = true;
+                    
+                    // Execute reCAPTCHA v3
+                    executeRecaptchaV3(signupForm, 'signup')
+                        .then(() => {
+                            // Submit the form
+                            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+                            signupForm.submit();
+                        })
+                        .catch((error) => {
+                            console.error('reCAPTCHA verification failed:', error);
+                            submitBtn.innerHTML = originalText;
+                            submitBtn.disabled = false;
+                            
+                            // Show error message
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Security Verification Failed',
+                                text: 'Please refresh the page and try again.',
+                                confirmButtonColor: '#667eea'
+                            });
+                        });
                 });
             }
         });

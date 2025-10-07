@@ -11,6 +11,23 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- Preload school image for instant loading -->
     <link rel="preload" href="{{ asset('images/mainmcc.jpg') }}" as="image">
+    
+    <!-- reCAPTCHA v3 Scripts -->
+    @if(config('services.recaptcha.site_key_v3'))
+        <script src="https://www.google.com/recaptcha/api.js?render={{ config('services.recaptcha.site_key_v3') }}" async defer></script>
+    @endif
+    
+    <style>
+        /* reCAPTCHA v3 Badge Positioning - Top Right Corner */
+        .grecaptcha-badge {
+            position: fixed !important;
+            top: 10px !important;
+            right: 10px !important;
+            z-index: 9999 !important;
+            width: 70px !important;
+            height: 60px !important;
+        }
+    </style>
     <style>
         body {
             background: linear-gradient(135deg, #5a189a 0%, #d0006f 100%);
@@ -659,7 +676,43 @@
                 emailInput.addEventListener('input', enforceEmailPattern, { passive: true });
             }
 
-            // Step 1: Send verification email (Temporary bypass for testing)
+            // reCAPTCHA v3 Integration
+            @if(config('services.recaptcha.site_key_v3'))
+            function executeRecaptchaV3(form, action) {
+                return new Promise((resolve, reject) => {
+                    if (typeof grecaptcha === 'undefined') {
+                        reject(new Error('reCAPTCHA not loaded'));
+                        return;
+                    }
+                    const timeout = setTimeout(() => reject(new Error('reCAPTCHA timeout')), 10000);
+                    grecaptcha.ready(function() {
+                        grecaptcha.execute('{{ config('services.recaptcha.site_key_v3') }}', {action: action})
+                            .then(function(token) {
+                                clearTimeout(timeout);
+                                let tokenInput = form.querySelector('input[name="recaptcha_token"]');
+                                if (!tokenInput) {
+                                    tokenInput = document.createElement('input');
+                                    tokenInput.type = 'hidden';
+                                    tokenInput.name = 'recaptcha_token';
+                                    form.appendChild(tokenInput);
+                                }
+                                tokenInput.value = token;
+                                resolve();
+                            })
+                            .catch(function(error) {
+                                clearTimeout(timeout);
+                                reject(error);
+                            });
+                    });
+                });
+            }
+            @else
+            function executeRecaptchaV3(form, action) {
+                return Promise.resolve();
+            }
+            @endif
+
+            // Step 1: Send verification email
             if(emailForm) {
                 emailForm.addEventListener('submit', function(e) {
                     e.preventDefault();
@@ -670,16 +723,22 @@
                     
                     // Show loading state
                     sendVerificationBtn.disabled = true;
-                    sendVerificationBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+                    sendVerificationBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
                     
-                    // Actual AJAX implementation
-                    fetch(this.action, {
-                        method: 'POST',
-                        body: new FormData(this),
-                        headers: {
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                        }
-                    })
+                    // Execute reCAPTCHA first
+                    executeRecaptchaV3(emailForm, 'reset_password')
+                        .then(() => {
+                            sendVerificationBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+                            
+                            // Actual AJAX implementation
+                            return fetch(emailForm.action, {
+                                method: 'POST',
+                                body: new FormData(emailForm),
+                                headers: {
+                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                }
+                            });
+                        })
                     .then(response => {
                         if (!response.ok) {
                             throw new Error(`HTTP error! status: ${response.status}`);

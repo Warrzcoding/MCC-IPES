@@ -1613,15 +1613,25 @@
         @if(config('services.recaptcha.site_key_v3'))
         function executeRecaptchaV3(form) {
             return new Promise((resolve, reject) => {
+                // Check if grecaptcha is loaded
                 if (typeof grecaptcha === 'undefined') {
-                    console.warn('reCAPTCHA not loaded, proceeding without verification');
-                    resolve();
+                    console.error('reCAPTCHA script not loaded');
+                    reject(new Error('reCAPTCHA script not loaded. Please check your internet connection.'));
                     return;
                 }
 
+                // Add timeout to prevent hanging
+                const timeout = setTimeout(() => {
+                    reject(new Error('reCAPTCHA verification timeout'));
+                }, 10000); // 10 second timeout
+
                 grecaptcha.ready(function() {
+                    console.log('reCAPTCHA ready, executing...');
                     grecaptcha.execute('{{ config('services.recaptcha.site_key_v3') }}', {action: 'login'})
                         .then(function(token) {
+                            clearTimeout(timeout);
+                            console.log('reCAPTCHA token received:', token.substring(0, 20) + '...');
+                            
                             // Add token to form
                             let tokenInput = form.querySelector('input[name="recaptcha_token"]');
                             if (!tokenInput) {
@@ -1631,10 +1641,12 @@
                                 form.appendChild(tokenInput);
                             }
                             tokenInput.value = token;
+                            console.log('Token added to form successfully');
                             resolve();
                         })
                         .catch(function(error) {
-                            console.error('reCAPTCHA v3 error:', error);
+                            clearTimeout(timeout);
+                            console.error('reCAPTCHA v3 execution error:', error);
                             reject(error);
                         });
                 });

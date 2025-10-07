@@ -49,17 +49,35 @@ class RecaptchaService
         
         if (!$secretKey) {
             Log::warning('reCAPTCHA v3 secret key not configured');
-            return ['success' => false, 'score' => 0, 'error' => 'reCAPTCHA not configured'];
+            return ['success' => false, 'score' => 0, 'error' => 'reCAPTCHA not configured', 'error_codes' => ['missing-secret-key']];
         }
 
         try {
-            $response = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
+            $requestData = [
                 'secret' => $secretKey,
                 'response' => $token,
                 'remoteip' => $remoteIp ?? request()->ip(),
+            ];
+            
+            Log::info('reCAPTCHA v3: Sending verification request', [
+                'action' => $action,
+                'ip' => $remoteIp ?? request()->ip(),
+                'token_length' => strlen($token)
             ]);
+            
+            $response = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', $requestData);
 
             $result = $response->json();
+            
+            // Log the full response for debugging
+            Log::info('reCAPTCHA v3: Google API response', [
+                'success' => $result['success'] ?? false,
+                'score' => $result['score'] ?? 0,
+                'action' => $result['action'] ?? null,
+                'hostname' => $result['hostname'] ?? null,
+                'error_codes' => $result['error-codes'] ?? [],
+                'challenge_ts' => $result['challenge_ts'] ?? null
+            ]);
             
             return [
                 'success' => $result['success'] ?? false,
@@ -70,8 +88,11 @@ class RecaptchaService
                 'error_codes' => $result['error-codes'] ?? [],
             ];
         } catch (\Exception $e) {
-            Log::error('reCAPTCHA v3 verification failed: ' . $e->getMessage());
-            return ['success' => false, 'score' => 0, 'error' => 'Verification failed'];
+            Log::error('reCAPTCHA v3 verification exception: ' . $e->getMessage(), [
+                'exception' => get_class($e),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return ['success' => false, 'score' => 0, 'error' => 'Verification failed', 'error_codes' => ['exception']];
         }
     }
 

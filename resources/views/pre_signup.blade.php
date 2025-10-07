@@ -11,6 +11,23 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- Preload school image for instant loading -->
     <link rel="preload" href="{{ asset('images/mainmcc.jpg') }}" as="image">
+    
+    <!-- reCAPTCHA v3 Scripts -->
+    @if(config('services.recaptcha.site_key_v3'))
+        <script src="https://www.google.com/recaptcha/api.js?render={{ config('services.recaptcha.site_key_v3') }}" async defer></script>
+    @endif
+    
+    <style>
+        /* reCAPTCHA v3 Badge Positioning - Top Right Corner */
+        .grecaptcha-badge {
+            position: fixed !important;
+            top: 10px !important;
+            right: 10px !important;
+            z-index: 9999 !important;
+            width: 70px !important;
+            height: 60px !important;
+        }
+    </style>
     <style>
         body {
             background: linear-gradient(135deg, #5a189a 0%, #d0006f 100%);
@@ -1000,6 +1017,42 @@
             }
         }
 
+        // reCAPTCHA v3 Integration
+        @if(config('services.recaptcha.site_key_v3'))
+        function executeRecaptchaV3(form, action) {
+            return new Promise((resolve, reject) => {
+                if (typeof grecaptcha === 'undefined') {
+                    reject(new Error('reCAPTCHA not loaded'));
+                    return;
+                }
+                const timeout = setTimeout(() => reject(new Error('reCAPTCHA timeout')), 10000);
+                grecaptcha.ready(function() {
+                    grecaptcha.execute('{{ config('services.recaptcha.site_key_v3') }}', {action: action})
+                        .then(function(token) {
+                            clearTimeout(timeout);
+                            let tokenInput = form.querySelector('input[name="recaptcha_token"]');
+                            if (!tokenInput) {
+                                tokenInput = document.createElement('input');
+                                tokenInput.type = 'hidden';
+                                tokenInput.name = 'recaptcha_token';
+                                form.appendChild(tokenInput);
+                            }
+                            tokenInput.value = token;
+                            resolve();
+                        })
+                        .catch(function(error) {
+                            clearTimeout(timeout);
+                            reject(error);
+                        });
+                });
+            });
+        }
+        @else
+        function executeRecaptchaV3(form, action) {
+            return Promise.resolve();
+        }
+        @endif
+
         // Handle email form submission with AJAX
         if(emailForm) {
             emailForm.addEventListener('submit', function(e) {
@@ -1011,52 +1064,69 @@
                 
                 // Disable button and show loading state
                 submitBtn.disabled = true;
-                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Checking...';
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
                 
-                // Create FormData object
-                const formData = new FormData(emailForm);
-                
-                // Send AJAX request
-                fetch(emailForm.action, {
-                    method: 'POST',
-                    body: formData,
+                // Execute reCAPTCHA first
+                executeRecaptchaV3(emailForm, 'pre_signup')
+                    .then(() => {
+                        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Checking...';
+                        
+                        // Create FormData object
+                        const formData = new FormData(emailForm);
+                        
+                        // Send AJAX request
+                        return fetch(emailForm.action, {
+                            method: 'POST',
+                            body: formData,
                     headers: {
                         'X-Requested-With': 'XMLHttpRequest',
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || document.querySelector('input[name="_token"]').value
                     }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        // Email is valid and not duplicate, proceed to OTP step
-                        step1.style.display = 'none';
-                        step2.style.display = 'block';
-                        otpEmail.value = email;
-                        startOtpTimer();
-                        updateBackButtonVisibility();
-                        
-                        // Show success message
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Verification Code Sent!',
-                            text: data.message,
-                            confirmButtonColor: '#667eea',
-                            timer: 3000,
-                            timerProgressBar: true
-                        });
-                    } else {
-                        // Show error message
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            // Email is valid and not duplicate, proceed to OTP step
+                            step1.style.display = 'none';
+                            step2.style.display = 'block';
+                            otpEmail.value = email;
+                            startOtpTimer();
+                            updateBackButtonVisibility();
+                            
+                            // Show success message
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Verification Code Sent!',
+                                text: data.message,
+                                confirmButtonColor: '#667eea',
+                                timer: 3000,
+                                timerProgressBar: true
+                            });
+                        } else {
+                            // Show error message
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Email Already Registered',
+                                text: data.message,
+                                confirmButtonColor: '#667eea',
+                                confirmButtonText: 'Try Again'
+                            }).then(() => {
+                                // Auto reset form after error alert is dismissed
+                                resetPreSignupForm();
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        submitBtn.innerHTML = originalBtnText;
+                        submitBtn.disabled = false;
                         Swal.fire({
                             icon: 'error',
-                            title: 'Email Already Registered',
-                            text: data.message,
-                            confirmButtonColor: '#667eea',
-                            confirmButtonText: 'Try Again'
-                        }).then(() => {
-                            // Auto reset form after error alert is dismissed
-                            resetPreSignupForm();
+                            title: 'Error',
+                            text: 'An error occurred. Please try again.',
+                            confirmButtonColor: '#667eea'
                         });
-                    }
+                    });
                 })
                 .catch(error => {
                     console.error('Error:', error);
