@@ -8,16 +8,15 @@
     <link rel="icon" type="image/png" href="{{ asset('images/mccicon.jpg') }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- Preload school image for instant loading -->
     <link rel="preload" href="{{ asset('images/mainmcc.jpg') }}" as="image">
-    
+
     <!-- reCAPTCHA v3 Scripts -->
     @if(config('services.recaptcha.site_key_v3'))
         <script src="https://www.google.com/recaptcha/api.js?render={{ config('services.recaptcha.site_key_v3') }}" async defer></script>
     @endif
-    
+
     <style>
         /* reCAPTCHA v3 Badge Positioning - Top Right Corner */
         .grecaptcha-badge {
@@ -29,6 +28,7 @@
             height: 60px !important;
         }
     </style>
+
     <style>
         body {
             background: linear-gradient(135deg, #5a189a 0%, #d0006f 100%);
@@ -38,10 +38,11 @@
             align-items: center;
             justify-content: center;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            perspective: 1000px;
+            /* For mobile vertical centering */
+            height: 100dvh;
             position: relative;
+            perspective: 1000px;
             overflow: hidden;
-            height: 100dvh; /* maintain mobile vertical centering */
         }
 
         /* Floating Cubes Animation */
@@ -56,16 +57,18 @@
             pointer-events: none;
             transform-style: preserve-3d;
         }
+
         .cube {
             position: absolute;
             width: 20px;
             height: 20px;
             background: rgba(255, 255, 255, 0.15);
             border-radius: 5px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25), inset 0 0 10px rgba(255,255,255,0.25);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25), inset 0 0 10px rgba(255, 255, 255, 0.25);
             animation: floatCube 18s infinite ease-in-out;
             transform: translateZ(-200px) rotateX(15deg) rotateY(20deg);
         }
+
         .cube:nth-child(1) { top: 10%; left: 10%; animation-delay: 0s; width: 25px; height: 25px; background: rgba(142, 45, 226, 0.2); }
         .cube:nth-child(2) { top: 20%; right: 10%; animation-delay: 2s; width: 20px; height: 20px; background: rgba(255, 20, 147, 0.2); }
         .cube:nth-child(3) { bottom: 30%; left: 20%; animation-delay: 4s; width: 30px; height: 30px; background: rgba(255, 255, 255, 0.2); }
@@ -78,6 +81,7 @@
         .cube:nth-child(10) { bottom: 5%; left: 5%; animation-delay: 18s; width: 32px; height: 32px; background: rgba(255, 20, 147, 0.25); }
         .cube:nth-child(11) { top: 80%; left: 30%; animation-delay: 20s; width: 19px; height: 19px; background: rgba(255, 255, 255, 0.2); }
         .cube:nth-child(12) { bottom: 20%; right: 50%; animation-delay: 22s; width: 27px; height: 27px; background: rgba(142, 45, 226, 0.2); }
+
         @keyframes floatCube {
             0%, 100% {
                 transform: translateZ(-200px) translateY(0) translateX(0) rotateX(15deg) rotateY(20deg) rotateZ(0deg);
@@ -102,6 +106,8 @@
             width: 100%;
             transition: all 0.3s ease;
             margin: 0 auto;
+            position: relative;
+            z-index: 2;
         }
         .signup-card:hover {
             transform: translateY(-5px);
@@ -509,57 +515,23 @@
                 line-height: 1.4;
             }
         }
-
-        /* Floating Cubes Animation */
-        .floating-cubes {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            overflow: hidden;
-            pointer-events: none;
-        }
-        .cube {
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            background: rgba(255, 255, 255, 0.15);
-            border-radius: 5px;
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
-            animation: floatCube 15s infinite ease-in-out;
-        }
-        .cube:nth-child(1) { top: 10%; left: 10%; animation-delay: 0s; width: 25px; height: 25px; background: rgba(142, 45, 226, 0.2); }
-        .cube:nth-child(2) { top: 20%; right: 10%; animation-delay: 2s; width: 20px; height: 20px; background: rgba(255, 20, 147, 0.2); }
-        .cube:nth-child(3) { bottom: 30%; left: 20%; animation-delay: 4s; width: 30px; height: 30px; background: rgba(255, 255, 255, 0.2); }
-        .cube:nth-child(4) { bottom: 10%; right: 20%; animation-delay: 6s; width: 22px; height: 22px; background: rgba(218, 112, 214, 0.2); }
-        .cube:nth-child(5) { top: 50%; left: 50%; animation-delay: 8s; width: 28px; height: 28px; background: rgba(142, 45, 226, 0.25); }
-        .cube:nth-child(6) { top: 70%; right: 30%; animation-delay: 10s; width: 18px; height: 18px; background: rgba(255, 20, 147, 0.18); }
-        .cube:nth-child(7) { bottom: 50%; left: 70%; animation-delay: 12s; width: 26px; height: 26px; background: rgba(255, 255, 255, 0.22); }
-        .cube:nth-child(8) { top: 30%; left: 80%; animation-delay: 14s; width: 24px; height: 24px; background: rgba(218, 112, 214, 0.2); }
-        .cube:nth-child(9) { top: 5%; right: 5%; animation-delay: 16s; width: 20px; height: 20px; background: rgba(74, 0, 224, 0.2); }
-        .cube:nth-child(10) { bottom: 5%; left: 5%; animation-delay: 18s; width: 32px; height: 32px; background: rgba(255, 20, 147, 0.25); }
-        .cube:nth-child(11) { top: 80%; left: 30%; animation-delay: 20s; width: 19px; height: 19px; background: rgba(255, 255, 255, 0.2); }
-        .cube:nth-child(12) { bottom: 20%; right: 50%; animation-delay: 22s; width: 27px; height: 27px; background: rgba(142, 45, 226, 0.2); }
-        @keyframes floatCube {
-            0%, 100% {
-                transform: translateY(0px) translateX(0px) rotate(0deg);
-            }
-            25% {
-                transform: translateY(-30px) translateX(20px) rotate(90deg);
-            }
-            50% {
-                transform: translateY(-60px) translateX(0px) rotate(180deg);
-            }
-            75% {
-                transform: translateY(-30px) translateX(-20px) rotate(270deg);
-            }
-        }
     </style>
 </head>
 <body>
-    <div class="floating-cubes">
+            <!--Bubbles bg-->
+       <div class="bg-decorations">
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+       </div>
+
+
+
+    <!-- 3D Cube background container -->
+    <div class="floating-cubes" aria-hidden="true">
         <div class="cube"></div>
         <div class="cube"></div>
         <div class="cube"></div>
@@ -573,6 +545,8 @@
         <div class="cube"></div>
         <div class="cube"></div>
     </div>
+
+
     <div class="signup-card position-relative">
         <div class="signup-header" style="margin-top: 18px;">
             <div class="logo">
@@ -824,27 +798,27 @@
         
         // Handle checkbox click
         if (acceptTermsCheckbox) {
-            acceptTermsCheckbox.addEventListener('change', function(e) {
+            acceptTermsCheckbox.addEventListener('click', function(e) {
                 if (!termsAccepted) {
-                    // Prevent checking without viewing the modal
-                    e.target.checked = false;
+                    e.preventDefault();
+                    this.checked = false;
                     showModal();
-                } else if (!this.checked) {
+                } else if (this.checked === false) {
                     // If user unchecks the checkbox after accepting terms
                     termsAccepted = false;
                     sendVerificationBtn.disabled = true;
                 }
             });
+            
+            // Also handle change event for unchecking
+            acceptTermsCheckbox.addEventListener('change', function() {
+                if (!this.checked && termsAccepted) {
+                    // User unchecked the checkbox
+                    termsAccepted = false;
+                    sendVerificationBtn.disabled = true;
+                }
+            });
         }
-
-        // Allow accessibility toggle via keyboard click events
-        acceptTermsCheckbox?.addEventListener('click', function(e) {
-            if (!termsAccepted) {
-                e.preventDefault();
-                this.checked = false;
-                showModal();
-            }
-        });
         
         // Handle terms link click
         if (termsLink) {
@@ -1018,42 +992,6 @@
             }
         }
 
-        // reCAPTCHA v3 Integration
-        @if(config('services.recaptcha.site_key_v3'))
-        function executeRecaptchaV3(form, action) {
-            return new Promise((resolve, reject) => {
-                if (typeof grecaptcha === 'undefined') {
-                    reject(new Error('reCAPTCHA not loaded'));
-                    return;
-                }
-                const timeout = setTimeout(() => reject(new Error('reCAPTCHA timeout')), 10000);
-                grecaptcha.ready(function() {
-                    grecaptcha.execute('{{ config('services.recaptcha.site_key_v3') }}', {action: action})
-                        .then(function(token) {
-                            clearTimeout(timeout);
-                            let tokenInput = form.querySelector('input[name="recaptcha_token"]');
-                            if (!tokenInput) {
-                                tokenInput = document.createElement('input');
-                                tokenInput.type = 'hidden';
-                                tokenInput.name = 'recaptcha_token';
-                                form.appendChild(tokenInput);
-                            }
-                            tokenInput.value = token;
-                            resolve();
-                        })
-                        .catch(function(error) {
-                            clearTimeout(timeout);
-                            reject(error);
-                        });
-                });
-            });
-        }
-        @else
-        function executeRecaptchaV3(form, action) {
-            return Promise.resolve();
-        }
-        @endif
-
         // Handle email form submission with AJAX
         if(emailForm) {
             emailForm.addEventListener('submit', function(e) {
@@ -1065,69 +1003,52 @@
                 
                 // Disable button and show loading state
                 submitBtn.disabled = true;
-                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Checking...';
                 
-                // Execute reCAPTCHA first
-                executeRecaptchaV3(emailForm, 'pre_signup')
-                    .then(() => {
-                        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Checking...';
-                        
-                        // Create FormData object
-                        const formData = new FormData(emailForm);
-                        
-                        // Send AJAX request
-                        return fetch(emailForm.action, {
-                            method: 'POST',
-                            body: formData,
+                // Create FormData object
+                const formData = new FormData(emailForm);
+                
+                // Send AJAX request
+                fetch(emailForm.action, {
+                    method: 'POST',
+                    body: formData,
                     headers: {
                         'X-Requested-With': 'XMLHttpRequest',
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || document.querySelector('input[name="_token"]').value
                     }
-                        })
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.status === 'success') {
-                            // Email is valid and not duplicate, proceed to OTP step
-                            step1.style.display = 'none';
-                            step2.style.display = 'block';
-                            otpEmail.value = email;
-                            startOtpTimer();
-                            updateBackButtonVisibility();
-                            
-                            // Show success message
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Verification Code Sent!',
-                                text: data.message,
-                                confirmButtonColor: '#667eea',
-                                timer: 3000,
-                                timerProgressBar: true
-                            });
-                        } else {
-                            // Show error message
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Email Already Registered',
-                                text: data.message,
-                                confirmButtonColor: '#667eea',
-                                confirmButtonText: 'Try Again'
-                            }).then(() => {
-                                // Auto reset form after error alert is dismissed
-                                resetPreSignupForm();
-                            });
-                        }
-                    })
-                    .catch(error => {
-                        submitBtn.innerHTML = originalBtnText;
-                        submitBtn.disabled = false;
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        // Email is valid and not duplicate, proceed to OTP step
+                        step1.style.display = 'none';
+                        step2.style.display = 'block';
+                        otpEmail.value = email;
+                        startOtpTimer();
+                        updateBackButtonVisibility();
+                        
+                        // Show success message
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Verification Code Sent!',
+                            text: data.message,
+                            confirmButtonColor: '#667eea',
+                            timer: 3000,
+                            timerProgressBar: true
+                        });
+                    } else {
+                        // Show error message
                         Swal.fire({
                             icon: 'error',
-                            title: 'Error',
-                            text: 'An error occurred. Please try again.',
-                            confirmButtonColor: '#667eea'
+                            title: 'Email Already Registered',
+                            text: data.message,
+                            confirmButtonColor: '#667eea',
+                            confirmButtonText: 'Try Again'
+                        }).then(() => {
+                            // Auto reset form after error alert is dismissed
+                            resetPreSignupForm();
                         });
-                    });
+                    }
                 })
                 .catch(error => {
                     console.error('Error:', error);
@@ -1390,4 +1311,4 @@
     </script>
    <script src="{{ asset('js/dev-tools-security.js') }}"></script>
 </body>
-</html> 
+</html>                                                                                 `   +-9                              
