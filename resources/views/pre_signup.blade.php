@@ -8,6 +8,7 @@
     <link rel="icon" type="image/png" href="{{ asset('images/mccicon.jpg') }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- Preload school image for instant loading -->
     <link rel="preload" href="{{ asset('images/mainmcc.jpg') }}" as="image">
@@ -823,27 +824,27 @@
         
         // Handle checkbox click
         if (acceptTermsCheckbox) {
-            acceptTermsCheckbox.addEventListener('click', function(e) {
+            acceptTermsCheckbox.addEventListener('change', function(e) {
                 if (!termsAccepted) {
-                    e.preventDefault();
-                    this.checked = false;
+                    // Prevent checking without viewing the modal
+                    e.target.checked = false;
                     showModal();
-                } else if (this.checked === false) {
+                } else if (!this.checked) {
                     // If user unchecks the checkbox after accepting terms
                     termsAccepted = false;
                     sendVerificationBtn.disabled = true;
                 }
             });
-            
-            // Also handle change event for unchecking
-            acceptTermsCheckbox.addEventListener('change', function() {
-                if (!this.checked && termsAccepted) {
-                    // User unchecked the checkbox
-                    termsAccepted = false;
-                    sendVerificationBtn.disabled = true;
-                }
-            });
         }
+
+        // Allow accessibility toggle via keyboard click events
+        acceptTermsCheckbox?.addEventListener('click', function(e) {
+            if (!termsAccepted) {
+                e.preventDefault();
+                this.checked = false;
+                showModal();
+            }
+        });
         
         // Handle terms link click
         if (termsLink) {
