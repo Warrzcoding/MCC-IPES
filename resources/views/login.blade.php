@@ -27,7 +27,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Office Instructors Evaluation System</title>
+    <title>Login - Instructors Performance Evaluation System</title>
     <link rel="icon" type="image/png" href="{{ asset('images/mccicon.jpg') }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
@@ -370,14 +370,22 @@
             text-decoration: underline;
         }
 
-        /* reCAPTCHA v3 Badge Positioning - Top Right Corner */
+        /* reCAPTCHA v3 Badge - Collapsed by default, expands on hover/focus */
         .grecaptcha-badge {
             position: fixed !important;
             top: 10px !important;
             right: 10px !important;
             z-index: 9999 !important;
             width: 70px !important;
-            height: 60px !important;
+            overflow: hidden !important;
+            transition: width 0.3s ease !important;
+            transform: scale(0.85);
+            transform-origin: 100% 0;
+        }
+        
+        .grecaptcha-badge:hover,
+        .grecaptcha-badge:focus-within {
+            width: 256px !important;
         }
 
         /* Animated Forgot Password link */
@@ -951,7 +959,7 @@
                     <input type="hidden" name="user_type" value="student">
                     <div class="mb-3">
                         <label for="school_id" class="form-label">
-                            <i class="fas fa-id-card"></i> School IDt
+                            <i class="fas fa-id-card"></i> School ID
                         </label>
                         <div class="input-group">
                             <span class="input-group-text">

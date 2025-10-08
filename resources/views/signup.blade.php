@@ -28,14 +28,22 @@
             overflow: hidden;
         }
 
-        /* reCAPTCHA v3 Badge Positioning - Top Right Corner */
+        /* reCAPTCHA v3 Badge - Collapsed by default, expands on hover/focus */
         .grecaptcha-badge {
             position: fixed !important;
             top: 10px !important;
             right: 10px !important;
             z-index: 9999 !important;
             width: 70px !important;
-            height: 60px !important;
+            overflow: hidden !important;
+            transition: width 0.3s ease !important;
+            transform: scale(0.85);
+            transform-origin: 100% 0;
+        }
+        
+        .grecaptcha-badge:hover,
+        .grecaptcha-badge:focus-within {
+            width: 256px !important;
         }
 
         /* Floating Cubes Animation */
