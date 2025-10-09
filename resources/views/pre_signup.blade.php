@@ -35,6 +35,194 @@
         .grecaptcha-badge:focus-within {
             width: 256px !important;
         }
+
+        /* SweetAlert2 Mobile-Friendly Customization */
+        .swal2-popup {
+            width: 280px !important;
+            padding: 20px !important;
+            font-size: 0.875rem !important;
+        }
+        
+        .swal2-title {
+            font-size: 1.25rem !important;
+            padding: 0 0 10px 0 !important;
+        }
+        
+        .swal2-html-container {
+            font-size: 0.813rem !important;
+            margin: 0 0 15px 0 !important;
+        }
+        
+        .swal2-icon {
+            width: 60px !important;
+            height: 60px !important;
+            margin: 10px auto 15px !important;
+            border-width: 3px !important;
+        }
+        
+        .swal2-icon .swal2-icon-content {
+            font-size: 2.5rem !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+        }
+        
+        /* Success icon checkmark */
+        .swal2-icon.swal2-success {
+            border-color: #a5dc86 !important;
+            border-radius: 50% !important;
+            width: 60px !important;
+            height: 60px !important;
+        }
+        
+        .swal2-icon.swal2-success [class^='swal2-success-line'] {
+            height: 3px !important;
+            background-color: #a5dc86 !important;
+        }
+        
+        .swal2-icon.swal2-success .swal2-success-line-tip {
+            width: 15px !important;
+            left: 10px !important;
+            top: 30px !important;
+        }
+        
+        .swal2-icon.swal2-success .swal2-success-line-long {
+            width: 28px !important;
+            right: 10px !important;
+            top: 26px !important;
+        }
+        
+        .swal2-icon.swal2-success .swal2-success-ring {
+            width: 60px !important;
+            height: 60px !important;
+            border: 3px solid rgba(165, 220, 134, 0.3) !important;
+            border-radius: 50% !important;
+        }
+        
+        .swal2-icon.swal2-success .swal2-success-fix {
+            width: 4px !important;
+            height: 60px !important;
+            left: 28px !important;
+        }
+        
+        /* Error icon X mark */
+        .swal2-icon.swal2-error {
+            border-color: #f27474 !important;
+        }
+        
+        .swal2-icon.swal2-error [class^='swal2-x-mark-line'] {
+            height: 3px !important;
+            width: 30px !important;
+            background-color: #f27474 !important;
+            top: 28px !important;
+        }
+        
+        .swal2-icon.swal2-error .swal2-x-mark-line-left {
+            left: 15px !important;
+        }
+        
+        .swal2-icon.swal2-error .swal2-x-mark-line-right {
+            right: 15px !important;
+        }
+        
+        /* Warning icon */
+        .swal2-icon.swal2-warning {
+            border-color: #facea8 !important;
+            color: #f8bb86 !important;
+            font-size: 2.5rem !important;
+            line-height: 60px !important;
+        }
+        
+        /* Info icon */
+        .swal2-icon.swal2-info {
+            border-color: #9de0f6 !important;
+            color: #3fc3ee !important;
+            font-size: 2.5rem !important;
+            line-height: 60px !important;
+        }
+        
+        /* Question icon */
+        .swal2-icon.swal2-question {
+            border-color: #c9dae1 !important;
+            color: #87adbd !important;
+            font-size: 2.5rem !important;
+            line-height: 60px !important;
+        }
+        
+        .swal2-confirm, .swal2-cancel {
+            font-size: 0.813rem !important;
+            padding: 8px 20px !important;
+        }
+        
+        .swal2-timer-progress-bar {
+            height: 3px !important;
+        }
+        
+        /* Responsive adjustments for very small screens */
+        @media (max-width: 360px) {
+            .swal2-popup {
+                width: 260px !important;
+                padding: 18px !important;
+            }
+            
+            .swal2-title {
+                font-size: 1.125rem !important;
+            }
+            
+            .swal2-icon {
+                width: 50px !important;
+                height: 50px !important;
+            }
+            
+            .swal2-icon.swal2-success {
+                width: 50px !important;
+                height: 50px !important;
+                border-radius: 50% !important;
+            }
+            
+            .swal2-icon.swal2-success .swal2-success-line-tip {
+                width: 13px !important;
+                left: 8px !important;
+                top: 25px !important;
+            }
+            
+            .swal2-icon.swal2-success .swal2-success-line-long {
+                width: 23px !important;
+                right: 8px !important;
+                top: 22px !important;
+            }
+            
+            .swal2-icon.swal2-success .swal2-success-ring {
+                width: 50px !important;
+                height: 50px !important;
+                border-radius: 50% !important;
+            }
+            
+            .swal2-icon.swal2-success .swal2-success-fix {
+                left: 23px !important;
+                height: 50px !important;
+            }
+            
+            .swal2-icon.swal2-error [class^='swal2-x-mark-line'] {
+                width: 25px !important;
+                top: 23px !important;
+            }
+            
+            .swal2-icon.swal2-error .swal2-x-mark-line-left {
+                left: 12px !important;
+            }
+            
+            .swal2-icon.swal2-error .swal2-x-mark-line-right {
+                right: 12px !important;
+            }
+            
+            .swal2-icon.swal2-warning,
+            .swal2-icon.swal2-info,
+            .swal2-icon.swal2-question {
+                font-size: 2rem !important;
+                line-height: 50px !important;
+            }
+        }
     </style>
 
     <style>

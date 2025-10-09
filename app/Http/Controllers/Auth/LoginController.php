@@ -31,7 +31,8 @@ class LoginController extends Controller
     }*/
 public function showLoginForm(Request $request)
     {
-        if (Auth::check()) {
+        // Allow authenticated users to see login page ONLY if showing success alert
+        if (Auth::check() && !Session::has('login_success')) {
             return redirect()->route('dashboard');
         }
 
@@ -412,12 +413,12 @@ public function login(Request $request)
     // Log successful attempt (so monitor badge can reflect activity)
     $this->createLoginAttempt($request, $user, 'success');
 
-    // Set success message and redirect flag
-    $welcomeMessage = 'Welcome back, ' . $user->full_name . '!';
-    
-    // Redirect based on role with success message
+    // Set success message and user name for the alert
     Session::flash('login_success', true);
-    return redirect()->route('dashboard');
+    Session::flash('user_name', $user->full_name);
+    
+    // Redirect back to login to show success alert, then JS will redirect to dashboard
+    return redirect()->route('login');
 }
 
     public function logout()
