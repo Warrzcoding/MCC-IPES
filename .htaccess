@@ -26,6 +26,13 @@
 
 <IfModule mod_rewrite.c>
     RewriteEngine On
+     RewriteBase /
+
+    # Block direct access to /public
+    RewriteRule ^public(/.*)?$ - [F,L,NC]
+
+    # Protect sensitive files
+    RewriteRule ^(\.env|\.htaccess|\.htpasswd|composer\.json|composer\.lock|artisan|server\.php|package\.json|webpack\.mix\.js)$ - [F,L,NC]
 
     # Deny access to sensitive directories
     RewriteRule ^(app|bootstrap|config|database|resources|routes|storage|tests|vendor)/ - [F,L]
@@ -33,3 +40,4 @@
     RewriteCond %{REQUEST_URI} !^/public/
     RewriteRule ^(.*)$ public/$1 [L]
 </IfModule>
+
