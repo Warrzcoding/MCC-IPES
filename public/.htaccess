@@ -1,6 +1,7 @@
 <IfModule mod_rewrite.c>
     <IfModule mod_negotiation.c>
         Options -MultiViews -Indexes
+  
     </IfModule>
 
     RewriteEngine On
@@ -23,6 +24,82 @@
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
+
 </IfModule>
 
-#=====================================================================
+
+# =========================================================================
+# Laravel Secure .htaccess - Protect against XSS, tampering, and file leaks
+# =========================================================================
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+
+    # -------------------------------------------------------------
+    # 1. Prevent access to hidden & sensitive files
+    # -------------------------------------------------------------
+    RewriteRule ^(\.env|\.htaccess|\.htpasswd|composer\.json|artisan|server\.php|package\.json|webpack\.mix\.js)$ - [F,L,NC]
+
+    # -------------------------------------------------------------
+    # 2. Block direct access to non-public directories
+    # -------------------------------------------------------------
+    RewriteRule ^(storage|vendor|resources|routes|database|tests|config)/ - [F,L,NC]
+
+    # -------------------------------------------------------------
+    # 3. Protect against common XSS / tampering via query strings
+    # -------------------------------------------------------------
+    RewriteCond %{QUERY_STRING} (\<|%3C|\b(alert|script|onerror|onload|eval|javascript|base64|data:)\b) [NC]
+    RewriteRule .* - [F,L]
+
+    # -------------------------------------------------------------
+    # 4. Laravel routing: Send all requests to index.php
+    # -------------------------------------------------------------
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^ index.php [L]
+</IfModule>
+
+# -------------------------------------------------------------
+# 5. Security headers (helps mitigate XSS / clickjacking)
+# -------------------------------------------------------------
+<IfModule mod_headers.c>
+    Header always set X-Frame-Options "DENY"
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set Referrer-Policy "no-referrer"
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains" env=HTTPS
+    Header always set X-XSS-Protection "1; mode=block"
+    # Adjust your CSP if your app loads scripts or images from elsewhere
+    Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; object-src 'none';"
+</IfModule>
+
+# -------------------------------------------------------------
+# 6. Prevent directory listing
+# -------------------------------------------------------------
+Options -Indexes
+
+# -------------------------------------------------------------
+# 7. Deny access to uploaded PHP files (if uploads exist)
+# -------------------------------------------------------------
+<IfModule mod_php.c>
+    <FilesMatch "\.(php|phtml|php5)$">
+        Require all denied
+    </FilesMatch>
+</IfModule>
+
+# -------------------------------------------------------------
+# 8. Block scanning bots / known tamper tools
+# -------------------------------------------------------------
+<IfModule mod_setenvif.c>
+    SetEnvIfNoCase User-Agent "sqlmap" bad_bot
+    SetEnvIfNoCase User-Agent "acunetix" bad_bot
+    SetEnvIfNoCase User-Agent "nikto" bad_bot
+    SetEnvIfNoCase User-Agent "curl" bad_bot
+</IfModule>
+
+<IfModule mod_authz_core.c>
+    <RequireAll>
+        Require all granted
+        Require not env bad_bot
+    </RequireAll>
+</IfModule>
