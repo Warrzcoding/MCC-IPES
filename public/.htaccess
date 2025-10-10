@@ -7,11 +7,7 @@
     RewriteEngine On
     RewriteBase /
 
-    # -------------------------------------------------------------
-    # 1. Force HTTPS (optional - remove if not using SSL)
-    # -------------------------------------------------------------
-    RewriteCond %{HTTPS} !=on
-    RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+  
 
     # -------------------------------------------------------------
     # 2. Prevent access to hidden & sensitive files
