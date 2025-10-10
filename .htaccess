@@ -34,24 +34,3 @@
     RewriteRule ^(.*)$ public/$1 [L]
 </IfModule>
 
-# Enable mod_rewrite
-RewriteEngine On
-
-# Serve static assets directly from /public
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteCond %{REQUEST_URI} !^/public/
-RewriteCond %{REQUEST_URI} ^/(css|js|images|storage|fonts)/
-RewriteRule ^(css|js|images|storage|fonts)/(.*)$ public/$1/$2 [L]
-
-# Use Laravel's index.php as default
-DirectoryIndex public/index.php
-
-# Redirect /index.html to /
-RewriteCond %{THE_REQUEST} \s/+index\.html [NC]
-RewriteRule ^index\.html$ / [R=301,L]
-
-# Send everything else to Laravel
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^ public/index.php [L]
