@@ -1,49 +1,109 @@
 # =========================================================================
-# Laravel Secure .htaccess - Safe & Asset-Friendly
+# Laravel Secure & Optimized .htaccess
 # =========================================================================
 
 <IfModule mod_rewrite.c>
     RewriteEngine On
     RewriteBase /
 
-    # Optional HTTPS redirect
+    # -------------------------------------------------------------
+    # 1. Force HTTPS (optional — remove if not using SSL)
+    # -------------------------------------------------------------
     RewriteCond %{HTTPS} !=on
     RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
-    # Protect sensitive files in root
+    # -------------------------------------------------------------
+    # 2. Block access to sensitive files
+    # -------------------------------------------------------------
     RewriteRule ^(\.env|\.htaccess|\.htpasswd|composer\.json|composer\.lock|artisan|package\.json|webpack\.mix\.js)$ - [F,L,NC]
 
-    # Block access to Laravel internal folders
+    # -------------------------------------------------------------
+    # 3. Block access to Laravel internal folders (outside public)
+    # -------------------------------------------------------------
     RewriteRule ^(app|bootstrap|config|database|resources|routes|tests|vendor)/ - [F,L,NC]
 
-    # Protect against common injection patterns
+    # -------------------------------------------------------------
+    # 4. Protect against query-string attacks
+    # -------------------------------------------------------------
     RewriteCond %{QUERY_STRING} (\<|%3C|\b(alert|script|onerror|onload|eval|javascript|base64|data:)\b) [NC]
     RewriteRule .* - [F,L]
 
-    # Laravel default rewrites
+    # -------------------------------------------------------------
+    # 5. Laravel default rewrites
+    # -------------------------------------------------------------
     <IfModule mod_negotiation.c>
         Options -MultiViews -Indexes
     </IfModule>
 
+    # Redirect trailing slashes
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} (.+)/$
+    RewriteRule ^ %1 [L,R=301]
+
+    # Route everything else to index.php
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
 </IfModule>
 
-# Security headers (CSP allows assets)
+# =========================================================================
+# 🔐 Security & Performance Headers
+# =========================================================================
 <IfModule mod_headers.c>
+
+    # Prevent Clickjacking
     Header always set X-Frame-Options "DENY"
+
+    # Prevent MIME-type sniffing
     Header always set X-Content-Type-Options "nosniff"
+
+    # Hide referrer details
     Header always set Referrer-Policy "no-referrer"
+
+    # Enforce HTTPS for 1 year
     Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains" env=HTTPS
+
+    # Basic XSS protection
     Header always set X-XSS-Protection "1; mode=block"
-    Header always set Content-Security-Policy "default-src 'self'; style-src 'self' 'unsafe-inline' https:; script-src 'self' 'unsafe-inline' https:; object-src 'none';"
+
+    # ---------------------------------------------------------
+    # Content Security Policy (CSP)
+    # Allow inline and HTTPS assets
+    # ---------------------------------------------------------
+    Header always set Content-Security-Policy "default-src 'self'; style-src 'self' 'unsafe-inline' https:; script-src 'self' 'unsafe-inline' https:; img-src 'self' data: https:; font-src 'self' data: https:; object-src 'none'; base-uri 'self'; frame-ancestors 'none';"
+
+    # ---------------------------------------------------------
+    # Permissions Policy (Feature restrictions)
+    # ---------------------------------------------------------
+    Header always set Permissions-Policy "accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=(), fullscreen=(self)"
+
+    # ---------------------------------------------------------
+    # Cache Control (for performance)
+    # ---------------------------------------------------------
+    <FilesMatch "\.(ico|jpg|jpeg|png|gif|js|css|webp|avif|svg|woff|woff2|ttf|eot)$">
+        Header set Cache-Control "public, max-age=31536000, immutable"
+    </FilesMatch>
+
+    <FilesMatch "\.(php|html|env|json)$">
+        Header set Cache-Control "no-store, no-cache, must-revalidate"
+    </FilesMatch>
+
 </IfModule>
 
-# Disable directory listing
+# =========================================================================
+# Directory & File Protections
+# =========================================================================
 Options -Indexes
 
-# Optional: block known bad bots
+<IfModule mod_php.c>
+    <FilesMatch "\.(php|phtml|php5)$">
+        Require all denied
+    </FilesMatch>
+</IfModule>
+
+# =========================================================================
+# Anti-scan / Bad Bot Protection
+# =========================================================================
 <IfModule mod_setenvif.c>
     SetEnvIfNoCase User-Agent "sqlmap" bad_bot
     SetEnvIfNoCase User-Agent "acunetix" bad_bot
