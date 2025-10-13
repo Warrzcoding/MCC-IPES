@@ -44,6 +44,186 @@
 <!-- SweetAlert2 CDN -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+<style>
+:root {
+    --academic-text-size-base: 0.8rem;
+    --academic-text-size-heading: 1rem;
+    --academic-text-size-subheading: 0.9rem;
+    --academic-text-size-label: 0.74rem;
+    --academic-text-size-button: 0.74rem;
+    --academic-table-text-size: 0.78rem;
+}
+
+.page-full-width,
+.page-full-width .card,
+.page-full-width .card-body,
+.page-full-width .card-header,
+.page-full-width table,
+.page-full-width .modal {
+    font-size: var(--academic-text-size-base);
+}
+
+.page-full-width h5,
+.page-full-width .card-header h5 {
+    font-size: var(--academic-text-size-heading);
+}
+
+.page-full-width h6,
+.page-full-width .card-header h6,
+.page-full-width .modal-title {
+    font-size: var(--academic-text-size-subheading);
+}
+
+.page-full-width label,
+.page-full-width .form-label,
+.page-full-width .form-text,
+.page-full-width .badge,
+.page-full-width small {
+    font-size: var(--academic-text-size-label);
+}
+
+.page-full-width .btn,
+.page-full-width .btn-sm,
+.page-full-width button {
+    font-size: var(--academic-text-size-button);
+}
+
+.page-full-width .btn {
+    padding: 0.38rem 0.75rem;
+}
+
+.page-full-width .btn-sm {
+    padding: 0.2rem 0.4rem;
+}
+
+.page-full-width table {
+    font-size: var(--academic-table-text-size);
+}
+
+.page-full-width table th,
+.page-full-width table td {
+    padding: 0.35rem 0.45rem;
+    vertical-align: middle;
+}
+
+.page-full-width .alert {
+    font-size: var(--academic-text-size-base);
+}
+
+.table-responsive {
+    border: 1px solid #dee2e6;
+    border-radius: 0.375rem;
+}
+
+#addAcademicYearModal .modal-dialog,
+div[id^="editAcademicYearModal"] .modal-dialog {
+    max-width: 460px;
+}
+
+#addAcademicYearModal .modal-content,
+div[id^="editAcademicYearModal"] .modal-content {
+    font-size: var(--academic-text-size-base);
+}
+
+#addAcademicYearModal .form-control,
+#addAcademicYearModal .form-select,
+div[id^="editAcademicYearModal"] .form-control,
+div[id^="editAcademicYearModal"] .form-select {
+    font-size: var(--academic-text-size-base);
+    padding: 0.38rem 0.6rem;
+}
+
+#addAcademicYearModal .form-text,
+div[id^="editAcademicYearModal"] .form-text {
+    font-size: var(--academic-text-size-label);
+}
+
+#addAcademicYearModal .modal-footer .btn,
+div[id^="editAcademicYearModal"] .modal-footer .btn {
+    font-size: var(--academic-text-size-button);
+}
+
+@media (max-width: 1400px) {
+    :root {
+        --academic-text-size-base: 0.78rem;
+        --academic-text-size-heading: 0.95rem;
+        --academic-text-size-subheading: 0.85rem;
+        --academic-text-size-label: 0.7rem;
+        --academic-text-size-button: 0.72rem;
+        --academic-table-text-size: 0.76rem;
+    }
+
+    .page-full-width table th,
+    .page-full-width table td {
+        padding: 0.3rem 0.4rem;
+    }
+}
+
+@media (max-width: 1200px) {
+    :root {
+        --academic-text-size-base: 0.75rem;
+        --academic-text-size-heading: 0.92rem;
+        --academic-text-size-subheading: 0.82rem;
+        --academic-text-size-label: 0.68rem;
+        --academic-text-size-button: 0.7rem;
+        --academic-table-text-size: 0.74rem;
+    }
+
+    .page-full-width .btn {
+        padding: 0.34rem 0.65rem;
+    }
+
+    .page-full-width table th,
+    .page-full-width table td {
+        padding: 0.28rem 0.36rem;
+    }
+}
+
+@media (max-width: 992px) {
+    :root {
+        --academic-text-size-base: 0.72rem;
+        --academic-text-size-heading: 0.88rem;
+        --academic-text-size-subheading: 0.78rem;
+        --academic-text-size-label: 0.65rem;
+        --academic-text-size-button: 0.68rem;
+        --academic-table-text-size: 0.72rem;
+    }
+
+    .page-full-width .btn {
+        padding: 0.3rem 0.6rem;
+    }
+
+    .page-full-width .btn-sm {
+        padding: 0.18rem 0.32rem;
+    }
+
+    .page-full-width table th,
+    .page-full-width table td {
+        padding: 0.24rem 0.32rem;
+    }
+}
+
+@media (max-width: 768px) {
+    :root {
+        --academic-text-size-base: 0.68rem;
+        --academic-text-size-heading: 0.82rem;
+        --academic-text-size-subheading: 0.72rem;
+        --academic-text-size-label: 0.6rem;
+        --academic-text-size-button: 0.64rem;
+        --academic-table-text-size: 0.68rem;
+    }
+
+    .page-full-width .btn {
+        padding: 0.26rem 0.55rem;
+    }
+
+    .page-full-width table th,
+    .page-full-width table td {
+        padding: 0.2rem 0.28rem;
+    }
+}
+</style>
+
 <div class="row page-full-width">
     <div class="col-12">
         <div class="card border-0 shadow-sm">

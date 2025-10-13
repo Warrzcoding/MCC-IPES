@@ -132,6 +132,191 @@ if (!function_exists('getRatingStatus')) {
 }
 @endphp
 <style>
+    :root {
+        --manage-text-size-base: 0.8rem;
+        --manage-text-size-heading: 1rem;
+        --manage-text-size-subheading: 0.9rem;
+        --manage-text-size-label: 0.74rem;
+        --manage-text-size-button: 0.74rem;
+        --manage-text-size-table: 0.78rem;
+    }
+
+    .page-full-width,
+    .page-full-width .card,
+    .page-full-width .card-body,
+    .page-full-width .card-header,
+    .page-full-width .modal,
+    .page-full-width table,
+    .nav,
+    .nav-tabs,
+    .tab-content {
+        font-size: var(--manage-text-size-base);
+    }
+
+    .page-full-width h4,
+    .page-full-width h5,
+    .page-full-width .card-header h4,
+    .page-full-width .card-header h5,
+    .evaluation-header h4 {
+        font-size: var(--manage-text-size-heading);
+    }
+
+    .page-full-width h6,
+    .page-full-width .card-header h6,
+    .page-full-width .modal-title,
+    .section-title,
+    .nav-tabs .nav-link {
+        font-size: var(--manage-text-size-subheading);
+    }
+
+    .page-full-width label,
+    .page-full-width .form-label,
+    .page-full-width .form-text,
+    .page-full-width .badge,
+    .page-full-width small,
+    .rating-badge,
+    .action-buttons .btn,
+    .section-count {
+        font-size: var(--manage-text-size-label);
+    }
+
+    .page-full-width .btn,
+    .page-full-width .btn-sm,
+    .page-full-width button,
+    .nav-tabs .nav-link {
+        font-size: var(--manage-text-size-button);
+    }
+
+    .page-full-width .btn {
+        padding: 0.38rem 0.75rem;
+    }
+
+    .page-full-width .btn-sm,
+    .action-buttons .btn {
+        padding: 0.22rem 0.45rem;
+    }
+
+    .page-full-width table {
+        font-size: var(--manage-text-size-table);
+    }
+
+    .page-full-width table th,
+    .page-full-width table td,
+    table.table th,
+    table.table td {
+        padding: 0.35rem 0.45rem;
+        vertical-align: middle;
+    }
+
+    .page-full-width .alert,
+    .page-full-width p,
+    .page-full-width li {
+        font-size: var(--manage-text-size-base);
+    }
+
+    .nav-tabs .nav-link {
+        padding: 0.4rem 0.75rem;
+    }
+
+    .tab-content .card-header,
+    .tab-content .card-body,
+    .tab-content .card {
+        font-size: var(--manage-text-size-base);
+    }
+
+    .page-full-width .form-control,
+    .page-full-width .form-select,
+    .page-full-width .modal .form-control,
+    .page-full-width .modal .form-select {
+        font-size: var(--manage-text-size-base);
+        padding: 0.38rem 0.6rem;
+    }
+
+    .page-full-width .form-text {
+        font-size: var(--manage-text-size-label);
+    }
+
+    @media (max-width: 1400px) {
+        :root {
+            --manage-text-size-base: 0.78rem;
+            --manage-text-size-heading: 0.96rem;
+            --manage-text-size-subheading: 0.86rem;
+            --manage-text-size-label: 0.7rem;
+            --manage-text-size-button: 0.72rem;
+            --manage-text-size-table: 0.76rem;
+        }
+
+        .page-full-width table th,
+        .page-full-width table td {
+            padding: 0.3rem 0.4rem;
+        }
+    }
+
+    @media (max-width: 1200px) {
+        :root {
+            --manage-text-size-base: 0.75rem;
+            --manage-text-size-heading: 0.92rem;
+            --manage-text-size-subheading: 0.82rem;
+            --manage-text-size-label: 0.68rem;
+            --manage-text-size-button: 0.7rem;
+            --manage-text-size-table: 0.74rem;
+        }
+
+        .page-full-width .btn {
+            padding: 0.34rem 0.65rem;
+        }
+
+        .page-full-width table th,
+        .page-full-width table td {
+            padding: 0.28rem 0.36rem;
+        }
+    }
+
+    @media (max-width: 992px) {
+        :root {
+            --manage-text-size-base: 0.72rem;
+            --manage-text-size-heading: 0.88rem;
+            --manage-text-size-subheading: 0.78rem;
+            --manage-text-size-label: 0.65rem;
+            --manage-text-size-button: 0.68rem;
+            --manage-text-size-table: 0.72rem;
+        }
+
+        .page-full-width .btn {
+            padding: 0.3rem 0.6rem;
+        }
+
+        .page-full-width .btn-sm,
+        .action-buttons .btn {
+            padding: 0.18rem 0.32rem;
+        }
+
+        .page-full-width table th,
+        .page-full-width table td {
+            padding: 0.24rem 0.32rem;
+        }
+    }
+
+    @media (max-width: 768px) {
+        :root {
+            --manage-text-size-base: 0.68rem;
+            --manage-text-size-heading: 0.82rem;
+            --manage-text-size-subheading: 0.72rem;
+            --manage-text-size-label: 0.6rem;
+            --manage-text-size-button: 0.64rem;
+            --manage-text-size-table: 0.68rem;
+        }
+
+        .page-full-width .btn {
+            padding: 0.26rem 0.55rem;
+        }
+
+        .page-full-width table th,
+        .page-full-width table td {
+            padding: 0.2rem 0.28rem;
+        }
+    }
+
     .staff-image {
         width: 60px;
         height: 60px;
@@ -238,23 +423,24 @@ if (!function_exists('getRatingStatus')) {
     .section-header {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
-        padding: 1rem;
+        padding: 0.85rem;
         border-radius: 8px 8px 0 0;
         margin-bottom: 0;
+        font-size: var(--manage-text-size-base);
     }
     .section-title {
-        font-size: 1.3em;
-        font-weight: bold;
+        font-size: calc(var(--manage-text-size-heading) * 1.05);
+        font-weight: 600;
         margin: 0;
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 8px;
     }
     .section-count {
         background: rgba(255,255,255,0.2);
-        padding: 0.2em 0.6em;
+        padding: 0.18em 0.55em;
         border-radius: 15px;
-        font-size: 0.8em;
+        font-size: calc(var(--manage-text-size-label) * 0.95);
     }
     .staff-list {
         max-height: 600px;

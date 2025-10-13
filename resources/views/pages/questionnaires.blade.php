@@ -111,16 +111,16 @@
     </div>
 @endif
 
-<div class="row">
+<div class="row questionnaire-page">
     <div class="col-12">
         <div class="card border-0 shadow-sm">
-            <div class="card-header bg-transparent border-0">
+            <div class="card-header bg-transparent border-0 questionnaire-page">
                 <h5 class="mb-0">
                     <i class="fas fa-clipboard-list me-2"></i>
                     Questionnaires Management
                 </h5>
             </div>
-            <div class="card-body">
+            <div class="card-body questionnaire-page">
                 <div class="alert alert-info">
                     <i class="fas fa-info-circle me-2"></i>
                     <strong>Questionnaires:</strong> This section allows administrators to manage evaluation questions and academic years.
@@ -130,11 +130,11 @@
     </div>
 </div>
 
-<div class="row">
+<div class="row questionnaire-page">
     <!-- Questions List -->
     <div class="col-12">
         <div class="card shadow mb-4">
-            <div class="card-header py-3 d-flex justify-content-between align-items-center">
+            <div class="card-header py-3 d-flex justify-content-between align-items-center questionnaire-page">
                 <div class="d-flex align-items-center gap-3">
                     <h6 class="m-0 font-weight-bold text-primary">Questions List</h6>
                     @if(isset($questionnaires_data['current_academic_year']['year']))
@@ -303,8 +303,8 @@
 </div>
 
 <!-- Add Question Modal -->
-<div class="modal fade" id="addQuestionModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
+<div class="modal fade questionnaire-modal" id="addQuestionModal" tabindex="-1">
+    <div class="modal-dialog modal-lg questionnaire-modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Add New Question</h5>
@@ -360,8 +360,8 @@
 </div>
 
 <!-- Edit Question Modal -->
-<div class="modal fade" id="editQuestionModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
+<div class="modal fade questionnaire-modal" id="editQuestionModal" tabindex="-1">
+    <div class="modal-dialog modal-lg questionnaire-modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Edit Question</h5>
@@ -455,6 +455,211 @@
 </div>
 
 <style>
+:root {
+    --questionnaire-text-size-base: 0.8rem;
+    --questionnaire-text-size-heading: 1rem;
+    --questionnaire-text-size-subheading: 0.9rem;
+    --questionnaire-text-size-label: 0.74rem;
+    --questionnaire-text-size-button: 0.74rem;
+    --questionnaire-text-size-table: 0.78rem;
+    --questionnaire-modal-max-width: 68%;
+    --questionnaire-modal-text-size-base: 0.74rem;
+    --questionnaire-modal-text-size-heading: 0.92rem;
+    --questionnaire-modal-text-size-label: 0.7rem;
+    --questionnaire-modal-text-size-button: 0.7rem;
+    --questionnaire-modal-field-padding: 0.34rem 0.55rem;
+}
+
+.questionnaire-page,
+.questionnaire-page .card,
+.questionnaire-page .card-body,
+.questionnaire-page .card-header,
+.questionnaire-page .modal,
+.questionnaire-page table,
+.questionnaire-page .nav,
+.questionnaire-page .nav-tabs,
+.questionnaire-page .tab-content,
+.questionnaire-page .alert {
+    font-size: var(--questionnaire-text-size-base);
+}
+
+.questionnaire-page h5,
+.questionnaire-page h6,
+.questionnaire-page .card-header h5,
+.questionnaire-page .card-header h6,
+.questionnaire-page .modal-title,
+.questionnaire-page .section-title,
+.questionnaire-page .nav-tabs .nav-link {
+    font-size: var(--questionnaire-text-size-heading);
+}
+
+.questionnaire-page label,
+.questionnaire-page .form-label,
+.questionnaire-page .form-text,
+.questionnaire-page small,
+.questionnaire-page .badge,
+.questionnaire-page strong,
+.questionnaire-page .table th,
+.questionnaire-page .table td,
+.questionnaire-page .countdown,
+.questionnaire-page .dropdown-item,
+.questionnaire-page #countdown-label,
+.questionnaire-page #countdown-timer {
+    font-size: var(--questionnaire-text-size-label);
+}
+
+.questionnaire-page .btn,
+.questionnaire-page .btn-sm,
+.questionnaire-page button,
+.questionnaire-page .dropdown-item,
+.questionnaire-page .modal-footer .btn {
+    font-size: var(--questionnaire-text-size-button);
+}
+
+.questionnaire-page .btn {
+    padding: 0.38rem 0.75rem;
+}
+
+.questionnaire-page .btn-sm,
+.questionnaire-page .dropdown-item,
+.questionnaire-page .action-buttons .btn {
+    padding: 0.22rem 0.45rem;
+}
+
+.questionnaire-page table {
+    font-size: var(--questionnaire-text-size-table);
+}
+
+.questionnaire-page table th,
+.questionnaire-page table td {
+    padding: 0.32rem 0.45rem;
+    vertical-align: middle;
+}
+
+.questionnaire-page .modal .form-control,
+.questionnaire-page .modal .form-select {
+    font-size: var(--questionnaire-text-size-base);
+    padding: 0.38rem 0.6rem;
+}
+
+.questionnaire-modal .modal-dialog {
+    max-width: var(--questionnaire-modal-max-width);
+}
+
+.questionnaire-modal .modal-content,
+.questionnaire-modal .modal-header,
+.questionnaire-modal .modal-body,
+.questionnaire-modal .modal-footer {
+    font-size: var(--questionnaire-modal-text-size-base);
+}
+
+.questionnaire-modal .modal-title {
+    font-size: var(--questionnaire-modal-text-size-heading);
+}
+
+.questionnaire-modal .form-label,
+.questionnaire-modal .form-text,
+.questionnaire-modal small {
+    font-size: var(--questionnaire-modal-text-size-label);
+}
+
+.questionnaire-modal .form-control,
+.questionnaire-modal .form-select,
+.questionnaire-modal textarea {
+    font-size: var(--questionnaire-modal-text-size-base);
+    padding: var(--questionnaire-modal-field-padding);
+}
+
+.questionnaire-modal .modal-footer .btn {
+    font-size: var(--questionnaire-modal-text-size-button);
+    padding: 0.28rem 0.6rem;
+}
+
+.questionnaire-page .modal-footer .btn {
+    padding: 0.3rem 0.65rem;
+}
+
+.questionnaire-page .alert {
+    padding: 0.7rem 1rem;
+}
+
+@media (max-width: 1400px) {
+    :root {
+        --questionnaire-text-size-base: 0.78rem;
+        --questionnaire-text-size-heading: 0.96rem;
+        --questionnaire-text-size-subheading: 0.86rem;
+        --questionnaire-text-size-label: 0.7rem;
+        --questionnaire-text-size-button: 0.72rem;
+        --questionnaire-text-size-table: 0.76rem;
+    }
+
+    .questionnaire-page table th,
+    .questionnaire-page table td {
+        padding: 0.3rem 0.4rem;
+    }
+}
+
+@media (max-width: 1200px) {
+    :root {
+        --questionnaire-text-size-base: 0.75rem;
+        --questionnaire-text-size-heading: 0.92rem;
+        --questionnaire-text-size-subheading: 0.82rem;
+        --questionnaire-text-size-label: 0.68rem;
+        --questionnaire-text-size-button: 0.7rem;
+        --questionnaire-text-size-table: 0.74rem;
+    }
+
+    .questionnaire-page .btn {
+        padding: 0.34rem 0.65rem;
+    }
+
+    .questionnaire-page table th,
+    .questionnaire-page table td {
+        padding: 0.28rem 0.36rem;
+    }
+}
+
+@media (max-width: 992px) {
+    :root {
+        --questionnaire-text-size-base: 0.72rem;
+        --questionnaire-text-size-heading: 0.88rem;
+        --questionnaire-text-size-subheading: 0.78rem;
+        --questionnaire-text-size-label: 0.65rem;
+        --questionnaire-text-size-button: 0.68rem;
+        --questionnaire-text-size-table: 0.72rem;
+    }
+
+    .questionnaire-page .btn {
+        padding: 0.3rem 0.6rem;
+    }
+
+    .questionnaire-page .btn-sm,
+    .questionnaire-page .action-buttons .btn {
+        padding: 0.2rem 0.35rem;
+    }
+
+    .questionnaire-page table th,
+    .questionnaire-page table td {
+        padding: 0.26rem 0.32rem;
+    }
+}
+
+@media (max-width: 768px) {
+    :root {
+        --questionnaire-text-size-base: 0.7rem;
+        --questionnaire-text-size-heading: 0.85rem;
+        --questionnaire-text-size-subheading: 0.74rem;
+        --questionnaire-text-size-label: 0.62rem;
+        --questionnaire-text-size-button: 0.66rem;
+        --questionnaire-text-size-table: 0.7rem;
+    }
+
+    .questionnaire-page table th,
+    .questionnaire-page table td {
+        padding: 0.24rem 0.3rem;
+    }
+}
+
 .btn:disabled {
     opacity: 0.6;
     cursor: not-allowed;
