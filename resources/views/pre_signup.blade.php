@@ -297,9 +297,9 @@
             backdrop-filter: blur(15px);
             border-radius: 25px;
             box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
-            padding: 45px;
-            max-width: 400px;
-            width: 100%;
+            padding: 36px;
+            max-width: 320px;
+            width: 80%;
             transition: all 0.3s ease;
             margin: 0 auto;
             position: relative;
@@ -311,45 +311,46 @@
         }
         .signup-header {
             text-align: center;
-            margin-bottom: 35px;
+            margin-bottom: 28px;
         }
         .signup-header .logo {
-            width: 60px;
-            height: 60px;
+            width: 48px;
+            height: 48px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 20px;
-            font-size: 2rem;
+            margin: 0 auto 16px;
+            font-size: 1.6rem;
             color: white;
         }
         .signup-header h2 {
             color: #333;
             font-weight: 700;
-            margin-bottom: 10px;
-            font-size: 1.5rem;
+            margin-bottom: 8px;
+            font-size: 1.2rem;
         }
         .signup-header p {
             color: #666;
-            font-size: 14px;
+            font-size: 12px;
         }
         .form-label {
             font-weight: 600;
             color: #333;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.45rem;
+            font-size: 0.875rem;
         }
         .form-control {
             border-radius: 15px;
             border: 2px solid #e9ecef;
-            padding: 15px 20px;
-            font-size: 16px;
+            padding: 12px 16px;
+            font-size: 0.9rem;
             transition: all 0.3s ease;
         }
         .form-control:focus {
             border-color: #667eea;
-            box-shadow: 0 0 0 0.3rem rgba(102, 126, 234, 0.15);
+            box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.15);
             transform: translateY(-2px);
         }
         .form-control.valid {
@@ -362,27 +363,27 @@
         }
         .form-control.valid:focus {
             border-color: #28a745 !important;
-            box-shadow: 0 0 0 0.3rem rgba(40, 167, 69, 0.15) !important;
+            box-shadow: 0 0 0 0.25rem rgba(40, 167, 69, 0.15) !important;
         }
         .form-control.invalid:focus {
             border-color: #dc3545 !important;
-            box-shadow: 0 0 0 0.3rem rgba(220, 53, 69, 0.15) !important;
+            box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.15) !important;
         }
         .btn-primary, .btn-success {
             border-radius: 15px;
-            padding: 15px 25px;
+            padding: 12px 20px;
             font-weight: 600;
             width: 100%;
-            margin-bottom: 15px;
-            font-size: 16px;
+            margin-bottom: 12px;
+            font-size: 0.95rem;
             transition: all 0.3s ease;
         }
         
         .btn-outline-primary, .btn-outline-secondary {
             border-radius: 12px;
-            padding: 12px 20px;
+            padding: 10px 16px;
             font-weight: 600;
-            font-size: 14px;
+            font-size: 0.9rem;
             transition: all 0.3s ease;
             border-width: 2px;
         }
@@ -408,8 +409,8 @@
         .alert {
             border-radius: 15px;
             border: none;
-            padding: 15px 20px;
-            margin-bottom: 20px;
+            padding: 12px 16px;
+            margin-bottom: 16px;
             animation: fadeIn 0.5s ease;
         }
         .alert-success {
@@ -439,11 +440,16 @@
         
         /* Terms and Conditions Styles */
         .terms-checkbox-container {
-            margin: 20px 0;
-            padding: 15px;
+            margin: 16px 0;
+            padding: 12px;
             background: rgba(102, 126, 234, 0.05);
             border-radius: 12px;
-            border: 1px solid rgba(102, 126, 234, 0.1);
+            border: 1px solid rgba(102, 126, 234, 0.12);
+        }
+
+        .terms-checkbox-container .form-check-label {
+            font-size: 0.85rem;
+            line-height: 1.4;
         }
         
         .form-check-input:checked {
@@ -453,7 +459,7 @@
         
         .form-check-input:focus {
             border-color: #667eea;
-            box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.25);
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.2);
         }
         
         .terms-link {
@@ -461,6 +467,7 @@
             text-decoration: none;
             font-weight: 600;
             cursor: pointer;
+            font-size: 0.85rem;
         }
         
         .terms-link:hover {
@@ -477,18 +484,18 @@
         
         /* Modal Styles */
         .modal-dialog {
-            margin: 1rem auto;
-            max-width: 90%;
-            width: 90%;
+            margin: 0.75rem auto;
+            max-width: 640px;
+            width: 85%;
             display: flex;
             align-items: center;
-            min-height: calc(100vh - 2rem);
+            min-height: calc(100vh - 1.5rem);
         }
         
         .modal-content {
             border-radius: 20px;
             border: none;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.12);
             width: 100%;
             margin: auto;
         }
@@ -498,6 +505,7 @@
             color: white;
             border-radius: 20px 20px 0 0;
             border-bottom: none;
+            padding: 16px 24px;
         }
         
         .modal-header .btn-close {
@@ -505,49 +513,57 @@
         }
         
         .modal-body {
-            padding: 30px;
-            max-height: 60vh;
+            padding: 20px 24px;
+            max-height: 55vh;
             overflow-y: auto;
+            font-size: 0.85rem;
         }
         
         .modal-footer {
             border-top: 1px solid #e9ecef;
-            padding: 20px 30px;
+            padding: 16px 24px;
         }
         
         .terms-content {
-            line-height: 1.6;
+            line-height: 1.55;
             color: #333;
             text-align: justify;
         }
         
         .terms-content h4 {
             color: #667eea;
-            margin-top: 25px;
-            margin-bottom: 15px;
+            margin-top: 20px;
+            margin-bottom: 10px;
             text-align: left;
+            font-size: 1rem;
         }
         
         .terms-content h4:first-child {
             margin-top: 0;
+        }
+
+        .terms-content p,
+        .terms-content li {
+            font-size: 0.85rem;
         }
         
         /* Accept Terms Button Styling */
         #acceptTermsBtn {
             background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
             border: none;
-            padding: 12px 30px;
+            padding: 10px 24px;
             font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+            letter-spacing: 0.4px;
+            box-shadow: 0 3px 12px rgba(40, 167, 69, 0.28);
             transition: all 0.3s ease;
+            font-size: 0.85rem;
         }
         
         #acceptTermsBtn:hover {
             background: linear-gradient(135deg, #218838 0%, #1ea085 100%);
-            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
-            transform: translateY(-2px);
+            box-shadow: 0 5px 16px rgba(40, 167, 69, 0.32);
+            transform: translateY(-1px);
         }
         
         /* Mobile Modal Responsive Styles */

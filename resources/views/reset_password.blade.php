@@ -299,9 +299,9 @@
             backdrop-filter: blur(15px);
             border-radius: 25px;
             box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
-            padding: 45px;
-            max-width: 400px;
-            width: 100%;
+            padding: 36px;
+            max-width: 320px;
+            width: 80%;
             transition: all 0.3s ease;
             margin: 0 auto;
             position: relative;
@@ -315,61 +315,62 @@
         
         .reset-header {
             text-align: center;
-            margin-bottom: 35px;
+            margin-bottom: 28px;
         }
         
         .reset-header .logo {
-            width: 60px;
-            height: 60px;
+            width: 48px;
+            height: 48px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 20px;
-            font-size: 2rem;
+            margin: 0 auto 16px;
+            font-size: 1.6rem;
             color: white;
         }
         
         .reset-header h2 {
             color: #333;
             font-weight: 700;
-            margin-bottom: 10px;
-            font-size: 1.5rem;
+            margin-bottom: 8px;
+            font-size: 1.2rem;
         }
         
         .reset-header p {
             color: #666;
-            font-size: 14px;
+            font-size: 12px;
         }
         
         .form-label {
             font-weight: 600;
             color: #333;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.45rem;
+            font-size: 0.875rem;
         }
         
         .form-control {
             border-radius: 15px;
             border: 2px solid #e9ecef;
-            padding: 15px 20px;
-            font-size: 16px;
+            padding: 12px 16px;
+            font-size: 0.9rem;
             transition: all 0.3s ease;
         }
         
         .form-control:focus {
             border-color: #667eea;
-            box-shadow: 0 0 0 0.3rem rgba(102, 126, 234, 0.15);
+            box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.15);
             transform: translateY(-2px);
         }
         
         .btn-primary, .btn-success, .btn-warning {
             border-radius: 15px;
-            padding: 15px 25px;
+            padding: 12px 20px;
             font-weight: 600;
             width: 100%;
-            margin-bottom: 15px;
-            font-size: 16px;
+            margin-bottom: 12px;
+            font-size: 0.95rem;
             transition: all 0.3s ease;
             border: none;
         }
@@ -390,8 +391,8 @@
         .alert {
             border-radius: 15px;
             border: none;
-            padding: 15px 20px;
-            margin-bottom: 20px;
+            padding: 12px 16px;
+            margin-bottom: 16px;
             animation: fadeIn 0.5s ease;
         }
         
@@ -420,11 +421,11 @@
             color: #667eea;
             background: transparent;
             border-radius: 12px;
-            padding: 12px 20px;
+            padding: 10px 16px;
             font-weight: 600;
             transition: all 0.3s ease;
             text-decoration: none;
-            font-size: 14px;
+            font-size: 0.9rem;
         }
         
         .btn-outline-secondary {
