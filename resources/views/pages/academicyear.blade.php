@@ -54,6 +54,37 @@
     --academic-table-text-size: 0.78rem;
 }
 
+/* Ensure SweetAlert2 action buttons align horizontally and use smaller Bootstrap sizing */
+.swal2-container .swal2-actions {
+    display: flex;
+    flex-direction: row !important;
+    justify-content: center;
+    gap: 0.5rem;
+    flex-wrap: nowrap; /* prevent vertical stacking */
+}
+
+.swal2-container .swal2-actions .btn {
+    padding: 0.25rem 0.5rem; /* make buttons a bit smaller */
+    font-size: 0.72rem;
+}
+
+/* SweetAlert typography tweaks */
+.swal2-container .swal2-popup {
+    font-size: 0.88rem; /* base popup font size (smaller) */
+}
+.swal2-container .swal2-title {
+    font-size: 0.95rem; /* slightly smaller title */
+}
+.swal2-container .swal2-html-container {
+    font-size: 0.85rem; /* smaller html/content text */
+}
+
+@media (max-width: 576px) {
+    .swal2-container .swal2-popup { font-size: 0.82rem; }
+    .swal2-container .swal2-title { font-size: 0.9rem; }
+    .swal2-container .swal2-html-container { font-size: 0.8rem; }
+}
+
 .page-full-width,
 .page-full-width .card,
 .page-full-width .card-body,
@@ -446,10 +477,15 @@ function confirmDeleteAcademicYear(year, yearId) {
         showCancelButton: true,
         confirmButtonColor: '#d33',
         cancelButtonColor: '#3085d6',
-        confirmButtonText: '<i class="fas fa-trash"></i> Yes, Delete It',
-        cancelButtonText: '<i class="fas fa-times"></i> Cancel',
+    confirmButtonText: '<i class="fas fa-trash"></i> Delete',
+    cancelButtonText: '<i class="fas fa-times"></i> Cancel',
         reverseButtons: true,
-        width: '500px'
+        width: '540px',
+        buttonsStyling: false,
+        customClass: {
+            confirmButton: 'btn btn-danger btn-sm',
+            cancelButton: 'btn btn-secondary btn-sm'
+        }
     }).then((result) => {
         if (result.isConfirmed) {
             // Set the year ID in the hidden form

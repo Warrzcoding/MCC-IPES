@@ -31,123 +31,129 @@ function getAdjectivalRating($rating) {
         box-shadow: 0 4px 15px rgba(0,0,0,0.1);
     }
     .staff-image {
-        width: 60px;
-        height: 60px;
+        width: 48px;
+        height: 48px;
         border-radius: 50%;
         object-fit: cover;
-        border: 3px solid #fff;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        border: 2px solid #fff;
+        box-shadow: 0 1px 6px rgba(0,0,0,0.08);
     }
     .default-avatar {
-        width: 60px;
-        height: 60px;
+        width: 48px;
+        height: 48px;
         border-radius: 50%;
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         display: flex;
         align-items: center;
         justify-content: center;
-        border: 3px solid #fff;
+        border: 2px solid #fff;
         color: white;
         font-weight: bold;
-        font-size: 20px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        font-size: 16px;
+        box-shadow: 0 1px 6px rgba(0,0,0,0.08);
     }
     .rating-badge {
-        font-size: 0.85em;
-        padding: 0.4em 0.8em;
-        border-radius: 20px;
+        font-size: 0.68rem;
+        padding: 0.28em 0.6em;
+        border-radius: 16px;
         font-weight: 600;
         text-transform: uppercase;
-        letter-spacing: 0.5px;
+        letter-spacing: 0.4px;
     }
     .rating-stars {
         color: #ffc107;
-        font-size: 1.2em;
+        font-size: 0.88rem;
     }
     .rating-number {
-        font-size: 1.5em;
-        font-weight: bold;
+        font-size: 1.1rem;
+        font-weight: 600;
     }
     .stats-item {
         text-align: center;
-        padding: 0.5rem;
+        padding: 0.35rem;
     }
     .stats-number {
-        font-size: 1.2em;
-        font-weight: bold;
+        font-size: 0.95rem;
+        font-weight: 600;
         color: #007bff;
     }
     .stats-label {
-        font-size: 0.8em;
+        font-size: 0.66rem;
         color: #6c757d;
         text-transform: uppercase;
     }
     .search-box {
-        margin-bottom: 20px;
+        margin-bottom: 16px;
         position: relative;
     }
     .search-icon {
         position: absolute;
-        left: 15px;
+        left: 12px;
         top: 50%;
         transform: translateY(-50%);
         color: #6c757d;
+        font-size: 0.75rem;
     }
     #searchInput {
-        padding-left: 50px;
-        border-radius: 25px;
-        border: 2px solid #e9ecef;
+        padding-left: 38px;
+        border-radius: 20px;
+        border: 1px solid #e9ecef;
+        font-size: 0.8rem;
+        height: 2rem;
     }
     #searchInput:focus {
         border-color: #007bff;
-        box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+        box-shadow: 0 0 0 0.12rem rgba(0,123,255,.2);
     }
     .table-header {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
+        font-size: 0.78rem;
     }
     .action-btn {
-        padding: 0.25rem 0.5rem;
-        font-size: 0.875rem;
-        border-radius: 15px;
+        padding: 0.18rem 0.4rem;
+        font-size: 0.7rem;
+        border-radius: 12px;
     }
     .comments-modal .modal-body {
-        max-height: 400px;
+        max-height: 320px;
         overflow-y: auto;
     }
     .comment-item {
-        border-left: 4px solid #007bff;
-        padding: 15px;
-        margin-bottom: 15px;
+        border-left: 3px solid #007bff;
+        padding: 10px;
+        margin-bottom: 10px;
         background-color: #f8f9fa;
-        border-radius: 0 8px 8px 0;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        border-radius: 0 6px 6px 0;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        font-size: 0.74rem;
     }
     .comment-header {
         border-bottom: 1px solid #e9ecef;
-        padding-bottom: 8px;
+        padding-bottom: 5px;
     }
     .comment-date {
-        font-size: 0.8em;
+        font-size: 0.66rem;
         color: #6c757d;
     }
     .no-comments {
         text-align: center;
-        padding: 40px;
+        padding: 24px;
         color: #6c757d;
+        font-size: 0.72rem;
     }
     .range-bar {
         width: 100%;
-        height: 8px;
-        border-radius: 6px;
+        height: 6px;
+        border-radius: 5px;
         background: #e9ecef;
-        margin-top: 6px;
+        margin-top: 4px;
         margin-bottom: 2px;
         position: relative;
     }
     .range-bar-fill {
         height: 100%;
-        border-radius: 6px;
+        border-radius: 5px;
         position: absolute;
         left: 0;
         top: 0;
@@ -179,36 +185,36 @@ function getAdjectivalRating($rating) {
     .modal-body .range-bar-fill.range-bar-orange { background-color: #fd7e14 !important; }
     .modal-body .range-bar-fill.range-bar-red { background-color: #dc3545 !important; }
     .range-legend {
-        font-size: 1em;
-        margin-bottom: 16px;
+        font-size: 0.72rem;
+        margin-bottom: 12px;
         display: flex;
         flex-wrap: nowrap;
         align-items: center;
-        gap: 18px;
+        gap: 12px;
         overflow-x: auto;
         white-space: nowrap;
     }
     .legend-item {
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 6px;
         margin-bottom: 0;
         white-space: nowrap;
     }
     .range-legend span.color {
         display: inline-block;
-        width: 22px;
-        height: 22px;
+        width: 16px;
+        height: 16px;
         border-radius: 50%;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.10);
-        border: 2px solid #fff;
-        outline: 1.5px solid #bbb;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+        border: 1px solid #fff;
+        outline: 1px solid #bbb;
     }
     .range-legend-label {
         font-weight: 600;
         color: #333;
-        letter-spacing: 0.5px;
-        font-size: 0.98em;
+        letter-spacing: 0.3px;
+        font-size: 0.72rem;
     }
     @media print {
         .modal-footer, .d-print-none, #reportPreviewModal .modal-header, #reportPreviewModal .modal, .report-title, .report-date { display: none !important; }
@@ -238,55 +244,57 @@ function getAdjectivalRating($rating) {
         width: 100%;
         background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
         color: #fff;
-        padding: 2.2em 0 1.2em 0;
-        margin-bottom: 2em;
+        padding: 1.5em 0 0.9em 0;
+        margin-bottom: 1.4em;
         text-align: center;
-        border-radius: 0.7em 0.7em 0 0;
-        box-shadow: 0 2px 12px rgba(102,126,234,0.08);
+        border-radius: 0.6em 0.6em 0 0;
+        box-shadow: 0 1px 8px rgba(102,126,234,0.08);
     }
     .report-logo {
-        width: 110px;
+        width: 82px;
         height: auto;
-        margin-bottom: 1em;
+        margin-bottom: 0.7em;
         display: block;
         margin-left: auto;
         margin-right: auto;
     }
     .report-title {
-        font-size: 2.1em;
-        font-weight: bold;
-        letter-spacing: 1px;
-        margin-bottom: 0.2em;
+        font-size: 1.4em;
+        font-weight: 700;
+        letter-spacing: 0.6px;
+        margin-bottom: 0.15em;
         color: #fff;
-        text-shadow: 0 2px 8px rgba(44,62,80,0.08);
+        text-shadow: 0 2px 6px rgba(44,62,80,0.08);
     }
     .report-date {
         color: #e0e0e0;
-        font-size: 1em;
-        margin-bottom: 1.2em;
+        font-size: 0.78em;
+        margin-bottom: 0.8em;
     }
     .report-section-title {
-        font-size: 1.2em;
+        font-size: 0.92em;
         font-weight: 600;
-        margin-top: 2em;
-        margin-bottom: 0.7em;
+        margin-top: 1.4em;
+        margin-bottom: 0.5em;
         color: #444;
         border-bottom: 2px solid #eee;
-        padding-bottom: 0.2em;
+        padding-bottom: 0.15em;
     }
     #reportTable th, #reportTable td {
         vertical-align: middle;
         text-align: center;
+        font-size: 0.68rem;
+        padding: 0.35rem 0.4rem;
     }
     #reportTable th.name-col, #reportTable td.name-col {
         text-align: left;
-        padding-left: 1.2em;
+        padding-left: 0.85em;
     }
     #reportTable th {
         background: #f8fafc;
         color: #333;
-        font-weight: 700;
-        border-bottom: 2px solid #dee2e6;
+        font-weight: 600;
+        border-bottom: 1px solid #dee2e6;
     }
     #reportTable tr {
         page-break-inside: avoid;
@@ -303,21 +311,21 @@ function getAdjectivalRating($rating) {
 
     /* Staff Type Tabs Styling */
     .nav-tabs {
-        border-bottom: 3px solid #e9ecef;
+        border-bottom: 2px solid #e9ecef;
         margin-bottom: 0;
-        padding: 0 4px;
+        padding: 0 3px;
         background: #f8f9fa;
-        border-radius: 8px 8px 0 0;
+        border-radius: 6px 6px 0 0;
     }
 
     .nav-tabs .nav-item {
-        margin-bottom: -3px;
+        margin-bottom: -2px;
     }
 
     .nav-tabs .nav-link {
-        border: 2px solid transparent;
-        border-radius: 8px 8px 0 0;
-        padding: 12px 20px;
+        border: 1px solid transparent;
+        border-radius: 6px 6px 0 0;
+        padding: 8px 14px;
         font-weight: 600;
         color: #6c757d;
         background: #ffffff;
@@ -325,8 +333,9 @@ function getAdjectivalRating($rating) {
         position: relative;
         overflow: hidden;
         text-decoration: none;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        margin-right: 4px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        margin-right: 3px;
+        font-size: 0.82rem;
     }
 
     .nav-tabs .nav-link::before {
@@ -349,35 +358,35 @@ function getAdjectivalRating($rating) {
         background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
         border-color: #007bff;
         transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0,123,255,0.2);
+        box-shadow: 0 3px 8px rgba(0,123,255,0.15);
     }
 
     .nav-tabs .nav-link.active {
         color: #ffffff;
         background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
         border-color: #007bff;
-        box-shadow: 0 4px 15px rgba(0,123,255,0.3);
+        box-shadow: 0 3px 10px rgba(0,123,255,0.25);
         transform: translateY(-1px);
     }
 
     .nav-tabs .nav-link.active:hover {
         background: linear-gradient(135deg, #0056b3 0%, #004085 100%);
-        box-shadow: 0 6px 20px rgba(0,123,255,0.4);
-        transform: translateY(-3px);
+        box-shadow: 0 4px 12px rgba(0,123,255,0.3);
+        transform: translateY(-2px);
     }
 
     .nav-tabs .nav-link i {
-        margin-right: 8px;
-        font-size: 1.1em;
+        margin-right: 6px;
+        font-size: 0.9rem;
         transition: transform 0.3s ease;
     }
 
     .nav-tabs .nav-link:hover i {
-        transform: scale(1.1) rotate(5deg);
+        transform: scale(1.08) rotate(4deg);
     }
 
     .nav-tabs .nav-link.active i {
-        transform: scale(1.05);
+        transform: scale(1.02);
         text-shadow: 0 1px 2px rgba(0,0,0,0.2);
     }
 
@@ -386,14 +395,15 @@ function getAdjectivalRating($rating) {
         background: #ffffff;
         border: 1px solid #e9ecef;
         border-top: none;
-        border-radius: 0 0 8px 8px;
+        border-radius: 0 0 6px 6px;
+        font-size: 0.78rem;
     }
 
     .tab-pane {
-        padding: 20px;
-        min-height: 400px;
+        padding: 16px;
+        min-height: 360px;
         opacity: 0;
-        transform: translateY(10px);
+        transform: translateY(8px);
         transition: all 0.3s ease-in-out;
     }
 
@@ -406,10 +416,10 @@ function getAdjectivalRating($rating) {
     .nav-tabs .nav-link.active::after {
         content: '';
         position: absolute;
-        bottom: -3px;
+        bottom: -2px;
         left: 0;
         right: 0;
-        height: 3px;
+        height: 2px;
         background: linear-gradient(90deg, #007bff, #0056b3, #007bff);
         border-radius: 2px;
     }
@@ -418,10 +428,10 @@ function getAdjectivalRating($rating) {
     .staff-type-badge {
         display: inline-block;
         background: rgba(255,255,255,0.2);
-        padding: 2px 8px;
-        border-radius: 12px;
-        font-size: 0.8em;
-        margin-left: 8px;
+        padding: 2px 6px;
+        border-radius: 10px;
+        font-size: 0.64rem;
+        margin-left: 6px;
         font-weight: 500;
     }
 
@@ -434,7 +444,7 @@ function getAdjectivalRating($rating) {
     .nav-tabs .nav-link:focus {
         outline: 2px solid #007bff;
         outline-offset: 2px;
-        box-shadow: 0 0 0 3px rgba(0,123,255,0.25);
+        box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
     }
 
     /* Responsive tab styling */
@@ -444,14 +454,14 @@ function getAdjectivalRating($rating) {
         }
         
         .nav-tabs .nav-link {
-            padding: 8px 12px;
-            font-size: 0.85em;
+            padding: 6px 10px;
+            font-size: 0.74rem;
             margin-right: 2px;
         }
         
         .nav-tabs .nav-link i {
             margin-right: 4px;
-            font-size: 0.9em;
+            font-size: 0.8rem;
         }
         
         .staff-type-badge {
@@ -461,8 +471,8 @@ function getAdjectivalRating($rating) {
 
     @media (max-width: 576px) {
         .nav-tabs .nav-link {
-            padding: 6px 10px;
-            font-size: 0.8em;
+            padding: 5px 8px;
+            font-size: 0.7rem;
         }
         
         .nav-tabs .nav-link span:first-of-type {
@@ -471,10 +481,10 @@ function getAdjectivalRating($rating) {
     }
 </style>
 
-<div class="container-fluid py-4">
-<div class="row page-full-width">
-    <div class="col-12">
-        <div class="card shadow-sm">
+<div class="container-fluid py-4 staff-ratings-page">
+    <div class="row page-full-width">
+        <div class="col-12">
+            <div class="card shadow-sm">
                 <div class="card-body">
                     <!-- Staff Type Tabs -->
                     <div class="mb-4">

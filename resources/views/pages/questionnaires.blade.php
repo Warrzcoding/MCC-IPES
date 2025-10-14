@@ -670,10 +670,53 @@
     cursor: not-allowed;
     pointer-events: auto !important;
 }
+
+/* Ensure SweetAlert2 action buttons align horizontally and use smaller Bootstrap sizing */
+.swal2-container .swal2-actions {
+    display: flex;
+    flex-direction: row !important;
+    justify-content: center;
+    gap: 0.5rem;
+    flex-wrap: nowrap; /* prevent vertical stacking */
+}
+
+.swal2-container .swal2-actions .btn {
+    padding: 0.25rem 0.5rem; /* make buttons a bit smaller */
+    font-size: 0.72rem;
+}
+
+/* SweetAlert typography tweaks */
+.swal2-container .swal2-popup {
+    font-size: 0.88rem; /* base popup font size (smaller) */
+}
+.swal2-container .swal2-title {
+    font-size: 0.95rem; /* slightly smaller title */
+}
+.swal2-container .swal2-html-container {
+    font-size: 0.85rem; /* smaller html/content text */
+}
+
+@media (max-width: 576px) {
+    .swal2-container .swal2-popup { font-size: 0.82rem; }
+    .swal2-container .swal2-title { font-size: 0.9rem; }
+    .swal2-container .swal2-html-container { font-size: 0.8rem; }
+}
+
+/* Force button text/icon sizes in SweetAlert popups */
+.swal2-popup .btn, .swal2-popup .swal2-styled {
+    font-size: 0.72rem !important;
+    padding: 0.28rem 0.5rem !important;
+}
+.swal2-popup .btn i.fas, .swal2-popup .swal2-styled i.fas {
+    margin-right: 0.35rem !important;
+    font-size: 0.85em !important;
+}
+
 </style>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
+// JavaScript for questionnaires page
 function loadQuestionData(id, title, description, responseType) {
     document.getElementById('editQuestionId').value = id;
     document.getElementById('editTitle').value = title;
@@ -684,19 +727,20 @@ function loadQuestionData(id, title, description, responseType) {
 function confirmDeleteQuestion(id, name) {
     Swal.fire({
         title: 'Are you sure?',
-        html: `<span style='font-size:1.1rem;'>You are about to <b>delete</b> the question:<br><span class='badge bg-danger text-white mt-2 mb-2'>${name}</span></span>`,
+        html: `<span style='font-size:0.9rem;'>You are about to <b>delete</b> the question:<br><span class='badge bg-danger text-white mt-2 mb-2'>${name}</span></span>`,
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#d33',
         cancelButtonColor: '#3085d6',
-        confirmButtonText: '<i class="fas fa-trash-alt me-1"></i>Yes, delete it!',
-        cancelButtonText: '<i class="fas fa-times me-1"></i>Cancel',
+        confirmButtonText: '<i class="fas fa-trash-alt"></i> Delete',
+        cancelButtonText: '<i class="fas fa-times"></i> Cancel',
         reverseButtons: true,
+        buttonsStyling: false,
         customClass: {
             popup: 'rounded-4 shadow-lg',
             title: 'fw-bold',
-            confirmButton: 'px-4 py-2',
-            cancelButton: 'px-4 py-2'
+            confirmButton: 'btn btn-danger btn-sm',
+            cancelButton: 'btn btn-secondary btn-sm'
         }
     }).then((result) => {
         if (result.isConfirmed) {
@@ -716,19 +760,20 @@ function confirmDeleteQuestion(id, name) {
 function confirmSaveAllQuestions() {
     Swal.fire({
         title: 'Save & Archive All Questions?',
-        html: "<span style='font-size:1.1rem;'>This will save all current questions to the archive for the active academic year and <b>clear all questions</b> from the list.<br><br>Are you sure?</span>",
+    html: "<span style='font-size:0.9rem;'>This will save all current questions to the archive for the active academic year and <b>clear all questions</b> from the list.<br><br>Are you sure?</span>",
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#f59e42',
         cancelButtonColor: '#3085d6',
-        confirmButtonText: '<i class="fas fa-save me-1"></i>Yes, Save & Clear!',
-        cancelButtonText: '<i class="fas fa-times me-1"></i>Cancel',
+        confirmButtonText: '<i class="fas fa-save"></i> Save & Clear',
+        cancelButtonText: '<i class="fas fa-times"></i> Cancel',
         reverseButtons: true,
+        buttonsStyling: false,
         customClass: {
             popup: 'rounded-4 shadow-lg',
             title: 'fw-bold',
-            confirmButton: 'px-4 py-2',
-            cancelButton: 'px-4 py-2'
+            confirmButton: 'btn btn-warning btn-sm',
+            cancelButton: 'btn btn-secondary btn-sm'
         }
     }).then((result) => {
         if (result.isConfirmed) {
@@ -743,10 +788,11 @@ function showCloseQuestionnaireAlert() {
         title: 'Please close the questionnaire first',
         text: 'You can only archive questions when the questionnaire is closed.',
         confirmButtonText: 'OK',
+        buttonsStyling: false,
         customClass: {
             popup: 'rounded-4 shadow-lg',
             title: 'fw-bold',
-            confirmButton: 'px-4 py-2'
+            confirmButton: 'btn btn-primary btn-sm'
         }
     });
 }
@@ -757,10 +803,11 @@ function showQuestionnaireOpenAlert() {
         title: 'Questions are being used',
         text: 'Questions are open, please close it first before adding new questions.',
         confirmButtonText: 'OK',
+        buttonsStyling: false,
         customClass: {
             popup: 'rounded-4 shadow-lg',
             title: 'fw-bold',
-            confirmButton: 'px-4 py-2'
+            confirmButton: 'btn btn-primary btn-sm'
         }
     });
 }
