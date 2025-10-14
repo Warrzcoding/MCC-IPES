@@ -524,7 +524,7 @@ function getAdjectivalRating($rating) {
                                 </div>
                                 <button type="button" class="btn btn-primary ms-2 shadow-sm d-flex align-items-center gap-2 rounded-pill refresh-btn-enhanced"
                                         style="height:40px;font-weight:bold;font-size:1rem;" onclick="location.reload();">
-                                    <i class="fas fa-sync-alt"></i> <span>Refreshd</span>
+                                    <i class="fas fa-sync-alt"></i> <span>Refresh</span>
                                 </button>
                             </div>
                             
