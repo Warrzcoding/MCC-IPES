@@ -16,7 +16,7 @@ use App\Http\Controllers\TestRecaptchaController;
 
 // Root route - redirect to login
 Route::get('/', function () {
-    return view('404');
+    return view('login');
 });
 
 // Authentication Routes
