@@ -1,34 +1,103 @@
 {{-- Login Monitoring Tracker UI (Frontend-only enhancement) --}}
 <style>
+  /* Compact scaling for login-monitor (visually reduced density) */
+  .compact-scale {
+    transform-origin: top center;
+    transform: scale(0.92);
+    max-width: 100%;
+  }
+  .compact-scale .search-container { padding: 0.9rem; }
+  .compact-scale .stat-card { padding: 0.75rem; }
+  .compact-scale .stat-icon { width: 36px; height: 36px; }
+  .compact-scale .tab-nav .btn { padding: 0.45rem 0.7rem; font-size: 0.92rem; }
+  .compact-scale .timeline-item { padding: 0.6rem 0.8rem; }
+  .compact-scale .attempt-meta { font-size: 0.78rem; }
+  .compact-scale .ua-muted { font-size: 0.72rem; }
+  .compact-scale .btn { padding: 0.375rem 0.6rem; font-size: 0.9rem; }
+  .compact-scale table th, .compact-scale table td { padding: 0.45rem 0.6rem; font-size: 0.88rem; }
+  .compact-scale .back-btn { padding: 0.45rem 0.9rem !important; min-width: 98px !important; }
+
+  /* Further compact and readable timeline text reductions */
+  .compact-scale .timeline-item .fw-semibold { font-size: 0.95rem; }
+  .compact-scale .timeline-item .status-badge { font-size: 0.68rem; padding: 0.25rem 0.45rem; }
+
+  /* Table row compactness */
+  .compact-scale #attempts-table th, .compact-scale #attempts-table td { font-size: 0.82rem; padding: 0.35rem 0.5rem; }
+  .compact-scale #attempts-table td.text-nowrap { max-width: 140px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  /* Action button: make smaller and clearer */
+  .compact-scale .view-details { padding: 0.22rem 0.45rem; font-size: 0.78rem; border-radius: 6px; }
+  .compact-scale .view-details i { margin-right: 0.35rem; }
+  .compact-scale .btn-outline-primary.view-details { border-width: 1px; }
+
+  /* Small-screen adjustments for compact view */
+  @media (max-width: 576px) {
+    .compact-scale .timeline-item .fw-semibold { font-size: 0.98rem; }
+    .compact-scale #attempts-table th, .compact-scale #attempts-table td { font-size: 0.9rem; padding: 0.4rem 0.5rem; }
+  }
+
   .enhanced-card { border: none; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); overflow: hidden; }
   .tab-separator { border: none; height: 2px; background: linear-gradient(90deg, #e9ecef 0%, #dee2e6 50%, #e9ecef 100%); margin: 0.5rem 2rem 0.75rem 2rem; border-radius: 2px; }
   .back-btn { background: linear-gradient(135deg, #6c757d 0%, #495057 100%) !important; border: none !important; border-radius: 10px !important; padding: 0.75rem 1.5rem !important; font-weight: 600 !important; transition: all 0.3s ease !important; box-shadow: 0 4px 15px rgba(108, 117, 125, 0.3) !important; color: white !important; text-decoration: none !important; display: inline-flex !important; align-items: center !important; min-width: 120px !important; }
   .back-btn:hover { transform: translateY(-2px) !important; box-shadow: 0 6px 20px rgba(108, 117, 125, 0.4) !important; color: white !important; text-decoration: none !important; }
   .search-container { background: white; border-radius: 12px; padding: 1.25rem; box-shadow: 0 5px 15px rgba(0,0,0,0.08); margin-bottom: 1.25rem; }
 
-  /* Summary cards */
-  .stat-card { background: #fff; border-radius: 12px; padding: 1rem; box-shadow: 0 6px 18px rgba(0,0,0,0.06); }
-  .stat-icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #fff; }
-  .bg-gradient-primary { background: linear-gradient(135deg, #4f46e5, #6366f1); }
-  .bg-gradient-success { background: linear-gradient(135deg, #10b981, #34d399); }
-  .bg-gradient-danger { background: linear-gradient(135deg, #ef4444, #f87171); }
+  /* Summary / dashboard cards — enhanced visuals */
+  .stat-card {
+    background: linear-gradient(180deg, #ffffff 0%, #f7fbff 100%);
+    border-radius: 12px;
+    padding: 1rem;
+    box-shadow: 0 10px 26px rgba(15,23,42,0.06);
+    border-left: 4px solid rgba(79,70,229,0.18); /* stronger accent */
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+    overflow: hidden;
+  }
+  .stat-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 22px 46px rgba(15,23,42,0.10);
+  }
+  .stat-card .text-muted.small { color: #52575b; opacity: 0.98; }
+  .stat-card .h5 { font-weight: 800; margin-bottom: 0.12rem; color: #0b1220; }
+
+  .stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    box-shadow: 0 8px 22px rgba(79,70,229,0.14);
+    font-size: 1.05rem;
+    flex-shrink: 0;
+  }
+  /* Make icon gradients slightly more prominent when present */
+  .stat-icon.bg-gradient-primary { box-shadow: 0 8px 22px rgba(79,70,229,0.12); }
+  .stat-icon.bg-gradient-success { box-shadow: 0 8px 22px rgba(16,185,129,0.12); }
+  .stat-icon.bg-gradient-danger { box-shadow: 0 8px 22px rgba(239,68,68,0.12); }
+  .bg-gradient-primary { background: linear-gradient(135deg, #3730a3, #4f46e5); }
+  .bg-gradient-success { background: linear-gradient(135deg, #059669, #10b981); }
+  .bg-gradient-danger { background: linear-gradient(135deg, #dc2626, #ef4444); }
 
   /* Tabs */
   .tab-nav .btn { border-radius: 10px; font-weight: 600; }
   .tab-nav .btn.active { background: #0d6efd; color: #fff; box-shadow: 0 6px 20px rgba(13,110,253,0.35); }
+
+  /* stronger active tab contrast */
+  .tab-nav .btn.active { background: linear-gradient(135deg, #0b5ed7, #0d6efd); color: #fff; }
 
   /* Timeline */
   .timeline { position: relative; margin: 0; padding: 0 0 0 28px; list-style: none; }
   .timeline::before { content: ""; position: absolute; top: 0; left: 10px; width: 2px; height: 100%; background: #e9ecef; }
   .timeline-item { position: relative; margin-bottom: 18px; background: #fff; border-radius: 12px; padding: 0.85rem 1rem 0.85rem 1rem; box-shadow: 0 2px 12px rgba(0,0,0,0.05); }
   .timeline-item .marker { position: absolute; left: -6px; top: 14px; width: 14px; height: 14px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
-  .marker-success { background: #16a34a; }
-  .marker-failed { background: #dc2626; }
+  .marker-success { background: #10b981; box-shadow: 0 2px 8px rgba(16,185,129,0.18); }
+  .marker-failed { background: #ef4444; box-shadow: 0 2px 8px rgba(239,68,68,0.18); }
   .attempt-meta { color: #6b7280; font-size: 0.9rem; }
   .ua-muted { color: #9ca3af; font-size: 0.85rem; }
   .status-badge { font-size: 0.75rem; padding: 0.35rem 0.55rem; border-radius: 999px; font-weight: 700; letter-spacing: .2px; }
-  .status-success { background: rgba(34,197,94,0.12); color: #15803d; border: 1px solid rgba(34,197,94,0.25); }
-  .status-failed { background: rgba(239,68,68,0.12); color: #b91c1c; border: 1px solid rgba(239,68,68,0.25); }
+  .status-success { background: rgba(16,185,129,0.14); color: #065f46; border: 1px solid rgba(16,185,129,0.28); }
+  .status-failed { background: rgba(239,68,68,0.14); color: #7f1d1d; border: 1px solid rgba(239,68,68,0.28); }
 
   /* Utilities */
   .truncate-1 { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
@@ -51,13 +120,14 @@
   })->values();
 
   // Page-level counts (based on deduped items)
-  $pageSuccess = $collection->where('status', 'success')->count();
+  $pageSuccess = $collection->where('status', 'success')->count();  
   $pageFailed  = $collection->where('status', 'failed')->count();
 
   // Keep the global total from paginator if available
   $totalCount  = isset($loginAttempts) && method_exists($loginAttempts, 'total') ? $loginAttempts->total() : $collection->count();
 @endphp
 
+<div class="compact-scale">
 <div class="row page-full-width">
   <div class="col-12">
     <div class="enhanced-card">
@@ -296,6 +366,7 @@
     </div>
   </div>
 </div>
+</div>
 
 {{-- Details Modal --}}
 <div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true">
@@ -373,6 +444,30 @@
     color: #6c757d;
     font-size: 14px;
   }
+
+  /* Compact modal text & controls for details view */
+  #detailsModal .modal-content {
+    font-size: 0.90rem; /* slightly reduced overall */
+  }
+  #detailsModal .modal-title {
+    font-size: 1.0rem;
+    font-weight: 700;
+  }
+  #detailsModal .modal-body table th {
+    font-size: 0.82rem;
+    width: 32%;
+    vertical-align: top;
+    padding: 0.35rem 0.5rem;
+  }
+  #detailsModal .modal-body table td {
+    font-size: 0.88rem;
+    padding: 0.35rem 0.5rem;
+  }
+  #detailsModal .modal-body h6 { font-size: 0.95rem; }
+  #detailsModal .modal-footer .btn { padding: 0.35rem 0.6rem; font-size: 0.86rem; }
+
+  /* Make map a bit shorter inside modal so modal height is balanced */
+  .modal.show #map { min-height: 320px !important; }
 </style>
 
 <!-- Enhanced Mapping with Multiple Providers -->

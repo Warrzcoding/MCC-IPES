@@ -28,6 +28,127 @@
     </div>
 @endif
 
+<style>
+    /* Compact styling for profile page (matches login-monitor adjustments) */
+    .compact-scale {
+        transform-origin: top center;
+        transform: scale(0.92);
+        max-width: 100%;
+    }
+    .compact-scale .card { border-radius: 12px; }
+    .compact-scale .card-body { padding: 0.9rem; }
+    .compact-scale .rounded-circle { width: 110px !important; height: 110px !important; }
+    .compact-scale .card-title { font-size: 1.05rem; font-weight: 700; }
+    .compact-scale .form-label { font-size: 0.92rem; }
+    .compact-scale .form-control, .compact-scale .form-select { padding: 0.45rem 0.6rem; font-size: 0.92rem; }
+    .compact-scale .btn { padding: 0.38rem 0.7rem; font-size: 0.9rem; }
+    .compact-scale .text-muted.small { font-size: 0.78rem; }
+    .compact-scale .badge { font-size: 0.78rem; padding: 0.28rem 0.5rem; }
+    .compact-scale .table th, .compact-scale .table td { padding: 0.4rem 0.5rem; font-size: 0.86rem; }
+    .compact-scale .btn-sm { padding: 0.22rem 0.45rem; font-size: 0.78rem; }
+    .compact-scale .card.border-0.shadow-sm { box-shadow: 0 8px 22px rgba(13,20,30,0.06); border-left: 4px solid rgba(102,126,234,0.10); }
+
+    /* Admin table specific tweaks */
+    .compact-scale #adminsTable .table-avatar {
+        width: 32px !important;
+        height: 32px !important;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 2px solid #667eea;
+        display: inline-block;
+    }
+
+    .compact-scale .btn-icon {
+        width: 34px;
+        height: 34px;
+        padding: 0;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.9rem;
+        line-height: 1;
+    }
+    .compact-scale .btn-icon i { margin: 0; }
+    .compact-scale .btn-icon.btn-outline-primary:hover {
+        background-color: rgba(102,126,234,0.08);
+    }
+    .compact-scale .btn-icon.btn-outline-danger:hover {
+        background-color: rgba(220,53,69,0.06);
+    }
+
+    /* Status indicator: colored dot + label */
+    .compact-scale .status-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        display: inline-block;
+        box-shadow: 0 0 0 2px rgba(255,255,255,0.6);
+    }
+    .compact-scale .status-text { font-size: 0.88rem; }
+    .compact-scale .status-success { background-color: #28a745; }
+    .compact-scale .status-danger { background-color: #dc3545; }
+
+    /* Modal tweaks: reduce sizes for admin modals only (keeps maps/full screens unaffected) */
+    .modal .modal-content { font-size: 0.95rem; }
+    .modal .modal-title { font-size: 1rem; }
+    .modal .modal-body .form-label { font-size: 0.9rem; }
+
+    /* Specific compact rules for admin modals (further reduced) */
+    #addAdminModal .modal-dialog,
+    #editAdminModal .modal-dialog { max-width: 760px; }
+    #addAdminModal .modal-content,
+    #editAdminModal .modal-content,
+    .admin-modal .modal-content {
+        font-size: 0.86rem;
+    }
+    #addAdminModal .modal-title,
+    #editAdminModal .modal-title,
+    .admin-modal .modal-title { font-size: 0.92rem; }
+    #addAdminModal .form-label,
+    #editAdminModal .form-label,
+    .admin-modal .form-label { font-size: 0.82rem; }
+    #addAdminModal .form-control,
+    #editAdminModal .form-control,
+    .admin-modal .form-control,
+    #addAdminModal .form-select,
+    #editAdminModal .form-select,
+    .admin-modal .form-select {
+        padding: 0.28rem 0.4rem;
+        font-size: 0.84rem; /* tighter inputs */
+    }
+    #addAdminModal .modal-body .row > [class*="col-"],
+    #editAdminModal .modal-body .row > [class*="col-"] {
+        margin-bottom: 0.3rem;
+    }
+
+    /* Smaller preview images inside modals */
+    #addAdminModal #adminPreviewImg {
+        max-width: 110px;
+        max-height: 110px;
+        border-radius: 6px;
+    }
+    #editAdminModal #editAdminPreviewImg,
+    #editAdminModal .rounded-circle {
+        width: 70px !important;
+        height: 70px !important;
+        object-fit: cover;
+        border: 2px solid #667eea !important;
+    }
+
+    /* Tighten modal footer buttons for admin modals */
+    #addAdminModal .modal-footer .btn,
+    #editAdminModal .modal-footer .btn {
+        padding: 0.28rem 0.48rem;
+        font-size: 0.82rem;
+    }
+    @media (max-width:576px) {
+        .compact-scale { transform: scale(0.98); }
+        .compact-scale .rounded-circle { width: 120px !important; height: 120px !important; }
+    }
+</style>
+
+<div class="compact-scale">
 <div class="row page-full-width">
     <div class="col-md-4 mb-4">
         <div class="card border-0 shadow-sm">
@@ -370,11 +491,11 @@
                                                     $adminImagePath = 'https://ui-avatars.com/api/?name=' . urlencode($admin->full_name) . '&background=667eea&color=fff&size=50';
                                                 }
                                             @endphp
-                                            <img src="{{ $adminImagePath }}" 
-                                                 alt="{{ $admin->full_name }}" 
-                                                 class="rounded-circle"
-                                                 style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #667eea;"
-                                                 onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode($admin->full_name) }}&background=667eea&color=fff&size=50'">
+                                    <img src="{{ $adminImagePath }}" 
+                                        alt="{{ $admin->full_name }}" 
+                                        class="table-avatar"
+                                        style="width:32px; height:32px; object-fit: cover;"
+                                        onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode($admin->full_name) }}&background=667eea&color=fff&size=50'">
                                         </td>
                                         <td><strong>{{ $admin->full_name }}</strong></td>
                                         <td>{{ $admin->username }}</td>
@@ -388,9 +509,9 @@
                                                 $statusClass = $isActive ? 'success' : 'danger';
                                                 $statusIcon = $isActive ? 'fa-check-circle' : 'fa-times-circle';
                                             @endphp
-                                            <span class="badge bg-{{ $statusClass }}">
-                                                <i class="fas {{ $statusIcon }} me-1"></i>
-                                                {{ $statusLabel }}
+                                            <span class="d-inline-flex align-items-center">
+                                                <span class="status-dot {{ $isActive ? 'status-success' : 'status-danger' }} me-2" aria-hidden="true"></span>
+                                                <span class="status-text">{{ $statusLabel }}</span>
                                             </span>
                                             @if($admin->id === Auth::id())
                                                 <span class="badge bg-primary ms-1">
@@ -413,12 +534,12 @@
                                         </td>
                                         <td>
                                             <div class="btn-group" role="group">
-                                                <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editAdminModal" 
+                                                <button class="btn btn-outline-primary btn-icon" data-bs-toggle="modal" data-bs-target="#editAdminModal" 
                                                         onclick="loadAdminData({{ $admin->id }}, '{{ addslashes($admin->full_name) }}', '{{ addslashes($admin->username) }}', '{{ addslashes($admin->email) }}', '{{ addslashes($admin->course ?? '') }}')"
                                                         title="Edit Admin" {{ $admin->id === Auth::id() ? 'disabled' : '' }}>
                                                     <i class="fas fa-edit"></i>
                                                 </button>
-                                                <button class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteAdminModal" 
+                                                <button class="btn btn-outline-danger btn-icon ms-2" data-bs-toggle="modal" data-bs-target="#deleteAdminModal" 
                                                         onclick="deleteAdmin({{ $admin->id }}, '{{ addslashes($admin->full_name) }}')"
                                                         title="Delete Admin" {{ $admin->id === Auth::id() ? 'disabled' : '' }}>
                                                     <i class="fas fa-trash"></i>
@@ -442,6 +563,7 @@
             </div>
         </div>
     </div>
+</div>
 </div>
 
 <!-- Add Admin Modal -->

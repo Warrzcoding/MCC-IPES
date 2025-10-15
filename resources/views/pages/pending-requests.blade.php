@@ -1,6 +1,43 @@
 {{-- Enhanced Pending Requests Subpage --}}
 <style>
 
+/* Compact scaling for 100% scale -> visually ~80% */
+.compact-scale {
+    transform-origin: top center;
+    transform: scale(0.92); /* slightly less than 0.8 to preserve readability; adjust if needed */
+    max-width: 100%;
+}
+
+/* Additional compact rules to reduce spacing, fonts, and control sizes */
+.compact-scale .custom-nav-tabs .nav-link {
+    padding: 0.55rem 0.9rem;
+    font-size: 0.92rem;
+}
+.compact-scale .search-container {
+    padding: 0.9rem;
+}
+.compact-scale .search-input-group .form-control {
+    padding: 0.45rem 0.75rem 0.45rem 2.2rem;
+    font-size: 0.9rem;
+}
+.compact-scale .search-icon { left: 0.75rem; }
+.compact-scale .back-btn { padding: 0.45rem 0.9rem !important; min-width: 98px !important; }
+.compact-scale .status-badge { padding: 0.35rem 0.75rem; font-size: 0.8rem; }
+.compact-scale .table-container { font-size: 0.9rem; }
+.compact-scale table th, .compact-scale table td { padding: 0.45rem 0.6rem; }
+.compact-scale .btn { padding: 0.375rem 0.6rem; font-size: 0.9rem; }
+.compact-scale .form-label { font-size: 0.92rem; }
+.compact-scale small { font-size: 0.78rem; }
+
+.compact-scale .enhanced-card { border-radius: 12px; }
+
+/* Reduce small-screen density a bit less aggressively */
+@media (max-width: 576px) {
+    .compact-scale { transform: scale(0.98); }
+    .compact-scale .custom-nav-tabs .nav-link { padding: 0.5rem 0.7rem; }
+}
+
+
 
 .custom-nav-tabs {
     border: none;
@@ -134,6 +171,7 @@
 
 
 
+<div class="compact-scale">
 <div class="row page-full-width">
     <div class="col-12">
         <div class="enhanced-card">
@@ -540,3 +578,4 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script> 
+</div>
