@@ -1504,9 +1504,56 @@ document.querySelectorAll('.reuse-all-questions-form').forEach(form => {
             cancelButtonColor: '#d33',
             confirmButtonText: 'Yes, reuse all!'
         }).then((result) => {
-            if (result.isConfirmed) {
-                form.submit();
+            if (!result.isConfirmed) {
+                return;
             }
+
+            Swal.fire({
+                title: 'Reusing questions...',
+                text: 'Please wait while we reuse all saved questions.',
+                icon: 'info',
+                allowOutsideClick: false,
+                showConfirmButton: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            const formData = new FormData(form);
+
+            fetch(form.action, {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                },
+                body: formData
+            })
+            .then(async response => {
+                const isJson = response.headers.get('content-type')?.includes('application/json');
+                const data = isJson ? await response.json() : null;
+
+                if (!response.ok) {
+                    const errorMessage = data?.message || 'Failed to reuse questions.';
+                    throw new Error(errorMessage);
+                }
+
+                Swal.fire({
+                    title: data?.status === 'warning' ? 'Warning' : 'Success!',
+                    text: data?.message || 'All saved questions reused successfully!',
+                    icon: data?.status === 'warning' ? 'warning' : 'success',
+                    confirmButtonColor: data?.status === 'warning' ? '#ffc107' : '#28a745',
+                }).then(() => window.location.reload());
+            })
+            .catch(error => {
+                console.error('Reuse all error:', error);
+                Swal.fire({
+                    title: 'Error!',
+                    text: error.message || 'Something went wrong while reusing all saved questions.',
+                    icon: 'error',
+                    confirmButtonColor: '#dc3545',
+                });
+            });
         });
     });
 });

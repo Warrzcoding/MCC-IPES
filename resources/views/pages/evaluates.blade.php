@@ -50,19 +50,19 @@
     border: none;
     color: rgba(255, 255, 255, 0.8);
     font-weight: 600;
-    font-size: 1.1rem;
-    padding: 15px 25px;
+    font-size: 1rem;
+    padding: 12px 20px;
     border-radius: 10px;
     text-align: center;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.4px;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 12px;
+    gap: 10px;
     backdrop-filter: blur(10px);
 }
 .custom-nav-tabs .nav-link::before {
@@ -112,7 +112,7 @@
 .tab-content {
     background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
     border-radius: 20px;
-    padding: 35px;
+    padding: 30px;
     box-shadow: 0 15px 50px rgba(0, 0, 0, 0.1);
     position: relative;
     overflow: hidden;
@@ -134,10 +134,10 @@
 .section-title {
     color: #2d3748;
     font-weight: 700;
-    font-size: 1.4rem;
-    margin-bottom: 25px;
+    font-size: 1.15rem;
+    margin-bottom: 20px;
     position: relative;
-    padding-left: 20px;
+    padding-left: 16px;
 }
 .section-title::before {
     content: '';
@@ -154,8 +154,8 @@
     background: linear-gradient(135deg, #ffffff 0%, #f8faff 100%);
     border: 2px solid #e2e8f0;
     border-radius: 12px;
-    padding: 12px 20px;
-    font-size: 1rem;
+    padding: 10px 18px;
+    font-size: 0.95rem;
     color: #4a5568;
     transition: all 0.3s ease;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
@@ -193,8 +193,8 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 30px;
-    padding: 20px;
+    margin-bottom: 24px;
+    padding: 16px;
     background: linear-gradient(135deg, #ffffff 0%, #f8faff 100%);
     border-radius: 15px;
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
@@ -202,13 +202,13 @@
 .enhanced-status-badge {
     display: inline-flex;
     align-items: center;
-    gap: 10px;
-    padding: 12px 25px;
+    gap: 8px;
+    padding: 10px 22px;
     border-radius: 25px;
     font-weight: 600;
-    font-size: 1.1rem;
+    font-size: 0.95rem;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.45px;
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
     position: relative;
     overflow: hidden;
@@ -288,11 +288,11 @@
     box-shadow: 0 4px 15px rgba(255, 77, 79, 0.25);
     border: 2px solid #fff;
     font-weight: bold;
-    font-size: 1.2rem;
-    width: 2.4em;
-    height: 2.4em;
-    min-width: 2.4em;
-    min-height: 2.4em;
+    font-size: 1.05rem;
+    width: 2.1em;
+    height: 2.1em;
+    min-width: 2.1em;
+    min-height: 2.1em;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -584,8 +584,24 @@
     40% { transform: translateY(-10px); }
     60% { transform: translateY(-5px); }
 }
+.evaluations-page {
+    font-size: 0.95rem;
+}
+.evaluations-page .card-header h4 {
+    font-size: 1.2rem;
+}
+.status-badges {
+    gap: 0.75rem !important;
+    flex-wrap: nowrap !important;
+}
+#evaluatedStaffBadge,
+.status-badges .enhanced-status-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
 </style>
-<div class="row page-full-width">
+<div class="row page-full-width evaluations-page">
     <div class="col-12">
         <div class="card border-0 shadow-sm" style="position: relative;">
             <div class="card-header bg-transparent border-0">
@@ -621,7 +637,7 @@
                 @endif
                 
                 <!-- Status and Badge Container -->
-                <div class="d-flex justify-content-center align-items-center gap-4 flex-wrap">
+                <div class="d-flex justify-content-center align-items-center gap-3 flex-wrap status-badges">
                     <!-- Notification badge for evaluated staff -->
                     <button type="button" class="btn position-relative p-0" id="evaluatedStaffBadge" data-bs-toggle="popover" data-bs-trigger="focus" title="Evaluated Staff Breakdown" data-bs-html="true" data-bs-content="
                         <div class='evaluated-popover-content'>

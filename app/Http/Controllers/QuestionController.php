@@ -416,11 +416,31 @@ class QuestionController extends Controller
         // Get the current active academic year to ensure we're using the right one
         $activeAcademicYear = AcademicYear::where('is_active', true)->first();
         if (!$activeAcademicYear) {
-            return redirect()->back()->with('message', 'No active academic year found. Please activate an academic year first.')->with('message_type', 'danger');
+            $message = 'No active academic year found. Please activate an academic year first.';
+            if ($request->expectsJson()) {
+                return response()->json(['status' => 'danger', 'message' => $message], 422);
+            }
+
+            return redirect()->back()->with('message', $message)->with('message_type', 'danger');
         }
 
         $saved = SavedQuestion::findOrFail($request->saved_question_id);
         
+        // Prevent duplicates for the active academic year
+        $duplicateExists = Question::where('title', $saved->title)
+            ->where('description', $saved->description)
+            ->where('academic_year_id', $activeAcademicYear->id)
+            ->exists();
+
+        if ($duplicateExists) {
+            $message = 'This saved question already exists in the active academic year.';
+            if ($request->expectsJson()) {
+                return response()->json(['status' => 'warning', 'message' => $message], 409);
+            }
+
+            return redirect()->back()->with('message', $message)->with('message_type', 'warning');
+        }
+
         // Create new question in the questions table with the active academic year
         $newQuestion = new Question();
         $newQuestion->title = $saved->title;
@@ -430,8 +450,13 @@ class QuestionController extends Controller
         $newQuestion->academic_year_id = $activeAcademicYear->id; // Use the active academic year
         $newQuestion->is_open = 0; // Set to closed
         $newQuestion->save();
-        
-        return redirect()->back()->with('message', 'Question reused successfully!')->with('message_type', 'success');
+
+        $message = 'Question reused successfully!';
+        if ($request->expectsJson()) {
+            return response()->json(['status' => 'success', 'message' => $message]);
+        }
+
+        return redirect()->back()->with('message', $message)->with('message_type', 'success');
     }
 
     /**
@@ -451,22 +476,70 @@ class QuestionController extends Controller
         
         $savedQuestions = SavedQuestion::where('academic_year_id', $request->academic_year_id)->get();
         if ($savedQuestions->isEmpty()) {
-            return redirect()->back()->with('message', 'No saved questions to reuse.')->with('message_type', 'warning');
+            $message = 'No saved questions to reuse.';
+            if ($request->expectsJson()) {
+                return response()->json(['status' => 'warning', 'message' => $message], 404);
+            }
+
+            return redirect()->back()->with('message', $message)->with('message_type', 'warning');
         }
         
+        $createdCount = 0;
+        $skippedDuplicates = 0;
+
         foreach ($savedQuestions as $savedQuestion) {
-            // Create new question in the questions table with the active academic year
-            $newQuestion = new Question();
-            $newQuestion->title = $savedQuestion->title;
-            $newQuestion->description = $savedQuestion->description;
-            $newQuestion->staff_type = $savedQuestion->staff_type;
-            $newQuestion->response_type = $savedQuestion->response_type;
-            $newQuestion->academic_year_id = $activeAcademicYear->id; // Use the active academic year
-            $newQuestion->is_open = 0; // Set to closed
-            $newQuestion->save();
+            $question = Question::firstOrCreate(
+                [
+                    'title' => $savedQuestion->title,
+                    'description' => $savedQuestion->description,
+                    'academic_year_id' => $activeAcademicYear->id,
+                ],
+                [
+                    'staff_type' => $savedQuestion->staff_type,
+                    'response_type' => $savedQuestion->response_type,
+                    'is_open' => 0,
+                ]
+            );
+
+            if ($question->wasRecentlyCreated) {
+                $createdCount++;
+            } else {
+                $skippedDuplicates++;
+            }
         }
-        
-        return redirect()->back()->with('message', 'All saved questions reused successfully!')->with('message_type', 'success');
+
+        if ($createdCount === 0) {
+            $message = $skippedDuplicates > 0
+                ? 'All saved questions already exist for the active academic year. No new questions were added.'
+                : 'No saved questions to reuse.';
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'status' => 'warning',
+                    'message' => $message,
+                    'created' => $createdCount,
+                    'duplicates' => $skippedDuplicates,
+                ], 409);
+            }
+
+            return redirect()->back()->with('message', $message)->with('message_type', 'warning');
+        }
+
+        $message = 'Reused ' . $createdCount . ' saved question' . ($createdCount === 1 ? '' : 's') . ' successfully!';
+        if ($skippedDuplicates > 0) {
+            $message .= ' Skipped ' . $skippedDuplicates . ' duplicate' . ($skippedDuplicates === 1 ? '' : 's') . '.';
+        }
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'status' => 'success',
+                'message' => $message,
+                'created' => $createdCount,
+                'duplicates' => $skippedDuplicates,
+            ]);
+        }
+
+        return redirect()->back()->with('message', $message)->with('message_type', 'success');
     }
 
     /**
