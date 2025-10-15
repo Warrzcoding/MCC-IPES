@@ -24,16 +24,16 @@ function getRatingStatus($rating) {
         box-shadow: 0 4px 15px rgba(0,0,0,0.1);
     }
     .staff-image {
-        width: 50px;
-        height: 50px;
+        width: 44px;
+        height: 44px;
         border-radius: 50%;
         object-fit: cover;
         border: 2px solid #fff;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        box-shadow: 0 1px 6px rgba(0,0,0,0.08);
     }
     .default-avatar {
-        width: 50px;
-        height: 50px;
+        width: 44px;
+        height: 44px;
         border-radius: 50%;
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         display: flex;
@@ -41,71 +41,89 @@ function getRatingStatus($rating) {
         justify-content: center;
         border: 2px solid #fff;
         color: white;
-        font-weight: bold;
-        font-size: 16px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        font-weight: 600;
+        font-size: 14px;
+        box-shadow: 0 1px 6px rgba(0,0,0,0.08);
     }
     .rating-badge {
-        font-size: 0.75em;
-        padding: 0.3em 0.6em;
-        border-radius: 15px;
+        font-size: 0.62rem;
+        padding: 0.24em 0.55em;
+        border-radius: 13px;
         font-weight: 600;
         text-transform: uppercase;
-        letter-spacing: 0.5px;
+        letter-spacing: 0.4px;
         white-space: nowrap;
         display: inline-flex;
         align-items: center;
     }
     .rating-stars {
         color: #ffc107;
-        font-size: 1em;
+        font-size: 0.8rem;
         display: flex;
         align-items: center;
-        gap: 2px;
+        gap: 1px;
     }
     .rating-number {
-        font-size: 1.3em;
-        font-weight: bold;
-        text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        font-size: 0.98rem;
+        font-weight: 600;
+        text-shadow: 0 1px 2px rgba(0,0,0,0.08);
         white-space: nowrap;
     }
 
     .section-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #5a67d8 0%, #4c51bf 100%);
         color: white;
-        padding: 1rem;
-        border-radius: 8px 8px 0 0;
+        padding: 0.55rem 0.85rem;
+        border-radius: 10px 10px 0 0;
         margin-bottom: 0;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.18);
     }
     .section-title {
-        font-size: 1.3em;
-        font-weight: bold;
+        font-size: 0.92rem;
+        font-weight: 600;
         margin: 0;
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 8px;
+        letter-spacing: 0.3px;
+        text-transform: uppercase;
+    }
+    .section-title i {
+        background: rgba(255,255,255,0.18);
+        width: 28px;
+        height: 28px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.85rem;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    }
+    .section-title span {
+        display: inline-flex;
+        align-items: center;
     }
     .section-count {
-        background: rgba(255,255,255,0.2);
-        padding: 0.2em 0.6em;
-        border-radius: 15px;
-        font-size: 0.8em;
+        background: rgba(255,255,255,0.18);
+        padding: 0.16em 0.48em;
+        border-radius: 13px;
+        font-size: 0.62rem;
     }
     .staff-list {
         max-height: 600px;
         overflow-y: auto;
-        padding: 15px;
+        padding: 12px;
         background: #f8f9fa;
         border-radius: 0 0 8px 8px;
     }
     .staff-item {
         background: white;
-        padding: 20px;
-        border-radius: 12px;
-        margin-bottom: 15px;
-        box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+        padding: 14px;
+        border-radius: 10px;
+        margin-bottom: 12px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.08);
         transition: all 0.3s ease;
-        border-left: 4px solid transparent;
+        border-left: 3px solid transparent;
     }
     .staff-item:hover {
         transform: translateY(-3px);
@@ -115,15 +133,15 @@ function getRatingStatus($rating) {
     .staff-rank {
         background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
         color: white;
-        width: 35px;
-        height: 35px;
+        width: 30px;
+        height: 30px;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-weight: bold;
-        font-size: 0.9em;
-        margin-right: 15px;
+        font-weight: 600;
+        font-size: 0.68rem;
+        margin-right: 12px;
         flex-shrink: 0;
         position: relative;
     }
@@ -132,29 +150,29 @@ function getRatingStatus($rating) {
     }
     .staff-rank.rank-1 {
         background: linear-gradient(135deg, #ffd700 0%, #ffb347 100%);
-        box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+        box-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
     }
     .staff-rank.rank-2 {
         background: linear-gradient(135deg, #c0c0c0 0%, #a8a8a8 100%);
-        box-shadow: 0 0 10px rgba(192, 192, 192, 0.4);
+        box-shadow: 0 0 7px rgba(192, 192, 192, 0.35);
     }
     .staff-rank.rank-3 {
         background: linear-gradient(135deg, #cd7f32 0%, #b8860b 100%);
-        box-shadow: 0 0 10px rgba(205, 127, 50, 0.4);
+        box-shadow: 0 0 7px rgba(205, 127, 50, 0.35);
     }
     .rank-label {
         position: absolute;
-        top: -8px;
-        right: -25px;
+        top: -6px;
+        right: -20px;
         background: rgba(0, 0, 0, 0.8);
         color: white;
-        font-size: 0.6em;
-        padding: 2px 6px;
+        font-size: 0.5em;
+        padding: 2px 5px;
         border-radius: 10px;
         white-space: nowrap;
         font-weight: 600;
         text-transform: uppercase;
-        letter-spacing: 0.5px;
+        letter-spacing: 0.4px;
     }
     .rank-label.rank-1-label {
         background: linear-gradient(135deg, #ffd700 0%, #ffb347 100%);
@@ -175,36 +193,38 @@ function getRatingStatus($rating) {
         display: flex;
         flex-direction: column;
         justify-content: center;
+        font-size: 0.72rem;
+        line-height: 1.35;
     }
     .staff-name {
-        font-weight: bold;
+        font-weight: 600;
         color: #333;
-        margin-bottom: 8px;
-        font-size: 1.1em;
+        margin-bottom: 6px;
+        font-size: 0.82rem;
     }
     .staff-info-line {
         display: flex;
         align-items: center;
-        gap: 15px;
+        gap: 10px;
         flex-wrap: wrap;
         margin-bottom: 0;
     }
     .staff-badges {
         display: flex;
-        gap: 8px;
+        gap: 6px;
         flex-wrap: wrap;
         margin-bottom: 0;
     }
     .staff-badges .badge {
-        font-size: 0.75em;
-        padding: 0.3em 0.7em;
-        border-radius: 20px;
+        font-size: 0.6rem;
+        padding: 0.22em 0.55em;
+        border-radius: 14px;
         font-weight: 600;
     }
     .rating-section {
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 8px;
         margin-top: 0;
         flex-wrap: wrap;
     }
@@ -221,17 +241,17 @@ function getRatingStatus($rating) {
     .overall-header {
         background: linear-gradient(145deg, #1e3c72 0%, #2a5298 50%, #667eea 100%);
         color: white;
-        padding: 1.5rem 2rem;
-        border-radius: 20px;
-        margin-bottom: 2rem;
+        padding: 0.9rem 1.6rem;
+        border-radius: 16px;
+        margin-bottom: 1.5rem;
         text-align: center;
         position: relative;
         overflow: hidden;
         box-shadow: 
-            0 20px 40px rgba(30, 60, 114, 0.3),
-            inset 0 1px 0 rgba(255, 255, 255, 0.2),
-            inset 0 -1px 0 rgba(0, 0, 0, 0.1);
-        border: 1px solid rgba(255, 255, 255, 0.1);
+            0 14px 28px rgba(30, 60, 114, 0.26),
+            inset 0 1px 0 rgba(255, 255, 255, 0.18),
+            inset 0 -1px 0 rgba(0, 0, 0, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.08);
     }
     
     .overall-header::before {
@@ -254,8 +274,8 @@ function getRatingStatus($rating) {
         right: 0;
         bottom: 0;
         background: 
-            radial-gradient(circle at 20% 20%, rgba(255,255,255,0.1) 0%, transparent 50%),
-            radial-gradient(circle at 80% 80%, rgba(255,255,255,0.05) 0%, transparent 50%);
+            radial-gradient(circle at 20% 20%, rgba(255,255,255,0.08) 0%, transparent 50%),
+            radial-gradient(circle at 80% 80%, rgba(255,255,255,0.04) 0%, transparent 50%);
         pointer-events: none;
     }
     
@@ -265,47 +285,47 @@ function getRatingStatus($rating) {
     }
     
     .overall-title {
-        font-size: 2.5em;
-        font-weight: 800;
-        margin-bottom: 0.4rem;
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 0.3rem;
         position: relative;
         z-index: 2;
         color: #ffffff;
         text-shadow: 
-            0 2px 4px rgba(0,0,0,0.3),
-            0 4px 8px rgba(0,0,0,0.2),
-            0 0 20px rgba(255,255,255,0.1);
-        letter-spacing: -0.5px;
-        line-height: 1.1;
+            0 2px 4px rgba(0,0,0,0.25),
+            0 4px 8px rgba(0,0,0,0.18),
+            0 0 16px rgba(255,255,255,0.08);
+        letter-spacing: -0.4px;
+        line-height: 1.05;
     }
     
     .overall-title i {
         color: #ffd700;
-        margin-right: 15px;
-        filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.6));
-        transform: scale(1.1);
+        margin-right: 10px;
+        filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5));
+        transform: scale(1);
         display: inline-block;
         animation: bounce 2s ease-in-out infinite;
     }
     
     @keyframes bounce {
-        0%, 20%, 50%, 80%, 100% { transform: scale(1.1) translateY(0); }
-        40% { transform: scale(1.1) translateY(-8px); }
-        60% { transform: scale(1.1) translateY(-4px); }
+        0%, 20%, 50%, 80%, 100% { transform: scale(1) translateY(0); }
+        40% { transform: scale(1) translateY(-6px); }
+        60% { transform: scale(1) translateY(-3px); }
     }
     
     .overall-subtitle {
-        font-size: 1.3em;
+        font-size: 0.98rem;
         opacity: 0.9;
         margin: 0;
         position: relative;
         z-index: 2;
-        text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        text-shadow: 0 1px 3px rgba(0,0,0,0.25);
         font-weight: 400;
-        color: rgba(255, 255, 255, 0.95);
-        max-width: 600px;
+        color: rgba(255, 255, 255, 0.92);
+        max-width: 560px;
         margin: 0 auto;
-        line-height: 1.4;
+        line-height: 1.35;
     }
 
     
