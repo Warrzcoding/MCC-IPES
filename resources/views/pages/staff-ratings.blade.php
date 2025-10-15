@@ -105,6 +105,31 @@ function getAdjectivalRating($rating) {
         border-color: #007bff;
         box-shadow: 0 0 0 0.12rem rgba(0,123,255,.2);
     }
+    .search-refresh-wrapper {
+        gap: 0.5rem !important;
+    }
+    .search-refresh-wrapper .search-box {
+        flex: 1 1 240px;
+        min-width: 210px;
+        margin-bottom: 0;
+    }
+    .search-refresh-wrapper .search-icon {
+        left: 14px;
+        font-size: 0.7rem;
+    }
+    .compact-search {
+        padding-left: 42px;
+        height: 34px;
+        border-radius: 999px;
+        font-size: 0.74rem;
+        border: 1px solid #dde3f0;
+        box-shadow: inset 0 1px 2px rgba(102,126,234,0.08);
+        transition: box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+    .compact-search:focus {
+        border-color: #6c5ce7;
+        box-shadow: 0 0 0 0.12rem rgba(108,92,231,0.18);
+    }
     .table-header {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
@@ -177,7 +202,89 @@ function getAdjectivalRating($rating) {
     #staffProfileModal .range-bar-fill.range-bar-yellow { background: #ffc107 !important; }
     #staffProfileModal .range-bar-fill.range-bar-orange { background: #fd7e14 !important; }
     #staffProfileModal .range-bar-fill.range-bar-red { background: #dc3545 !important; }
-    
+
+    /* Compact modal adjustments for action modals */
+    .action-modal-dialog {
+        max-width: 680px;
+    }
+
+    .action-modal-content {
+        font-size: 0.92rem;
+        line-height: 1.45;
+    }
+
+    .action-modal-content .modal-title {
+        font-size: 1.05rem;
+        font-weight: 600;
+    }
+
+    .action-modal-body {
+        font-size: 0.88rem;
+    }
+
+    .action-modal-body .modal-section-title {
+        font-size: 0.95rem;
+    }
+
+    .action-btn {
+        padding: 0.18rem 0.4rem;
+        font-size: 0.68rem;
+        border-radius: 10px;
+    }
+
+    .refresh-btn-enhanced {
+        padding: 0.28rem 0.8rem;
+        min-height: 30px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        letter-spacing: 0.15px;
+        border-radius: 999px;
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+        box-shadow: 0 6px 16px rgba(102,126,234,0.15);
+        background: linear-gradient(135deg, #4f8ef7 0%, #6c5ce7 100%);
+        border: none;
+    }
+
+    .refresh-btn-enhanced i {
+        font-size: 0.75rem;
+    }
+
+    .refresh-btn-enhanced span {
+        font-size: 0.72rem;
+        font-weight: 600;
+    }
+
+    .refresh-btn-enhanced:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 10px 22px rgba(102,126,234,0.22);
+    }
+
+    .refresh-btn-enhanced:active {
+        transform: translateY(0);
+        box-shadow: 0 5px 12px rgba(102,126,234,0.18);
+    }
+
+    @media (max-width: 992px) {
+        .action-modal-content {
+            font-size: 0.88rem;
+        }
+        .action-modal-content .modal-title {
+            font-size: 1rem;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .action-modal-dialog {
+            margin: 0.5rem;
+        }
+        .action-modal-content {
+            font-size: 0.84rem;
+        }
+        .action-modal-content .modal-title {
+            font-size: 0.95rem;
+        }
+    }
+
     /* Additional specificity for modal content */
     .modal-body .range-bar-fill.range-bar-green { background-color: #28a745 !important; }
     .modal-body .range-bar-fill.range-bar-blue { background-color: #007bff !important; }
@@ -311,141 +418,66 @@ function getAdjectivalRating($rating) {
 
     /* Staff Type Tabs Styling */
     .nav-tabs {
-        border-bottom: 2px solid #e9ecef;
-        margin-bottom: 0;
-        padding: 0 3px;
+        border: none;
+        border-radius: 12px;
         background: #f8f9fa;
-        border-radius: 6px 6px 0 0;
+        padding: 0.45rem;
+        display: inline-flex;
+        gap: 0.4rem;
     }
 
     .nav-tabs .nav-item {
-        margin-bottom: -2px;
+        margin-bottom: 0;
     }
 
     .nav-tabs .nav-link {
         border: 1px solid transparent;
-        border-radius: 6px 6px 0 0;
-        padding: 8px 14px;
+        border-radius: 10px;
+        padding: 0.45rem 0.85rem;
         font-weight: 600;
-        color: #6c757d;
-        background: #ffffff;
-        transition: all 0.3s ease;
-        position: relative;
-        overflow: hidden;
-        text-decoration: none;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-        margin-right: 3px;
+        color: #495057;
+        background: transparent;
+        transition: all 0.25s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
         font-size: 0.82rem;
     }
 
-    .nav-tabs .nav-link::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-        transition: left 0.5s;
+    .nav-tabs .nav-link i {
+        font-size: 0.95rem;
     }
 
-    .nav-tabs .nav-link:hover::before {
-        left: 100%;
-    }
-
-    .nav-tabs .nav-link:hover {
-        color: #007bff;
-        background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
-        border-color: #007bff;
-        transform: translateY(-2px);
-        box-shadow: 0 3px 8px rgba(0,123,255,0.15);
+    .nav-tabs .nav-link:hover,
+    .nav-tabs .nav-link:focus {
+        border-color: #dee2e6;
+        color: #2563eb;
+        background: rgba(37, 99, 235, 0.08);
     }
 
     .nav-tabs .nav-link.active {
-        color: #ffffff;
-        background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
-        border-color: #007bff;
-        box-shadow: 0 3px 10px rgba(0,123,255,0.25);
-        transform: translateY(-1px);
-    }
-
-    .nav-tabs .nav-link.active:hover {
-        background: linear-gradient(135deg, #0056b3 0%, #004085 100%);
-        box-shadow: 0 4px 12px rgba(0,123,255,0.3);
-        transform: translateY(-2px);
-    }
-
-    .nav-tabs .nav-link i {
-        margin-right: 6px;
-        font-size: 0.9rem;
-        transition: transform 0.3s ease;
-    }
-
-    .nav-tabs .nav-link:hover i {
-        transform: scale(1.08) rotate(4deg);
-    }
-
-    .nav-tabs .nav-link.active i {
-        transform: scale(1.02);
-        text-shadow: 0 1px 2px rgba(0,0,0,0.2);
-    }
-
-    /* Tab content styling */
-    .tab-content {
-        background: #ffffff;
-        border: 1px solid #e9ecef;
-        border-top: none;
-        border-radius: 0 0 6px 6px;
-        font-size: 0.78rem;
-    }
-
-    .tab-pane {
-        padding: 16px;
-        min-height: 360px;
-        opacity: 0;
-        transform: translateY(8px);
-        transition: all 0.3s ease-in-out;
-    }
-
-    .tab-pane.active {
-        opacity: 1;
-        transform: translateY(0);
-    }
-
-    /* Active tab indicator */
-    .nav-tabs .nav-link.active::after {
-        content: '';
-        position: absolute;
-        bottom: -2px;
-        left: 0;
-        right: 0;
-        height: 2px;
-        background: linear-gradient(90deg, #007bff, #0056b3, #007bff);
-        border-radius: 2px;
-    }
-
-    /* Staff type badge styling */
-    .staff-type-badge {
-        display: inline-block;
-        background: rgba(255,255,255,0.2);
-        padding: 2px 6px;
-        border-radius: 10px;
-        font-size: 0.64rem;
-        margin-left: 6px;
-        font-weight: 500;
+        color: #fff;
+        background: linear-gradient(135deg, #1d4ed8, #1e40af);
+        border-color: transparent;
+        box-shadow: 0 8px 18px rgba(29, 78, 216, 0.25);
     }
 
     .nav-tabs .nav-link.active .staff-type-badge {
-        background: rgba(255,255,255,0.3);
-        color: #ffffff;
+        background: rgba(255, 255, 255, 0.25);
+        color: #fff;
     }
 
-    /* Enhanced focus states for accessibility */
-    .nav-tabs .nav-link:focus {
-        outline: 2px solid #007bff;
-        outline-offset: 2px;
-        box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+    .staff-type-badge {
+        display: inline-block;
+        padding: 0.12rem 0.5rem;
+        border-radius: 12px;
+        font-size: 0.62rem;
+        background: rgba(37, 99, 235, 0.08);
+        color: #2563eb;
+        transition: inherit;
     }
+
 
     /* Responsive tab styling */
     @media (max-width: 768px) {
@@ -515,15 +547,15 @@ function getAdjectivalRating($rating) {
                             @endphp
                            
                             <!-- Search controls for Teaching Staff -->
-                            <div class="d-flex flex-wrap align-items-center gap-3 mb-3">
-                                <div class="search-box mb-0" style="flex:1 1 250px; min-width:220px;">
-                                  
+                            <div class="d-flex flex-wrap align-items-center gap-2 mb-3 search-refresh-wrapper">
+                                <div class="search-box mb-0 flex-grow-1">
+                                    <div class="search-icon"><i class="fas fa-search"></i></div>
                                     <input type="text" id="searchInputTeaching" onkeyup="searchStaff('teaching')" 
-                                           placeholder="Search teaching staff by name, department, or email..." 
-                                           class="form-control">
+                                           placeholder="Search teaching staff..." 
+                                           class="form-control compact-search">
                                 </div>
-                                <button type="button" class="btn btn-primary ms-2 shadow-sm d-flex align-items-center gap-2 rounded-pill refresh-btn-enhanced"
-                                        style="height:40px;font-weight:bold;font-size:1rem;" onclick="location.reload();">
+                                <button type="button" class="btn btn-primary shadow-sm d-flex align-items-center gap-2 refresh-btn-enhanced"
+                                        onclick="location.reload();">
                                     <i class="fas fa-sync-alt"></i> <span>Refresh</span>
                                 </button>
                             </div>
@@ -642,15 +674,15 @@ function getAdjectivalRating($rating) {
                             <!-- Debug info (remove in production) -->
                            
                             <!-- Search controls for Non-Teaching Staff -->
-                            <div class="d-flex flex-wrap align-items-center gap-3 mb-3">
-                                <div class="search-box mb-0" style="flex:1 1 250px; min-width:220px;">
-                              
+                            <div class="d-flex flex-wrap align-items-center gap-2 mb-3 search-refresh-wrapper">
+                                <div class="search-box mb-0 flex-grow-1">
+                                    <div class="search-icon"><i class="fas fa-search"></i></div>
                                     <input type="text" id="searchInputNonTeaching" onkeyup="searchStaff('non-teaching')" 
-                                           placeholder="Search non-teaching staff by name, department, or email..." 
-                                           class="form-control">
+                                           placeholder="Search non-teaching staff..." 
+                                           class="form-control compact-search">
                                 </div>
-                                <button type="button" class="btn btn-primary ms-2 shadow-sm d-flex align-items-center gap-2 rounded-pill refresh-btn-enhanced"
-                                        style="height:40px;font-weight:bold;font-size:1rem;" onclick="location.reload();">
+                                <button type="button" class="btn btn-primary shadow-sm d-flex align-items-center gap-2 refresh-btn-enhanced"
+                                        onclick="location.reload();">
                                     <i class="fas fa-sync-alt"></i> <span>Refresh</span>
                                 </button>
                             </div>
@@ -842,15 +874,15 @@ function getAdjectivalRating($rating) {
 
 <!-- Comments Modal -->
 <div class="modal fade" id="commentsModal" tabindex="-1" aria-labelledby="commentsModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
+    <div class="modal-dialog modal-lg action-modal-dialog">
+        <div class="modal-content action-modal-content">
             <div class="modal-header table-header text-white">
                 <h5 class="modal-title" id="commentsModalLabel">
                     <i class="fas fa-comments me-2"></i>Staff Comments
                 </h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body" id="commentsContent">
+            <div class="modal-body action-modal-body" id="commentsContent">
                 <div class="text-center">
                     <div class="spinner-border text-primary" role="status">
                         <span class="visually-hidden">Loading...</span>
@@ -863,15 +895,15 @@ function getAdjectivalRating($rating) {
 
 <!-- Staff Profile & Ratings Modal -->
 <div class="modal fade" id="staffProfileModal" tabindex="-1" aria-labelledby="staffProfileModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
+    <div class="modal-dialog modal-lg action-modal-dialog">
+        <div class="modal-content action-modal-content">
             <div class="modal-header table-header text-white">
                 <h5 class="modal-title" id="staffProfileModalLabel">
                     <i class="fas fa-user-circle me-2"></i>Staff Profile & Ratings
                 </h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body" id="staffProfileContent">
+            <div class="modal-body action-modal-body" id="staffProfileContent">
                 <div class="text-center">
                     <div class="spinner-border text-primary" role="status">
                         <span class="visually-hidden">Loading...</span>
@@ -1109,7 +1141,7 @@ function getAdjectivalRating($rating) {
             showCancelButton: true,
             confirmButtonColor: '#28a745',
             cancelButtonColor: '#6c757d',
-            confirmButtonText: '<i class="fas fa-print me-1"></i>Yes, Print',
+            confirmButtonText: 'Print',
             cancelButtonText: 'Cancel',
             reverseButtons: true,
             customClass: {
@@ -1119,20 +1151,28 @@ function getAdjectivalRating($rating) {
             },
             buttonsStyling: false,
             didOpen: () => {
-                // Add custom spacing styles
-                const style = document.createElement('style');
-                style.textContent = `
-                    .swal-actions-spaced {
-                        gap: 25px !important;
-                        justify-content: center !important;
-                    }
-                    .swal2-actions .btn {
-                        margin: 0 12px !important;
-                        min-width: 120px !important;
-                        padding: 10px 20px !important;
-                    }
-                `;
-                document.head.appendChild(style);
+                // Ensure the custom SweetAlert action styling exists only once
+                if (!document.getElementById('swal-actions-style')) {
+                    const style = document.createElement('style');
+                    style.id = 'swal-actions-style';
+                    style.textContent = `
+                        .swal-actions-spaced {
+                            display: flex !important;
+                            flex-wrap: nowrap !important;
+                            align-items: center !important;
+                            justify-content: center !important;
+                            gap: 12px !important;
+                        }
+                        .swal-actions-spaced .btn {
+                            margin: 0 !important;
+                            min-width: 110px !important;
+                            padding: 8px 16px !important;
+                            white-space: nowrap !important;
+                            font-size: 0.9rem !important;
+                        }
+                    `;
+                    document.head.appendChild(style);
+                }
             }
         }).then((result) => {
             if (result.isConfirmed) {
@@ -1351,7 +1391,7 @@ function getAdjectivalRating($rating) {
                                 </div>
                                 <div style='margin-bottom:0.5em;'>
                                     Reviewed and Noted by:
-                                </div>
+                                 </div>
                                 <div style='margin-bottom:0.5em;'>
                                     <strong style='text-decoration:underline;'>DR. LIZA D. GARCIA</strong>
                                 </div>
