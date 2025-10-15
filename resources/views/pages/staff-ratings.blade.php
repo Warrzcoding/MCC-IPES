@@ -52,6 +52,31 @@ function getAdjectivalRating($rating) {
         font-size: 16px;
         box-shadow: 0 1px 6px rgba(0,0,0,0.08);
     }
+    .staff-details {
+        font-size: 0.74rem;
+        line-height: 1.25;
+    }
+    .staff-details .staff-name {
+        font-size: 0.84rem;
+        font-weight: 600;
+        display: inline-block;
+        margin-bottom: 0.15rem;
+    }
+    .staff-details .staff-meta {
+        font-size: 0.68rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+    .staff-details .staff-meta i {
+        font-size: 0.65rem;
+    }
+    .staff-details .staff-badge {
+        font-size: 0.6rem;
+        padding: 0.25em 0.55em;
+        border-radius: 10px;
+        letter-spacing: 0.3px;
+    }
     .rating-badge {
         font-size: 0.68rem;
         padding: 0.28em 0.6em;
@@ -593,19 +618,21 @@ function getAdjectivalRating($rating) {
                                         </td>
                                         
                                         <td class="align-middle">
-                                            <div>
-                                                <strong class="text-primary">{{ $staff->full_name }}</strong>
+                                            <div class="staff-details">
+                                                <span class="staff-name text-primary">{{ $staff->full_name }}</span>
                                                 <br>
-                                                <small class="text-muted">
-                                                    <i class="fas fa-id-badge me-1"></i>{{ $staff->staff_id }}
-                                                </small>
+                                                <span class="staff-meta text-muted">
+                                                    <i class="fas fa-id-badge"></i>
+                                                    {{ $staff->staff_id }}
+                                                </span>
                                                 <br>
-                                                <small class="text-muted">
-                                                    <i class="fas fa-envelope me-1"></i>{{ $staff->email }}
-                                                </small>
+                                                <span class="staff-meta text-muted">
+                                                    <i class="fas fa-envelope"></i>
+                                                    {{ $staff->email }}
+                                                </span>
                                                 <br>
-                                                <span class="badge bg-secondary">{{ $staff->department }}</span>
-                                                <span class="badge bg-info">{{ $staff->staff_type }}</span>
+                                                <span class="badge bg-secondary staff-badge">{{ $staff->department }}</span>
+                                                <span class="badge bg-info staff-badge">{{ $staff->staff_type }}</span>
                                             </div>
                                         </td>
                                         
@@ -720,19 +747,21 @@ function getAdjectivalRating($rating) {
                                                 </td>
                                                 
                                                 <td class="align-middle">
-                                                    <div>
-                                                        <strong class="text-primary">{{ $staff->full_name }}</strong>
+                                                    <div class="staff-details">
+                                                        <span class="staff-name text-primary">{{ $staff->full_name }}</span>
                                                         <br>
-                                                        <small class="text-muted">
-                                                            <i class="fas fa-id-badge me-1"></i>{{ $staff->staff_id }}
-                                                        </small>
+                                                        <span class="staff-meta text-muted">
+                                                            <i class="fas fa-id-badge"></i>
+                                                            {{ $staff->staff_id }}
+                                                        </span>
                                                         <br>
-                                                        <small class="text-muted">
-                                                            <i class="fas fa-envelope me-1"></i>{{ $staff->email }}
-                                                        </small>
+                                                        <span class="staff-meta text-muted">
+                                                            <i class="fas fa-envelope"></i>
+                                                            {{ $staff->email }}
+                                                        </span>
                                                         <br>
-                                                        <span class="badge bg-secondary">{{ $staff->department }}</span>
-                                                        <span class="badge bg-info">{{ $staff->staff_type }}</span>
+                                                        <span class="badge bg-secondary staff-badge">{{ $staff->department }}</span>
+                                                        <span class="badge bg-info staff-badge">{{ $staff->staff_type }}</span>
                                                     </div>
                                                 </td>
                                                 
