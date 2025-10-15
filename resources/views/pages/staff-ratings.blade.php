@@ -87,10 +87,10 @@ function getAdjectivalRating($rating) {
     }
     .rating-stars {
         color: #ffc107;
-        font-size: 0.88rem;
+        font-size: 0.82rem;
     }
     .rating-number {
-        font-size: 1.1rem;
+        font-size: 1.02rem;
         font-weight: 600;
     }
     .stats-item {
@@ -98,12 +98,12 @@ function getAdjectivalRating($rating) {
         padding: 0.35rem;
     }
     .stats-number {
-        font-size: 0.95rem;
+        font-size: 0.88rem;
         font-weight: 600;
         color: #007bff;
     }
     .stats-label {
-        font-size: 0.66rem;
+        font-size: 0.6rem;
         color: #6c757d;
         text-transform: uppercase;
     }
@@ -120,11 +120,15 @@ function getAdjectivalRating($rating) {
         font-size: 0.75rem;
     }
     #searchInput {
-        padding-left: 38px;
-        border-radius: 20px;
-        border: 1px solid #e9ecef;
-        font-size: 0.8rem;
-        height: 2rem;
+        padding-left: 30px;
+        border-radius: 16px;
+        border: 1px solid #e0e6ef;
+        font-size: 0.7rem;
+        height: 1.75rem;
+    }
+    #searchInput::placeholder {
+        font-size: 0.64rem;
+        color: #9aa5b5;
     }
     #searchInput:focus {
         border-color: #007bff;
@@ -143,12 +147,12 @@ function getAdjectivalRating($rating) {
         font-size: 0.7rem;
     }
     .compact-search {
-        padding-left: 42px;
-        height: 34px;
+        padding-left: 36px;
+        height: 32px;
         border-radius: 999px;
-        font-size: 0.74rem;
-        border: 1px solid #dde3f0;
-        box-shadow: inset 0 1px 2px rgba(102,126,234,0.08);
+        font-size: 0.7rem;
+        border: 1px solid #d7dff1;
+        box-shadow: inset 0 1px 1px rgba(102,126,234,0.05);
         transition: box-shadow 0.2s ease, border-color 0.2s ease;
     }
     .compact-search:focus {
@@ -258,24 +262,24 @@ function getAdjectivalRating($rating) {
     }
 
     .refresh-btn-enhanced {
-        padding: 0.28rem 0.8rem;
-        min-height: 30px;
-        font-size: 0.7rem;
+        padding: 0.24rem 0.7rem;
+        min-height: 28px;
+        font-size: 0.64rem;
         font-weight: 600;
-        letter-spacing: 0.15px;
+        letter-spacing: 0.12px;
         border-radius: 999px;
         transition: transform 0.25s ease, box-shadow 0.25s ease;
-        box-shadow: 0 6px 16px rgba(102,126,234,0.15);
+        box-shadow: 0 5px 14px rgba(102,126,234,0.14);
         background: linear-gradient(135deg, #4f8ef7 0%, #6c5ce7 100%);
         border: none;
     }
 
     .refresh-btn-enhanced i {
-        font-size: 0.75rem;
+        font-size: 0.68rem;
     }
 
     .refresh-btn-enhanced span {
-        font-size: 0.72rem;
+        font-size: 0.66rem;
         font-weight: 600;
     }
 
@@ -415,12 +419,12 @@ function getAdjectivalRating($rating) {
     #reportTable th, #reportTable td {
         vertical-align: middle;
         text-align: center;
-        font-size: 0.68rem;
-        padding: 0.35rem 0.4rem;
+        font-size: 0.62rem;
+        padding: 0.3rem 0.35rem;
     }
     #reportTable th.name-col, #reportTable td.name-col {
         text-align: left;
-        padding-left: 0.85em;
+        padding-left: 0.75em;
     }
     #reportTable th {
         background: #f8fafc;

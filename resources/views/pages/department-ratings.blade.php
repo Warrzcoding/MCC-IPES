@@ -31,54 +31,80 @@ function getAdjectivalRating($rating) {
         box-shadow: 0 4px 15px rgba(0,0,0,0.1);
     }
     .staff-image {
-        width: 60px;
-        height: 60px;
+        width: 48px;
+        height: 48px;
         border-radius: 50%;
         object-fit: cover;
-        border: 3px solid #fff;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        border: 2px solid #fff;
+        box-shadow: 0 1px 6px rgba(0,0,0,0.08);
     }
     .default-avatar {
-        width: 60px;
-        height: 60px;
+        width: 48px;
+        height: 48px;
         border-radius: 50%;
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         display: flex;
         align-items: center;
         justify-content: center;
-        border: 3px solid #fff;
+        border: 2px solid #fff;
         color: white;
         font-weight: bold;
-        font-size: 20px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        font-size: 16px;
+        box-shadow: 0 1px 6px rgba(0,0,0,0.08);
+    }
+    .staff-info {
+        font-size: 0.72rem;
+        line-height: 1.35;
+    }
+    .staff-info .staff-name {
+        display: inline-block;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-bottom: 0.1rem;
+    }
+    .staff-info .staff-meta {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        font-size: 0.66rem;
+        color: #6c757d;
+    }
+    .staff-info .staff-meta i {
+        font-size: 0.62rem;
+    }
+    .staff-info .staff-badge {
+        font-size: 0.58rem;
+        padding: 0.2em 0.5em;
+        border-radius: 10px;
+        letter-spacing: 0.3px;
     }
     .rating-badge {
-        font-size: 0.85em;
-        padding: 0.4em 0.8em;
-        border-radius: 20px;
+        font-size: 0.68rem;
+        padding: 0.28em 0.6em;
+        border-radius: 16px;
         font-weight: 600;
         text-transform: uppercase;
-        letter-spacing: 0.5px;
+        letter-spacing: 0.4px;
     }
     .rating-stars {
         color: #ffc107;
-        font-size: 1.2em;
+        font-size: 0.78rem;
     }
     .rating-number {
-        font-size: 1.5em;
-        font-weight: bold;
+        font-size: 1rem;
+        font-weight: 600;
     }
     .stats-item {
         text-align: center;
-        padding: 0.5rem;
+        padding: 0.35rem;
     }
     .stats-number {
-        font-size: 1.2em;
-        font-weight: bold;
+        font-size: 0.84rem;
+        font-weight: 600;
         color: #007bff;
     }
     .stats-label {
-        font-size: 0.8em;
+        font-size: 0.58rem;
         color: #6c757d;
         text-transform: uppercase;
     }
@@ -94,22 +120,29 @@ function getAdjectivalRating($rating) {
         color: #6c757d;
     }
     #searchInput {
-        padding-left: 50px;
-        border-radius: 25px;
-        border: 2px solid #e9ecef;
+        padding-left: 34px;
+        border-radius: 18px;
+        border: 1px solid #e7ebf2;
+        font-size: 0.78rem;
+        height: 1.95rem;
+    }
+    #searchInput::placeholder {
+        font-size: 0.7rem;
+        color: #9aa5b5;
     }
     #searchInput:focus {
         border-color: #007bff;
-        box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+        box-shadow: 0 0 0 0.16rem rgba(0,123,255,.2);
     }
     .table-header {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
+        font-size: 0.78rem;
     }
     .action-btn {
-        padding: 0.25rem 0.5rem;
-        font-size: 0.875rem;
-        border-radius: 15px;
+        padding: 0.18rem 0.4rem;
+        font-size: 0.68rem;
+        border-radius: 12px;
     }
     .comments-modal .modal-body {
         max-height: 400px;
@@ -250,10 +283,12 @@ function getAdjectivalRating($rating) {
     #reportTable th, #reportTable td {
         vertical-align: middle;
         text-align: center;
+        font-size: 0.62rem;
+        padding: 0.3rem 0.35rem;
     }
     #reportTable th.name-col, #reportTable td.name-col {
         text-align: left;
-        padding-left: 1.2em;
+        padding-left: 0.75em;
     }
     #reportTable th {
         background: #f8fafc;
@@ -266,6 +301,8 @@ function getAdjectivalRating($rating) {
     }
     .generate-reports-btn {
         transition: background 0.2s, box-shadow 0.2s;
+        padding: 0.35rem 1.2rem;
+        font-size: 0.85rem;
     }
     .generate-reports-btn:hover, .generate-reports-btn:focus {
         background-color: #198754 !important;
@@ -288,11 +325,11 @@ function getAdjectivalRating($rating) {
         transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         position: relative;
         overflow: hidden;
-        font-weight: 700;
-        letter-spacing: 0.5px;
+        font-weight: 600;
+        letter-spacing: 0.4px;
         text-transform: uppercase;
-        font-size: 0.85rem;
-        padding: 12px 20px;
+        font-size: 0.68rem;
+        padding: 8px 13px;
         margin: 0 2px;
         border: none;
         background: rgba(255, 255, 255, 0.1);
@@ -358,8 +395,8 @@ function getAdjectivalRating($rating) {
     
     #departmentTabs .nav-link i {
         transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        margin-right: 8px;
-        font-size: 1.1em;
+        margin-right: 6px;
+        font-size: 0.9em;
         filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
     }
     
@@ -467,7 +504,7 @@ function getAdjectivalRating($rating) {
                                        class="form-control">
                             </div>
                             <button type="button" class="btn btn-primary ms-2 shadow-sm d-flex align-items-center gap-2 rounded-pill refresh-btn-enhanced"
-                                    style="height:40px;font-weight:bold;font-size:1rem;" onclick="location.reload();">
+                                    style="height:30px;font-weight:600;font-size:0.82rem;" onclick="location.reload();">
                                 <i class="fas fa-sync-alt"></i> <span>Refresh</span>
                             </button>
                         </div>
@@ -506,19 +543,19 @@ function getAdjectivalRating($rating) {
                                         </td>
                                         
                                         <td class="align-middle">
-                                            <div>
-                                                <strong class="text-primary">{{ $staff->full_name }}</strong>
+                                            <div class="staff-info">
+                                                <span class="staff-name text-primary">{{ $staff->full_name }}</span>
                                                 <br>
-                                                <small class="text-muted">
-                                                    <i class="fas fa-id-badge me-1"></i>{{ $staff->staff_id }}
-                                                </small>
+                                                <span class="staff-meta">
+                                                    <i class="fas fa-id-badge"></i>{{ $staff->staff_id }}
+                                                </span>
                                                 <br>
-                                                <small class="text-muted">
-                                                    <i class="fas fa-envelope me-1"></i>{{ $staff->email }}
-                                                </small>
+                                                <span class="staff-meta">
+                                                    <i class="fas fa-envelope"></i>{{ $staff->email }}
+                                                </span>
                                                 <br>
-                                                <span class="badge bg-secondary">{{ $rowDept }}</span>
-                                                <span class="badge bg-info">{{ $staff->staff_type }}</span>
+                                                <span class="badge bg-secondary staff-badge">{{ $rowDept }}</span>
+                                                <span class="badge bg-info staff-badge">{{ $staff->staff_type }}</span>
                                             </div>
                                         </td>
                                         
