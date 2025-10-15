@@ -283,47 +283,49 @@
             }
         }
         .signup-card {
+            --signup-scale: 0.8;
             background: #fff;
             border-radius: 12px;
             box-shadow: 0 4px 18px rgba(102,126,234,0.10), 0 1.5px 8px rgba(0,0,0,0.06);
             border: 1.5px solid #e9ecef;
-            padding: 24px 20px 20px 20px;
-            max-width: 400px;
-            width: 100%;
+            padding: calc(32px * var(--signup-scale)) calc(24px * var(--signup-scale)) calc(28px * var(--signup-scale)) calc(24px * var(--signup-scale));
+            max-width: calc(420px * var(--signup-scale));
+            width: min(100%, calc(420px * var(--signup-scale)));
             margin: 0 auto;
-            min-height: 380px;
-            max-height: 95vh;
+            min-height: calc(100vh - 48px);
+            max-height: calc(100vh - 48px);
             overflow-y: auto;
             display: flex;
             flex-direction: column;
             align-items: center;
             position: relative; /* ensure it layers above background */
+            font-size: calc(1rem * var(--signup-scale));
         }
         .signup-header {
             text-align: center;
-            margin-bottom: 18px;
+            margin-bottom: calc(18px * var(--signup-scale));
         }
         .signup-header .logo {
-            width: 44px;
-            height: 44px;
+            width: calc(44px * var(--signup-scale));
+            height: calc(44px * var(--signup-scale));
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 10px;
-            font-size: 1.3rem;
+            margin: 0 auto calc(10px * var(--signup-scale));
+            font-size: calc(1.3rem * var(--signup-scale));
             color: white;
         }
         .signup-header h2 {
             color: #333;
             font-weight: 700;
-            margin-bottom: 6px;
-            font-size: 1.2rem;
+            margin-bottom: calc(6px * var(--signup-scale));
+            font-size: calc(1.2rem * var(--signup-scale));
         }
         .signup-header p {
             color: #666;
-            font-size: 13px;
+            font-size: calc(13px * var(--signup-scale));
         }
         .step-indicator-wrapper {
             display: flex;
@@ -331,15 +333,15 @@
             justify-content: center;
             gap: 0;
             position: relative;
-            margin-bottom: 0.5rem;
+            margin-bottom: calc(0.5rem * var(--signup-scale));
             width: 100%;
-            max-width: 140px; /* reduced for closer circles */
+            max-width: calc(140px * var(--signup-scale)); /* reduced for closer circles */
             margin-left: auto;
             margin-right: auto;
         }
         .step-circle {
-            width: 22px;
-            height: 22px;
+            width: calc(22px * var(--signup-scale));
+            height: calc(22px * var(--signup-scale));
             border-radius: 50%;
             background: #e9ecef;
             color: #888;
@@ -347,7 +349,7 @@
             align-items: center;
             justify-content: center;
             font-weight: 700;
-            font-size: 0.98rem;
+            font-size: calc(0.98rem * var(--signup-scale));
             transition: background 0.2s, color 0.2s;
             position: relative;
             z-index: 2;
@@ -359,13 +361,13 @@
         }
         .step-connector {
             flex: 1 1 0;
-            height: 3px;
+            height: calc(3px * var(--signup-scale));
             background: #e0e6f7;
-            margin: 0 1px;
+            margin: 0 calc(1px * var(--signup-scale));
             position: relative;
             top: 0;
             z-index: 1;
-            border-radius: 2px;
+            border-radius: calc(2px * var(--signup-scale));
             transition: background 0.3s;
         }
         .step-connector.active {
@@ -373,81 +375,81 @@
         }
         .form-horizontal {
             width: 100%;
-            max-width: 360px;
+            max-width: calc(360px * var(--signup-scale));
             margin: 0 auto;
             padding: 0;
             display: flex;
             flex-direction: column;
-            gap: 1rem;
+            gap: calc(1rem * var(--signup-scale));
         }
         .form-navigation {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 12px;
+            gap: calc(12px * var(--signup-scale));
             width: 100%;
-            margin-top: 1.2rem;
+            margin-top: calc(1.2rem * var(--signup-scale));
         }
         .form-navigation .nav-btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
+            gap: calc(6px * var(--signup-scale));
             font-weight: 600;
-            letter-spacing: 0.2px;
-            border-radius: 10px;
-            padding: 0.4rem 0.95rem;
-            min-height: 46px;
+            letter-spacing: calc(0.2px * var(--signup-scale));
+            border-radius: calc(10px * var(--signup-scale));
+            padding: calc(0.4rem * var(--signup-scale)) calc(0.95rem * var(--signup-scale));
+            min-height: calc(46px * var(--signup-scale));
             flex: 0 0 auto;
-            min-width: 108px;
+            min-width: calc(108px * var(--signup-scale));
             transition: all 0.2s ease;
         }
         .form-navigation .nav-btn i {
-            font-size: 1rem;
+            font-size: calc(1rem * var(--signup-scale));
         }
         .form-navigation .nav-btn-icon-only {
             display: inline-flex;
-            width: 44px;
-            min-width: 44px;
-            height: 44px;
+            width: calc(44px * var(--signup-scale));
+            min-width: calc(44px * var(--signup-scale));
+            height: calc(44px * var(--signup-scale));
             padding: 0;
             border-radius: 50%;
-            flex: 0 0 44px;
+            flex: 0 0 calc(44px * var(--signup-scale));
         }
         .form-navigation .nav-btn-fill {
             flex: 1 1 auto;
             min-width: 0;
         }
         .form-navigation .nav-btn-submit {
-            padding: 0.35rem 0.85rem;
-            min-height: 44px;
-            font-size: 0.96rem;
+            padding: calc(0.35rem * var(--signup-scale)) calc(0.85rem * var(--signup-scale));
+            min-height: calc(44px * var(--signup-scale));
+            font-size: calc(0.96rem * var(--signup-scale));
         }
         .form-horizontal .form-label {
-            font-size: 0.98rem;
+            font-size: calc(0.98rem * var(--signup-scale));
             font-weight: 600;
             color: #333;
-            margin-bottom: 0.2rem;
+            margin-bottom: calc(0.2rem * var(--signup-scale));
         }
         .form-horizontal .form-control, .form-horizontal .form-select {
-            border-radius: 10px;
+            border-radius: calc(10px * var(--signup-scale));
             border: 1.5px solid #e9ecef;
-            padding: 14px 16px;
-            font-size: 15px;
+            padding: calc(14px * var(--signup-scale)) calc(16px * var(--signup-scale));
+            font-size: calc(15px * var(--signup-scale));
             transition: all 0.3s ease;
             box-shadow: 0 2px 4px rgba(0,0,0,0.02);
         }
         .form-horizontal .form-control:focus, .form-horizontal .form-select:focus {
             border-color: #667eea;
-            box-shadow: 0 0 0 0.15rem rgba(102, 126, 234, 0.15), 0 4px 8px rgba(0,0,0,0.05);
+            box-shadow: 0 0 0 calc(0.15rem * var(--signup-scale)) rgba(102, 126, 234, 0.15), 0 4px 8px rgba(0,0,0,0.05);
             outline: none;
         }
         .btn-primary, .btn-secondary {
             width: 100%;
-            font-size: 15px;
-            padding: 14px 0;
-            border-radius: 10px;
-            margin-bottom: 8px;
+            font-size: calc(15px * var(--signup-scale));
+            padding: calc(14px * var(--signup-scale)) 0;
+            border-radius: calc(10px * var(--signup-scale));
+            margin-bottom: calc(8px * var(--signup-scale));
             font-weight: 600;
         }
         .btn-primary {
@@ -465,9 +467,9 @@
             border: none;
         }
         .signup-link {
-            font-size: 0.98rem;
-            margin-top: 10px;
-            padding-top: 10px;
+            font-size: calc(0.98rem * var(--signup-scale));
+            margin-top: calc(10px * var(--signup-scale));
+            padding-top: calc(10px * var(--signup-scale));
             border-top: 1px solid #e9ecef;
             color: #667eea;
             width: 100%;
@@ -481,10 +483,10 @@
             color: #764ba2;
         }
         .alert {
-            font-size: 0.98rem;
-            border-radius: 8px;
-            padding: 8px 10px;
-            margin-bottom: 8px;
+            font-size: calc(0.98rem * var(--signup-scale));
+            border-radius: calc(8px * var(--signup-scale));
+            padding: calc(8px * var(--signup-scale)) calc(10px * var(--signup-scale));
+            margin-bottom: calc(8px * var(--signup-scale));
             box-shadow: 0 1px 3px rgba(102,126,234,0.07);
         }
         .alert-success {
@@ -498,17 +500,17 @@
         .compact-image-upload {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: calc(15px * var(--signup-scale));
             margin-bottom: 0;
         }
         .image-preview-compact {
             flex-shrink: 0;
         }
         .image-preview-compact img {
-            width: 60px !important;
-            height: 60px !important;
+            width: calc(60px * var(--signup-scale)) !important;
+            height: calc(60px * var(--signup-scale)) !important;
             border-radius: 50%;
-            border: 2px solid #667eea;
+            border: calc(2px * var(--signup-scale)) solid #667eea;
             object-fit: cover;
             background: #f8f9fa;
         }
@@ -517,11 +519,11 @@
             display: flex;
             flex-direction: column;
             align-items: flex-start;
-            gap: 8px;
+            gap: calc(8px * var(--signup-scale));
         }
         .upload-buttons-row {
             display: flex;
-            gap: 8px;
+            gap: calc(8px * var(--signup-scale));
             width: 100%;
             justify-content: center;
             flex-wrap: wrap;
@@ -529,13 +531,13 @@
         .upload-btn {
             border-color: #667eea;
             color: #667eea;
-            font-size: 12px;
-            padding: 6px 14px;
-            border-radius: 6px;
+            font-size: calc(12px * var(--signup-scale));
+            padding: calc(6px * var(--signup-scale)) calc(14px * var(--signup-scale));
+            border-radius: calc(6px * var(--signup-scale));
             transition: all 0.3s ease;
             cursor: pointer;
             flex: 0 0 auto;
-            min-width: 160px;
+            min-width: calc(160px * var(--signup-scale));
             text-align: center;
         }
         .upload-btn:hover {
@@ -544,39 +546,39 @@
             color: white;
         }
         .upload-btn i {
-            margin-right: 4px;
+            margin-right: calc(4px * var(--signup-scale));
         }
 
         .password-strength {
-            margin-top: 6px;
-            margin-bottom: 2px;
-            height: 7px;
+            margin-top: calc(6px * var(--signup-scale));
+            margin-bottom: calc(2px * var(--signup-scale));
+            height: calc(7px * var(--signup-scale));
             width: 100%;
-            border-radius: 4px;
+            border-radius: calc(4px * var(--signup-scale));
             background: #e9ecef;
             overflow: hidden;
         }
         .password-strength-bar {
             height: 100%;
             width: 0%;
-            border-radius: 4px;
+            border-radius: calc(4px * var(--signup-scale));
             transition: width 0.3s, background 0.3s;
         }
         .password-strength-text {
-            font-size: 0.92rem;
-            margin-top: 2px;
+            font-size: calc(0.92rem * var(--signup-scale));
+            margin-top: calc(2px * var(--signup-scale));
             font-weight: 600;
         }
         .password-suggestion {
-            font-size: 0.85rem;
+            font-size: calc(0.85rem * var(--signup-scale));
             color: #b71c1c;
-            margin-top: 2px;
+            margin-top: calc(2px * var(--signup-scale));
         }
         .password-match-indicator {
-            font-size: 0.92rem;
-            margin-top: 4px;
+            font-size: calc(0.92rem * var(--signup-scale));
+            margin-top: calc(4px * var(--signup-scale));
             font-weight: 600;
-            min-height: 18px;
+            min-height: calc(18px * var(--signup-scale));
         }
         .password-match-indicator.match {
             color: #51cf66;
@@ -585,10 +587,10 @@
             color: #ff6b6b;
         }
         .validation-feedback {
-            font-size: 0.92rem;
-            margin-top: 4px;
+            font-size: calc(0.92rem * var(--signup-scale));
+            margin-top: calc(4px * var(--signup-scale));
             font-weight: 600;
-            min-height: 18px;
+            min-height: calc(18px * var(--signup-scale));
         }
         .validation-feedback.valid {
             color: #51cf66;
@@ -733,7 +735,7 @@
                 <div class="step-connector" id="stepConnector2"></div>
                 <div class="step-circle" id="stepCircle3">3</div>
             </div>
-            <div style="margin-top: 6px; font-size: 0.98rem; color: #888;">
+            <div style="margin-top: calc(6px * var(--signup-scale)); font-size: calc(0.98rem * var(--signup-scale)); color: #888;">
                 <span id="stepLabel">Personal Info</span>
             </div>
         </div>
