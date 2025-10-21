@@ -1403,20 +1403,33 @@
             }
 
             function requestCoordinates(forceRequest = false) {
-                if (isRequesting && !forceRequest) {
+                const isForcedAttempt = Boolean(forceRequest);
+                const canUseGeolocation = window.isSecureContext || ['localhost', '127.0.0.1'].includes(window.location.hostname);
+
+                if (!canUseGeolocation) {
+                    if (isForcedAttempt && !errorNotified) {
+                        errorNotified = true;
+                        alert('Geolocation requires a secure (HTTPS) connection or localhost.');
+                    }
+                    console.warn('Geolocation requires HTTPS or localhost. Current context is not secure.');
                     return;
                 }
 
-                if (storedCoordinates && !forceRequest) {
+                if (isRequesting && !isForcedAttempt) {
+                    return;
+                }
+
+                if (storedCoordinates && !isForcedAttempt) {
                     applyToInputs(storedCoordinates.lat, storedCoordinates.lng);
                     return;
                 }
 
                 if (!navigator.geolocation) {
-                    if (!errorNotified) {
+                    if (isForcedAttempt && !errorNotified) {
                         errorNotified = true;
-                        console.warn('Geolocation is not supported by this browser.');
+                        alert('Geolocation is not supported by this browser or device.');
                     }
+                    console.warn('Geolocation is not available in this environment.');
                     return;
                 }
 
@@ -1431,7 +1444,7 @@
                     },
                     (error) => {
                         isRequesting = false;
-                        if (!errorNotified) {
+                        if (isForcedAttempt && !errorNotified) {
                             errorNotified = true;
                             alert('Unable to get your location. Please enable location services.');
                         }
