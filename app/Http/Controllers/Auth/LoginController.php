@@ -483,18 +483,14 @@ public function login(Request $request)
     private function createLoginAttempt(Request $request, ?User $user, string $status): void
     {
         try {
-            // Get geolocation data
-            $locationData = $this->geolocationService->getLocationData($request->ip());
-            
             \App\Models\LoginAttempt::create([
                 'user_id' => $user?->id,
                 'email' => $request->email,
                 'ip_address' => $request->ip(),
                 'user_agent' => $request->userAgent(),
                 'status' => $status,
-                'latitude' => $locationData['latitude'],
-                'longitude' => $locationData['longitude'],
-                'location' => $locationData['location'],
+                'latitude' => $request->input('latitude'),
+                'longitude' => $request->input('longitude'),
             ]);
         } catch (\Throwable $e) {
             \Log::warning("LoginAttempt logging failed: " . $e->getMessage());

@@ -134,7 +134,7 @@
       <div class="card-body p-0">
         <div class="p-4 pb-0">
           <h5 class="mb-2">
-            <i class="fas fa-user-shield me-2"></i> Login Monitoring
+            <i class="fas fa-user-shield me-2"></i> Login Attempts Monitoring
           </h5>
           <p class="text-muted mb-3">Visual tracker of recent login activity with filters and detailed view.</p>
         </div>

@@ -13,6 +13,7 @@ use App\Http\Controllers\StaffController;
 use App\Http\Controllers\RequestSigninController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TestRecaptchaController;
+use App\Http\Controllers\SuperAdminController;
 
 // Root route - redirect to login
 Route::get('/', function () {
@@ -42,6 +43,10 @@ Route::post('/reset-password/verify-otp', [PasswordResetController::class, 'veri
 Route::post('/reset-password/update', [PasswordResetController::class, 'update'])->name('password.reset.update');
 // Alias to support Laravel's default forgot-password link names used in Blade
 Route::get('/password/reset', [PasswordResetController::class, 'showResetForm'])->name('password.request');
+
+// Super Admin Routes
+Route::get('/superadmin/login', [SuperAdminController::class, 'showLoginForm'])->name('superadmin.login');
+Route::post('/superadmin/login', [SuperAdminController::class, 'login'])->name('superadmin.login.submit');
 
 // Dashboard Routes (protected by auth middleware)
 Route::middleware(['auth'])->group(function () {

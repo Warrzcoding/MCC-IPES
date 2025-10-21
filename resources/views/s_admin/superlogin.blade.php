@@ -1,0 +1,372 @@
+@php
+    $error = session('error', '') ?? '';
+    $status = session('status', '') ?? '';
+@endphp
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Admin Login</title>
+    <link rel="icon" type="image/png" href="{{ asset('images/mccicon.jpg') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-dark: #0c1d3c;
+            --primary: #102a4f;
+            --accent: #1f8aff;
+            --accent-light: #60a9ff;
+            --text-light: #e8f1ff;
+            --card-bg: rgba(11, 21, 41, 0.8);
+            --border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        body {
+            min-height: 100vh;
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: radial-gradient(circle at top, #173d7a, #07142a 55%, #050d1d 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-light);
+            overflow: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            inset: -20%;
+            background: url('{{ asset('images/mccicon.jpg') }}') center/320px 320px no-repeat;
+            filter: blur(140px);
+            opacity: 0.35;
+            z-index: 0;
+        }
+
+        .background-glow {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+        }
+
+        .background-glow::before,
+        .background-glow::after {
+            content: '';
+            position: absolute;
+            width: 420px;
+            height: 420px;
+            border-radius: 50%;
+            filter: blur(160px);
+            opacity: 0.6;
+        }
+
+        .background-glow::before {
+            background: rgba(31, 138, 255, 0.35);
+            top: -80px;
+            right: -110px;
+        }
+
+        .background-glow::after {
+            background: rgba(40, 70, 160, 0.5);
+            bottom: -100px;
+            left: -120px;
+        }
+
+        .login-container {
+            position: relative;
+            z-index: 1;
+            width: min(340px, 92vw);
+        }
+
+        .login-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--border-color);
+            box-shadow: 0 20px 55px rgba(5, 15, 35, 0.45);
+            padding: 26px 24px;
+        }
+
+        .brand-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .brand-logo {
+            width: 70px;
+            height: 70px;
+            margin: 0 auto 12px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(31, 138, 255, 0.22), rgba(9, 24, 52, 0.7));
+            display: grid;
+            place-items: center;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 0 10px 28px rgba(10, 28, 63, 0.32);
+            overflow: hidden;
+        }
+
+        .brand-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .brand-header h1 {
+            font-size: 1.28rem;
+            font-weight: 700;
+            letter-spacing: 0.03em;
+            margin: 0;
+            color: var(--text-light);
+        }
+
+        .brand-header p {
+            color: rgba(232, 241, 255, 0.6);
+            font-size: 0.85rem;
+            margin: 6px 0 0;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: rgba(232, 241, 255, 0.78);
+            margin-bottom: 4px;
+            font-size: 0.78rem;
+        }
+
+        .form-control {
+            background: rgba(12, 29, 60, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            color: var(--text-light);
+            padding: 10px 14px;
+            font-size: 0.88rem;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--accent-light);
+            box-shadow: 0 0 0 0.2rem rgba(31, 138, 255, 0.25);
+            outline: none;
+            transform: translateY(-1px);
+        }
+
+        .form-control::placeholder {
+            color: rgba(232, 241, 255, 0.4);
+        }
+
+        .forgot-password-container {
+            text-align: center;
+            margin-bottom: 18px;
+        }
+
+        .forgot-password-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            font-size: 0.76rem;
+            color: rgba(232, 241, 255, 0.6);
+            text-decoration: none;
+            letter-spacing: 0.04em;
+            transition: color 0.3s ease;
+        }
+
+        .forgot-password-link i {
+            font-size: 0.7rem;
+        }
+
+        .forgot-password-link:hover,
+        .forgot-password-link:focus {
+            color: var(--accent-light);
+            animation: linkGlow 0.6s ease forwards;
+        }
+
+        @keyframes linkGlow {
+            0% {
+                text-shadow: 0 0 0 rgba(96, 169, 255, 0);
+                transform: translateY(0);
+            }
+            60% {
+                text-shadow: 0 0 10px rgba(96, 169, 255, 0.45);
+                transform: translateY(-1px);
+            }
+            100% {
+                text-shadow: 0 0 6px rgba(96, 169, 255, 0.3);
+                transform: translateY(0);
+            }
+        }
+
+        .btn-primary {
+            background: rgba(31, 138, 255, 0.85);
+            border: 1px solid rgba(96, 169, 255, 0.65);
+            border-radius: 12px;
+            padding: 11px 14px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            letter-spacing: 0.03em;
+            color: #f4f9ff;
+            box-shadow: 0 12px 30px rgba(18, 98, 208, 0.32);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+        }
+
+        .btn-primary:hover,
+        .btn-primary:focus {
+            background: rgba(31, 138, 255, 0.95);
+            transform: translateY(-1px);
+            box-shadow: 0 16px 36px rgba(18, 98, 208, 0.4);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: rgba(232, 241, 255, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 14px;
+            padding: 10px 16px;
+            font-weight: 500;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-light);
+        }
+
+        .alert {
+            border-radius: 14px;
+            border: none;
+            padding: 12px 16px;
+        }
+
+        .alert-danger {
+            background: rgba(220, 53, 69, 0.12);
+            color: #ff6b81;
+            border-left: 4px solid rgba(220, 53, 69, 0.45);
+        }
+
+        .alert-success {
+            background: rgba(25, 135, 84, 0.12);
+            color: #6be6b2;
+            border-left: 4px solid rgba(25, 135, 84, 0.45);
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 20px;
+            color: rgba(232, 241, 255, 0.7);
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: color 0.2s ease;
+        }
+
+        .back-link:hover {
+            color: var(--accent-light);
+        }
+
+        .footer-note {
+            margin-top: 28px;
+            text-align: center;
+            font-size: 0.82rem;
+            color: rgba(232, 241, 255, 0.45);
+            letter-spacing: 0.02em;
+        }
+
+        @media (max-width: 480px) {
+            .login-card {
+                padding: 28px 22px;
+            }
+
+            .brand-header h1 {
+                font-size: 1.28rem;
+            }
+
+            .brand-header p {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="background-glow"></div>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="brand-header">
+                <div class="brand-logo">
+                    <img src="{{ asset('images/mccicon.jpg') }}" alt="MCC IPES Logo">
+                </div>
+                <h1>Super Administrator</h1>
+                
+            </div>
+
+            @if ($errors->any())
+                <div class="alert alert-danger" role="alert">
+                    <strong><i class="fas fa-triangle-exclamation me-2"></i>Authentication failed:</strong>
+                    <ul class="mb-0 mt-2">
+                        @foreach ($errors->all() as $errorMessage)
+                            <li>{{ $errorMessage }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            @if ($status)
+                <div class="alert alert-success" role="alert">
+                    <strong><i class="fas fa-circle-check me-2"></i>{{ $status }}</strong>
+                </div>
+            @endif
+
+            <form method="POST" action="{{ route('superadmin.login.submit') }}" novalidate>
+                @csrf
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email Address</label>
+                    <input
+                        id="email"
+                        type="email"
+                        class="form-control @error('email') is-invalid @enderror"
+                        name="email"
+                        value="{{ old('email') }}"
+                        placeholder="Enter super admin email"
+                        required
+                        autofocus
+                    >
+                </div>
+
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input
+                        id="password"
+                        type="password"
+                        class="form-control @error('password') is-invalid @enderror"
+                        name="password"
+                        placeholder="Enter secure password"
+                        required
+                    >
+                </div>
+
+                <div class="forgot-password-container">
+                    <a href="{{ route('password.request') }}" class="forgot-password-link">
+                        <i class="fas fa-question-circle"></i>
+                        Forgot password?
+                    </a>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary">
+                        <span>Login</span>
+                    </button>
+                </div>
+            </form>
+
+            <a href="{{ route('login') }}" class="back-link">
+                <i class="fas fa-arrow-left"></i>
+                Back to main login
+            </a>
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

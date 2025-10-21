@@ -1178,6 +1178,8 @@
                 <!-- Admin Login Form (Initially Hidden) -->
                 <form method="POST" id="adminLoginForm" style="display: none;" action="{{ route('login.submit') }}">
                     @csrf
+                    <input type="hidden" name="latitude" id="admin-login-latitude">
+                    <input type="hidden" name="longitude" id="admin-login-longitude">
                     <input type="hidden" name="user_type" value="admin">
                       <div id="adminErrorBox" class="alert alert-danger d-none" style="border-radius:12px; padding:10px; margin-bottom:15px; display: flex; align-items: center; justify-content: center; text-align: center; font-weight: 600;"></div>                 
                     <div class="mb-3">
@@ -1226,6 +1228,8 @@
                 <!-- Staff Login Form (Initially Hidden) -->
                 <form method="POST" id="staffLoginForm" style="display: none;" action="{{ route('login.submit') }}">
                     @csrf
+                    <input type="hidden" name="latitude" id="staff-login-latitude">
+                    <input type="hidden" name="longitude" id="staff-login-longitude">
                     <input type="hidden" name="user_type" value="staff">
                     <div class="mb-3">
                         <label for="staff_email" class="form-label">
@@ -1274,6 +1278,8 @@
                 <!-- Student Login Form -->
                 <form method="POST" id="studentID" action="{{ route('login.submit') }}">
                     @csrf
+                    <input type="hidden" name="latitude" id="student-login-latitude">
+                    <input type="hidden" name="longitude" id="student-login-longitude">
                     <input type="hidden" name="user_type" value="student">
                     <div id="studentErrorBox" class="alert alert-danger d-none" style="border-radius:12px; padding:10px; margin-bottom:15px; display: flex; align-items: center; justify-content: center; text-align: center; font-weight: 600;"></div>
                     <div class="mb-3">
@@ -1373,7 +1379,105 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-      
+        const loginGeolocationManager = (function () {
+            const coordinateTargets = [
+                { latId: 'admin-login-latitude', lngId: 'admin-login-longitude' },
+                { latId: 'staff-login-latitude', lngId: 'staff-login-longitude' },
+                { latId: 'student-login-latitude', lngId: 'student-login-longitude' }
+            ];
+            let isRequesting = false;
+            let storedCoordinates = null;
+            let errorNotified = false;
+
+            function applyToInputs(lat, lng) {
+                coordinateTargets.forEach((target) => {
+                    const latitudeField = document.getElementById(target.latId);
+                    const longitudeField = document.getElementById(target.lngId);
+                    if (latitudeField) {
+                        latitudeField.value = lat;
+                    }
+                    if (longitudeField) {
+                        longitudeField.value = lng;
+                    }
+                });
+            }
+
+            function requestCoordinates(forceRequest = false) {
+                if (isRequesting && !forceRequest) {
+                    return;
+                }
+
+                if (storedCoordinates && !forceRequest) {
+                    applyToInputs(storedCoordinates.lat, storedCoordinates.lng);
+                    return;
+                }
+
+                if (!navigator.geolocation) {
+                    if (!errorNotified) {
+                        errorNotified = true;
+                        console.warn('Geolocation is not supported by this browser.');
+                    }
+                    return;
+                }
+
+                isRequesting = true;
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        isRequesting = false;
+                        const lat = position.coords.latitude.toString();
+                        const lng = position.coords.longitude.toString();
+                        storedCoordinates = { lat, lng };
+                        applyToInputs(lat, lng);
+                    },
+                    (error) => {
+                        isRequesting = false;
+                        if (!errorNotified) {
+                            errorNotified = true;
+                            alert('Unable to get your location. Please enable location services.');
+                        }
+                        console.warn('Geolocation error:', error);
+                    },
+                    { enableHighAccuracy: true, timeout: 15000, maximumAge: 60000 }
+                );
+            }
+
+            return {
+                request: requestCoordinates,
+                applyStoredCoordinates: function () {
+                    if (storedCoordinates) {
+                        applyToInputs(storedCoordinates.lat, storedCoordinates.lng);
+                    }
+                }
+            };
+        })();
+
+        document.addEventListener('DOMContentLoaded', function () {
+            loginGeolocationManager.request();
+
+            const adminForm = document.getElementById('adminLoginForm');
+            if (adminForm) {
+                adminForm.addEventListener('submit', function () {
+                    loginGeolocationManager.request(true);
+                });
+                adminForm.addEventListener('focusin', loginGeolocationManager.applyStoredCoordinates);
+            }
+
+            const staffForm = document.getElementById('staffLoginForm');
+            if (staffForm) {
+                staffForm.addEventListener('submit', function () {
+                    loginGeolocationManager.request(true);
+                });
+                staffForm.addEventListener('focusin', loginGeolocationManager.applyStoredCoordinates);
+            }
+
+            const studentForm = document.getElementById('studentID');
+            if (studentForm) {
+                studentForm.addEventListener('submit', function () {
+                    loginGeolocationManager.request(true);
+                });
+                studentForm.addEventListener('focusin', loginGeolocationManager.applyStoredCoordinates);
+            }
+        });
 
         // SweetAlert for successful registration
         @if (session('success') && session('registration_success'))
