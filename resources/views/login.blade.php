@@ -1446,12 +1446,14 @@
                         isRequesting = false;
                         if (isForcedAttempt && !errorNotified) {
                             errorNotified = true;
-                            alert('Unable to get your location. Please enable location services.');
+                            alert('Unable to get your location, so the map will use IP-based data instead.');
                         }
                         console.warn('Geolocation error:', error);
+                        document.dispatchEvent(new CustomEvent('login-geolocation:failed'));
                     },
                     { enableHighAccuracy: true, timeout: 15000, maximumAge: 60000 }
                 );
+                document.dispatchEvent(new CustomEvent('login-geolocation:requested'));
             }
 
             return {
@@ -1459,6 +1461,12 @@
                 applyStoredCoordinates: function () {
                     if (storedCoordinates) {
                         applyToInputs(storedCoordinates.lat, storedCoordinates.lng);
+                    }
+                },
+                watch: function (callback) {
+                    if (typeof callback === 'function') {
+                        document.addEventListener('login-geolocation:requested', () => callback('requested'));
+                        document.addEventListener('login-geolocation:failed', () => callback('failed'));
                     }
                 }
             };

@@ -492,32 +492,98 @@
     let map;
     let marker;
 
-    function initMap(lat, lng) {
-      console.log('Initializing map with coordinates:', lat, lng);
-      
-      if (!lat || !lng || lat === 'null' || lng === 'null') {
-        $('#map').innerHTML = '<div class="d-flex align-items-center justify-content-center h-100"><p class="text-muted mb-0"><i class="fas fa-map-marker-alt me-2"></i>Location data not available</p></div>';
+    function destroyExistingMap() {
+      if (map) {
+        try {
+          if (typeof map.remove === 'function') {
+            map.remove();
+          } else if (typeof map.destroy === 'function') {
+            map.destroy();
+          } else if (typeof map.unmount === 'function') {
+            map.unmount();
+          }
+        } catch (error) {
+          console.warn('Error tearing down previous map instance:', error);
+        }
+      }
+
+      const mapContainer = $('#map');
+      if (mapContainer) {
+        mapContainer.innerHTML = '';
+      }
+
+      map = null;
+      marker = null;
+    }
+
+    function renderMapMessage(messageHtml) {
+      destroyExistingMap();
+      const mapContainer = $('#map');
+      if (mapContainer) {
+        mapContainer.innerHTML = messageHtml;
+      }
+    }
+
+    function normalizeCoordinate(coord) {
+      if (coord === undefined || coord === null) {
+        return '';
+      }
+      return String(coord).trim();
+    }
+
+    function dispatchMapEvent(name, detail = {}) {
+      document.dispatchEvent(new CustomEvent(name, { detail }));
+    }
+
+    function initMap(lat, lng, meta = {}) {
+      console.log('Initializing map with coordinates:', lat, lng, meta);
+
+      const normalizedLat = normalizeCoordinate(lat);
+      const normalizedLng = normalizeCoordinate(lng);
+
+      if (
+        !normalizedLat ||
+        !normalizedLng ||
+        normalizedLat.toLowerCase() === 'null' ||
+        normalizedLng.toLowerCase() === 'null' ||
+        normalizedLat.toLowerCase() === 'undefined' ||
+        normalizedLng.toLowerCase() === 'undefined'
+      ) {
+        renderMapMessage(`<div class="d-flex flex-column align-items-center justify-content-center h-100 text-center px-4">
+          <p class="text-muted mb-1"><i class="fas fa-map-marker-alt me-2"></i>Precise coordinates not available</p>
+          ${meta.locationLabel && meta.locationLabel !== 'Unknown' ? `<p class="text-muted small mb-0">Approximate location: <strong>${meta.locationLabel}</strong></p>` : ''}
+          ${meta.ipAddress ? `<p class="text-muted small mb-0">Source IP: <strong>${meta.ipAddress}</strong></p>` : ''}
+        </div>`);
+        dispatchMapEvent('loginMonitor:mapUnavailable', { reason: 'missing-coordinates', meta });
         return;
       }
-      
-      const latitude = parseFloat(lat);
-      const longitude = parseFloat(lng);
-      
-      if (isNaN(latitude) || isNaN(longitude)) {
-        $('#map').innerHTML = '<div class="d-flex align-items-center justify-content-center h-100"><p class="text-muted mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Invalid coordinates</p></div>';
+
+      const latitude = parseFloat(normalizedLat);
+      const longitude = parseFloat(normalizedLng);
+
+      if (Number.isNaN(latitude) || Number.isNaN(longitude)) {
+        renderMapMessage('<div class="d-flex align-items-center justify-content-center h-100"><p class="text-muted mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Invalid coordinates</p></div>');
+        dispatchMapEvent('loginMonitor:mapUnavailable', { reason: 'invalid-coordinates', meta, rawLat: lat, rawLng: lng });
         return;
       }
-      
-      // Clear any existing map content
-      $('#map').innerHTML = '';
-      
+
+      destroyExistingMap();
+
       console.log('Using coordinates:', latitude, longitude);
-      
-      // Check if Google Maps is available
+
+      const container = document.getElementById('map');
+      if (!container) {
+        console.warn('Map container not found.');
+        dispatchMapEvent('loginMonitor:mapUnavailable', { reason: 'missing-container', meta });
+        return;
+      }
+
+      let providerUsed = 'none';
+
       if (typeof google !== 'undefined' && google.maps) {
-        // Use Google Maps
+        providerUsed = 'google';
         const location = { lat: latitude, lng: longitude };
-        map = new google.maps.Map(document.getElementById('map'), {
+        map = new google.maps.Map(container, {
           zoom: 12,
           center: location,
           mapTypeControl: true,
@@ -530,23 +596,16 @@
           title: 'Login Location'
         });
       } else if (typeof mapboxgl !== 'undefined') {
-        // Use Mapbox GL JS (High-quality satellite imagery)
+        providerUsed = 'mapbox';
         mapboxgl.accessToken = '{{ config("services.mapbox.access_token") }}';
-        $('#map').innerHTML = ''; // Clear any existing content
-        
         map = new mapboxgl.Map({
           container: 'map',
-          style: 'mapbox://styles/mapbox/satellite-streets-v12', // Satellite view by default
+          style: 'mapbox://styles/mapbox/satellite-streets-v12',
           center: [longitude, latitude],
           zoom: 12
         });
-        
-        // Add navigation controls
         map.addControl(new mapboxgl.NavigationControl());
-        
-        // Add style switcher
         map.on('load', function() {
-          // Add layer switcher
           const layerList = document.createElement('div');
           layerList.className = 'mapboxgl-ctrl mapboxgl-ctrl-group';
           layerList.style.position = 'absolute';
@@ -564,10 +623,12 @@
               <option value="dark-v11">Dark</option>
             </select>
           `;
-          document.getElementById('map').appendChild(layerList);
+          const existingCtrl = container.querySelector('.mapboxgl-ctrl.mapboxgl-ctrl-group');
+          if (existingCtrl) {
+            existingCtrl.remove();
+          }
+          container.appendChild(layerList);
         });
-        
-        // Add marker
         marker = new mapboxgl.Marker()
           .setLngLat([longitude, latitude])
           .setPopup(new mapboxgl.Popup().setHTML(`
@@ -578,10 +639,8 @@
           `))
           .addTo(map);
       } else if (typeof L !== 'undefined') {
-        // Use Enhanced Leaflet with Multiple Providers
+        providerUsed = 'leaflet';
         console.log('Initializing Leaflet map');
-        $('#map').innerHTML = ''; // Clear any existing content
-        
         try {
           map = L.map('map', {
             center: [latitude, longitude],
@@ -589,37 +648,28 @@
             zoomControl: true,
             attributionControl: true
           });
-        
-        // Define multiple tile layers
-        const baseLayers = {
-          "OpenStreetMap": L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          }),
-          
-          "Satellite (Esri)": L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-            attribution: '© <a href="https://www.esri.com/">Esri</a>, DigitalGlobe, GeoEye, Earthstar Geographics, CNES/Airbus DS, USDA, USGS, AeroGRID, IGN, and the GIS User Community'
-          }),
-          
-          "Terrain": L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-            attribution: '© <a href="https://opentopomap.org/">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
-          }),
-          
-          "CartoDB Positron": L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-            attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors © <a href="https://carto.com/attributions">CARTO</a>'
-          }),
-          
-          "Stamen Toner": L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner/{z}/{x}/{y}{r}.png', {
-            attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> — Map data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          })
-        };
-        
-        // Add default layer (Satellite)
-        baseLayers["Satellite (Esri)"].addTo(map);
-        
-        // Add layer control for switching between map types
-        L.control.layers(baseLayers).addTo(map);
-        
-          // Add marker with enhanced popup
+
+          const baseLayers = {
+            "OpenStreetMap": L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+              attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }),
+            "Satellite (Esri)": L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+              attribution: '© <a href="https://www.esri.com/">Esri</a>, DigitalGlobe, GeoEye, Earthstar Geographics, CNES/Airbus DS, USDA, USGS, AeroGRID, IGN, and the GIS User Community'
+            }),
+            "Terrain": L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+              attribution: '© <a href="https://opentopomap.org/">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
+            }),
+            "CartoDB Positron": L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+              attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors © <a href="https://carto.com/attributions">CARTO</a>'
+            }),
+            "Stamen Toner": L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner/{z}/{x}/{y}{r}.png', {
+              attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> — Map data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            })
+          };
+
+          baseLayers["Satellite (Esri)"].addTo(map);
+          L.control.layers(baseLayers).addTo(map);
+
           marker = L.marker([latitude, longitude])
             .addTo(map)
             .bindPopup(`
@@ -629,17 +679,26 @@
               </div>
             `)
             .openPopup();
-            
+
           console.log('Leaflet map initialized successfully');
-          
         } catch (error) {
           console.error('Error initializing Leaflet map:', error);
-          $('#map').innerHTML = '<div class="d-flex align-items-center justify-content-center h-100"><p class="text-muted mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Error loading map</p></div>';
+          renderMapMessage('<div class="d-flex align-items-center justify-content-center h-100"><p class="text-muted mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Error loading map</p></div>');
+          dispatchMapEvent('loginMonitor:mapUnavailable', { reason: 'leaflet-error', meta, error });
+          return;
         }
       } else {
-        // No mapping library available
-        $('#map').innerHTML = '<div class="d-flex align-items-center justify-content-center h-100"><p class="text-muted mb-0"><i class="fas fa-exclamation-triangle me-2"></i>No mapping service available</p></div>';
+        renderMapMessage('<div class="d-flex align-items-center justify-content-center h-100"><p class="text-muted mb-0"><i class="fas fa-exclamation-triangle me-2"></i>No mapping service available</p></div>');
+        dispatchMapEvent('loginMonitor:mapUnavailable', { reason: 'no-provider', meta });
+        return;
       }
+
+      dispatchMapEvent('loginMonitor:mapReady', {
+        provider: providerUsed,
+        latitude,
+        longitude,
+        meta
+      });
     }
 
     const search = $('#lm-search');
