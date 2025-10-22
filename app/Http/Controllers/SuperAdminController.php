@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\SuperAdmin;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class SuperAdminController extends Controller
 {
@@ -12,9 +13,9 @@ class SuperAdminController extends Controller
      */
     public function showLoginForm()
     {
-        // If already authenticated as super admin, redirect to dashboard or desired page
-        if (Auth::check() && Auth::user()->role === 'super-admin') {
-            return redirect()->route('dashboard');
+        // If already authenticated as super admin, redirect to home page
+        if (session()->has('super_admin_id')) {
+            return redirect()->route('superadmin.home');
         }
 
         return view('s_admin.superlogin');
@@ -30,16 +31,53 @@ class SuperAdminController extends Controller
             'password' => ['required', 'string'],
         ]);
 
-        $credentials['role'] = 'super-admin';
+        // Find super admin by email
+        $superAdmin = SuperAdmin::where('email', $credentials['email'])->first();
 
-        if (Auth::attempt($credentials, $request->boolean('remember'))) {
+        if ($superAdmin && Hash::check($credentials['password'], $superAdmin->password)) {
+            // Store in session
+            session(['super_admin_id' => $superAdmin->id]);
             $request->session()->regenerate();
 
-            return redirect()->intended(route('dashboard'));
+            // Update last login timestamp
+            $superAdmin->update(['last_login' => now()]);
+
+            return redirect()->route('superadmin.home');
         }
 
         return back()->withErrors([
-            'email' => __('These credentials do not match our records or you do not have super admin access.'),
+            'email' => __('These credentials do not match our records.'),
         ])->onlyInput('email');
+    }
+
+    /**
+     * Display the super admin home/dashboard.
+     */
+    public function home()
+    {
+        if (!session()->has('super_admin_id')) {
+            return redirect()->route('superadmin.login');
+        }
+
+        $superAdmin = SuperAdmin::find(session('super_admin_id'));
+
+        if (!$superAdmin) {
+            session()->forget('super_admin_id');
+            return redirect()->route('superadmin.login');
+        }
+
+        return view('s_admin.superadminhome', ['superAdmin' => $superAdmin]);
+    }
+
+    /**
+     * Handle logout for super admin.
+     */
+    public function logout(Request $request)
+    {
+        session()->forget('super_admin_id');
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->route('superadmin.login')->with('success', 'You have been logged out successfully.');
     }
 }

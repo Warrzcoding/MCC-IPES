@@ -554,6 +554,7 @@ class ComposerStaticInit968849d277a4491bb3125edd3b16a686
     );
 
     public static $classMap = array (
+        'App\\Console\\Commands\\FixPermissionsCommand' => __DIR__ . '/../..' . '/app/Console/Commands/FixPermissionsCommand.php',
         'App\\Console\\Commands\\FixSaveEvalResultQuestionIds' => __DIR__ . '/../..' . '/app/Console/Commands/FixSaveEvalResultQuestionIds.php',
         'App\\Console\\Commands\\SetMainAdmin' => __DIR__ . '/../..' . '/app/Console/Commands/SetMainAdmin.php',
         'App\\Console\\Commands\\TestEmail' => __DIR__ . '/../..' . '/app/Console/Commands/TestEmail.php',
@@ -573,9 +574,11 @@ class ComposerStaticInit968849d277a4491bb3125edd3b16a686
         'App\\Http\\Controllers\\RequestSigninController' => __DIR__ . '/../..' . '/app/Http/Controllers/RequestSigninController.php',
         'App\\Http\\Controllers\\StaffController' => __DIR__ . '/../..' . '/app/Http/Controllers/StaffController.php',
         'App\\Http\\Controllers\\StudentController' => __DIR__ . '/../..' . '/app/Http/Controllers/StudentController.php',
+        'App\\Http\\Controllers\\SuperAdminController' => __DIR__ . '/../..' . '/app/Http/Controllers/SuperAdminController.php',
         'App\\Http\\Controllers\\TestRecaptchaController' => __DIR__ . '/../..' . '/app/Http/Controllers/TestRecaptchaController.php',
         'App\\Http\\Kernel' => __DIR__ . '/../..' . '/app/Http/Kernel.php',
         'App\\Http\\Middleware\\CheckAccountLockout' => __DIR__ . '/../..' . '/app/Http/Middleware/CheckAccountLockout.php',
+        'App\\Http\\Middleware\\SuperAdminMiddleware' => __DIR__ . '/../..' . '/app/Http/Middleware/SuperAdminMiddleware.php',
         'App\\Http\\Middleware\\TrackUserActivity' => __DIR__ . '/../..' . '/app/Http/Middleware/TrackUserActivity.php',
         'App\\Listeners\\LogFailedLogin' => __DIR__ . '/../..' . '/app/Listeners/LogFailedLogin.php',
         'App\\Listeners\\LogSuccessfulLogin' => __DIR__ . '/../..' . '/app/Listeners/LogSuccessfulLogin.php',
@@ -591,6 +594,7 @@ class ComposerStaticInit968849d277a4491bb3125edd3b16a686
         'App\\Models\\SemisSubject' => __DIR__ . '/../..' . '/app/Models/SemisSubject.php',
         'App\\Models\\Staff' => __DIR__ . '/../..' . '/app/Models/Staff.php',
         'App\\Models\\Subject' => __DIR__ . '/../..' . '/app/Models/Subject.php',
+        'App\\Models\\SuperAdmin' => __DIR__ . '/../..' . '/app/Models/SuperAdmin.php',
         'App\\Models\\User' => __DIR__ . '/../..' . '/app/Models/User.php',
         'App\\Providers\\AppServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AppServiceProvider.php',
         'App\\Providers\\EventServiceProvider' => __DIR__ . '/../..' . '/app/Providers/EventServiceProvider.php',
@@ -723,6 +727,7 @@ class ComposerStaticInit968849d277a4491bb3125edd3b16a686
         'Database\\Seeders\\ResponseOptionsSeeder' => __DIR__ . '/../..' . '/database/seeders/ResponseOptionsSeeder.php',
         'Database\\Seeders\\SemisSubjectSeeder' => __DIR__ . '/../..' . '/database/seeders/SemisSubjectSeeder.php',
         'Database\\Seeders\\StaffSeeder' => __DIR__ . '/../..' . '/database/seeders/StaffSeeder.php',
+        'Database\\Seeders\\SuperAdminSeeder' => __DIR__ . '/../..' . '/database/seeders/SuperAdminSeeder.php',
         'Database\\Seeders\\UserSeeder' => __DIR__ . '/../..' . '/database/seeders/UserSeeder.php',
         'DateError' => __DIR__ . '/..' . '/symfony/polyfill-php83/Resources/stubs/DateError.php',
         'DateException' => __DIR__ . '/..' . '/symfony/polyfill-php83/Resources/stubs/DateException.php',

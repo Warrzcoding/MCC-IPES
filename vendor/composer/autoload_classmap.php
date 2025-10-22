@@ -6,6 +6,7 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
+    'App\\Console\\Commands\\FixPermissionsCommand' => $baseDir . '/app/Console/Commands/FixPermissionsCommand.php',
     'App\\Console\\Commands\\FixSaveEvalResultQuestionIds' => $baseDir . '/app/Console/Commands/FixSaveEvalResultQuestionIds.php',
     'App\\Console\\Commands\\SetMainAdmin' => $baseDir . '/app/Console/Commands/SetMainAdmin.php',
     'App\\Console\\Commands\\TestEmail' => $baseDir . '/app/Console/Commands/TestEmail.php',
@@ -25,9 +26,11 @@ return array(
     'App\\Http\\Controllers\\RequestSigninController' => $baseDir . '/app/Http/Controllers/RequestSigninController.php',
     'App\\Http\\Controllers\\StaffController' => $baseDir . '/app/Http/Controllers/StaffController.php',
     'App\\Http\\Controllers\\StudentController' => $baseDir . '/app/Http/Controllers/StudentController.php',
+    'App\\Http\\Controllers\\SuperAdminController' => $baseDir . '/app/Http/Controllers/SuperAdminController.php',
     'App\\Http\\Controllers\\TestRecaptchaController' => $baseDir . '/app/Http/Controllers/TestRecaptchaController.php',
     'App\\Http\\Kernel' => $baseDir . '/app/Http/Kernel.php',
     'App\\Http\\Middleware\\CheckAccountLockout' => $baseDir . '/app/Http/Middleware/CheckAccountLockout.php',
+    'App\\Http\\Middleware\\SuperAdminMiddleware' => $baseDir . '/app/Http/Middleware/SuperAdminMiddleware.php',
     'App\\Http\\Middleware\\TrackUserActivity' => $baseDir . '/app/Http/Middleware/TrackUserActivity.php',
     'App\\Listeners\\LogFailedLogin' => $baseDir . '/app/Listeners/LogFailedLogin.php',
     'App\\Listeners\\LogSuccessfulLogin' => $baseDir . '/app/Listeners/LogSuccessfulLogin.php',
@@ -43,6 +46,7 @@ return array(
     'App\\Models\\SemisSubject' => $baseDir . '/app/Models/SemisSubject.php',
     'App\\Models\\Staff' => $baseDir . '/app/Models/Staff.php',
     'App\\Models\\Subject' => $baseDir . '/app/Models/Subject.php',
+    'App\\Models\\SuperAdmin' => $baseDir . '/app/Models/SuperAdmin.php',
     'App\\Models\\User' => $baseDir . '/app/Models/User.php',
     'App\\Providers\\AppServiceProvider' => $baseDir . '/app/Providers/AppServiceProvider.php',
     'App\\Providers\\EventServiceProvider' => $baseDir . '/app/Providers/EventServiceProvider.php',
@@ -175,6 +179,7 @@ return array(
     'Database\\Seeders\\ResponseOptionsSeeder' => $baseDir . '/database/seeders/ResponseOptionsSeeder.php',
     'Database\\Seeders\\SemisSubjectSeeder' => $baseDir . '/database/seeders/SemisSubjectSeeder.php',
     'Database\\Seeders\\StaffSeeder' => $baseDir . '/database/seeders/StaffSeeder.php',
+    'Database\\Seeders\\SuperAdminSeeder' => $baseDir . '/database/seeders/SuperAdminSeeder.php',
     'Database\\Seeders\\UserSeeder' => $baseDir . '/database/seeders/UserSeeder.php',
     'DateError' => $vendorDir . '/symfony/polyfill-php83/Resources/stubs/DateError.php',
     'DateException' => $vendorDir . '/symfony/polyfill-php83/Resources/stubs/DateException.php',

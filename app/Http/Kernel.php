@@ -53,6 +53,7 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'account.lockout' => \App\Http\Middleware\CheckAccountLockout::class,
         'track.activity' => \App\Http\Middleware\TrackUserActivity::class,
+        'superadmin' => \App\Http\Middleware\SuperAdminMiddleware::class,
     ];
 
     /**

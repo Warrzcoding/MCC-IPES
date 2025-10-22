@@ -47,6 +47,8 @@ Route::get('/password/reset', [PasswordResetController::class, 'showResetForm'])
 // Super Admin Routes
 Route::get('/superadmin/login', [SuperAdminController::class, 'showLoginForm'])->name('superadmin.login');
 Route::post('/superadmin/login', [SuperAdminController::class, 'login'])->name('superadmin.login.submit');
+Route::get('/superadmin/home', [SuperAdminController::class, 'home'])->name('superadmin.home');
+Route::post('/superadmin/logout', [SuperAdminController::class, 'logout'])->name('superadmin.logout');
 
 // Dashboard Routes (protected by auth middleware)
 Route::middleware(['auth'])->group(function () {
