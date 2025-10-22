@@ -29,6 +29,8 @@
   .compact-scale .view-details { padding: 0.22rem 0.45rem; font-size: 0.78rem; border-radius: 6px; }
   .compact-scale .view-details i { margin-right: 0.35rem; }
   .compact-scale .btn-outline-primary.view-details { border-width: 1px; }
+  .compact-scale .delete-attempt { padding: 0.22rem 0.45rem; font-size: 0.78rem; border-radius: 6px; border-width: 1px; }
+  .compact-scale .delete-attempt i { margin-right: 0.35rem; }
 
   /* Small-screen adjustments for compact view */
   @media (max-width: 576px) {
@@ -102,6 +104,19 @@
   /* Utilities */
   .truncate-1 { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
   .truncate-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+  /* SweetAlert button container styling */
+  .swal-button-container {
+    gap: 1rem !important;
+    display: flex !important;
+    justify-content: center !important;
+    margin-top: 1.5rem !important;
+  }
+  
+  .swal-button-container .btn-sm {
+    padding: 0.375rem 0.75rem !important;
+    font-size: 0.875rem !important;
+  }
 </style>
 
 @php
@@ -243,9 +258,12 @@
                       </div>
                       <div class="ua-muted truncate-2 mt-1"><i class="fas fa-desktop me-1"></i>{{ \Illuminate\Support\Str::limit($ua, 160) }}</div>
                     </div>
-                    <div class="align-self-start">
+                    <div class="align-self-start d-flex gap-2">
                       <button class="btn btn-sm btn-outline-primary view-details" data-id="{{ $attempt->id ?? $loop->index }}" data-email="{{ $email }}" data-ip="{{ $ip }}" data-location="{{ $attempt->location ?? 'Unknown' }}" data-latitude="{{ $attempt->latitude ?? '' }}" data-longitude="{{ $attempt->longitude ?? '' }}" data-usertype="{{ $attempt->user->usertype ?? 'N/A' }}" data-ua="{{ $ua }}">
                         <i class="fas fa-eye"></i> View
+                      </button>
+                      <button class="btn btn-sm btn-outline-danger delete-attempt" data-id="{{ $attempt->id }}" data-email="{{ $email }}">
+                        <i class="fas fa-trash"></i> Delete
                       </button>
                     </div>
                   </div>
@@ -318,9 +336,14 @@
                       </td>
                       <td>{{ $attempt->created_at?->diffForHumans() }}</td>
                       <td>
-                        <button class="btn btn-sm btn-outline-primary view-details" data-id="{{ $attempt->id ?? $loop->index }}" data-email="{{ $attempt->email ?? '-' }}" data-ip="{{ $attempt->ip_address ?? '-' }}" data-location="{{ $attempt->location ?? 'Unknown' }}" data-latitude="{{ $attempt->latitude ?? '' }}" data-longitude="{{ $attempt->longitude ?? '' }}" data-usertype="{{ $attempt->user->usertype ?? 'N/A' }}" data-ua="{{ $ua }}">
-                          <i class="fas fa-eye"></i> View
-                        </button>
+                        <div class="d-flex gap-2">
+                          <button class="btn btn-sm btn-outline-primary view-details" data-id="{{ $attempt->id ?? $loop->index }}" data-email="{{ $attempt->email ?? '-' }}" data-ip="{{ $attempt->ip_address ?? '-' }}" data-location="{{ $attempt->location ?? 'Unknown' }}" data-latitude="{{ $attempt->latitude ?? '' }}" data-longitude="{{ $attempt->longitude ?? '' }}" data-usertype="{{ $attempt->user->usertype ?? 'N/A' }}" data-ua="{{ $ua }}">
+                            <i class="fas fa-eye"></i> View
+                          </button>
+                          <button class="btn btn-sm btn-outline-danger delete-attempt" data-id="{{ $attempt->id }}" data-email="{{ $attempt->email ?? '-' }}">
+                            <i class="fas fa-trash"></i> Delete
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   @empty
@@ -421,17 +444,28 @@
   /* Ensure map container has proper dimensions */
   #map {
     min-height: 400px !important;
+    height: 400px !important;
+    width: 100% !important;
     position: relative !important;
+    display: block !important;
   }
   
-  /* Fix for Leaflet in modals */
-  .modal.show #map .leaflet-container {
-    height: 600px !important;
+  /* Fix for Leaflet in modals - ensure proper display */
+  #detailsModal #map {
+    min-height: 320px !important;
+    height: 320px !important;
+  }
+
+  /* Leaflet container must have dimensions */
+  #map .leaflet-container {
+    height: 100% !important;
+    width: 100% !important;
   }
 
   /* Fix for Mapbox in modals */
-  .modal.show #map .mapboxgl-map {
-    height: 600px !important;
+  #map .mapboxgl-map {
+    height: 100% !important;
+    width: 100% !important;
   }
   
   /* Loading state */
@@ -443,6 +477,7 @@
     transform: translate(-50%, -50%);
     color: #6c757d;
     font-size: 14px;
+    z-index: 1;
   }
 
   /* Compact modal text & controls for details view */
@@ -466,8 +501,16 @@
   #detailsModal .modal-body h6 { font-size: 0.95rem; }
   #detailsModal .modal-footer .btn { padding: 0.35rem 0.6rem; font-size: 0.86rem; }
 
-  /* Make map a bit shorter inside modal so modal height is balanced */
-  .modal.show #map { min-height: 320px !important; }
+  /* Ensure modal body layout is correct */
+  #detailsModal .modal-body {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  #detailsModal .modal-body > div {
+    display: flex;
+    flex-direction: column;
+  }
 </style>
 
 <!-- Enhanced Mapping with Multiple Providers -->
@@ -493,13 +536,17 @@
     let marker;
 
     function destroyExistingMap() {
+      console.log('Destroying existing map instance');
       if (map) {
         try {
           if (typeof map.remove === 'function') {
+            console.log('Calling map.remove()');
             map.remove();
           } else if (typeof map.destroy === 'function') {
+            console.log('Calling map.destroy()');
             map.destroy();
           } else if (typeof map.unmount === 'function') {
+            console.log('Calling map.unmount()');
             map.unmount();
           }
         } catch (error) {
@@ -509,7 +556,14 @@
 
       const mapContainer = $('#map');
       if (mapContainer) {
-        mapContainer.innerHTML = '';
+        console.log('Clearing map container HTML');
+        // Remove all children including Leaflet-generated elements
+        while (mapContainer.firstChild) {
+          mapContainer.removeChild(mapContainer.firstChild);
+        }
+        // Reset inline styles
+        mapContainer.style.height = '';
+        mapContainer.style.width = '';
       }
 
       map = null;
@@ -641,13 +695,31 @@
       } else if (typeof L !== 'undefined') {
         providerUsed = 'leaflet';
         console.log('Initializing Leaflet map');
+        console.log('Map container info:', {
+          element: container,
+          computed: window.getComputedStyle(container),
+          height: container.offsetHeight,
+          width: container.offsetWidth,
+          display: window.getComputedStyle(container).display,
+          visibility: window.getComputedStyle(container).visibility
+        });
+        
         try {
+          // Ensure container has proper dimensions
+          if (container.offsetHeight === 0 || container.offsetWidth === 0) {
+            console.warn('Map container has zero dimensions, applying fallback styles');
+            container.style.height = '320px';
+            container.style.width = '100%';
+          }
+          
           map = L.map('map', {
             center: [latitude, longitude],
             zoom: 12,
             zoomControl: true,
             attributionControl: true
           });
+
+          console.log('Leaflet map object created, adding tiles');
 
           const baseLayers = {
             "OpenStreetMap": L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -680,11 +752,12 @@
             `)
             .openPopup();
 
-          console.log('Leaflet map initialized successfully');
+          console.log('Leaflet map initialized successfully with marker at', [latitude, longitude]);
         } catch (error) {
           console.error('Error initializing Leaflet map:', error);
+          console.error('Error stack:', error.stack);
           renderMapMessage('<div class="d-flex align-items-center justify-content-center h-100"><p class="text-muted mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Error loading map</p></div>');
-          dispatchMapEvent('loginMonitor:mapUnavailable', { reason: 'leaflet-error', meta, error });
+          dispatchMapEvent('loginMonitor:mapUnavailable', { reason: 'leaflet-error', meta, error: error.message });
           return;
         }
       } else {
@@ -769,26 +842,48 @@
         const lat = this.getAttribute('data-lat');
         const lng = this.getAttribute('data-lng');
         
+        console.log('Modal shown event - coordinates:', lat, lng);
+        
         if (lat && lng) {
-          // Small delay to ensure DOM is ready
+          // Longer delay to ensure DOM is fully rendered and visible
           setTimeout(() => {
+            console.log('Initializing map from modal event');
             initMap(lat, lng);
             
-            // Force map resize after initialization (for Leaflet)
-            if (map && typeof map.invalidateSize === 'function') {
-              setTimeout(() => map.invalidateSize(), 100);
-            }
-            
-            // Force map resize for Mapbox
-            if (map && typeof map.resize === 'function') {
-              setTimeout(() => map.resize(), 100);
-            }
-          }, 100);
+            // Force map to recalculate dimensions for different map libraries
+            setTimeout(() => {
+              const mapContainer = $('#map');
+              if (mapContainer) {
+                console.log('Map container computed height:', window.getComputedStyle(mapContainer).height);
+              }
+              
+              // Leaflet invalidateSize
+              if (map && typeof map.invalidateSize === 'function') {
+                console.log('Calling invalidateSize for Leaflet');
+                map.invalidateSize();
+              }
+              
+              // Mapbox resize
+              if (map && typeof map.resize === 'function') {
+                console.log('Calling resize for Mapbox');
+                map.resize();
+              }
+              
+              // Google Maps triggerResize (if needed)
+              if (map && typeof google !== 'undefined' && google.maps) {
+                console.log('Triggering resize for Google Maps');
+                google.maps.event.trigger(map, 'resize');
+              }
+            }, 250);
+          }, 150);
+        } else {
+          console.warn('Modal shown but missing coordinates - lat:', lat, 'lng:', lng);
         }
       });
       
       // Clean up map when modal is hidden
       detailsModal.addEventListener('hidden.bs.modal', function() {
+        console.log('Modal hidden - cleaning up map');
         if (map) {
           // Clean up map instance
           if (typeof map.remove === 'function') {
@@ -807,5 +902,105 @@
         }
       });
     }
+
+    // Delete attempt button handler
+    const deleteButtons = $$('.delete-attempt');
+    deleteButtons.forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        const id = this.getAttribute('data-id');
+        const email = this.getAttribute('data-email');
+        
+        // SweetAlert confirmation dialog
+        Swal.fire({
+          title: 'Delete Login Attempt?',
+          html: `<p class="text-muted">Are you sure you want to delete the login attempt for <strong>${email}</strong>?</p><p class="small text-danger">This action cannot be undone.</p>`,
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#dc3545',
+          cancelButtonColor: '#6c757d',
+          confirmButtonText: '<i class="fas fa-trash me-2"></i> Yes, Delete',
+          cancelButtonText: 'Cancel',
+          reverseButtons: true,
+          allowOutsideClick: false,
+          buttonsStyling: false,
+          customClass: {
+            confirmButton: 'btn btn-sm btn-danger px-3',
+            cancelButton: 'btn btn-sm btn-secondary px-3',
+            actions: 'swal-button-container'
+          }
+        }).then((result) => {
+          if (result.isConfirmed) {
+            // Show loading state
+            Swal.fire({
+              title: 'Deleting...',
+              html: '<p class="text-muted">Please wait while the login attempt is being deleted.</p>',
+              icon: 'info',
+              allowOutsideClick: false,
+              didOpen: () => {
+                Swal.showLoading();
+              }
+            });
+
+            // Send delete request
+            fetch(`/dashboard/login-monitor/${id}`, {
+              method: 'DELETE',
+              headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+              }
+            })
+            .then(response => response.json())
+            .then(data => {
+              if (data.success) {
+                // Success notification
+                Swal.fire({
+                  title: 'Deleted!',
+                  html: `<p class="mb-0">${data.message}</p>`,
+                  icon: 'success',
+                  confirmButtonColor: '#28a745',
+                  confirmButtonText: 'OK',
+                  buttonsStyling: true
+                }).then(() => {
+                  // Remove the row from the view
+                  const itemRow = btn.closest('.lm-item') || btn.closest('tr');
+                  if (itemRow) {
+                    itemRow.style.transition = 'opacity 0.3s ease';
+                    itemRow.style.opacity = '0';
+                    setTimeout(() => {
+                      itemRow.remove();
+                      // Refresh page if no items left
+                      const remainingItems = $$('.lm-item').length;
+                      if (remainingItems === 0) {
+                        setTimeout(() => {
+                          window.location.reload();
+                        }, 500);
+                      }
+                    }, 300);
+                  }
+                });
+              } else {
+                Swal.fire({
+                  title: 'Error!',
+                  html: `<p class="text-danger mb-0">${data.message || 'Failed to delete login attempt.'}</p>`,
+                  icon: 'error',
+                  confirmButtonColor: '#dc3545'
+                });
+              }
+            })
+            .catch(error => {
+              console.error('Delete error:', error);
+              Swal.fire({
+                title: 'Error!',
+                html: '<p class="text-danger mb-0">An error occurred while deleting. Please try again.</p>',
+                icon: 'error',
+                confirmButtonColor: '#dc3545'
+              });
+            });
+          }
+        });
+      });
+    });
   })();
 </script>

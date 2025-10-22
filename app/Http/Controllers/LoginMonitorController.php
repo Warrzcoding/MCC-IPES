@@ -34,4 +34,32 @@ class LoginMonitorController extends Controller
         }
         return response()->json(['ok' => true]);
     }
+
+    public function deleteAttempt($id)
+    {
+        try {
+            $attempt = LoginAttempt::find($id);
+            
+            if (!$attempt) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Login attempt not found.'
+                ], 404);
+            }
+
+            $email = $attempt->email;
+            $attempt->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => "Login attempt for {$email} has been deleted successfully.",
+                'id' => $id
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error deleting login attempt: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }

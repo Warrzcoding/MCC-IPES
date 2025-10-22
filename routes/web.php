@@ -14,6 +14,7 @@ use App\Http\Controllers\RequestSigninController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TestRecaptchaController;
 use App\Http\Controllers\SuperAdminController;
+use App\Http\Controllers\LoginMonitorController;
 
 // Root route - redirect to login
 Route::get('/', function () {
@@ -58,6 +59,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard/login-monitor', function() {
         return redirect()->route('dashboard', ['page' => 'login-monitor']);
     })->name('dashboard.login-monitor');
+    
+    // Login monitor delete route
+    Route::delete('/dashboard/login-monitor/{id}', [LoginMonitorController::class, 'deleteAttempt'])->name('login-monitor.delete');
     
     // Evaluation Routes
     Route::get('/evaluations', [EvaluationController::class, 'showForm'])->name('evaluations.form');
