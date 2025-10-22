@@ -1,6 +1,11 @@
 @php
     $error = session('error', '') ?? '';
     $status = session('status', '') ?? '';
+    $loginFailed = session('login_failed', false);
+    $attemptsLeft = session('attempts_left', 0);
+    $accountLocked = session('account_locked', false);
+    $lockedTime = session('locked_time', 0);
+    $logoutSuccess = session('logout_success', false);
 @endphp
 
 <!DOCTYPE html>
@@ -12,6 +17,7 @@
     <link rel="icon" type="image/png" href="{{ asset('images/mccicon.jpg') }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
     <style>
         :root {
             --primary-dark: #0c1d3c;
@@ -250,6 +256,21 @@
             border-left: 4px solid rgba(25, 135, 84, 0.45);
         }
 
+        @keyframes fadeOut {
+            0% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+        }
+
+        .alert.fade-out {
+            animation: fadeOut 0.5s ease forwards;
+        }
+
         .back-link {
             display: inline-flex;
             align-items: center;
@@ -300,9 +321,9 @@
                 
             </div>
 
-            @if ($errors->any())
-                <div class="alert alert-danger" role="alert">
-                    <strong><i class="fas fa-triangle-exclamation me-2"></i>Authentication failed:</strong>
+            @if ($errors->any() && !$loginFailed && !$accountLocked)
+                <div id="validationErrorAlert" class="alert alert-danger" role="alert">
+                    <strong><i class="fas fa-triangle-exclamation me-2"></i>Validation Error:</strong>
                     <ul class="mb-0 mt-2">
                         @foreach ($errors->all() as $errorMessage)
                             <li>{{ $errorMessage }}</li>
@@ -367,6 +388,182 @@
         </div>
     </div>
 
+    <!-- Countdown Modal for Account Lock -->
+    <div class="modal fade" id="lockCountdownModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="lockCountdownLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px;">
+                <div class="modal-body text-center" style="padding: 40px 30px;">
+                    <div style="font-size: 48px; margin-bottom: 20px; color: #ff6b81;">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <h5 class="modal-title mb-3" style="color: var(--text-light); font-weight: 700;">Account Temporarily Locked</h5>
+                    <p style="color: rgba(232, 241, 255, 0.7); margin-bottom: 24px;">
+                        Too many failed login attempts. Please try again in:
+                    </p>
+                    <div id="countdownDisplay" style="font-size: 36px; font-weight: 700; color: var(--accent); margin-bottom: 30px; font-family: 'Courier New', monospace;">
+                        1:00
+                    </div>
+                    <p style="color: rgba(232, 241, 255, 0.5); font-size: 0.9rem;">
+                        Your account will be automatically unlocked after the timer expires.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Handle validation error alert timeout (5 seconds)
+            const errorAlert = document.getElementById('validationErrorAlert');
+            if (errorAlert) {
+                setTimeout(() => {
+                    errorAlert.classList.add('fade-out');
+                    setTimeout(() => {
+                        errorAlert.remove();
+                    }, 500); // Wait for animation to complete
+                }, 5000); // 5 seconds timeout
+            }
+
+            // Handle logout success alert
+            @if($logoutSuccess)
+                Swal.fire({
+                    title: 'Logout Successful',
+                    text: 'You have been successfully logged out from the Super Admin Panel',
+                    icon: 'success',
+                    confirmButtonColor: '#1f8aff',
+                    confirmButtonText: 'OK',
+                    background: 'rgba(11, 21, 41, 0.95)',
+                    color: '#e8f1ff',
+                    allowOutsideClick: false,
+                    didOpen: function() {
+                        const popup = Swal.getPopup();
+                        if (popup) {
+                            popup.style.borderRadius = '16px';
+                            popup.style.border = '1px solid rgba(255, 255, 255, 0.08)';
+                            popup.style.boxShadow = '0 20px 55px rgba(5, 15, 35, 0.45)';
+                        }
+                    }
+                });
+            @endif
+
+            // Handle account locked state
+            @if($accountLocked)
+                showLockCountdown({{ $lockedTime }});
+            @endif
+
+            // Handle login failed alert
+            @if($loginFailed && $attemptsLeft > 0)
+                Swal.fire({
+                    title: 'Login Failed',
+                    html: '<strong>Invalid credentials</strong><br><span style="font-size: 14px;">{{ $attemptsLeft }} attempt(s) remaining before account lock</span>',
+                    icon: 'error',
+                    confirmButtonColor: '#1f8aff',
+                    confirmButtonText: 'Try Again',
+                    background: 'rgba(11, 21, 41, 0.95)',
+                    color: '#e8f1ff',
+                    allowOutsideClick: false,
+                    didOpen: function() {
+                        const popup = Swal.getPopup();
+                        if (popup) {
+                            popup.style.borderRadius = '16px';
+                            popup.style.border = '1px solid rgba(255, 255, 255, 0.08)';
+                            popup.style.boxShadow = '0 20px 55px rgba(5, 15, 35, 0.45)';
+                        }
+                    }
+                });
+            @endif
+        });
+
+        function showLockCountdown(remainingSeconds) {
+            // Show the modal
+            const lockModal = new bootstrap.Modal(document.getElementById('lockCountdownModal'));
+            lockModal.show();
+
+            let remaining = remainingSeconds;
+
+            // Update countdown every second
+            const countdownInterval = setInterval(() => {
+                const minutes = Math.floor(remaining / 60);
+                const seconds = remaining % 60;
+                const timeString = String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
+                document.getElementById('countdownDisplay').textContent = timeString;
+
+                if (remaining <= 0) {
+                    clearInterval(countdownInterval);
+                    // Auto-close modal and reload
+                    lockModal.hide();
+                    setTimeout(() => {
+                        location.reload();
+                    }, 500);
+                }
+
+                remaining--;
+            }, 1000);
+        }
+
+        // Handle successful login redirect
+        @if(session('login_success'))
+            window.addEventListener('load', function() {
+                Swal.fire({
+                    title: 'Welcome Back!',
+                    text: 'Login successful. Redirecting...',
+                    icon: 'success',
+                    confirmButtonColor: '#1f8aff',
+                    background: 'rgba(11, 21, 41, 0.95)',
+                    color: '#e8f1ff',
+                    allowOutsideClick: false,
+                    didOpen: function() {
+                        const popup = Swal.getPopup();
+                        if (popup) {
+                            popup.style.borderRadius = '16px';
+                            popup.style.border = '1px solid rgba(255, 255, 255, 0.08)';
+                            popup.style.boxShadow = '0 20px 55px rgba(5, 15, 35, 0.45)';
+                        }
+                        // Auto redirect after short delay
+                        setTimeout(() => {
+                            window.location.href = '{{ route("superadmin.home") }}';
+                        }, 1000);
+                    }
+                }).then(() => {
+                    window.location.href = '{{ route("superadmin.home") }}';
+                });
+            });
+        @endif
+
+        // Custom styling for SweetAlert modals
+        const style = document.createElement('style');
+        style.textContent = `
+            .swal2-popup {
+                border-radius: 16px !important;
+                border: 1px solid rgba(255, 255, 255, 0.08) !important;
+                box-shadow: 0 20px 55px rgba(5, 15, 35, 0.45) !important;
+            }
+            .swal2-title {
+                font-weight: 700 !important;
+                font-size: 1.5rem !important;
+            }
+            .swal2-html-container {
+                font-size: 0.95rem !important;
+            }
+            .swal2-confirm {
+                background-color: rgba(31, 138, 255, 0.85) !important;
+                border: 1px solid rgba(96, 169, 255, 0.65) !important;
+                border-radius: 12px !important;
+                padding: 11px 24px !important;
+                font-weight: 600 !important;
+                box-shadow: 0 12px 30px rgba(18, 98, 208, 0.32) !important;
+                transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease !important;
+            }
+            .swal2-confirm:hover {
+                background-color: rgba(31, 138, 255, 0.95) !important;
+                transform: translateY(-1px) !important;
+                box-shadow: 0 16px 36px rgba(18, 98, 208, 0.4) !important;
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
 </body>
 </html>

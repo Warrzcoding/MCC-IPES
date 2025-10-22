@@ -11,6 +11,7 @@
     <link rel="icon" type="image/png" href="{{ asset('images/mccicon.jpg') }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
     
     <style>
         :root {
@@ -525,9 +526,9 @@
                     <div style="font-size: 11px; color: var(--accent-green);">SUPER ADMIN</div>
                 </div>
             </div>
-            <form action="{{ route('superadmin.logout') }}" method="POST" style="display: inline;">
+            <form id="logoutForm" action="{{ route('superadmin.logout') }}" method="POST" style="display: inline;">
                 @csrf
-                <button type="submit" class="logout-btn">
+                <button type="button" id="logoutBtn" class="logout-btn">
                     <i class="fas fa-power-off"></i> Logout
                 </button>
             </form>
@@ -549,18 +550,7 @@
                     <span>Users Management</span>
                 </a>
             </li>
-            <li>
-                <a href="#">
-                    <i class="fas fa-university"></i>
-                    <span>Academic Years</span>
-                </a>
-            </li>
-            <li>
-                <a href="#">
-                    <i class="fas fa-tasks"></i>
-                    <span>Questionnaires</span>
-                </a>
-            </li>
+           
             <li>
                 <a href="#">
                     <i class="fas fa-chart-bar"></i>
@@ -727,6 +717,7 @@
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
     <script>
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
@@ -743,6 +734,27 @@
             console.log('%c[SUPER ADMIN CONSOLE]', 'color: #00ff41; font-size: 16px; font-weight: bold; text-shadow: 0 0 10px #00ff41;');
             console.log('%cWelcome to MCCIPES Super Admin Panel', 'color: #39ff14; font-size: 14px;');
             console.log('%cAll actions are being monitored.', 'color: #90ee90; font-size: 12px;');
+
+            // Show login success alert
+            @if(session('login_success'))
+                Swal.fire({
+                    title: 'Welcome Back!',
+                    text: 'You have successfully logged in to the Super Admin Panel',
+                    icon: 'success',
+                    confirmButtonColor: '#00ff41',
+                    background: 'rgba(10, 14, 39, 0.95)',
+                    color: '#e8f5e9',
+                    allowOutsideClick: false,
+                    didOpen: function() {
+                        const popup = Swal.getPopup();
+                        if (popup) {
+                            popup.style.borderRadius = '16px';
+                            popup.style.border = '1px solid rgba(0, 255, 65, 0.3)';
+                            popup.style.boxShadow = '0 20px 55px rgba(0, 255, 65, 0.15)';
+                        }
+                    }
+                });
+            @endif
         });
 
         // Close sidebar on mobile when clicking a link
@@ -755,6 +767,35 @@
                 });
             });
         }
+
+        // Handle logout confirmation
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            Swal.fire({
+                title: 'Confirm Logout',
+                text: 'Are you sure you want to logout from the Super Admin Panel?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ff6b6b',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, Logout',
+                cancelButtonText: 'Cancel',
+                background: 'rgba(10, 14, 39, 0.95)',
+                color: '#e8f5e9',
+                didOpen: function() {
+                    const popup = Swal.getPopup();
+                    if (popup) {
+                        popup.style.borderRadius = '16px';
+                        popup.style.border = '1px solid rgba(0, 255, 65, 0.3)';
+                        popup.style.boxShadow = '0 20px 55px rgba(0, 255, 65, 0.15)';
+                    }
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Submit the form
+                    document.getElementById('logoutForm').submit();
+                }
+            });
+        });
     </script>
 </body>
 </html>
