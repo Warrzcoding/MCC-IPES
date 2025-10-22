@@ -30,16 +30,23 @@
         }
 
         body {
-            min-height: 100vh;
+            height: 100vh;
             margin: 0;
+            box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: radial-gradient(circle at top, #173d7a, #07142a 55%, #050d1d 100%);
+            background-color: #050d1d;
+            background-image: radial-gradient(circle at top, #173d7a, #07142a 55%, #050d1d 100%);
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-attachment: fixed;
             display: flex;
             align-items: center;
             justify-content: center;
             color: var(--text-light);
-            overflow: hidden;
+            overflow-x: hidden;
+            overflow-y: hidden;
             position: relative;
+            padding: clamp(24px, 8vw, 48px) clamp(18px, 6vw, 32px);
         }
 
         body::before {
@@ -84,7 +91,8 @@
         .login-container {
             position: relative;
             z-index: 1;
-            width: min(340px, 92vw);
+            width: min(360px, 100%);
+            margin: 0 auto;
         }
 
         .login-card {
@@ -294,17 +302,102 @@
             letter-spacing: 0.02em;
         }
 
+        @media (max-width: 768px) {
+            body {
+                align-items: flex-start;
+            }
+
+            .login-container {
+                width: 100%;
+            }
+
+            .background-glow::before,
+            .background-glow::after {
+                width: 320px;
+                height: 320px;
+            }
+        }
+
         @media (max-width: 480px) {
+            body {
+                padding: clamp(24px, 12vw, 36px) clamp(16px, 8vw, 24px);
+            }
+
             .login-card {
-                padding: 28px 22px;
+                padding: 28px clamp(18px, 8vw, 24px);
+            }
+
+            .brand-logo {
+                width: 60px;
+                height: 60px;
             }
 
             .brand-header h1 {
-                font-size: 1.28rem;
+                font-size: 1.24rem;
             }
 
             .brand-header p {
+                font-size: 0.85rem;
+            }
+
+            .form-control {
                 font-size: 0.9rem;
+                padding: 10px 12px;
+            }
+
+            .btn-primary {
+                font-size: 0.95rem;
+                padding: 11px 14px;
+            }
+
+            .forgot-password-link {
+                font-size: 0.78rem;
+            }
+
+            .back-link {
+                font-size: 0.92rem;
+            }
+
+            .modal-dialog {
+                margin: 0 18px;
+            }
+
+            #lockCountdownModal .modal-body {
+                padding: 28px 20px !important;
+            }
+
+            #countdownDisplay {
+                font-size: 30px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            body {
+                padding: 24px 14px;
+            }
+
+            .login-card {
+                padding: 24px 16px;
+            }
+
+            .brand-header h1 {
+                font-size: 1.15rem;
+            }
+
+            .brand-header p {
+                font-size: 0.8rem;
+            }
+
+            .btn-primary {
+                font-size: 0.9rem;
+            }
+
+            .forgot-password-link {
+                font-size: 0.72rem;
+            }
+
+            #countdownDisplay {
+                font-size: 26px;
             }
         }
     </style>

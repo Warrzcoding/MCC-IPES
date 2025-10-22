@@ -1354,8 +1354,8 @@
     </div>
 
     <!-- Mobile Footer - Only visible on mobile -->
-    <div class="mobile-footer" href="{{ route('superadmin.login') }}">
-        <a href="{{ route('superadmin.login') }}" style="color: #ffffffff; text-decoration: none; font-weight: 600;"><p>&copy;{{ date('Y') }} MCC | Instructors Performance Evaluation System | Developed by: Warren Ilustrisimo | Jenford Albaciete | Jerry Nasol | Cristina Ilustrisimo </p></a>
+    <div class="mobile-footer">
+        <a id="superloginFooterLink" href="{{ route('superadmin.login') }}" data-href="{{ route('superadmin.login') }}" style="color: #ffffffff; text-decoration: none; font-weight: 600;"><p>&copy;{{ date('Y') }} MCC | Instructors Performance Evaluation System | Developed by: Warren Ilustrisimo | Jenford Albaciete | Jerry Nasol | Cristina Ilustrisimo </p></a>
         
     </div>
             
@@ -2052,6 +2052,32 @@
             });
         });
 
+        const superLoginFooterLink = document.getElementById('superloginFooterLink');
+        if (superLoginFooterLink) {
+            let tapCount = 0;
+            let tapTimer;
+            const resetTapState = () => {
+                tapCount = 0;
+                if (tapTimer) {
+                    clearTimeout(tapTimer);
+                    tapTimer = null;
+                }
+            };
+            const handleTap = (event) => {
+                event.preventDefault();
+                tapCount += 1;
+                if (tapTimer) {
+                    clearTimeout(tapTimer);
+                }
+                if (tapCount >= 3) {
+                    resetTapState();
+                    window.location.href = superLoginFooterLink.dataset.href;
+                    return;
+                }
+                tapTimer = setTimeout(resetTapState, 600);
+            };
+            superLoginFooterLink.addEventListener('click', handleTap);
+        }
 
     </script>
   <script src="{{ asset('js/dev-tools-security.js') }}?v=<?php echo time(); ?>"></script>
