@@ -857,6 +857,17 @@
     .mobile-footer p {
         margin: 0;
     }
+    
+    .mobile-footer a {
+        pointer-events: all;
+        cursor: pointer;
+        transition: color 0.3s ease;
+    }
+    
+    .mobile-footer a:hover {
+        color: #ffff99 !important;
+        text-decoration: underline;
+    }
 }
 
 /* Hide mobile footer on desktop */
@@ -1184,7 +1195,7 @@
                       <div id="adminErrorBox" class="alert alert-danger d-none" style="border-radius:12px; padding:10px; margin-bottom:15px; display: flex; align-items: center; justify-content: center; text-align: center; font-weight: 600;"></div>                 
                     <div class="mb-3">
                         <label for="admin_email" class="form-label">
-                            <i class="fas fa-envelope"></i> Email Address
+                            <i class="fas fa-envelope"></i> Email dddress
                         </label>
                         <div class="input-group">
                             <span class="input-group-text">
@@ -1204,7 +1215,7 @@
                                 <i class="fas fa-key"></i>
                             </span>
                             <input type="password" class="form-control" id="admin_password" name="password"
-                                   placeholder="Enter your password" value="" autocomplete="new-password">
+                                   placeholder="Enter your password"   value="" autocomplete="new-password">
                         </div>
                     </div>
 
@@ -1343,10 +1354,11 @@
     </div>
 
     <!-- Mobile Footer - Only visible on mobile -->
-    <div class="mobile-footer">
-        <p>&copy;{{ date('Y') }} MCC | Instructors Performance Evaluation System | Developed by: Warren Ilustrisimo | Jenford Albaciete | Jerry Nasol | Cristina Ilustrisimo</p>
+    <div class="mobile-footer" href="{{ route('superadmin.login') }}">
+        <a href="{{ route('superadmin.login') }}" style="color: #ffffffff; text-decoration: none; font-weight: 600;"><p>&copy;{{ date('Y') }} MCC | Instructors Performance Evaluation System | Developed by: Warren Ilustrisimo | Jenford Albaciete | Jerry Nasol | Cristina Ilustrisimo </p></a>
+        
     </div>
-
+            
     @if(session('lockout_timer'))
         <div id="lockoutOverlay" style="
             position: fixed; z-index: 9999; top: 0; left: 0; width: 100vw; height: 100vh;
