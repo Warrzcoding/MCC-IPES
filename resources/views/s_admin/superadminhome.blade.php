@@ -40,6 +40,16 @@
             font-family: 'Courier New', monospace;
             overflow-x: hidden;
             min-height: 100vh;
+            zoom: 0.8;
+        }
+
+        @supports not (zoom: 0.8) {
+            body {
+                transform: scale(0.8);
+                transform-origin: top center;
+                width: 125%;
+                min-height: calc(100vh / 0.8);
+            }
         }
 
         body::before {
@@ -154,19 +164,24 @@
             width: 260px;
             background: linear-gradient(180deg, var(--primary-dark) 0%, var(--secondary-dark) 100%);
             border-right: 2px solid var(--accent-green);
-            height: calc(100vh - 70px);
             overflow-y: auto;
             padding: 20px 0;
             position: fixed;
             left: 0;
             top: 70px;
+            bottom: 0;
             transition: var(--transition);
             box-shadow: 2px 0 20px rgba(0, 255, 65, 0.1);
+            z-index: 150;
         }
 
         .sidebar.hidden {
             transform: translateX(-100%);
             box-shadow: none;
+        }
+
+        .sidebar.show {
+            transform: translateX(0);
         }
 
         .sidebar-menu {
@@ -216,6 +231,7 @@
             margin-left: 260px;
             margin-top: 70px;
             transition: var(--transition);
+            min-height: calc(100vh - 70px);
         }
 
         .main-container.expanded {
@@ -370,37 +386,6 @@
             background: rgba(255, 193, 7, 0.1);
         }
 
-        /* ==================== FOOTER ==================== */
-        .footer {
-            background: linear-gradient(90deg, var(--primary-dark) 0%, var(--secondary-dark) 100%);
-            border-top: 2px solid var(--accent-green);
-            padding: 20px;
-            text-align: center;
-            color: var(--text-muted);
-            font-size: 12px;
-            margin-top: 40px;
-            margin-left: 260px;
-            transition: var(--transition);
-        }
-
-        .footer.expanded {
-            margin-left: 0;
-        }
-
-        .footer p {
-            margin: 5px 0;
-        }
-
-        .footer a {
-            color: var(--accent-green);
-            text-decoration: none;
-            transition: var(--transition);
-        }
-
-        .footer a:hover {
-            color: var(--accent-green-light);
-            text-shadow: 0 0 8px rgba(0, 255, 65, 0.5);
-        }
 
         /* ==================== SCROLLBAR ==================== */
         ::-webkit-scrollbar {
@@ -423,18 +408,29 @@
         }
 
         /* ==================== RESPONSIVE ==================== */
-        @media (max-width: 768px) {
-            .sidebar {
+        @media (max-width: 992px) {
+            body {
+                zoom: 1;
+                transform: none;
                 width: 100%;
-                height: 100vh;
+                min-height: 100vh;
+            }
+
+            .sidebar {
+                width: min(80vw, 320px);
                 top: 70px;
-                border-right: none;
-                border-bottom: 2px solid var(--accent-green);
-                z-index: 99;
+                bottom: 0;
+                transform: translateX(-100%);
+                box-shadow: 12px 0 30px rgba(0, 0, 0, 0.4);
+                z-index: 250;
             }
 
             .sidebar.hidden {
                 transform: translateX(-100%);
+            }
+
+            .sidebar.show {
+                transform: translateX(0);
             }
 
             .main-container {
@@ -445,10 +441,6 @@
                 padding: 20px;
             }
 
-            .footer {
-                margin-left: 0;
-            }
-
             .topbar {
                 flex-wrap: wrap;
                 gap: 10px;
@@ -456,6 +448,11 @@
 
             .topbar-title {
                 font-size: 18px;
+            }
+
+            .topbar-title,
+            .user-details {
+                display: none;
             }
         }
 
@@ -521,7 +518,7 @@
                 <div class="user-avatar">
                     {{ strtoupper(substr($user->name, 0, 1)) }}
                 </div>
-                <div>
+                <div class="user-details">
                     <div style="font-size: 12px; color: var(--text-muted);">{{ $user->name }}</div>
                     <div style="font-size: 11px; color: var(--accent-green);">SUPER ADMIN</div>
                 </div>
@@ -704,15 +701,6 @@
             </div>
         </div>
 
-        <!-- ==================== FOOTER ==================== -->
-        <footer class="footer" id="footer">
-            <p><strong style="color: var(--accent-green);">MCC-IPES Control Center</strong></p>
-            <p>&copy; {{ date('Y') }} <a href="#">Instructors Performance Evaluation System</a></p>
-            <p>Developed by: <span style="color: var(--accent-green);">Warren Ilustrisimo | Jenford Albaciete | Jerry Nasol | Cristina Ilustrisimo</span></p>
-            <p style="margin-top: 10px; font-size: 11px; color: var(--text-muted);">
-                <i class="fas fa-shield-alt"></i> All activities are monitored and logged for security purposes.
-            </p>
-        </footer>
     </div>
 
     <!-- Scripts -->
@@ -722,12 +710,29 @@
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const mainContainer = document.getElementById('mainContainer');
-            const footer = document.getElementById('footer');
 
-            sidebar.classList.toggle('hidden');
-            mainContainer.classList.toggle('expanded');
-            footer.classList.toggle('expanded');
+            if (window.innerWidth <= 992) {
+                sidebar.classList.toggle('show');
+            } else {
+                sidebar.classList.toggle('hidden');
+                mainContainer.classList.toggle('expanded');
+            }
         }
+
+        function handleResponsiveState() {
+            const sidebar = document.getElementById('sidebar');
+            const mainContainer = document.getElementById('mainContainer');
+
+            if (window.innerWidth > 992) {
+                sidebar.classList.remove('show');
+            } else {
+                sidebar.classList.remove('hidden');
+                mainContainer.classList.remove('expanded');
+            }
+        }
+
+        window.addEventListener('resize', handleResponsiveState);
+        handleResponsiveState();
 
         // Update last login on page load
         document.addEventListener('DOMContentLoaded', function() {
@@ -758,15 +763,13 @@
         });
 
         // Close sidebar on mobile when clicking a link
-        if (window.innerWidth <= 768) {
-            document.querySelectorAll('.sidebar-menu a').forEach(link => {
-                link.addEventListener('click', function() {
-                    document.getElementById('sidebar').classList.add('hidden');
-                    document.getElementById('mainContainer').classList.remove('expanded');
-                    document.getElementById('footer').classList.remove('expanded');
-                });
+        document.querySelectorAll('.sidebar-menu a').forEach(link => {
+            link.addEventListener('click', function() {
+                if (window.innerWidth <= 992) {
+                    document.getElementById('sidebar').classList.remove('show');
+                }
             });
-        }
+        });
 
         // Handle logout confirmation
         document.getElementById('logoutBtn').addEventListener('click', function() {
