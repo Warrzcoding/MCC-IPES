@@ -29,73 +29,44 @@
             --border-color: rgba(255, 255, 255, 0.08);
         }
 
-        body {
-            height: 100vh;
-            margin: 0;
+        *, *::before, *::after {
             box-sizing: border-box;
+        }
+
+        html {
+            height: 100%;
+        }
+
+        body {
+            min-height: 100vh;
+            margin: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #050d1d;
-            background-image: radial-gradient(circle at top, #173d7a, #07142a 55%, #050d1d 100%);
+            background: radial-gradient(circle at top, #173d7a, #07142a 55%, #050d1d 100%);
             background-repeat: no-repeat;
             background-size: cover;
-            background-attachment: fixed;
             display: flex;
             align-items: center;
             justify-content: center;
             color: var(--text-light);
-            overflow-x: hidden;
-            overflow-y: hidden;
+            overflow: hidden;
             position: relative;
-            padding: clamp(24px, 8vw, 48px) clamp(18px, 6vw, 32px);
-        }
-
-        body::before {
-            content: '';
-            position: absolute;
-            inset: -20%;
-            background: url('{{ asset('images/mccicon.jpg') }}') center/320px 320px no-repeat;
-            filter: blur(140px);
-            opacity: 0.35;
-            z-index: 0;
-        }
-
-        .background-glow {
-            position: absolute;
-            inset: 0;
-            pointer-events: none;
-        }
-
-        .background-glow::before,
-        .background-glow::after {
-            content: '';
-            position: absolute;
-            width: 420px;
-            height: 420px;
-            border-radius: 50%;
-            filter: blur(160px);
-            opacity: 0.6;
-        }
-
-        .background-glow::before {
-            background: rgba(31, 138, 255, 0.35);
-            top: -80px;
-            right: -110px;
-        }
-
-        .background-glow::after {
-            background: rgba(40, 70, 160, 0.5);
-            bottom: -100px;
-            left: -120px;
+            padding: clamp(16px, 6vw, 32px);
         }
 
         .login-container {
             position: relative;
             z-index: 1;
-            width: min(360px, 100%);
+            width: 100%;
+            max-width: 400px;
             margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: 0 0 auto;
         }
 
         .login-card {
+            width: 100%;
             background: var(--card-bg);
             border-radius: 16px;
             backdrop-filter: blur(15px);
@@ -304,27 +275,21 @@
 
         @media (max-width: 768px) {
             body {
-                align-items: flex-start;
+                padding: 24px 18px;
             }
 
             .login-container {
-                width: 100%;
-            }
-
-            .background-glow::before,
-            .background-glow::after {
-                width: 320px;
-                height: 320px;
+                width: min(340px, 100%);
             }
         }
 
         @media (max-width: 480px) {
             body {
-                padding: clamp(24px, 12vw, 36px) clamp(16px, 8vw, 24px);
+                padding: 20px 16px;
             }
 
             .login-card {
-                padding: 28px clamp(18px, 8vw, 24px);
+                padding: 20px 18px;
             }
 
             .brand-logo {
@@ -373,11 +338,11 @@
 
         @media (max-width: 360px) {
             body {
-                padding: 24px 14px;
+                padding: 18px 14px;
             }
 
             .login-card {
-                padding: 24px 16px;
+                padding: 18px 16px;
             }
 
             .brand-header h1 {
@@ -403,7 +368,6 @@
     </style>
 </head>
 <body>
-    <div class="background-glow"></div>
     <div class="login-container">
         <div class="login-card">
             <div class="brand-header">
