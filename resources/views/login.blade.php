@@ -16,6 +16,8 @@
     $admin_otp_pending = session('admin_otp_pending', false);
     $pending_admin_email = session('pending_admin_email', '');
     $admin_otp_message = session('admin_otp_message', '');
+    $adminOtpOverlayEnabled = $admin_otp_pending && !empty($admin_otp_message);
+    $adminOtpCooldown = session('admin_otp_cooldown', 0);
 
     $remaining_lockout_seconds = 0;
     if ($account_locked && $lockout_time) {
@@ -1344,12 +1346,12 @@
             @if (!$show_student_form && !$show_login_form)
 
                 <!-- Mobile Student Login Button (Visible only on mobile) -->
-                <button type="button" class="mobile-student-btn" onclick="startMobileStudentLogin()" style="{{ $force_admin_form ? 'display: none;' : '' }}">
+                <button type="button" class="mobile-student-btn" onclick="startMobileStudentLogin()" style="{{ ($force_admin_form && $adminOtpOverlayEnabled) ? 'display: none;' : '' }}">
                     <i class="fas fa-graduation-cap"></i> Start Student Login
                 </button>
 
                 <!-- Desktop User Type Selection (Hidden on mobile) -->
-                <div class="desktop-user-select" style="{{ $force_admin_form ? 'display: none;' : '' }}">
+                <div class="desktop-user-select" style="{{ ($force_admin_form && $adminOtpOverlayEnabled) ? 'display: none;' : '' }}">
                     <form method="POST" id="userTypeForm">
                         <div class="mb-4">
                             <label for="user_type" class="form-label">
@@ -1400,7 +1402,7 @@
                 </form>
 
                 <!-- Admin Login Form (Initially Hidden) -->
-                <form method="POST" id="adminLoginForm" style="{{ $force_admin_form ? '' : 'display: none;' }}" action="{{ route('login.submit') }}">
+                <form method="POST" id="adminLoginForm" style="{{ ($force_admin_form && $adminOtpOverlayEnabled) ? '' : 'display: none;' }}" action="{{ route('login.submit') }}">
                     @csrf
                     <input type="hidden" name="latitude" id="admin-login-latitude">
                     <input type="hidden" name="longitude" id="admin-login-longitude">
@@ -1415,7 +1417,7 @@
                                 <i class="fas fa-at"></i>
                             </span>
                             <input type="email" class="form-control" id="admin_email" name="email"
-                                   placeholder="Enter your email" value="{{ old('email', $pending_admin_email) }}" autocomplete="off" {{ $admin_otp_pending ? 'readonly' : '' }}>
+                                   placeholder="Enter your email" value="{{ old('email', $pending_admin_email) }}" autocomplete="off" {{ ($admin_otp_pending && $adminOtpOverlayEnabled) ? 'readonly' : '' }}>
                         </div>
                     </div>
 
@@ -1428,7 +1430,7 @@
                                 <i class="fas fa-key"></i>
                             </span>
                             <input type="password" class="form-control" id="admin_password" name="password"
-                                   placeholder="Enter your password"   value="" autocomplete="new-password" {{ $admin_otp_pending ? 'readonly' : '' }}>
+                                   placeholder="Enter your password"   value="" autocomplete="new-password" {{ ($admin_otp_pending && $adminOtpOverlayEnabled) ? 'readonly' : '' }}>
                         </div>
                     </div>
 
@@ -1440,10 +1442,10 @@
                     @endif
 
                     <div class="d-grid gap-2">
-                        <button type="submit" name="login" class="btn btn-primary" {{ $admin_otp_pending ? 'disabled' : '' }}>
+                        <button type="submit" name="login" class="btn btn-primary" {{ ($admin_otp_pending && $adminOtpOverlayEnabled) ? 'disabled' : '' }}>
                             <i class="fas fa-sign-in-alt"></i> Login as Administrator
                         </button>
-                        <button type="button" class="btn-back-icon" onclick="resetForm()" aria-label="Back" {{ $admin_otp_pending ? 'disabled' : '' }}>
+                        <button type="button" class="btn-back-icon" onclick="resetForm()" aria-label="Back" {{ ($admin_otp_pending && $adminOtpOverlayEnabled) ? 'disabled' : '' }}>
                             <i class="fas fa-arrow-left"></i>
                         </button>
                     </div>
@@ -1566,7 +1568,7 @@
             @endif      
     </div>
 
-    <div class="otp-overlay {{ $admin_otp_pending ? 'active' : '' }}" id="adminOtpOverlay" role="dialog" aria-modal="true">
+    <div class="otp-overlay {{ $adminOtpOverlayEnabled ? 'active' : '' }}" id="adminOtpOverlay" role="dialog" aria-modal="true">
         <div class="otp-modal" role="document">
             <div class="otp-modal-icon">
                 <i class="fas fa-shield-heart"></i>
@@ -2055,6 +2057,9 @@
             if (submitButton) {
                 updateSubmitState();
             }
+            if (!overlay.classList.contains('active') && window.adminOtpOverlayEnabled) {
+                open();
+            }
             return {
                 open,
                 prefillEmail,
@@ -2254,11 +2259,9 @@
                 if (mobileBtn) mobileBtn.classList.remove('show-mobile');
                 const emailEl = document.getElementById('admin_email');
                 if (emailEl) emailEl.focus();
-                if (adminOtpController) {
+                if (adminOtpController && window.adminOtpOverlayEnabled) {
                     adminOtpController.prefillEmail('{{ $pending_admin_email }}');
-                    if (@json($admin_otp_pending)) {
-                        adminOtpController.open();
-                    }
+                    adminOtpController.open();
                 }
             }
         });
@@ -2368,6 +2371,7 @@
         });
 
         window.adminOtpCooldown = @json($adminOtpCooldown);
+window.adminOtpOverlayEnabled = @json($adminOtpOverlayEnabled);
 
         function handleUserTypeChange() {
             const userType = document.getElementById('user_type').value;
