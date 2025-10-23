@@ -605,10 +605,10 @@
                         <span class="input-group-text bg-white"><i class="fab fa-microsoft text-primary"></i></span>
                         <input type="email" class="form-control" id="ms365_email" name="ms365_email" 
                                placeholder="firstname.lastname@mcclawis.edu.ph" required autofocus 
-                               pattern="^[A-Za-z]+\.[A-Za-z]+@mcclawis\.edu\.ph$" 
+                               pattern="^[a-zA-Z]+(?:\.[a-zA-Z]+)+@mcclawis\.edu\.ph$" 
                                inputmode="email"
                                autocomplete="email"
-                               title="Email must be in the format firstname.lastname@mcclawis.edu.ph">
+                               title="Email must be firstname.lastname@mcclawis.edu.ph or sample.firstname.lastname@mcclawis.edu.ph">
                     </div>
                 </div>
                 <button type="submit" class="btn btn-primary" id="sendVerificationBtn">
@@ -725,7 +725,7 @@
             const passwordForm = document.getElementById('resetPasswordForm');
             const step1 = document.getElementById('resetStep1');
             const emailInput = document.getElementById('ms365_email');
-            const allowedEmailPattern = /^[A-Za-z]+\.[A-Za-z]+@mcclawis\.edu\.ph$/;
+            const allowedEmailPattern = /^[a-zA-Z]+(?:\.[a-zA-Z]+)+@mcclawis\.edu\.ph$/;
             const step2 = document.getElementById('resetStep2');
             const step3 = document.getElementById('resetStep3');
             const step4 = document.getElementById('resetStep4');
@@ -848,7 +848,7 @@
 
                 if (atIndex !== -1 && localPart) {
                     if (!allowedEmailPattern.test(input.value)) {
-                        input.setCustomValidity('Email must be in the format firstname.lastname@mcclawis.edu.ph');
+                        input.setCustomValidity('Email must be firstname.lastname@mcclawis.edu.ph or sample.firstname.lastname@mcclawis.edu.ph');
                     } else {
                         input.setCustomValidity('');
                     }
@@ -860,7 +860,7 @@
             function validateEmailBeforeSubmit(inputElement) {
                 const value = inputElement.value.trim();
                 if (!allowedEmailPattern.test(value)) {
-                    inputElement.setCustomValidity('Email must be in the format firstname.lastname@mcclawis.edu.ph');
+                    inputElement.setCustomValidity('Email must be firstname.lastname@mcclawis.edu.ph or sample.firstname.lastname@mcclawis.edu.ph');
                     inputElement.reportValidity();
                     return false;
                 }

@@ -1519,8 +1519,8 @@
                             <input type="email" class="form-control" id="email" name="email"
                                    placeholder="firstname.lastname@mcclawis.edu.ph" 
                                    value="{{ session('verified_student_email', '') }}" autocomplete="off"
-                                   pattern="^[a-zA-Z]+\.[a-zA-Z]+@mcclawis\.edu\.ph$"
-                                   title="Email must be in the format firstname.lastname@mcclawis.edu.ph">
+                                   pattern="^[a-zA-Z]+(?:\.[a-zA-Z]+)+@mcclawis\.edu\.ph$"
+                                   title="Email must be firstname.lastname@mcclawis.edu.ph or sample.firstname.lastname@mcclawis.edu.ph">
                         </div>
                     </div>
 

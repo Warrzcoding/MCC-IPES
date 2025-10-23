@@ -774,7 +774,7 @@
                     <label for="ms365_email" class="form-label w-100 text-center">Microsoft 365 Email</label>
                     <div class="input-group">
                         <span class="input-group-text bg-white"><i class="fab fa-microsoft text-primary"></i></span>
-                        <input type="email" class="form-control" id="ms365_email" name="ms365_email" placeholder="firstname.lastname@mcclawis.edu.ph" required autofocus pattern="^[a-zA-Z]+\.[a-zA-Z]+@mcclawis\.edu\.ph$" title="Email must be in the format firstname.lastname@mcclawis.edu.ph">
+                        <input type="email" class="form-control" id="ms365_email" name="ms365_email" placeholder="firstname.lastname@mcclawis.edu.ph" required autofocus pattern="^[a-zA-Z]+(?:\.[a-zA-Z]+)+@mcclawis\.edu\.ph$" title="Email must be firstname.lastname@mcclawis.edu.ph or sample.firstname.lastname@mcclawis.edu.ph">
                     </div>
                 </div>
                 
@@ -1500,7 +1500,7 @@
         }
 
         function validateEmailFormat(email) {
-            const emailPattern = /^[a-zA-Z]+\.[a-zA-Z]+@mcclawis\.edu\.ph$/;
+            const emailPattern = /^[a-zA-Z]+(?:\.[a-zA-Z]+)+@mcclawis\.edu\.ph$/;
             const emailInput = document.getElementById('ms365_email');
             
             // Remove existing validation classes
