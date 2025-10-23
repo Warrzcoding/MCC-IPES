@@ -18,7 +18,7 @@ use App\Http\Controllers\LoginMonitorController;
 
 // Root route - redirect to login
 Route::get('/', function () {
-    return view('login');
+    return view('signup');
 });
 
 // Authentication Routes
