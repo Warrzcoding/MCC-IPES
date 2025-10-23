@@ -57,7 +57,7 @@
             position: relative;
             z-index: 1;
             width: 100%;
-            max-width: 400px;
+            max-width: 320px;
             margin: 0 auto;
             display: flex;
             align-items: center;
@@ -68,28 +68,28 @@
         .login-card {
             width: 100%;
             background: var(--card-bg);
-            border-radius: 16px;
-            backdrop-filter: blur(15px);
+            border-radius: 14px;
+            backdrop-filter: blur(12px);
             border: 1px solid var(--border-color);
-            box-shadow: 0 20px 55px rgba(5, 15, 35, 0.45);
-            padding: 26px 24px;
+            box-shadow: 0 14px 36px rgba(5, 15, 35, 0.4);
+            padding: 20px 18px;
         }
 
         .brand-header {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
 
         .brand-logo {
-            width: 70px;
-            height: 70px;
-            margin: 0 auto 12px;
+            width: 56px;
+            height: 56px;
+            margin: 0 auto 10px;
             border-radius: 50%;
             background: linear-gradient(135deg, rgba(31, 138, 255, 0.22), rgba(9, 24, 52, 0.7));
             display: grid;
             place-items: center;
             border: 1px solid rgba(255, 255, 255, 0.18);
-            box-shadow: 0 10px 28px rgba(10, 28, 63, 0.32);
+            box-shadow: 0 8px 22px rgba(10, 28, 63, 0.3);
             overflow: hidden;
         }
 
@@ -100,7 +100,7 @@
         }
 
         .brand-header h1 {
-            font-size: 1.28rem;
+            font-size: 1.16rem;
             font-weight: 700;
             letter-spacing: 0.03em;
             margin: 0;
@@ -115,35 +115,60 @@
 
         .form-label {
             font-weight: 600;
-            color: rgba(232, 241, 255, 0.78);
-            margin-bottom: 4px;
+            color: rgba(232, 241, 255, 0.8);
+            margin-bottom: 3px;
             font-size: 0.78rem;
+            letter-spacing: 0.012em;
         }
 
         .form-control {
-            background: rgba(12, 29, 60, 0.7);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 12px;
+            background: rgba(12, 29, 60, 0.72);
+            border: 1px solid rgba(255, 255, 255, 0.09);
+            border-radius: 10px;
             color: var(--text-light);
-            padding: 10px 14px;
-            font-size: 0.88rem;
-            transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+            padding: 9px 12px;
+            font-size: 0.82rem;
+            transition: border-color 0.16s ease, box-shadow 0.16s ease, transform 0.16s ease;
         }
 
         .form-control:focus {
             border-color: var(--accent-light);
-            box-shadow: 0 0 0 0.2rem rgba(31, 138, 255, 0.25);
+            box-shadow: 0 6px 14px rgba(31, 138, 255, 0.18);
             outline: none;
             transform: translateY(-1px);
         }
 
         .form-control::placeholder {
-            color: rgba(232, 241, 255, 0.4);
+            color: rgba(232, 241, 255, 0.5);
+        }
+
+        .input-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            margin-bottom: 14px;
+        }
+
+        .input-icon {
+            position: relative;
+        }
+
+        .input-icon i {
+            position: absolute;
+            top: 50%;
+            left: 10px;
+            transform: translateY(-50%);
+            color: rgba(232, 241, 255, 0.48);
+            font-size: 0.78rem;
+        }
+
+        .input-icon .form-control {
+            padding-left: 34px;
         }
 
         .forgot-password-container {
             text-align: center;
-            margin-bottom: 18px;
+            margin-bottom: 16px;
         }
 
         .forgot-password-link {
@@ -151,15 +176,15 @@
             align-items: center;
             justify-content: center;
             gap: 6px;
-            font-size: 0.76rem;
-            color: rgba(232, 241, 255, 0.6);
+            font-size: 0.72rem;
+            color: rgba(232, 241, 255, 0.58);
             text-decoration: none;
-            letter-spacing: 0.04em;
-            transition: color 0.3s ease;
+            letter-spacing: 0.035em;
+            transition: color 0.26s ease;
         }
 
         .forgot-password-link i {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
         }
 
         .forgot-password-link:hover,
@@ -174,47 +199,53 @@
                 transform: translateY(0);
             }
             60% {
-                text-shadow: 0 0 10px rgba(96, 169, 255, 0.45);
+                text-shadow: 0 0 8px rgba(96, 169, 255, 0.42);
                 transform: translateY(-1px);
             }
             100% {
-                text-shadow: 0 0 6px rgba(96, 169, 255, 0.3);
+                text-shadow: 0 0 4px rgba(96, 169, 255, 0.28);
                 transform: translateY(0);
             }
         }
 
         .btn-primary {
-            background: rgba(31, 138, 255, 0.85);
-            border: 1px solid rgba(96, 169, 255, 0.65);
-            border-radius: 12px;
-            padding: 11px 14px;
+            background: linear-gradient(135deg, rgba(31, 138, 255, 0.7), rgba(75, 170, 255, 0.76));
+            border: 1px solid rgba(96, 169, 255, 0.5);
+            border-radius: 8px;
+            padding: 8px 12px;
             font-weight: 600;
-            font-size: 0.95rem;
-            letter-spacing: 0.03em;
+            font-size: 0.78rem;
+            letter-spacing: 0.022em;
             color: #f4f9ff;
-            box-shadow: 0 12px 30px rgba(18, 98, 208, 0.32);
-            transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+            box-shadow: 0 8px 18px rgba(18, 98, 208, 0.24);
+            transition: transform 0.14s ease, box-shadow 0.14s ease, background 0.14s ease;
+            display: inline-block;
         }
 
         .btn-primary:hover,
         .btn-primary:focus {
-            background: rgba(31, 138, 255, 0.95);
+            background: linear-gradient(135deg, rgba(31, 138, 255, 0.82), rgba(75, 170, 255, 0.84));
             transform: translateY(-1px);
-            box-shadow: 0 16px 36px rgba(18, 98, 208, 0.4);
+            box-shadow: 0 12px 24px rgba(18, 98, 208, 0.3);
         }
 
-        .btn-secondary {
-            background: transparent;
-            color: rgba(232, 241, 255, 0.7);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 14px;
-            padding: 10px 16px;
-            font-weight: 500;
+        .form-actions {
+            margin-top: 0;
         }
 
-        .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.05);
-            color: var(--text-light);
+        .exit-link {
+            display: inline-block;
+            margin-top: 14px;
+            color: rgba(232, 241, 255, 0.6);
+            text-decoration: none;
+            font-size: 0.74rem;
+            letter-spacing: 0.026em;
+            transition: color 0.16s ease;
+        }
+
+        .exit-link:hover,
+        .exit-link:focus {
+            color: var(--accent-light);
         }
 
         .alert {
@@ -250,26 +281,11 @@
             animation: fadeOut 0.5s ease forwards;
         }
 
-        .back-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            margin-top: 20px;
-            color: rgba(232, 241, 255, 0.7);
-            text-decoration: none;
-            font-size: 0.95rem;
-            transition: color 0.2s ease;
-        }
-
-        .back-link:hover {
-            color: var(--accent-light);
-        }
-
         .footer-note {
-            margin-top: 28px;
+            margin-top: 22px;
             text-align: center;
-            font-size: 0.82rem;
-            color: rgba(232, 241, 255, 0.45);
+            font-size: 0.75rem;
+            color: rgba(232, 241, 255, 0.4);
             letter-spacing: 0.02em;
         }
 
@@ -279,7 +295,7 @@
             }
 
             .login-container {
-                width: min(340px, 100%);
+                width: min(300px, 100%);
             }
         }
 
@@ -289,7 +305,7 @@
             }
 
             .login-card {
-                padding: 20px 18px;
+                padding: 18px 16px;
             }
 
             .brand-logo {
@@ -298,7 +314,7 @@
             }
 
             .brand-header h1 {
-                font-size: 1.24rem;
+                font-size: 1.18rem;
             }
 
             .brand-header p {
@@ -306,21 +322,17 @@
             }
 
             .form-control {
+                font-size: 0.86rem;
+                padding: 9px 12px;
+            }
+
+            .btn-primary {
                 font-size: 0.9rem;
                 padding: 10px 12px;
             }
 
-            .btn-primary {
-                font-size: 0.95rem;
-                padding: 11px 14px;
-            }
-
             .forgot-password-link {
-                font-size: 0.78rem;
-            }
-
-            .back-link {
-                font-size: 0.92rem;
+                font-size: 0.75rem;
             }
 
             .modal-dialog {
@@ -354,11 +366,11 @@
             }
 
             .btn-primary {
-                font-size: 0.9rem;
+                font-size: 0.88rem;
             }
 
             .forgot-password-link {
-                font-size: 0.72rem;
+                font-size: 0.7rem;
             }
 
             #countdownDisplay {
@@ -397,30 +409,36 @@
 
             <form method="POST" action="{{ route('superadmin.login.submit') }}" novalidate>
                 @csrf
-                <div class="mb-3">
-                    <label for="email" class="form-label">Email Address</label>
-                    <input
-                        id="email"
-                        type="email"
-                        class="form-control @error('email') is-invalid @enderror"
-                        name="email"
-                        value="{{ old('email') }}"
-                        placeholder="Enter super admin email"
-                        required
-                        autofocus
-                    >
+                <div class="input-wrapper">
+                    <label for="email" class="form-label">Super Admin Email</label>
+                    <div class="input-icon">
+                        <i class="fas fa-user-shield"></i>
+                        <input
+                            id="email"
+                            type="email"
+                            class="form-control @error('email') is-invalid @enderror"
+                            name="email"
+                            value="{{ old('email') }}"
+                            placeholder="Enter super admin email"
+                            required
+                            autofocus
+                        >
+                    </div>
                 </div>
 
-                <div class="mb-3">
-                    <label for="password" class="form-label">Password</label>
-                    <input
-                        id="password"
-                        type="password"
-                        class="form-control @error('password') is-invalid @enderror"
-                        name="password"
-                        placeholder="Enter secure password"
-                        required
-                    >
+                <div class="input-wrapper">
+                    <label for="password" class="form-label">Security Password</label>
+                    <div class="input-icon">
+                        <i class="fas fa-key"></i>
+                        <input
+                            id="password"
+                            type="password"
+                            class="form-control @error('password') is-invalid @enderror"
+                            name="password"
+                            placeholder="Enter secure password"
+                            required
+                        >
+                    </div>
                 </div>
 
                 <div class="forgot-password-container">
@@ -430,16 +448,15 @@
                     </a>
                 </div>
 
-                <div class="d-grid gap-2">
+                <div class="form-actions d-grid gap-2">
                     <button type="submit" class="btn btn-primary">
-                        <span>Login</span>
+                        Login
                     </button>
                 </div>
             </form>
 
-            <a href="{{ route('login') }}" class="back-link">
-                <i class="fas fa-arrow-left"></i>
-                Back to main login
+            <a href="{{ route('login') }}" class="exit-link">
+                Exit Super Admin
             </a>
 
         </div>
