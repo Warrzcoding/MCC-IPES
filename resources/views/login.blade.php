@@ -12,6 +12,10 @@
     $lockout_duration = session('lockout_duration', 0);
     $login_success = session('login_success', false);
     $redirect_url = session('redirect_url', '');
+    $force_admin_form = session('force_admin_form', false);
+    $admin_otp_pending = session('admin_otp_pending', false);
+    $pending_admin_email = session('pending_admin_email', '');
+    $admin_otp_message = session('admin_otp_message', '');
 
     $remaining_lockout_seconds = 0;
     if ($account_locked && $lockout_time) {
@@ -27,6 +31,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Login - Instructors Performance Evaluation System</title>
     <link rel="icon" type="image/png" href="{{ asset('images/mccicon.jpg') }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -46,9 +51,217 @@
             align-items: center;
             justify-content: center;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            perspective: 1000px; /* adds depth for 3D transforms */
+            perspective: 1000px;
             position: relative;
             overflow: hidden;
+        }
+
+        .otp-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.55);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 100000;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+        }
+        .otp-overlay.active {
+            display: flex;
+        }
+        .otp-modal {
+            width: min(100%, 300px);
+            padding: 22px 20px;
+            display: grid;
+            gap: 16px;
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.18);
+            text-align: center;
+        }
+        .otp-modal-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #4c6ef5, #5f3dc4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 2px;
+            color: #ffffff;
+            font-size: 1.35rem;
+            box-shadow: 0 8px 18px rgba(76, 110, 245, 0.32);
+        }
+        .otp-modal-title {
+            margin: 0;
+            font-size: 1.14rem;
+            font-weight: 700;
+            text-align: center;
+            letter-spacing: 0.2px;
+            color: #0f172a;
+        }
+        .otp-modal-subtitle {
+            margin: 0;
+            font-size: 0.85rem;
+            text-align: center;
+            color: #475569;
+            line-height: 1.45;
+        }
+        .otp-email {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 999px;
+            background: rgba(79, 70, 229, 0.1);
+            color: #4338ca;
+        }
+        .otp-email::before {
+            content: "@";
+            font-size: 0.78rem;
+            color: rgba(79, 70, 229, 0.6);
+        }
+        .otp-input-group {
+            display: grid;
+            grid-template-columns: repeat(6, minmax(38px, 1fr));
+            gap: 8px;
+        }
+        .otp-input-group input {
+            height: 44px;
+            border-radius: 10px;
+            border: 1px solid #cbd5f5;
+            font-size: 1.15rem;
+            font-weight: 600;
+            text-align: center;
+            color: #1e293b;
+            background: #f8fafc;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .otp-input-group input:focus {
+            outline: none;
+            border-color: #4c6ef5;
+            box-shadow: 0 0 0 3px rgba(76, 110, 245, 0.2);
+            background: #ffffff;
+        }
+        .otp-input-group input.error {
+            border-color: #ef4444;
+            box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.25);
+        }
+        .otp-error {
+            display: none;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #b91c1c;
+            background: #fee2e2;
+            border-radius: 8px;
+            padding: 10px 12px;
+        }
+        .otp-error.show {
+            display: block;
+        }
+        .otp-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .otp-overlay .btn {
+            width: 100%;
+        }
+        .otp-utility-actions {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+        }
+        .otp-utility-actions button {
+            background: none;
+            border: none;
+            color: #475569;
+            font-size: 0.78rem;
+            font-weight: 600;
+            padding: 0;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+        .otp-utility-actions button:hover {
+            color: #334155;
+        }
+        .otp-utility-actions button:disabled {
+            opacity: 0.5;
+        }
+        .otp-primary-btn {
+            background: #4c6ef5 !important;
+            border: none !important;
+            color: #ffffff !important;
+            font-weight: 600;
+            border-radius: 10px;
+            padding: 12px;
+            box-shadow: none;
+            transition: transform 0.15s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .otp-primary-btn:hover {
+            transform: translateY(-1px);
+        }
+        .otp-primary-btn:disabled {
+            opacity: 0.75;
+        }
+        .otp-secondary-btn {
+            border: 1px solid #cbd5f5 !important;
+            color: #4c6ef5 !important;
+            background: transparent !important;
+            border-radius: 10px;
+            padding: 10px 12px;
+            font-weight: 600;
+            transition: border-color 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .otp-secondary-btn:hover {
+            border-color: #4c6ef5 !important;
+        }
+        .otp-status {
+            text-align: center;
+            font-size: 0.78rem;
+            color: #64748b;
+            min-height: 16px;
+        }
+        .otp-cancel-link {
+            background: none;
+            border: none;
+            color: #334155;
+            font-weight: 600;
+            font-size: 0.78rem;
+            text-decoration: underline;
+            margin: 0 auto;
+            transition: color 0.2s ease;
+        }
+        .otp-cancel-link:hover {
+            color: #1e293b;
+        }
+        .otp-cancel-link:disabled {
+            opacity: 0.6;
+        }
+        @media (max-width: 480px) {
+            .otp-modal {
+                padding: 22px 18px;
+                gap: 12px;
+            }
+            .otp-input-group {
+                grid-template-columns: repeat(6, minmax(38px, 1fr));
+                gap: 6px;
+            }
+            .otp-input-group input {
+                height: 44px;
+                font-size: 1.1rem;
+            }
         }
 
         /* Removed previous gradient animation */
@@ -1131,12 +1344,12 @@
             @if (!$show_student_form && !$show_login_form)
 
                 <!-- Mobile Student Login Button (Visible only on mobile) -->
-                <button type="button" class="mobile-student-btn" onclick="startMobileStudentLogin()">
+                <button type="button" class="mobile-student-btn" onclick="startMobileStudentLogin()" style="{{ $force_admin_form ? 'display: none;' : '' }}">
                     <i class="fas fa-graduation-cap"></i> Start Student Login
                 </button>
 
                 <!-- Desktop User Type Selection (Hidden on mobile) -->
-                <div class="desktop-user-select">
+                <div class="desktop-user-select" style="{{ $force_admin_form ? 'display: none;' : '' }}">
                     <form method="POST" id="userTypeForm">
                         <div class="mb-4">
                             <label for="user_type" class="form-label">
@@ -1187,7 +1400,7 @@
                 </form>
 
                 <!-- Admin Login Form (Initially Hidden) -->
-                <form method="POST" id="adminLoginForm" style="display: none;" action="{{ route('login.submit') }}">
+                <form method="POST" id="adminLoginForm" style="{{ $force_admin_form ? '' : 'display: none;' }}" action="{{ route('login.submit') }}">
                     @csrf
                     <input type="hidden" name="latitude" id="admin-login-latitude">
                     <input type="hidden" name="longitude" id="admin-login-longitude">
@@ -1202,7 +1415,7 @@
                                 <i class="fas fa-at"></i>
                             </span>
                             <input type="email" class="form-control" id="admin_email" name="email"
-                                   placeholder="Enter your email" value="" autocomplete="off">
+                                   placeholder="Enter your email" value="{{ old('email', $pending_admin_email) }}" autocomplete="off" {{ $admin_otp_pending ? 'readonly' : '' }}>
                         </div>
                     </div>
 
@@ -1215,7 +1428,7 @@
                                 <i class="fas fa-key"></i>
                             </span>
                             <input type="password" class="form-control" id="admin_password" name="password"
-                                   placeholder="Enter your password"   value="" autocomplete="new-password">
+                                   placeholder="Enter your password"   value="" autocomplete="new-password" {{ $admin_otp_pending ? 'readonly' : '' }}>
                         </div>
                     </div>
 
@@ -1227,10 +1440,10 @@
                     @endif
 
                     <div class="d-grid gap-2">
-                        <button type="submit" name="login" class="btn btn-primary">
+                        <button type="submit" name="login" class="btn btn-primary" {{ $admin_otp_pending ? 'disabled' : '' }}>
                             <i class="fas fa-sign-in-alt"></i> Login as Administrator
                         </button>
-                        <button type="button" class="btn-back-icon" onclick="resetForm()" aria-label="Back">
+                        <button type="button" class="btn-back-icon" onclick="resetForm()" aria-label="Back" {{ $admin_otp_pending ? 'disabled' : '' }}>
                             <i class="fas fa-arrow-left"></i>
                         </button>
                     </div>
@@ -1353,6 +1566,36 @@
             @endif      
     </div>
 
+    <div class="otp-overlay {{ $admin_otp_pending ? 'active' : '' }}" id="adminOtpOverlay" role="dialog" aria-modal="true">
+        <div class="otp-modal" role="document">
+            <div class="otp-modal-icon">
+                <i class="fas fa-shield-heart"></i>
+            </div>
+            <div class="otp-modal-title">Administrator Verification</div>
+            <p class="otp-modal-subtitle">Enter the 6-digit code sent to <span class="otp-email" id="adminOtpEmail">{{ $pending_admin_email }}</span></p>
+            <div class="otp-error" id="adminOtpError" role="alert"></div>
+            <div class="otp-input-group" id="adminOtpInputs">
+                <input type="text" inputmode="numeric" maxlength="1" autocomplete="one-time-code" aria-label="Digit 1">
+                <input type="text" inputmode="numeric" maxlength="1" autocomplete="one-time-code" aria-label="Digit 2">
+                <input type="text" inputmode="numeric" maxlength="1" autocomplete="one-time-code" aria-label="Digit 3">
+                <input type="text" inputmode="numeric" maxlength="1" autocomplete="one-time-code" aria-label="Digit 4">
+                <input type="text" inputmode="numeric" maxlength="1" autocomplete="one-time-code" aria-label="Digit 5">
+                <input type="text" inputmode="numeric" maxlength="1" autocomplete="one-time-code" aria-label="Digit 6">
+            </div>
+            <div class="otp-actions">
+                <button type="button" class="btn otp-primary-btn" id="adminOtpSubmitButton">
+                    Verify Code
+                </button>
+                <div class="otp-utility-actions">
+                    <button type="button" id="adminOtpResendButton">Resend Code</button>
+                    <button type="button" id="adminOtpCancelButton">Cancel</button>
+                </div>
+            </div>
+            <div class="otp-status" id="adminOtpStatus" role="status">{{ $admin_otp_message }}</div>
+            <button type="button" class="otp-cancel-link" id="adminOtpBackButton">Back to Login</button>
+        </div>
+    </div>
+
     <!-- Mobile Footer - Only visible on mobile -->
     <div class="mobile-footer">
         <a id="superloginFooterLink" href="{{ route('superadmin.login') }}" data-href="{{ route('superadmin.login') }}" style="color: #ffffffff; text-decoration: none; font-weight: 600;"><p>&copy;{{ date('Y') }} MCC | Instructors Performance Evaluation System | Developed by: Warren Ilustrisimo | Jenford Albaciete | Jerry Nasol | Cristina Ilustrisimo </p></a>
@@ -1391,6 +1634,434 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        const adminOtpController = (function () {
+            const overlay = document.getElementById('adminOtpOverlay');
+            if (!overlay) return null;
+            const inputs = Array.from(overlay.querySelectorAll('#adminOtpInputs input'));
+            const submitButton = document.getElementById('adminOtpSubmitButton');
+            const resendButton = document.getElementById('adminOtpResendButton');
+            const cancelButton = document.getElementById('adminOtpCancelButton');
+            const backButton = document.getElementById('adminOtpBackButton');
+            const errorBox = document.getElementById('adminOtpError');
+            const statusBox = document.getElementById('adminOtpStatus');
+            const emailDisplay = document.getElementById('adminOtpEmail');
+            const csrfTokenMeta = document.querySelector('meta[name="csrf-token"]');
+            const csrfToken = csrfTokenMeta ? csrfTokenMeta.getAttribute('content') : '';
+            const verifyUrl = @json(route('admin.otp.verify'));
+            const resendUrl = @json(route('admin.otp.resend'));
+            const loginUrl = @json(route('login'));
+            const submitDefault = submitButton ? submitButton.innerHTML : '';
+            const resendDefault = resendButton ? resendButton.innerHTML : '';
+            let resendTimer = null;
+            let resendCountdown = 0;
+            function numeric(value) {
+                return value.replace(/[^0-9]/g, '');
+            }
+            function getValue() {
+                return inputs.map((input) => input.value).join('');
+            }
+            function clearInputs() {
+                inputs.forEach((input) => {
+                    input.value = '';
+                    input.classList.remove('error');
+                });
+                if (inputs.length) inputs[0].focus();
+                updateSubmitState();
+            }
+            function setError(message) {
+                if (!errorBox) return;
+                if (message) {
+                    errorBox.textContent = message;
+                    errorBox.classList.add('show');
+                    inputs.forEach((input) => input.classList.add('error'));
+                } else {
+                    errorBox.textContent = '';
+                    errorBox.classList.remove('show');
+                    inputs.forEach((input) => input.classList.remove('error'));
+                }
+            }
+            function setStatus(message) {
+                if (!statusBox) return;
+                statusBox.textContent = message || '';
+            }
+            function toggleLoadingState(isLoading) {
+                if (cancelButton) {
+                    cancelButton.disabled = isLoading;
+                }
+                if (backButton) {
+                    backButton.disabled = isLoading;
+                }
+                if (isLoading) {
+                    document.body.classList.add('admin-otp-loading');
+                } else {
+                    document.body.classList.remove('admin-otp-loading');
+                }
+            }
+            function updateSubmitState() {
+                if (!submitButton) return;
+                submitButton.disabled = getValue().length !== inputs.length;
+            }
+            function setSubmitLoading(isLoading) {
+                if (!submitButton) return;
+                if (isLoading) {
+                    submitButton.disabled = true;
+                    submitButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Verifying...';
+                } else {
+                    submitButton.innerHTML = submitDefault;
+                    updateSubmitState();
+                }
+            }
+            function updateResendView() {
+                if (!resendButton) return;
+                if (resendCountdown > 0) {
+                    resendButton.disabled = true;
+                    resendButton.innerHTML = '<i class="fas fa-hourglass-half"></i> Resend in ' + resendCountdown + 's';
+                } else {
+                    resendButton.disabled = false;
+                    resendButton.innerHTML = resendDefault;
+                }
+            }
+            function startResendCountdown(seconds) {
+                clearInterval(resendTimer);
+                resendCountdown = seconds;
+                updateResendView();
+                resendTimer = setInterval(() => {
+                    resendCountdown -= 1;
+                    if (resendCountdown <= 0) {
+                        clearInterval(resendTimer);
+                        resendTimer = null;
+                        resendCountdown = 0;
+                    }
+                    updateResendView();
+                }, 1000);
+            }
+            async function submitOtp() {
+                const code = getValue();
+                if (code.length !== inputs.length) {
+                    setError('Enter the complete code.');
+                    return;
+                }
+                setError('');
+                setStatus('');
+                setSubmitLoading(true);
+                toggleLoadingState(true);
+                try {
+                    const response = await fetch(verifyUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken,
+                            Accept: 'application/json'
+                        },
+                        body: JSON.stringify({ otp_code: code })
+                    });
+                    const payload = await response.json();
+                    if (response.ok && payload.status === 'success') {
+                        // Success - Show SweetAlert and redirect
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Verification Successful',
+                            text: 'You have been successfully verified. Redirecting...',
+                            confirmButtonColor: '#667eea',
+                            timer: 2000,
+                            timerProgressBar: true,
+                            showConfirmButton: false,
+                            allowOutsideClick: false,
+                            allowEscapeKey: false
+                        }).then(() => {
+                            if (payload.redirect) {
+                                window.location.href = payload.redirect;
+                            }
+                        });
+                    } else {
+                        const message = payload.message || 'Unable to verify code.';
+                        setError(message);
+                        
+                        if (response.status === 422) {
+                            // Invalid code or session expired
+                            if (message.toLowerCase().includes('please login again')) {
+                                // Session expired
+                                Swal.fire({
+                                    icon: 'warning',
+                                    title: 'Session Expired',
+                                    text: message,
+                                    confirmButtonColor: '#667eea',
+                                    timer: 2500,
+                                    timerProgressBar: true,
+                                    showConfirmButton: false,
+                                    allowOutsideClick: false,
+                                    allowEscapeKey: false
+                                }).then(() => {
+                                    window.location.href = loginUrl;
+                                });
+                            } else if (message.toLowerCase().includes('expired')) {
+                                // OTP expired
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Code Expired',
+                                    text: message + ' Please request a new code.',
+                                    confirmButtonColor: '#667eea',
+                                    allowOutsideClick: false,
+                                    allowEscapeKey: false
+                                });
+                            } else {
+                                // Wrong code - show remaining attempts
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Incorrect Code',
+                                    text: message,
+                                    confirmButtonColor: '#667eea',
+                                    allowOutsideClick: false,
+                                    allowEscapeKey: false
+                                });
+                                clearInputs();
+                            }
+                        } else if (response.status === 423) {
+                            // Too many failed attempts
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Too Many Attempts',
+                                text: message,
+                                confirmButtonColor: '#667eea',
+                                timer: 2500,
+                                timerProgressBar: true,
+                                showConfirmButton: false,
+                                allowOutsideClick: false,
+                                allowEscapeKey: false
+                            }).then(() => {
+                                window.location.href = loginUrl;
+                            });
+                        } else {
+                            clearInputs();
+                        }
+                    }
+                } catch (error) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Network Error',
+                        text: 'Please check your connection and try again.',
+                        confirmButtonColor: '#667eea',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false
+                    });
+                    setError('Network error. Please try again.');
+                } finally {
+                    setSubmitLoading(false);
+                    toggleLoadingState(false);
+                }
+            }
+            async function resendOtp() {
+                if (!resendButton || resendButton.disabled) return;
+                setError('');
+                setStatus('');
+                resendButton.disabled = true;
+                toggleLoadingState(true);
+                resendButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Sending...';
+                try {
+                    const response = await fetch(resendUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken,
+                            Accept: 'application/json'
+                        },
+                        body: JSON.stringify({})
+                    });
+                    const payload = await response.json();
+                    if (response.ok && payload.status === 'success') {
+                        // Code resent successfully
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Code Sent',
+                            text: 'A new verification code has been sent to your email.',
+                            confirmButtonColor: '#667eea',
+                            timer: 2000,
+                            timerProgressBar: true,
+                            showConfirmButton: false
+                        });
+                        setStatus(payload.message || '');
+                        startResendCountdown(60);
+                    } else {
+                        const message = payload.message || 'Unable to send code.';
+                        setError(message);
+                        if (response.status === 422) {
+                            if (message.toLowerCase().includes('please login again')) {
+                                // Session expired
+                                Swal.fire({
+                                    icon: 'warning',
+                                    title: 'Session Expired',
+                                    text: message,
+                                    confirmButtonColor: '#667eea',
+                                    timer: 2500,
+                                    timerProgressBar: true,
+                                    showConfirmButton: false,
+                                    allowOutsideClick: false,
+                                    allowEscapeKey: false
+                                }).then(() => {
+                                    window.location.href = loginUrl;
+                                });
+                            } else {
+                                // Other error
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Resend Failed',
+                                    text: message,
+                                    confirmButtonColor: '#667eea'
+                                });
+                            }
+                        } else if (response.status === 429) {
+                            // Rate limited
+                            const waitMatch = message.match(/\d+/);
+                            const waitSeconds = waitMatch ? parseInt(waitMatch[0], 10) : 60;
+                            Swal.fire({
+                                icon: 'info',
+                                title: 'Please Wait',
+                                text: message,
+                                confirmButtonColor: '#667eea'
+                            });
+                            startResendCountdown(waitSeconds);
+                        } else {
+                            // Generic error
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: message,
+                                confirmButtonColor: '#667eea'
+                            });
+                        }
+                    }
+                } catch (error) {
+                    // Network error
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Network Error',
+                        text: 'Please check your connection and try again.',
+                        confirmButtonColor: '#667eea'
+                    });
+                    setError('Network error. Please try again.');
+                } finally {
+                    toggleLoadingState(false);
+                    if (resendCountdown === 0) {
+                        resendButton.disabled = false;
+                        resendButton.innerHTML = resendDefault;
+                    }
+                }
+            }
+            function handlePaste(event) {
+                event.preventDefault();
+                const text = numeric((event.clipboardData || window.clipboardData).getData('text')).slice(0, inputs.length);
+                inputs.forEach((input, index) => {
+                    input.value = text[index] || '';
+                });
+                updateSubmitState();
+                const nextEmpty = inputs.find((input) => input.value === '');
+                if (nextEmpty) {
+                    nextEmpty.focus();
+                } else if (submitButton) {
+                    submitButton.focus();
+                }
+            }
+            function bindEvents() {
+                inputs.forEach((input, index) => {
+                    input.addEventListener('input', (event) => {
+                        const value = numeric(event.target.value);
+                        event.target.value = value.charAt(0) || '';
+                        if (value && index < inputs.length - 1) {
+                            inputs[index + 1].focus();
+                            inputs[index + 1].select();
+                        }
+                        updateSubmitState();
+                    });
+                    input.addEventListener('keydown', (event) => {
+                        if (event.key === 'Backspace' && !input.value && index > 0) {
+                            event.preventDefault();
+                            inputs[index - 1].focus();
+                            inputs[index - 1].value = '';
+                        }
+                    });
+                    input.addEventListener('paste', handlePaste);
+                    input.addEventListener('focus', () => input.select());
+                });
+                if (submitButton) {
+                    submitButton.addEventListener('click', submitOtp);
+                }
+                if (resendButton) {
+                    resendButton.addEventListener('click', resendOtp);
+                }
+                if (cancelButton) {
+                    cancelButton.addEventListener('click', async () => {
+                        try {
+                            toggleLoadingState(true);
+                            const response = await fetch(@json(route('admin.otp.cancel')), {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': csrfToken,
+                                    Accept: 'application/json'
+                                },
+                                body: JSON.stringify({})
+                            });
+                            if (!response.ok) {
+                                throw new Error('Cancel failed');
+                            }
+                        } catch (error) {
+                            console.error('Failed to cancel admin OTP session:', error);
+                        } finally {
+                            toggleLoadingState(false);
+                            window.location.href = loginUrl;
+                        }
+                    });
+                }
+                if (backButton) {
+                    backButton.addEventListener('click', () => {
+                        window.location.href = loginUrl;
+                    });
+                }
+                document.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter' && overlay.classList.contains('active')) {
+                        event.preventDefault();
+                        submitOtp();
+                    }
+                    if (event.key === 'Escape' && overlay.classList.contains('active')) {
+                        event.preventDefault();
+                        window.location.href = loginUrl;
+                    }
+                });
+            }
+            function open() {
+                if (!overlay) return;
+                overlay.classList.add('active');
+                if (inputs.length) {
+                    inputs[0].focus();
+                    inputs[0].select();
+                }
+            }
+            function prefillEmail(email) {
+                if (emailDisplay && email) {
+                    emailDisplay.textContent = email;
+                }
+            }
+            bindEvents();
+            updateSubmitState();
+            if (overlay.classList.contains('active')) {
+                open();
+            }
+            if (statusBox && statusBox.textContent) {
+                setStatus(statusBox.textContent);
+            }
+            if (resendButton && typeof window.adminOtpCooldown === 'number' && window.adminOtpCooldown > 0) {
+                startResendCountdown(window.adminOtpCooldown);
+            }
+            if (submitButton) {
+                updateSubmitState();
+            }
+            return {
+                open,
+                prefillEmail,
+                setStatus,
+                startResendCountdown
+            };
+        })();
         const loginGeolocationManager = (function () {
             const coordinateTargets = [
                 { latId: 'admin-login-latitude', lngId: 'admin-login-longitude' },
@@ -1525,6 +2196,30 @@
         });
         @endif
 
+        // SweetAlert for Admin OTP Sent Message
+        @if (session('admin_otp_message'))
+        Swal.fire({
+            icon: 'success',
+            title: 'Verification Code Sent',
+            html: '<div style="font-size: 0.95rem; color: #4b5563;">' +
+                  '{{ session("admin_otp_message") }}<br><br>' +
+                  '<small style="color: #9ca3af;">Check your email for the 6-digit verification code.</small>' +
+                  '</div>',
+            confirmButtonColor: '#667eea',
+            timer: 3500,
+            timerProgressBar: true,
+            showConfirmButton: false,
+            allowOutsideClick: false,
+            allowEscapeKey: false
+        }).then(() => {
+            // OTP modal will already be visible due to the 'active' class
+            if (adminOtpController) {
+                adminOtpController.open();
+                adminOtpController.prefillEmail('{{ session("pending_admin_email") }}');
+            }
+        });
+        @endif
+
         // SweetAlert for login errors
         @if (session('error'))
         const isStudentLoginView = {{ ($show_login_form && $student_data) ? 'true' : 'false' }};
@@ -1559,6 +2254,12 @@
                 if (mobileBtn) mobileBtn.classList.remove('show-mobile');
                 const emailEl = document.getElementById('admin_email');
                 if (emailEl) emailEl.focus();
+                if (adminOtpController) {
+                    adminOtpController.prefillEmail('{{ $pending_admin_email }}');
+                    if (@json($admin_otp_pending)) {
+                        adminOtpController.open();
+                    }
+                }
             }
         });
         @endif
@@ -1666,6 +2367,8 @@
             clearAllForms();
         });
 
+        window.adminOtpCooldown = @json($adminOtpCooldown);
+
         function handleUserTypeChange() {
             const userType = document.getElementById('user_type').value;
             const userTypeForm = document.getElementById('userTypeForm');
@@ -1694,6 +2397,9 @@
                 staffLoginForm.style.display = 'none';
                 studentIdForm.style.display = 'none';
                 document.getElementById('admin_email').focus();
+                if (adminOtpController) {
+                    adminOtpController.prefillEmail('{{ $pending_admin_email }}');
+                }
             } else if (userType === 'staff') {
                 localStorage.setItem('lastRole', 'staff');
                 userTypeForm.style.display = 'none';
@@ -2050,7 +2756,7 @@
                         });
                 });
             });
-        });
+        });     
 
         const superLoginFooterLink = document.getElementById('superloginFooterLink');
         if (superLoginFooterLink) {

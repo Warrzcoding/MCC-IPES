@@ -153,10 +153,10 @@
         }
 
         .logout-btn:hover {
-            background: #ff4444;
-            border-color: #ff4444;
+            background: #0d7effff;
+            border-color: #0bcbf1ff;
             color: white;
-            box-shadow: 0 0 15px rgba(255, 68, 68, 0.5);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 1);
         }
 
         /* ==================== SIDEBAR ==================== */
@@ -509,7 +509,7 @@
                 <i class="fas fa-bars"></i>
             </button>
             <div class="topbar-title">
-                <i class="fas fa-terminal"></i> MCCIPES SUPER ADMIN
+                <!--<i class="fas fa-terminal">--></i> MCCIPES SUPER ADMIN
             </div>
         </div>
 

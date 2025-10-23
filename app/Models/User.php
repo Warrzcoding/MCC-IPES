@@ -34,12 +34,15 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'admin_otp_code',
     ];
 
     protected $casts = [
         'email_verified_at' => 'datetime',
         'last_login' => 'datetime',
         'last_active_at' => 'datetime',
+        'admin_otp_expires_at' => 'datetime',
+        'admin_otp_last_sent_at' => 'datetime',
         'is_main_admin' => 'boolean',
         'password' => 'hashed',
     ];

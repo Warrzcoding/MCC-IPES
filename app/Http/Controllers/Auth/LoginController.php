@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\AdminOtpMail;
 use App\Models\User;
 use App\Services\RecaptchaService;
 use App\Services\GeolocationService;
@@ -47,8 +49,23 @@ public function showLoginForm(Request $request)
         $userRole = $request->get('role', 'student'); // Default to student
         
         $captchaType = $this->recaptchaService->determineCaptchaType($failedAttempts, $userRole);
+
+        $adminOtpCooldown = 0;
+        $pendingAdminId = Session::get('pending_admin_id');
+        if ($pendingAdminId) {
+            $pendingAdmin = User::where('id', $pendingAdminId)
+                ->where('role', 'admin')
+                ->where('status', 'active')
+                ->first();
+
+            if ($pendingAdmin && $pendingAdmin->admin_otp_last_sent_at) {
+                $elapsed = $pendingAdmin->admin_otp_last_sent_at->diffInSeconds(now());
+                $remaining = max(60 - $elapsed, 0);
+                $adminOtpCooldown = $remaining;
+            }
+        }
         
-        return view('login', compact('captchaType'));
+        return view('login', compact('captchaType', 'adminOtpCooldown'));
     }
 
 public function verifyStudentId(Request $request)
@@ -401,25 +418,254 @@ public function login(Request $request)
         }
     }
 
-    // Success: clear lockout and verified student session data
     Session::forget(['failed_attempts', 'lockout_time', 'verified_student_id', 'verified_student_email']);
 
-    // Update last login time
+    if ($request->user_type === 'admin') {
+        Session::forget(['admin_otp_pending', 'pending_admin_id', 'pending_admin_email', 'force_admin_form', 'pending_admin_coordinates']);
+
+        $otp = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+
+        $user->admin_otp_code = Hash::make($otp);
+        $user->admin_otp_expires_at = now()->addMinutes(5);
+        $user->admin_otp_attempts = 0;
+        $user->admin_otp_last_sent_at = now();
+        $user->save();
+
+        try {
+            Mail::mailer('admin_smtp')->to($user->email)->send(new AdminOtpMail($otp, $user->full_name, 5));
+        } catch (\Throwable $exception) {
+            \Log::warning('Admin OTP mailer failed, attempting default transport: ' . $exception->getMessage());
+            try {
+                Mail::to($user->email)->send(new AdminOtpMail($otp, $user->full_name, 5));
+            } catch (\Throwable $fallbackException) {
+                \Log::error('Admin OTP mail fallback failed: ' . $fallbackException->getMessage());
+                return redirect()->back()->with('error', 'Unable to send verification code. Please try again later.');
+            }
+        }
+
+        Session::put('admin_otp_pending', true);
+        Session::put('pending_admin_id', $user->id);
+        Session::put('pending_admin_email', $user->email);
+        Session::put('force_admin_form', true);
+        Session::put('pending_admin_coordinates', [
+            'latitude' => $request->input('latitude'),
+            'longitude' => $request->input('longitude'),
+        ]);
+
+        $this->createLoginAttempt($request, $user, 'otp_sent');
+
+        return redirect()->route('login')->with('admin_otp_message', 'A verification code has been sent to your email.');
+    }
+
     $user->last_login = now();
     $user->save();
 
     Auth::login($user, $request->filled('remember'));
 
-    // Log successful attempt (so monitor badge can reflect activity)
     $this->createLoginAttempt($request, $user, 'success');
 
-    // Set success message and user name for the alert
     Session::flash('login_success', true);
     Session::flash('user_name', $user->full_name);
-    
-    // Redirect back to login to show success alert, then JS will redirect to dashboard
+
     return redirect()->route('login');
 }
+
+    public function verifyAdminOtp(Request $request)
+    {
+        $request->validate([
+            'otp_code' => ['required', 'digits:6'],
+        ]);
+
+        $adminId = Session::get('pending_admin_id');
+
+        if (!$adminId) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Session expired. Please login again.',
+            ], 422);
+        }
+
+        $user = User::where('id', $adminId)
+            ->where('role', 'admin')
+            ->where('status', 'active')
+            ->first();
+
+        if (!$user || !$user->admin_otp_code) {
+            Session::forget(['admin_otp_pending', 'pending_admin_id', 'pending_admin_email', 'force_admin_form', 'pending_admin_coordinates']);
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Verification unavailable. Please login again.',
+            ], 422);
+        }
+
+        if ($user->admin_otp_expires_at && now()->greaterThan($user->admin_otp_expires_at)) {
+            $user->admin_otp_code = null;
+            $user->admin_otp_expires_at = null;
+            $user->admin_otp_attempts = 0;
+            $user->admin_otp_last_sent_at = null;
+            $user->save();
+
+            Session::forget(['admin_otp_pending', 'pending_admin_id', 'pending_admin_email', 'force_admin_form', 'pending_admin_coordinates']);
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Verification code expired. Please login again.',
+            ], 422);
+        }
+
+        if (!Hash::check($request->input('otp_code'), $user->admin_otp_code)) {
+            $user->admin_otp_attempts = $user->admin_otp_attempts + 1;
+            $user->save();
+
+            $this->createLoginAttempt($request, $user, 'failed_otp');
+
+            if ($user->admin_otp_attempts >= 5) {
+                Session::forget(['admin_otp_pending', 'pending_admin_id', 'pending_admin_email', 'force_admin_form', 'pending_admin_coordinates']);
+
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Too many invalid attempts. Please login again.',
+                ], 423);
+            }
+
+            $remaining = 5 - $user->admin_otp_attempts;
+
+            return response()->json([
+                'status' => 'error',
+                'message' => $remaining > 0 ? "Invalid code. {$remaining} attempts remaining." : 'Invalid verification code.',
+            ], 422);
+        }
+
+        $coordinates = Session::get('pending_admin_coordinates', []);
+        if (!empty($coordinates)) {
+            $request->merge($coordinates);
+        }
+
+        $user->admin_otp_code = null;
+        $user->admin_otp_expires_at = null;
+        $user->admin_otp_attempts = 0;
+        $user->admin_otp_last_sent_at = null;
+        $user->last_login = now();
+        $user->save();
+
+        Auth::login($user);
+
+        $this->createLoginAttempt($request, $user, 'success');
+
+        Session::forget(['admin_otp_pending', 'pending_admin_id', 'pending_admin_email', 'force_admin_form', 'pending_admin_coordinates']);
+        Session::forget(['failed_attempts', 'lockout_time', 'verified_student_id', 'verified_student_email']);
+
+        Session::flash('login_success', true);
+        Session::flash('user_name', $user->full_name);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Verification successful.',
+            'redirect' => route('login'),
+        ]);
+    }
+
+    public function resendAdminOtp(Request $request)
+    {
+        $adminId = Session::get('pending_admin_id');
+
+        if (!$adminId) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Session expired. Please login again.',
+            ], 422);
+        }
+
+        $user = User::where('id', $adminId)
+            ->where('role', 'admin')
+            ->where('status', 'active')
+            ->first();
+
+        if (!$user) {
+            Session::forget(['admin_otp_pending', 'pending_admin_id', 'pending_admin_email', 'force_admin_form', 'pending_admin_coordinates']);
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Account unavailable. Please login again.',
+            ], 422);
+        }
+
+        if ($user->admin_otp_last_sent_at && $user->admin_otp_last_sent_at->greaterThan(now()->subSeconds(60))) {
+            $seconds = $user->admin_otp_last_sent_at->diffInSeconds(now());
+            $wait = max(60 - $seconds, 0);
+
+            return response()->json([
+                'status' => 'error',
+                'message' => "Please wait {$wait} seconds before requesting a new code.",
+            ], 429);
+        }
+
+        $otp = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+
+        $user->admin_otp_code = Hash::make($otp);
+        $user->admin_otp_expires_at = now()->addMinutes(5);
+        $user->admin_otp_attempts = 0;
+        $user->admin_otp_last_sent_at = now();
+        $user->save();
+
+        try {
+            Mail::mailer('admin_smtp')->to($user->email)->send(new AdminOtpMail($otp, $user->full_name, 5));
+        } catch (\Throwable $exception) {
+            \Log::warning('Admin OTP mailer resend failed, attempting default transport: ' . $exception->getMessage());
+            try {
+                Mail::to($user->email)->send(new AdminOtpMail($otp, $user->full_name, 5));
+            } catch (\Throwable $fallbackException) {
+                \Log::error('Admin OTP mail resend fallback failed: ' . $fallbackException->getMessage());
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Unable to send verification code. Please try again later.',
+                ], 500);
+            }
+        }
+
+        Session::put('admin_otp_pending', true);
+        Session::put('force_admin_form', true);
+        Session::put('pending_admin_email', $user->email);
+
+        $this->createLoginAttempt($request, $user, 'otp_resent');
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'A new verification code has been sent.',
+        ]);
+    }
+
+    public function cancelAdminOtp(Request $request)
+    {
+        $adminId = Session::get('pending_admin_id');
+        $user = null;
+
+        if ($adminId) {
+            $user = User::where('id', $adminId)
+                ->where('role', 'admin')
+                ->where('status', 'active')
+                ->first();
+
+            if ($user) {
+                $user->admin_otp_code = null;
+                $user->admin_otp_expires_at = null;
+                $user->admin_otp_attempts = 0;
+                $user->admin_otp_last_sent_at = null;
+                $user->save();
+            }
+        }
+
+        Session::forget(['admin_otp_pending', 'pending_admin_id', 'pending_admin_email', 'force_admin_form', 'pending_admin_coordinates']);
+
+        if ($user) {
+            $this->createLoginAttempt($request, $user, 'otp_cancelled');
+        }
+
+        return response()->json([
+            'status' => 'success',
+        ]);
+    }
 
     public function logout()
     {

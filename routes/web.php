@@ -24,6 +24,9 @@ Route::get('/', function () {
 // Authentication Routes
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login'])->name('login.submit');
+Route::post('/admin/otp/verify', [LoginController::class, 'verifyAdminOtp'])->name('admin.otp.verify');
+Route::post('/admin/otp/resend', [LoginController::class, 'resendAdminOtp'])->name('admin.otp.resend');
+Route::post('/admin/otp/cancel', [LoginController::class, 'cancelAdminOtp'])->name('admin.otp.cancel');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::post('/verify-student-id', [LoginController::class, 'verifyStudentId'])->name('verify.student.id');
 Route::get('/clear-student-verification', [LoginController::class, 'clearStudentVerification'])->name('clear.student.verification');
