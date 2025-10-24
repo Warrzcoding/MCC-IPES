@@ -377,6 +377,33 @@
                 font-size: 26px;
             }
         }
+
+        /* ==================== SWEETALERT SIZING ==================== */
+        .swal2-popup {
+            width: 320px !important;
+            padding: 20px !important;
+        }
+
+        .swal2-title {
+            font-size: 1.25rem !important;
+            margin-bottom: 8px !important;
+        }
+
+        .swal2-html-container {
+            font-size: 0.9rem !important;
+            margin: 8px 0 !important;
+        }
+
+        .swal2-confirm,
+        .swal2-cancel {
+            padding: 6px 16px !important;
+            font-size: 0.85rem !important;
+        }
+
+        .swal2-actions {
+            gap: 8px !important;
+            margin-top: 12px !important;
+        }
     </style>
 </head>
 <body>
@@ -455,7 +482,7 @@
                 </div>
             </form>
 
-            <a href="{{ route('login') }}" class="exit-link">
+            <a href="{{ route('login') }}" class="exit-link" onclick="confirmExit(event)">
                 Exit Super Admin
             </a>
 
@@ -606,6 +633,34 @@
                 });
             });
         @endif
+
+        function confirmExit(event) {
+            event.preventDefault();
+            Swal.fire({
+                title: 'Exit Super Admin Portal?',
+                text: 'Are you sure you want to exit super admin secret portal?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Exit',
+                cancelButtonText: 'Cancel',
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#6c757d',
+                background: 'rgba(11, 21, 41, 0.95)',
+                color: '#e8f1ff',
+                didOpen: function() {
+                    const popup = Swal.getPopup();
+                    if (popup) {
+                        popup.style.borderRadius = '16px';
+                        popup.style.border = '1px solid rgba(255, 255, 255, 0.08)';
+                        popup.style.boxShadow = '0 20px 55px rgba(5, 15, 35, 0.45)';
+                    }
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = '{{ route("login") }}';
+                }
+            });
+        }
 
         // Custom styling for SweetAlert modals
         const style = document.createElement('style');

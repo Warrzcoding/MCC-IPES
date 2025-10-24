@@ -499,6 +499,33 @@
         .matrix-bg {
             animation: matrix 5s infinite;
         }
+
+        /* ==================== SWEETALERT SIZING ==================== */
+        .swal2-popup {
+            width: 320px !important;
+            padding: 20px !important;
+        }
+
+        .swal2-title {
+            font-size: 1.25rem !important;
+            margin-bottom: 8px !important;
+        }
+
+        .swal2-html-container {
+            font-size: 0.9rem !important;
+            margin: 8px 0 !important;
+        }
+
+        .swal2-confirm,
+        .swal2-cancel {
+            padding: 6px 16px !important;
+            font-size: 0.85rem !important;
+        }
+
+        .swal2-actions {
+            gap: 8px !important;
+            margin-top: 12px !important;
+        }
     </style>
 </head>
 <body>
