@@ -53,7 +53,7 @@
     --academic-text-size-button: 0.74rem;
     --academic-table-text-size: 0.78rem;
 }
-
+/*  */
 /* Ensure SweetAlert2 action buttons align horizontally and use smaller Bootstrap sizing */
 .swal2-container .swal2-actions {
     display: flex;
@@ -251,6 +251,108 @@ div[id^="editAcademicYearModal"] .modal-footer .btn {
     .page-full-width table th,
     .page-full-width table td {
         padding: 0.2rem 0.28rem;
+    }
+
+    .card-header {
+        flex-direction: column !important;
+        align-items: stretch !important;
+    }
+
+    .card-header h5 {
+        margin-bottom: 0.75rem;
+    }
+
+    .card-header button {
+        width: 100%;
+    }
+
+    .table td:last-child {
+        display: flex;
+        flex-wrap: nowrap;
+        gap: 0.15rem;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .table td:last-child form,
+    .table td:last-child .btn,
+    .table td:last-child a {
+        flex-shrink: 0;
+        margin: 0 !important;
+    }
+
+    .table td:last-child .btn {
+        padding: 0.2rem 0.3rem;
+        font-size: 0.55rem;
+        white-space: nowrap;
+    }
+
+    .table td:last-child .btn i {
+        font-size: 0.5rem;
+    }
+
+    .table td:last-child .me-1 {
+        margin-right: 0.1rem !important;
+    }
+
+    .table td:last-child .ms-1 {
+        margin-left: 0.1rem !important;
+    }
+}
+
+@media (max-width: 576px) {
+    :root {
+        --academic-text-size-base: 0.65rem;
+        --academic-text-size-heading: 0.78rem;
+        --academic-text-size-subheading: 0.68rem;
+        --academic-text-size-label: 0.58rem;
+        --academic-text-size-button: 0.62rem;
+        --academic-table-text-size: 0.65rem;
+    }
+
+    .page-full-width .btn-sm {
+        padding: 0.15rem 0.3rem;
+    }
+
+    .table td {
+        padding: 0.15rem 0.2rem !important;
+    }
+
+    .card-header button {
+        padding: 0.35rem 0.6rem;
+    }
+
+    .table td:last-child {
+        gap: 0.1rem;
+        overflow-x: auto;
+    }
+
+    .table td:last-child .btn {
+        padding: 0.15rem 0.25rem;
+        font-size: 0 !important;
+        height: 1.4rem;
+        width: 1.4rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 1;
+    }
+
+    .table td:last-child .btn i {
+        font-size: 0.5rem;
+        margin: 0 !important;
+    }
+
+    .table td:last-child .btn .text-white {
+        display: none;
+    }
+
+    .table td:last-child form {
+        display: inline;
+    }
+
+    .table td:last-child a.btn {
+        display: inline-flex;
     }
 }
 </style>
