@@ -1587,7 +1587,7 @@
                     Verify Code
                 </button>
                 <div class="otp-utility-actions">
-                    <button type="button" id="adminOtpResendButton">Resend Code</button>
+                    <button type="button" id="adminOtpResendButton">Resend Codes</button>
                     <button type="button" id="adminOtpCancelButton">Cancel</button>
                 </div>
             </div>
