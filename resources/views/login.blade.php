@@ -1573,7 +1573,7 @@
             <div class="otp-modal-icon">
             </div>
             <div class="otp-modal-title">Administrator Verification</div>
-            <p class="otp-modal-subtitle">Enter the 6-digit code sent to <span class="otp-email" id="adminOtpEmail">{{ $pending_admin_email }}</span></p>
+            <p class="otp-modal-subtitle">Enter the 6digit code sent to <span class="otp-email" id="adminOtpEmail">{{ $pending_admin_email }}</span></p>
             <div class="otp-error" id="adminOtpError" role="alert"></div>
             <div class="otp-input-group" id="adminOtpInputs">
                 <input type="text" inputmode="numeric" maxlength="1" autocomplete="one-time-code" aria-label="Digit 1">
