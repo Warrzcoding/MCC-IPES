@@ -644,6 +644,23 @@
     }
 }
 
+@media (max-width: 992px) {
+    .card-header.questionnaire-page {
+        flex-direction: column !important;
+        align-items: stretch !important;
+    }
+
+    .card-header.questionnaire-page > div:first-child {
+        margin-bottom: 0.75rem;
+        flex-wrap: wrap;
+    }
+
+    .card-header.questionnaire-page > div:last-child {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+}
+
 @media (max-width: 768px) {
     :root {
         --questionnaire-text-size-base: 0.7rem;
@@ -657,6 +674,130 @@
     .questionnaire-page table th,
     .questionnaire-page table td {
         padding: 0.24rem 0.3rem;
+    }
+
+    .card-header.questionnaire-page {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        padding: 0.75rem !important;
+    }
+
+    .card-header.questionnaire-page > div:first-child {
+        margin-bottom: 0.75rem;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .card-header.questionnaire-page > div:last-child {
+        flex-wrap: wrap;
+        gap: 0.35rem;
+    }
+
+    .card-header.questionnaire-page .badge {
+        margin: 0 !important;
+        margin-left: 0.25rem !important;
+    }
+
+    .card-header.questionnaire-page .dropdown,
+    .card-header.questionnaire-page > div:last-child > button {
+        width: 100%;
+        flex-basis: 100%;
+    }
+
+    .card-header.questionnaire-page .dropdown-toggle {
+        width: 100% !important;
+        justify-content: flex-start;
+    }
+
+    .card-header.questionnaire-page h6 {
+        margin-bottom: 0 !important;
+    }
+
+    .table td:last-child {
+        display: flex;
+        flex-wrap: nowrap;
+        gap: 0.15rem;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .table td:last-child .btn {
+        flex-shrink: 0;
+        padding: 0.2rem 0.3rem;
+        font-size: 0.55rem;
+        white-space: nowrap;
+        height: auto;
+    }
+
+    .table td:last-child .btn i {
+        font-size: 0.5rem;
+        margin-right: 0.05rem;
+    }
+
+    .table td:last-child form {
+        display: inline;
+    }
+}
+
+@media (max-width: 576px) {
+    :root {
+        --questionnaire-text-size-base: 0.65rem;
+        --questionnaire-text-size-heading: 0.78rem;
+        --questionnaire-text-size-subheading: 0.68rem;
+        --questionnaire-text-size-label: 0.58rem;
+        --questionnaire-text-size-button: 0.62rem;
+        --questionnaire-text-size-table: 0.65rem;
+    }
+
+    .card-header.questionnaire-page {
+        padding: 0.5rem !important;
+    }
+
+    .card-header.questionnaire-page h6 {
+        font-size: 0.75rem;
+    }
+
+    .card-header.questionnaire-page .badge {
+        padding: 0.35rem 0.5rem;
+        font-size: 0.55rem;
+    }
+
+    .card-header.questionnaire-page .dropdown-toggle,
+    .card-header.questionnaire-page > div:last-child > button {
+        padding: 0.35rem 0.5rem;
+        font-size: 0.62rem;
+    }
+
+    .table td {
+        padding: 0.2rem 0.2rem !important;
+    }
+
+    .table td:last-child {
+        gap: 0.1rem;
+    }
+
+    .table td:last-child .btn {
+        padding: 0.15rem 0.25rem;
+        font-size: 0 !important;
+        height: 1.4rem;
+        width: 1.4rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 1;
+    }
+
+    .table td:last-child .btn i {
+        font-size: 0.5rem;
+        margin: 0 !important;
+    }
+
+    .mt-3.text-end {
+        text-align: left !important;
+    }
+
+    .mt-3.text-end .btn {
+        width: 100%;
     }
 }
 
@@ -769,7 +910,7 @@ function confirmSaveAllQuestions() {
         cancelButtonText: '<i class="fas fa-times"></i> Cancel',
         reverseButtons: true,
         buttonsStyling: false,
-        customClass: {
+        customClass: {  
             popup: 'rounded-4 shadow-lg',
             title: 'fw-bold',
             confirmButton: 'btn btn-warning btn-sm',
