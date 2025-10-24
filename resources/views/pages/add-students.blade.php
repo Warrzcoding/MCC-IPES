@@ -229,8 +229,8 @@
                         flex-direction: column;
                         justify-content: center;
                         align-items: center;
-                        padding: 0.75rem 0.5rem;
-                        min-height: 80px;
+                        padding: 0.45rem 0.35rem;
+                        min-height: 55px;
                     }
                     
                     .glow-card .card-title {
@@ -287,8 +287,8 @@
                             font-size: 0.55rem;
                         }
                         .glow-card .card-body {
-                            padding: 0.5rem 0.25rem;
-                            min-height: 60px;
+                            padding: 0.35rem 0.2rem;
+                            min-height: 50px;
                         }
                     }
                     
@@ -317,6 +317,58 @@
                     @keyframes pulse-glow {
                         0%, 100% { box-shadow: 0 6px 20px rgba(0,0,0,.15), 0 0 0 3px rgba(255,193,7, .4), 0 0 20px rgba(255,193,7, .5); }
                         50% { box-shadow: 0 6px 20px rgba(0,0,0,.15), 0 0 0 4px rgba(255,193,7, .6), 0 0 30px rgba(255,193,7, .7); }
+                    }
+
+                    @media (max-width: 768px) {
+                        .card-header {
+                            padding: 0.75rem !important;
+                            flex-direction: column !important;
+                            align-items: stretch !important;
+                            justify-content: flex-start !important;
+                        }
+
+                        .card-header h6 {
+                            flex-basis: auto;
+                            margin-bottom: 0.5rem;
+                            order: -1;
+                        }
+
+                        .card-header > div {
+                            flex-basis: 100%;
+                            flex-direction: column;
+                            gap: 0.35rem;
+                        }
+
+                        .card-header .btn,
+                        .card-header .form-select {
+                            width: 100%;
+                            flex-basis: 100%;
+                        }
+
+                        .card-header .me-2 {
+                            margin-right: 0 !important;
+                            margin-bottom: 0.25rem;
+                        }
+                    }
+
+                    @media (max-width: 576px) {
+                        .card-header {
+                            padding: 0.5rem !important;
+                        }
+
+                        .card-header h6 {
+                            font-size: 0.85rem;
+                        }
+
+                        .card-header .btn {
+                            padding: 0.375rem 0.75rem;
+                            font-size: 0.75rem;
+                        }
+
+                        .card-header .form-select {
+                            font-size: 0.75rem;
+                            padding: 0.375rem 0.5rem;
+                        }
                     }
                 </style>
                 <!-- Evaluation Statistics -->
