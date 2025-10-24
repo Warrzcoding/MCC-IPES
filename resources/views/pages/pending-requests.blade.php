@@ -1,60 +1,27 @@
 {{-- Enhanced Pending Requests Subpage --}}
 <style>
 
-/* Compact scaling for 100% scale -> visually ~80% */
-.compact-scale {
-    transform-origin: top center;
-    transform: scale(0.92); /* slightly less than 0.8 to preserve readability; adjust if needed */
-    max-width: 100%;
+.page-full-width {
+    font-size: 0.8rem;
 }
-
-/* Additional compact rules to reduce spacing, fonts, and control sizes */
-.compact-scale .custom-nav-tabs .nav-link {
-    padding: 0.55rem 0.9rem;
-    font-size: 0.92rem;
-}
-.compact-scale .search-container {
-    padding: 0.9rem;
-}
-.compact-scale .search-input-group .form-control {
-    padding: 0.45rem 0.75rem 0.45rem 2.2rem;
-    font-size: 0.9rem;
-}
-.compact-scale .search-icon { left: 0.75rem; }
-.compact-scale .back-btn { padding: 0.45rem 0.9rem !important; min-width: 98px !important; }
-.compact-scale .status-badge { padding: 0.35rem 0.75rem; font-size: 0.8rem; }
-.compact-scale .table-container { font-size: 0.9rem; }
-.compact-scale table th, .compact-scale table td { padding: 0.45rem 0.6rem; }
-.compact-scale .btn { padding: 0.375rem 0.6rem; font-size: 0.9rem; }
-.compact-scale .form-label { font-size: 0.92rem; }
-.compact-scale small { font-size: 0.78rem; }
-
-.compact-scale .enhanced-card { border-radius: 12px; }
-
-/* Reduce small-screen density a bit less aggressively */
-@media (max-width: 576px) {
-    .compact-scale { transform: scale(0.98); }
-    .compact-scale .custom-nav-tabs .nav-link { padding: 0.5rem 0.7rem; }
-}
-
-
 
 .custom-nav-tabs {
     border: none;
     background: #f8f9fa;
     border-radius: 12px;
-    padding: 0.5rem;
-    margin-bottom: 0.5rem;
+    padding: 0.3rem;
+    margin-bottom: 0.3rem;
 }
 
 .custom-nav-tabs .nav-link {
     border: none;
     border-radius: 8px;
-    padding: 1rem 1.5rem;
-    margin: 0 0.25rem;
+    padding: 0.45rem 0.8rem;
+    margin: 0 0.15rem;
     font-weight: 600;
     transition: all 0.3s ease;
     color: #6c757d;
+    font-size: 0.65rem;
 }
 
 .custom-nav-tabs .nav-link.active {
@@ -71,9 +38,9 @@
 .search-container {
     background: white;
     border-radius: 12px;
-    padding: 1.5rem;
+    padding: 0.8rem;
     box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-    margin-bottom: 2rem;
+    margin-bottom: 1.2rem;
 }
 
 .search-input-group {
@@ -83,8 +50,8 @@
 .search-input-group .form-control {
     border: 2px solid #e9ecef;
     border-radius: 10px;
-    padding: 0.75rem 1rem 0.75rem 3rem;
-    font-size: 1rem;
+    padding: 0.4rem 0.6rem 0.4rem 2rem;
+    font-size: 0.7rem;
     transition: all 0.3s ease;
 }
 
@@ -95,37 +62,31 @@
 
 .search-icon {
     position: absolute;
-    left: 1rem;
+    left: 0.7rem;
     top: 50%;
     transform: translateY(-50%);
     color: #6c757d;
     z-index: 10;
+    font-size: 0.7rem;
 }
 
-.enhanced-card {
-    border: none;
-    border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-    overflow: hidden;
+.form-label {
+    font-size: 0.7rem;
+    font-weight: 600;
 }
 
-.tab-content {
-    padding: 0.5rem 2rem 2rem 2rem;
-}
-
-.tab-separator {
-    border: none;
-    height: 2px;
-    background: linear-gradient(90deg, #e9ecef 0%, #dee2e6 50%, #e9ecef 100%);
-    margin: 0.5rem 2rem 0.75rem 2rem;
-    border-radius: 2px;
+.status-badge {
+    padding: 0.35rem 0.75rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.7rem;
 }
 
 .back-btn {
     background: linear-gradient(135deg, #6c757d 0%, #495057 100%) !important;
     border: none !important;
     border-radius: 10px !important;
-    padding: 0.75rem 1.5rem !important;
+    padding: 0.4rem 0.8rem !important;
     font-weight: 600 !important;
     transition: all 0.3s ease !important;
     box-shadow: 0 4px 15px rgba(108, 117, 125, 0.3) !important;
@@ -133,7 +94,14 @@
     text-decoration: none !important;
     display: inline-flex !important;
     align-items: center !important;
-    min-width: 120px !important;
+    min-width: 85px !important;
+    font-size: 0.7rem !important;
+}
+
+#approve-selected {
+    padding: 0.35rem 0.65rem !important;
+    font-size: 0.65rem !important;
+    border-radius: 8px !important;
 }
 
 .back-btn:hover {
@@ -143,11 +111,221 @@
     text-decoration: none !important;
 }
 
-.status-badge {
-    padding: 0.5rem 1rem;
-    border-radius: 20px;
+.table-content-compact {
+    font-size: 0.8rem;
+}
+
+.table-content-compact table {
+    font-size: 0.8rem;
+}
+
+.table-content-compact table th, 
+.table-content-compact table td {
+    padding: 0.45rem 0.5rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.table-content-compact table th {
+    font-size: 0.75rem;
     font-weight: 600;
-    font-size: 0.875rem;
+}
+
+.table-content-compact table img {
+    width: 40px;
+    height: 40px;
+}
+
+.table-content-compact .approve-btn,
+.table-content-compact .reject-btn,
+.table-content-compact .delete-btn {
+    padding: 0.3rem 0.5rem !important;
+    font-size: 0.7rem !important;
+}
+
+.table-content-compact .approve-btn i,
+.table-content-compact .reject-btn i,
+.table-content-compact .delete-btn i {
+    font-size: 0.65rem !important;
+    margin-right: 0.25rem !important;
+}
+
+.tab-content {
+    padding: 0.3rem 1.2rem 1.2rem 1.2rem;
+}
+
+.tab-separator {
+    border: none;
+    height: 1px;
+    background: linear-gradient(90deg, #e9ecef 0%, #dee2e6 50%, #e9ecef 100%);
+    margin: 0.3rem 1.2rem 0.5rem 1.2rem;
+    border-radius: 2px;
+}
+
+small {
+    font-size: 0.7rem !important;
+}
+
+@media (max-width: 1024px) {
+    .custom-nav-tabs .nav-link {
+        padding: 0.4rem 0.7rem;
+        font-size: 0.62rem;
+    }
+
+    #approve-selected {
+        padding: 0.3rem 0.55rem !important;
+        font-size: 0.6rem !important;
+    }
+
+    .form-label {
+        font-size: 0.65rem;
+    }
+
+    .search-input-group .form-control {
+        font-size: 0.65rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .custom-nav-tabs {
+        padding: 0.25rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .custom-nav-tabs .nav-link {
+        padding: 0.38rem 0.65rem;
+        font-size: 0.6rem;
+    }
+
+    #approve-selected {
+        padding: 0.3rem 0.5rem !important;
+        font-size: 0.58rem !important;
+    }
+
+    .form-label {
+        font-size: 0.63rem;
+    }
+
+    .search-input-group .form-control {
+        font-size: 0.63rem;
+        padding: 0.35rem 0.5rem 0.35rem 1.8rem;
+    }
+
+    .search-icon {
+        font-size: 0.63rem;
+        left: 0.6rem;
+    }
+
+    .status-badge {
+        font-size: 0.65rem;
+        padding: 0.3rem 0.6rem;
+    }
+
+    .table-content-compact table th,
+    .table-content-compact table td {
+        padding: 0.35rem 0.35rem;
+        font-size: 0.75rem;
+    }
+
+    .table-content-compact .approve-btn,
+    .table-content-compact .reject-btn,
+    .table-content-compact .delete-btn {
+        padding: 0.25rem 0.4rem !important;
+        font-size: 0.65rem !important;
+    }
+
+    .search-container {
+        padding: 0.75rem;
+        margin-bottom: 1.2rem;
+    }
+
+    .tab-content {
+        padding: 0.25rem 1rem 1rem 1rem;
+    }
+
+    .back-btn {
+        padding: 0.35rem 0.7rem !important;
+        font-size: 0.65rem !important;
+    }
+}
+
+@media (max-width: 576px) {
+    .custom-nav-tabs {
+        padding: 0.2rem;
+        margin-bottom: 0.2rem;
+    }
+
+    .custom-nav-tabs .nav-link {
+        padding: 0.35rem 0.6rem;
+        font-size: 0.55rem;
+    }
+
+    #approve-selected {
+        padding: 0.25rem 0.45rem !important;
+        font-size: 0.53rem !important;
+    }
+
+    .form-label {
+        font-size: 0.6rem;
+    }
+
+    .search-input-group .form-control {
+        font-size: 0.6rem;
+        padding: 0.32rem 0.45rem 0.32rem 1.6rem;
+    }
+
+    .search-icon {
+        font-size: 0.6rem;
+        left: 0.5rem;
+    }
+
+    .status-badge {
+        font-size: 0.6rem;
+        padding: 0.25rem 0.5rem;
+    }
+
+    .table-content-compact table th,
+    .table-content-compact table td {
+        padding: 0.3rem 0.25rem;
+        font-size: 0.7rem;
+    }
+
+    .table-content-compact table img {
+        width: 35px;
+        height: 35px;
+    }
+
+    .table-content-compact .approve-btn,
+    .table-content-compact .reject-btn,
+    .table-content-compact .delete-btn {
+        padding: 0.2rem 0.3rem !important;
+        font-size: 0.6rem !important;
+    }
+
+    .search-container {
+        padding: 0.6rem;
+        margin-bottom: 0.8rem;
+    }
+
+    .tab-content {
+        padding: 0.2rem 0.8rem 0.8rem 0.8rem;
+    }
+
+    .back-btn {
+        padding: 0.3rem 0.6rem !important;
+        font-size: 0.6rem !important;
+    }
+
+    small {
+        font-size: 0.6rem !important;
+    }
+}
+.enhanced-card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    overflow: hidden;
 }
 
 .badge-pending {
@@ -158,6 +336,22 @@
 .badge-rejected {
     background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
     color: #dc3545;
+}
+
+.p-4 {
+    padding: 1rem !important;
+}
+
+@media (max-width: 768px) {
+    .p-4 {
+        padding: 0.75rem !important;
+    }
+}
+
+@media (max-width: 576px) {
+    .p-4 {
+        padding: 0.6rem !important;
+    }
 }
 </style>
 
@@ -171,7 +365,6 @@
 
 
 
-<div class="compact-scale">
 <div class="row page-full-width">
     <div class="col-12">
         <div class="enhanced-card">
@@ -245,7 +438,7 @@
                         </div>
 
                         <!-- Table Container -->
-                        <div class="table-container">
+                        <div class="table-container table-content-compact">
                             <div id="pendingRequestsTable">
                                 @include('pages.partials.pending-requests-table', ['pendingRequests' => $pendingRequests])
                             </div>
@@ -287,7 +480,7 @@
                         </div>
 
                         <!-- Table Container -->
-                        <div class="table-container">
+                        <div class="table-container table-content-compact">
                             <div id="rejectedRequestsTable">
                                 @include('pages.partials.rejected-requests-table', ['rejectedRequests' => $rejectedRequests])
                             </div>

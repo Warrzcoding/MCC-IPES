@@ -57,6 +57,33 @@
 </div>
 
 <style>
+    .table-responsive {
+        font-size: 0.8rem;
+    }
+
+    .table-responsive table {
+        font-size: 0.8rem;
+    }
+
+    .table-responsive table thead th {
+        font-size: 0.75rem;
+        padding: 0.45rem 0.5rem;
+        white-space: nowrap;
+    }
+
+    .table-responsive table tbody td {
+        font-size: 0.8rem;
+        padding: 0.45rem 0.5rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .table-responsive table img {
+        width: 40px;
+        height: 40px;
+    }
+
     /* Enhanced delete button */
     .delete-btn {
         border-radius: 6px !important;
@@ -65,6 +92,8 @@
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         border: none;
         background: linear-gradient(135deg, #dc3545, #e74c3c);
+        padding: 0.3rem 0.5rem !important;
+        font-size: 0.7rem !important;
     }
     
     .delete-btn:hover {
@@ -72,23 +101,49 @@
         transform: translateY(-2px);
         box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
     }
+
+    .delete-btn i {
+        font-size: 0.65rem !important;
+        margin-right: 0.25rem !important;
+    }
     
     /* Responsive adjustments */
     @media (max-width: 768px) {
-        .delete-btn {
-            padding: 4px 8px !important;
-            font-size: 11px !important;
+        .table-responsive table thead th {
+            font-size: 0.7rem;
+            padding: 0.35rem 0.35rem;
         }
-        
-        .delete-btn i {
-            font-size: 10px !important;
+
+        .table-responsive table tbody td {
+            font-size: 0.75rem;
+            padding: 0.35rem 0.35rem;
+        }
+
+        .delete-btn {
+            padding: 0.25rem 0.4rem !important;
+            font-size: 0.65rem !important;
         }
     }
     
     @media (max-width: 576px) {
+        .table-responsive table thead th {
+            font-size: 0.65rem;
+            padding: 0.3rem 0.25rem;
+        }
+
+        .table-responsive table tbody td {
+            font-size: 0.7rem;
+            padding: 0.3rem 0.25rem;
+        }
+
+        .table-responsive table img {
+            width: 35px;
+            height: 35px;
+        }
+
         .delete-btn {
-            padding: 3px 6px !important;
-            font-size: 10px !important;
+            padding: 0.2rem 0.3rem !important;
+            font-size: 0.6rem !important;
         }
         
         .delete-btn .me-1 {
