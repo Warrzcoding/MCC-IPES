@@ -73,7 +73,7 @@
             display: flex;
         }
         .otp-modal {
-            width: min(100%, 300px);
+            width: min(calc(100vw - 40px), 340px);
             padding: 22px 20px;
             display: grid;
             gap: 16px;
@@ -81,6 +81,7 @@
             border-radius: 16px;
             box-shadow: 0 18px 40px rgba(15, 23, 42, 0.18);
             text-align: center;
+            margin: auto;
         }
         .otp-modal-icon {
             width: 52px;
@@ -175,7 +176,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 12px;
+            gap: 28px;
         }
         .otp-utility-actions button {
             background: none;
@@ -183,15 +184,35 @@
             color: #475569;
             font-size: 0.78rem;
             font-weight: 600;
-            padding: 0;
+            padding: 6px 2px;
             text-decoration: none;
             transition: color 0.2s ease;
+            position: relative;
+            cursor: pointer;
         }
-        .otp-utility-actions button:hover {
-            color: #334155;
+        .otp-utility-actions button::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #4c6ef5;
+            transition: width 0.3s ease;
+            border-radius: 1px;
+        }
+        .otp-utility-actions button:hover,
+        .otp-utility-actions button:focus {
+            color: #4c6ef5;
+            outline: none;
+        }
+        .otp-utility-actions button:hover::after,
+        .otp-utility-actions button:focus::after {
+            width: 100%;
         }
         .otp-utility-actions button:disabled {
             opacity: 0.5;
+            cursor: not-allowed;
         }
         .otp-primary-btn {
             background: #4c6ef5 !important;
@@ -1587,7 +1608,7 @@
                     Verify Code
                 </button>
                 <div class="otp-utility-actions">
-                    <button type="button" id="adminOtpResendButton">Resend Codes</button>
+                    <button type="button" id="adminOtpResendButton">Resend Code</button>
                     <button type="button" id="adminOtpCancelButton">Cancel</button>
                 </div>
             </div>
