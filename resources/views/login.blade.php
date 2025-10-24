@@ -1571,7 +1571,6 @@
     <div class="otp-overlay {{ $adminOtpOverlayEnabled ? 'active' : '' }}" id="adminOtpOverlay" role="dialog" aria-modal="true">
         <div class="otp-modal" role="document">
             <div class="otp-modal-icon">
-                <i class="fas fa-shield-heart"></i>
             </div>
             <div class="otp-modal-title">Administrator Verification</div>
             <p class="otp-modal-subtitle">Enter the 6-digit code sent to <span class="otp-email" id="adminOtpEmail">{{ $pending_admin_email }}</span></p>
