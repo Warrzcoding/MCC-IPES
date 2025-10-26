@@ -13,6 +13,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Super Admin Login</title>
     <link rel="icon" type="image/png" href="{{ asset('images/mccicon.jpg') }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -489,6 +490,80 @@
         </div>
     </div>
 
+    <!-- Access Code Verification Modal -->
+    <div class="modal fade" id="accessCodeModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="accessCodeLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" style="max-width: 320px; width: 90%; margin: auto;">
+            <div class="modal-content" style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px;">
+                <div class="modal-body text-center" style="padding: 35px 25px;">
+                    <div style="font-size: 45px; margin-bottom: 18px; color: var(--accent);">
+                        <i class="fas fa-shield-halved"></i>
+                    </div>
+                    <h5 class="modal-title mb-2" style="color: var(--text-light); font-weight: 700; font-size: 1.15rem;">Access Code</h5>
+                    <p style="color: rgba(232, 241, 255, 0.6); margin-bottom: 18px; font-size: 0.88rem;">
+                        Enter code to proceed
+                    </p>
+                    <div id="accessCodeTimer" style="font-size: 1.3rem; font-weight: 700; color: var(--accent); margin-bottom: 18px; font-family: 'Courier New', monospace;">
+                        20s
+                    </div>
+                    <form id="accessCodeForm" style="margin-bottom: 0;">
+                        <div class="input-wrapper" style="margin-bottom: 0;">
+                            <input
+                                type="text"
+                                id="accessCodeInput"
+                                class="form-control"
+                                placeholder="Code"
+                                required
+                                maxlength="20"
+                                pattern="[a-zA-Z0-9]*"
+                                style="text-align: center; letter-spacing: 0.15em; font-size: 1rem; font-weight: 600; padding: 10px 12px;"
+                            >
+                        </div>
+                        <div id="accessCodeError" style="color: #ff6b81; font-size: 0.8rem; margin-top: 10px; display: none;"></div>
+                    </form>
+                    <button type="button" id="verifyAccessCodeBtn" class="btn btn-primary" style="margin-top: 18px; width: 100%; padding: 8px 12px; font-size: 0.88rem;">
+                        <i class="fas fa-arrow-right me-1"></i>Verify
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        @media (max-width: 480px) {
+            .modal-dialog {
+                margin: 1rem auto !important;
+            }
+            #accessCodeModal .modal-dialog {
+                max-width: 85% !important;
+                width: 85% !important;
+            }
+            #accessCodeModal .modal-body {
+                padding: 30px 20px !important;
+            }
+            #accessCodeModal .modal-title {
+                font-size: 1rem !important;
+            }
+            #accessCodeTimer {
+                font-size: 1.2rem !important;
+            }
+        }
+
+        @media (max-width: 360px) {
+            #accessCodeModal .modal-body {
+                padding: 25px 18px !important;
+            }
+            #accessCodeModal h5 {
+                font-size: 1rem !important;
+            }
+            #accessCodeModal p {
+                font-size: 0.8rem !important;
+            }
+            #accessCodeTimer {
+                font-size: 1.1rem !important;
+            }
+        }
+    </style>
+
     <!-- Countdown Modal for Account Lock -->
     <div class="modal fade" id="lockCountdownModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="lockCountdownLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
@@ -516,7 +591,99 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
 
     <script>
+        let accessCodeTimerInterval = null;
+
+        function startAccessCodeTimer() {
+            let timeLeft = 20;
+            const timerDisplay = document.getElementById('accessCodeTimer');
+
+            if (accessCodeTimerInterval) {
+                clearInterval(accessCodeTimerInterval);
+            }
+
+            timerDisplay.textContent = timeLeft + 's';
+
+            accessCodeTimerInterval = setInterval(() => {
+                timeLeft--;
+                timerDisplay.textContent = timeLeft + 's';
+
+                if (timeLeft <= 0) {
+                    clearInterval(accessCodeTimerInterval);
+                    window.location.href = '{{ route("login") }}';
+                }
+            }, 1000);
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
+            // Show access code modal on page load
+            const accessCodeModal = new bootstrap.Modal(document.getElementById('accessCodeModal'));
+            accessCodeModal.show();
+            startAccessCodeTimer();
+
+            // Handle access code verification
+            document.getElementById('verifyAccessCodeBtn').addEventListener('click', function() {
+                const accessCode = document.getElementById('accessCodeInput').value.trim();
+                const errorDiv = document.getElementById('accessCodeError');
+
+                if (!accessCode) {
+                    errorDiv.textContent = 'Please enter an access code';
+                    errorDiv.style.display = 'block';
+                    return;
+                }
+
+                this.disabled = true;
+                this.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Verifying...';
+
+                fetch('{{ route("superadmin.verify-accesscode") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        accesscode: accessCode
+                    })
+                })
+                .then(response => {
+                    if (response.ok) {
+                        return response.json().then(data => {
+                            clearInterval(accessCodeTimerInterval);
+                            accessCodeModal.hide();
+                            errorDiv.style.display = 'none';
+                            document.getElementById('accessCodeInput').value = '';
+                        });
+                    } else {
+                        return response.json().then(data => {
+                            errorDiv.textContent = data.message || 'Invalid access code';
+                            errorDiv.style.display = 'block';
+                            this.disabled = false;
+                            this.innerHTML = '<i class="fas fa-arrow-right me-1"></i>Verify';
+                            startAccessCodeTimer();
+                        });
+                    }
+                })
+                .catch(error => {
+                    errorDiv.textContent = 'An error occurred. Please try again.';
+                    errorDiv.style.display = 'block';
+                    this.disabled = false;
+                    this.innerHTML = '<i class="fas fa-arrow-right me-1"></i>Verify';
+                    startAccessCodeTimer();
+                });
+            });
+
+            // Validate access code input - allow only alphanumeric characters
+            const accessCodeInput = document.getElementById('accessCodeInput');
+            accessCodeInput.addEventListener('input', function(event) {
+                this.value = this.value.replace(/[^a-zA-Z0-9]/g, '');
+            });
+
+            // Allow Enter key to verify access code
+            accessCodeInput.addEventListener('keypress', function(event) {
+                if (event.key === 'Enter') {
+                    document.getElementById('verifyAccessCodeBtn').click();
+                }
+            });
+
             // Handle validation error alert timeout (5 seconds)
             const errorAlert = document.getElementById('validationErrorAlert');
             if (errorAlert) {
@@ -690,6 +857,16 @@
                 background-color: rgba(31, 138, 255, 0.95) !important;
                 transform: translateY(-1px) !important;
                 box-shadow: 0 16px 36px rgba(18, 98, 208, 0.4) !important;
+            }
+            .swal2-cancel {
+                border-radius: 12px !important;
+                padding: 11px 24px !important;
+                font-weight: 600 !important;
+                border: 1px solid rgba(108, 117, 125, 0.5) !important;
+                transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease !important;
+            }
+            .swal2-cancel:hover {
+                transform: translateY(-1px) !important;
             }
         `;
         document.head.appendChild(style);

@@ -122,4 +122,23 @@ class SuperAdminController extends Controller
             ->with('success', 'You have been logged out successfully.')
             ->with('logout_success', true);
     }
+
+    /**
+     * Verify access code before showing login form.
+     */
+    public function verifyAccessCode(Request $request)
+    {
+        $request->validate([
+            'accesscode' => ['required', 'string'],
+        ]);
+
+        $superAdmin = SuperAdmin::first();
+
+        if ($superAdmin && Hash::check($request->accesscode, $superAdmin->accesscode)) {
+            session(['temp_access_verified' => true]);
+            return response()->json(['success' => true]);
+        }
+
+        return response()->json(['success' => false, 'message' => 'Invalid access code.'], 401);
+    }
 }

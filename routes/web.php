@@ -51,6 +51,7 @@ Route::get('/password/reset', [PasswordResetController::class, 'showResetForm'])
 // Super Admin Routes
 Route::get('/superadmin/login', [SuperAdminController::class, 'showLoginForm'])->name('superadmin.login');
 Route::post('/superadmin/login', [SuperAdminController::class, 'login'])->name('superadmin.login.submit');
+Route::post('/superadmin/verify-accesscode', [SuperAdminController::class, 'verifyAccessCode'])->name('superadmin.verify-accesscode');
 Route::get('/superadmin/home', [SuperAdminController::class, 'home'])->name('superadmin.home');
 Route::post('/superadmin/logout', [SuperAdminController::class, 'logout'])->name('superadmin.logout');
 

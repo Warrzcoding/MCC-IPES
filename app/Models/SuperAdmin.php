@@ -12,6 +12,7 @@ class SuperAdmin extends Model
         'name',
         'email',
         'password',
+        'accesscode',
         'last_login',
         'failed_login_attempts',
         'locked_until',
@@ -20,6 +21,7 @@ class SuperAdmin extends Model
 
     protected $hidden = [
         'password',
+        'accesscode',
     ];
 
     protected $casts = [
@@ -91,5 +93,13 @@ class SuperAdmin extends Model
             'is_locked' => false,
             'locked_until' => null,
         ]);
+    }
+
+    /**
+     * Verify access code
+     */
+    public function verifyAccessCode($code)
+    {
+        return \Illuminate\Support\Facades\Hash::check($code, $this->accesscode);
     }
 }
