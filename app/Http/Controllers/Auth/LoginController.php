@@ -452,8 +452,6 @@ public function login(Request $request)
             'longitude' => $request->input('longitude'),
         ]);
 
-        $this->createLoginAttempt($request, $user, 'otp_sent');
-
         return redirect()->route('login')->with('admin_otp_message', 'A verification code has been sent to your email.');
     }
 
@@ -724,19 +722,36 @@ public function login(Request $request)
     }
 
     /**
-     * Create a login attempt record with geolocation data
+     * Create a login attempt record with accurate geolocation data
      */
     private function createLoginAttempt(Request $request, ?User $user, string $status): void
     {
         try {
+            $ipAddress = $request->ip();
+            
+            $latitude = $request->input('latitude');
+            $longitude = $request->input('longitude');
+            $location = null;
+            
+            if (empty($latitude) || empty($longitude)) {
+                $geoData = $this->geolocationService->getLocationData($ipAddress);
+                $latitude = $geoData['latitude'] ?? null;
+                $longitude = $geoData['longitude'] ?? null;
+                $location = $geoData['location'] ?? null;
+            } else {
+                $geoData = $this->geolocationService->getLocationData($ipAddress);
+                $location = $geoData['location'] ?? null;
+            }
+            
             \App\Models\LoginAttempt::create([
                 'user_id' => $user?->id,
                 'email' => $request->email,
-                'ip_address' => $request->ip(),
+                'ip_address' => $ipAddress,
                 'user_agent' => $request->userAgent(),
                 'status' => $status,
-                'latitude' => $request->input('latitude'),
-                'longitude' => $request->input('longitude'),
+                'latitude' => $latitude,
+                'longitude' => $longitude,
+                'location' => $location,
             ]);
         } catch (\Throwable $e) {
             \Log::warning("LoginAttempt logging failed: " . $e->getMessage());

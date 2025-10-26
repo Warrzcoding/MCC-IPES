@@ -448,24 +448,36 @@
     width: 100% !important;
     position: relative !important;
     display: block !important;
+    background-color: #f8f9fa !important;
+    border-radius: 8px !important;
+    overflow: hidden !important;
   }
   
   /* Fix for Leaflet in modals - ensure proper display */
   #detailsModal #map {
     min-height: 320px !important;
-    height: 320px !important;
+    max-height: 100% !important;
+    height: 100% !important;
+    width: 100% !important;
+    display: block !important;
   }
 
   /* Leaflet container must have dimensions */
   #map .leaflet-container {
     height: 100% !important;
     width: 100% !important;
+    display: block !important;
   }
 
   /* Fix for Mapbox in modals */
   #map .mapboxgl-map {
     height: 100% !important;
     width: 100% !important;
+  }
+  
+  /* Ensure map is visible */
+  #map, #map * {
+    box-sizing: border-box;
   }
   
   /* Loading state */
@@ -503,13 +515,48 @@
 
   /* Ensure modal body layout is correct */
   #detailsModal .modal-body {
+    min-height: 350px;
     display: flex;
-    flex-wrap: wrap;
+    align-items: stretch;
   }
 
-  #detailsModal .modal-body > div {
+  #detailsModal .modal-body .row {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1.4fr;
+    gap: 1.5rem;
+    align-items: start;
+  }
+
+  #detailsModal .modal-body .row .col-md-5 {
     display: flex;
     flex-direction: column;
+    min-height: fit-content;
+  }
+
+  #detailsModal .modal-body .row .col-md-7 {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+  }
+
+  #detailsModal .modal-body .row .col-md-7 #map {
+    flex: 1;
+    min-height: 320px;
+    height: 100%;
+    width: 100%;
+  }
+
+  @media (max-width: 992px) {
+    #detailsModal .modal-body .row {
+      grid-template-columns: 1fr;
+      min-height: auto;
+    }
+
+    #detailsModal .modal-body .row .col-md-7 #map {
+      min-height: 300px;
+      height: 300px;
+    }
   }
 </style>
 
@@ -595,6 +642,9 @@
       const normalizedLat = normalizeCoordinate(lat);
       const normalizedLng = normalizeCoordinate(lng);
 
+      let latitude, longitude, useDefaultLocation = false;
+
+      // Check if coordinates are missing or invalid
       if (
         !normalizedLat ||
         !normalizedLng ||
@@ -603,27 +653,25 @@
         normalizedLat.toLowerCase() === 'undefined' ||
         normalizedLng.toLowerCase() === 'undefined'
       ) {
-        renderMapMessage(`<div class="d-flex flex-column align-items-center justify-content-center h-100 text-center px-4">
-          <p class="text-muted mb-1"><i class="fas fa-map-marker-alt me-2"></i>Precise coordinates not available</p>
-          ${meta.locationLabel && meta.locationLabel !== 'Unknown' ? `<p class="text-muted small mb-0">Approximate location: <strong>${meta.locationLabel}</strong></p>` : ''}
-          ${meta.ipAddress ? `<p class="text-muted small mb-0">Source IP: <strong>${meta.ipAddress}</strong></p>` : ''}
-        </div>`);
-        dispatchMapEvent('loginMonitor:mapUnavailable', { reason: 'missing-coordinates', meta });
-        return;
-      }
+        console.log('No coordinates provided, using default world view');
+        latitude = 20;
+        longitude = 0;
+        useDefaultLocation = true;
+      } else {
+        latitude = parseFloat(normalizedLat);
+        longitude = parseFloat(normalizedLng);
 
-      const latitude = parseFloat(normalizedLat);
-      const longitude = parseFloat(normalizedLng);
-
-      if (Number.isNaN(latitude) || Number.isNaN(longitude)) {
-        renderMapMessage('<div class="d-flex align-items-center justify-content-center h-100"><p class="text-muted mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Invalid coordinates</p></div>');
-        dispatchMapEvent('loginMonitor:mapUnavailable', { reason: 'invalid-coordinates', meta, rawLat: lat, rawLng: lng });
-        return;
+        if (Number.isNaN(latitude) || Number.isNaN(longitude)) {
+          console.log('Invalid coordinates, using default world view');
+          latitude = 20;
+          longitude = 0;
+          useDefaultLocation = true;
+        }
       }
 
       destroyExistingMap();
 
-      console.log('Using coordinates:', latitude, longitude);
+      console.log('Using coordinates:', latitude, longitude, 'Default location:', useDefaultLocation);
 
       const container = document.getElementById('map');
       if (!container) {
@@ -637,26 +685,30 @@
       if (typeof google !== 'undefined' && google.maps) {
         providerUsed = 'google';
         const location = { lat: latitude, lng: longitude };
+        const zoomLevel = useDefaultLocation ? 2 : 12;
         map = new google.maps.Map(container, {
-          zoom: 12,
+          zoom: zoomLevel,
           center: location,
           mapTypeControl: true,
           streetViewControl: true,
           fullscreenControl: true
         });
-        marker = new google.maps.Marker({
-          position: location,
-          map: map,
-          title: 'Login Location'
-        });
+        if (!useDefaultLocation) {
+          marker = new google.maps.Marker({
+            position: location,
+            map: map,
+            title: 'Login Location'
+          });
+        }
       } else if (typeof mapboxgl !== 'undefined') {
         providerUsed = 'mapbox';
         mapboxgl.accessToken = '{{ config("services.mapbox.access_token") }}';
+        const zoomLevel = useDefaultLocation ? 2 : 12;
         map = new mapboxgl.Map({
           container: 'map',
           style: 'mapbox://styles/mapbox/satellite-streets-v12',
           center: [longitude, latitude],
-          zoom: 12
+          zoom: zoomLevel
         });
         map.addControl(new mapboxgl.NavigationControl());
         map.on('load', function() {
@@ -683,15 +735,17 @@
           }
           container.appendChild(layerList);
         });
-        marker = new mapboxgl.Marker()
-          .setLngLat([longitude, latitude])
-          .setPopup(new mapboxgl.Popup().setHTML(`
-            <div class="text-center">
-              <strong>Login Location</strong><br>
-              <small class="text-muted">Lat: ${latitude.toFixed(6)}<br>Lng: ${longitude.toFixed(6)}</small>
-            </div>
-          `))
-          .addTo(map);
+        if (!useDefaultLocation) {
+          marker = new mapboxgl.Marker()
+            .setLngLat([longitude, latitude])
+            .setPopup(new mapboxgl.Popup().setHTML(`
+              <div class="text-center">
+                <strong>Login Location</strong><br>
+                <small class="text-muted">Lat: ${latitude.toFixed(6)}<br>Lng: ${longitude.toFixed(6)}</small>
+              </div>
+            `))
+            .addTo(map);
+        }
       } else if (typeof L !== 'undefined') {
         providerUsed = 'leaflet';
         console.log('Initializing Leaflet map');
@@ -710,49 +764,71 @@
             console.warn('Map container has zero dimensions, applying fallback styles');
             container.style.height = '320px';
             container.style.width = '100%';
+            container.style.display = 'block';
           }
           
+          // Force reflow to ensure CSS is applied
+          void container.offsetHeight;
+          
+          const zoomLevel = useDefaultLocation ? 2 : 12;
           map = L.map('map', {
             center: [latitude, longitude],
-            zoom: 12,
+            zoom: zoomLevel,
             zoomControl: true,
-            attributionControl: true
+            attributionControl: true,
+            preferCanvas: true
           });
 
           console.log('Leaflet map object created, adding tiles');
 
           const baseLayers = {
             "OpenStreetMap": L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-              attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+              maxZoom: 19
             }),
             "Satellite (Esri)": L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-              attribution: '© <a href="https://www.esri.com/">Esri</a>, DigitalGlobe, GeoEye, Earthstar Geographics, CNES/Airbus DS, USDA, USGS, AeroGRID, IGN, and the GIS User Community'
+              attribution: '© <a href="https://www.esri.com/">Esri</a>, DigitalGlobe, GeoEye, Earthstar Geographics, CNES/Airbus DS, USDA, USGS, AeroGRID, IGN, and the GIS User Community',
+              maxZoom: 18
             }),
             "Terrain": L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-              attribution: '© <a href="https://opentopomap.org/">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
+              attribution: '© <a href="https://opentopomap.org/">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)',
+              maxZoom: 17
             }),
             "CartoDB Positron": L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-              attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors © <a href="https://carto.com/attributions">CARTO</a>'
+              attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors © <a href="https://carto.com/attributions">CARTO</a>',
+              maxZoom: 19
             }),
             "Stamen Toner": L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner/{z}/{x}/{y}{r}.png', {
-              attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> — Map data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> — Map data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+              maxZoom: 18
             })
           };
 
           baseLayers["Satellite (Esri)"].addTo(map);
           L.control.layers(baseLayers).addTo(map);
 
-          marker = L.marker([latitude, longitude])
-            .addTo(map)
-            .bindPopup(`
-              <div class="text-center">
-                <strong>Login Location</strong><br>
-                <small class="text-muted">Lat: ${latitude.toFixed(6)}<br>Lng: ${longitude.toFixed(6)}</small>
-              </div>
-            `)
-            .openPopup();
+          if (!useDefaultLocation) {
+            marker = L.marker([latitude, longitude])
+              .addTo(map)
+              .bindPopup(`
+                <div class="text-center">
+                  <strong>Login Location</strong><br>
+                  <small class="text-muted">Lat: ${latitude.toFixed(6)}<br>Lng: ${longitude.toFixed(6)}</small>
+                </div>
+              `)
+              .openPopup();
+          }
 
-          console.log('Leaflet map initialized successfully with marker at', [latitude, longitude]);
+          // Force map to recalculate size
+          setTimeout(() => {
+            if (map && typeof map.invalidateSize === 'function') {
+              map.invalidateSize(true);
+              console.log('invalidateSize called');
+            }
+          }, 100);
+
+          const locationStatus = useDefaultLocation ? 'with default world view' : 'successfully';
+          console.log('Leaflet map initialized ' + locationStatus + ' at', [latitude, longitude]);
         } catch (error) {
           console.error('Error initializing Leaflet map:', error);
           console.error('Error stack:', error.stack);
@@ -770,7 +846,8 @@
         provider: providerUsed,
         latitude,
         longitude,
-        meta
+        meta,
+        useDefaultLocation
       });
     }
 
@@ -838,44 +915,58 @@
     const detailsModal = $('#detailsModal');
     if (detailsModal) {
       detailsModal.addEventListener('shown.bs.modal', function() {
-        // Modal is fully shown, now initialize the map
         const lat = this.getAttribute('data-lat');
         const lng = this.getAttribute('data-lng');
         
         console.log('Modal shown event - coordinates:', lat, lng);
         
         if (lat && lng) {
-          // Longer delay to ensure DOM is fully rendered and visible
-          setTimeout(() => {
-            console.log('Initializing map from modal event');
-            initMap(lat, lng);
-            
-            // Force map to recalculate dimensions for different map libraries
+          // Use requestAnimationFrame to ensure DOM has settled
+          requestAnimationFrame(() => {
+            // Wait for next frame to ensure modal is fully rendered
             setTimeout(() => {
               const mapContainer = $('#map');
               if (mapContainer) {
-                console.log('Map container computed height:', window.getComputedStyle(mapContainer).height);
+                console.log('Map container before init:', {
+                  offsetHeight: mapContainer.offsetHeight,
+                  offsetWidth: mapContainer.offsetWidth,
+                  display: window.getComputedStyle(mapContainer).display,
+                  visibility: window.getComputedStyle(mapContainer).visibility
+                });
               }
               
-              // Leaflet invalidateSize
-              if (map && typeof map.invalidateSize === 'function') {
-                console.log('Calling invalidateSize for Leaflet');
-                map.invalidateSize();
-              }
+              console.log('Initializing map from modal event');
+              initMap(lat, lng);
               
-              // Mapbox resize
-              if (map && typeof map.resize === 'function') {
-                console.log('Calling resize for Mapbox');
-                map.resize();
-              }
-              
-              // Google Maps triggerResize (if needed)
-              if (map && typeof google !== 'undefined' && google.maps) {
-                console.log('Triggering resize for Google Maps');
-                google.maps.event.trigger(map, 'resize');
-              }
-            }, 250);
-          }, 150);
+              // Additional delay for dimension recalculation
+              setTimeout(() => {
+                if (mapContainer) {
+                  console.log('Map container after init:', {
+                    offsetHeight: mapContainer.offsetHeight,
+                    offsetWidth: mapContainer.offsetWidth
+                  });
+                }
+                
+                // Leaflet invalidateSize
+                if (map && typeof map.invalidateSize === 'function') {
+                  console.log('Calling invalidateSize for Leaflet');
+                  map.invalidateSize(true);
+                }
+                
+                // Mapbox resize
+                if (map && typeof map.resize === 'function') {
+                  console.log('Calling resize for Mapbox');
+                  map.resize();
+                }
+                
+                // Google Maps triggerResize (if needed)
+                if (map && typeof google !== 'undefined' && google.maps) {
+                  console.log('Triggering resize for Google Maps');
+                  google.maps.event.trigger(map, 'resize');
+                }
+              }, 300);
+            }, 50);
+          });
         } else {
           console.warn('Modal shown but missing coordinates - lat:', lat, 'lng:', lng);
         }
