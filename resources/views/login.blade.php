@@ -1132,20 +1132,24 @@
             background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
             border: none;
             border-radius: 15px;
-            padding: 18px 25px;
+            padding: 16px 20px;
             font-weight: 600;
             width: 100%;
             margin-bottom: 15px;
-            font-size: 18px;
+            font-size: clamp(14px, 4vw, 18px);
+            line-height: 1.1;
             color: white;
             transition: all 0.3s ease;
-            display: none !important; /* Hidden by default */
+            display: none !important;
             cursor: pointer;
+            white-space: nowrap;
         }
         
-        /* Only show mobile button when explicitly enabled */
         .mobile-student-btn.show-mobile {
-            display: block !important;
+            display: inline-flex !important;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
         .mobile-student-btn:hover {
             transform: translateY(-3px);
@@ -1153,13 +1157,22 @@
             color: white;
         }
         .mobile-student-btn i {
-            margin-right: 10px;
+            flex-shrink: 0;
+        }
+
+        @media (max-width: 360px) {
+            .mobile-student-btn {
+                padding: 14px 16px;
+            }
+            .mobile-student-btn.show-mobile {
+                gap: 6px;
+            }
         }
 
         /* Mobile-specific styles */
         @media (max-width: 768px) {
             .mobile-student-btn.show-mobile {
-                display: block !important;
+                display: inline-flex !important;
             }
             .desktop-user-select {
                 display: none !important;
