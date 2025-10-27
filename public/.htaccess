@@ -25,9 +25,22 @@
         Options -MultiViews -Indexes
     </IfModule>
 
+     RewriteCond %{THE_REQUEST} \s/+index\.php
+     RewriteRule ^index\.php$ - [R=404,L]
+     RewriteCond %{THE_REQUEST} \s/+public/
+     RewriteRule ^public/ - [R=404,L]
+     RewriteCond %{THE_REQUEST} \s/+public_html/
+     RewriteRule ^public_html/ - [R=404,L]
+
+
+
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
+
+   
+
+
 </IfModule>
 
 # Security headers (CSP allows assets)
@@ -59,3 +72,4 @@ Options -Indexes
         Require not env bad_bot
     </RequireAll>
 </IfModule>
+
