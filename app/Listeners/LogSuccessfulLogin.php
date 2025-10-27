@@ -9,6 +9,10 @@ class LogSuccessfulLogin
 {
     public function handle(Login $event): void
     {
+        if ($event->user?->role === 'admin') {
+            return;
+        }
+
         LoginAttempt::create([
             'user_id'    => $event->user?->id,
             'email'      => $event->user?->email,

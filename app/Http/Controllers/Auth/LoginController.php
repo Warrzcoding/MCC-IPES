@@ -734,7 +734,7 @@ public function login(Request $request)
             $location = null;
             
             \Log::info("LoginAttempt: Starting geolocation capture", [
-                'email' => $request->email,
+                'email' => $user?->email,
                 'status' => $status,
                 'client_lat' => $latitude,
                 'client_lng' => $longitude,
@@ -757,7 +757,7 @@ public function login(Request $request)
             }
             
             \Log::info("LoginAttempt: Final geolocation data", [
-                'email' => $request->email,
+                'email' => $user?->email,
                 'status' => $status,
                 'final_lat' => $latitude,
                 'final_lng' => $longitude,
@@ -766,7 +766,7 @@ public function login(Request $request)
             
             \App\Models\LoginAttempt::create([
                 'user_id' => $user?->id,
-                'email' => $request->email,
+                'email' => $user?->email,
                 'ip_address' => $ipAddress,
                 'user_agent' => $request->userAgent(),
                 'status' => $status,
@@ -776,7 +776,7 @@ public function login(Request $request)
             ]);
             
             \Log::info("LoginAttempt: Successfully recorded", [
-                'email' => $request->email,
+                'email' => $user?->email,
                 'status' => $status
             ]);
         } catch (\Throwable $e) {

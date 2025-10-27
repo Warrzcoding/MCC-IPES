@@ -1024,11 +1024,23 @@
               }
             });
 
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content || document.querySelector('input[name="_token"]')?.value || '';
+            
+            if (!csrfToken) {
+              Swal.fire({
+                title: 'Error!',
+                html: '<p class="text-danger mb-0">Security token not found. Please refresh the page.</p>',
+                icon: 'error',
+                confirmButtonColor: '#dc3545'
+              });
+              return;
+            }
+            
             // Send delete request
             fetch(`/dashboard/login-monitor/${id}`, {
               method: 'DELETE',
               headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+                'X-CSRF-TOKEN': csrfToken,
                 'Content-Type': 'application/json',
                 'Accept': 'application/json'
               }
