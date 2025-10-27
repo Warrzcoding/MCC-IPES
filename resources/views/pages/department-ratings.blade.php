@@ -1128,7 +1128,7 @@ function getAdjectivalRating($rating) {
             
             const rowDepartment = row.getAttribute('data-department');
             if (department === 'all' || rowDepartment === department) {
-                const nameEl = row.querySelector('td:nth-child(2) strong');
+                const nameEl = row.querySelector('.staff-info .staff-name');
                 const ratingEl = row.querySelector('td:nth-child(3) .rating-number');
                 const reviewsEl = row.querySelector('td:nth-child(5) .stats-number');
                 if (!nameEl || !ratingEl || !reviewsEl) return;
