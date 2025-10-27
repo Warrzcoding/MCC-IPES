@@ -1473,14 +1473,36 @@
                     // Questions table is empty - proceed with saving
                     Swal.fire({
                         title: 'Save & Clear All Results?',
-                        html: "<span style='font-size:1.1rem;'>This will save all evaluation results and <b>clear all entries</b> from the system.<br><br>Are you sure?</span>",
+                        html: "<span style='font-size:0.95rem;'>Save all evaluation results and clear existing entries?</span>",
                         icon: 'warning',
                         showCancelButton: true,
                         confirmButtonColor: '#dc3545',
                         cancelButtonColor: '#6c757d',
-                        confirmButtonText: '<i class="fas fa-save me-1"></i>Yes, Save & Clear!',
-                        cancelButtonText: '<i class="fas fa-times me-1"></i>Cancel',
+                        confirmButtonText: 'Save & Clear',
+                        cancelButtonText: 'Cancel',
                         reverseButtons: true,
+                        customClass: {
+                            confirmButton: 'btn btn-danger btn-sm',
+                            cancelButton: 'btn btn-secondary btn-sm',
+                            actions: 'swal-actions-compact'
+                        },
+                        buttonsStyling: false,
+                        didOpen: () => {
+                            const style = document.createElement('style');
+                            style.textContent = `
+                                .swal-actions-compact {
+                                    gap: 8px !important;
+                                    justify-content: center !important;
+                                }
+                                .swal2-actions .btn {
+                                    margin: 0 !important;
+                                    min-width: auto !important;
+                                    padding: 0.25rem 0.6rem !important;
+                                    font-size: 0.72rem !important;
+                                }
+                            `;
+                            document.head.appendChild(style);
+                        },
                         showClass: {
                             popup: 'animate__animated animate__fadeInDown'
                         },
