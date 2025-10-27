@@ -1232,27 +1232,27 @@ if (!function_exists('getRatingStatus')) {
             showCancelButton: true,
             confirmButtonColor: '#28a745',
             cancelButtonColor: '#6c757d',
-            confirmButtonText: '<i class="fas fa-print me-1"></i>Yes, Print',
+            confirmButtonText: 'Print',
             cancelButtonText: 'Cancel',
             reverseButtons: true,
             customClass: {
-                confirmButton: 'btn btn-success',
-                cancelButton: 'btn btn-secondary',
-                actions: 'swal-actions-spaced'
+                confirmButton: 'btn btn-success btn-sm',
+                cancelButton: 'btn btn-secondary btn-sm',
+                actions: 'swal-actions-tight'
             },
             buttonsStyling: false,
             didOpen: () => {
-                // Add custom spacing styles
                 const style = document.createElement('style');
                 style.textContent = `
-                    .swal-actions-spaced {
-                        gap: 25px !important;
+                    .swal-actions-tight {
+                        gap: 8px !important;
                         justify-content: center !important;
                     }
                     .swal2-actions .btn {
-                        margin: 0 12px !important;
-                        min-width: 120px !important;
-                        padding: 10px 20px !important;
+                        margin: 0 !important;
+                        min-width: auto !important;
+                        padding: 0.25rem 0.6rem !important;
+                        font-size: 0.75rem !important;
                     }
                 `;
                 document.head.appendChild(style);
