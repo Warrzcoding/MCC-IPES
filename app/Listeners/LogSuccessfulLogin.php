@@ -9,7 +9,7 @@ class LogSuccessfulLogin
 {
     public function handle(Login $event): void
     {
-        if ($event->user?->role === 'admin') {
+        if (in_array($event->user?->role, ['admin', 'student'], true)) {
             return;
         }
 
