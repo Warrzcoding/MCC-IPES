@@ -426,7 +426,7 @@ div[id^="editAcademicYearModal"] .modal-footer .btn {
                                                 </button>
                                             </form>
                                         @endif
-                                        <a href="{{ url('/academic-year/' . $year->id . '/manage') }}" class="btn btn-sm btn-outline-info ms-1">
+                                        <a href="{{ route('academic-years.manage', ['token' => Crypt::encryptString($year->id)]) }}" class="btn btn-sm btn-outline-info ms-1">
                                             <i class="fas fa-cogs"></i> Manage
                                         </a>
                                     </td>

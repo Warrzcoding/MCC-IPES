@@ -81,7 +81,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/dashboard/academic-years/{id}/update', [AcademicYearController::class, 'update'])->name('academic-years.update');
     Route::post('/dashboard/academic-years/{id}/toggle', [AcademicYearController::class, 'toggleActive'])->name('academic-years.toggle');
     Route::post('/dashboard/academic-years/{id}/delete', [AcademicYearController::class, 'destroy'])->name('academic-years.delete');
-    Route::get('/academic-year/{id}/manage', [AcademicYearController::class, 'manage'])->name('academic-years.manage');
+    Route::get('/academic-year/{token}/manage', [AcademicYearController::class, 'manage'])->name('academic-years.manage');
 
     // Academic Year AJAX for staff comments/evaluations
     Route::post('/academic-year/staff-comments', [AcademicYearController::class, 'getStaffCommentsForYear'])->name('staff.comments');

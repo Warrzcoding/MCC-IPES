@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\AcademicYear;
+use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Validator;
 
 class AcademicYearController extends Controller
@@ -100,8 +103,18 @@ class AcademicYearController extends Controller
         return redirect()->back()->with('message', 'Academic year is already active.')->with('message_type', 'info');
     }
 
-    public function manage($id)
+    public function manage($token)
     {
+        if (!Auth::check() || !Auth::user()->isAdmin()) {
+            abort(403);
+        }
+
+        try {
+            $id = Crypt::decryptString($token);
+        } catch (DecryptException $exception) {
+            abort(404);
+        }
+
         $year = \App\Models\AcademicYear::findOrFail($id);
         $savedQuestions = \App\Models\SavedQuestion::where('academic_year_id', $id)->get();
         $savedEvaluations = \DB::table('save_eval_result')->where('academic_year_id', $id)->get();

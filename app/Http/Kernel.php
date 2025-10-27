@@ -66,4 +66,5 @@ class Kernel extends HttpKernel
     protected $routeMiddleware = [
         //
     ];
-} 
+}
+ 
