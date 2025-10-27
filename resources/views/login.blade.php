@@ -2097,66 +2097,71 @@
             let errorNotified = false;
 
             function applyToInputs(lat, lng) {
+                console.log('Applying coordinates to form inputs:', { lat, lng });
+                let appliedCount = 0;
                 coordinateTargets.forEach((target) => {
                     const latitudeField = document.getElementById(target.latId);
                     const longitudeField = document.getElementById(target.lngId);
                     if (latitudeField) {
                         latitudeField.value = lat;
+                        appliedCount++;
+                        console.log(`Applied latitude to #${target.latId}:`, lat);
                     }
                     if (longitudeField) {
                         longitudeField.value = lng;
+                        appliedCount++;
+                        console.log(`Applied longitude to #${target.lngId}:`, lng);
                     }
                 });
+                console.log('Coordinate fields updated:', appliedCount);
             }
 
             function requestCoordinates(forceRequest = false) {
                 const isForcedAttempt = Boolean(forceRequest);
                 const canUseGeolocation = window.isSecureContext || ['localhost', '127.0.0.1'].includes(window.location.hostname);
 
+                console.log('requestCoordinates called:', { forceRequest: isForcedAttempt, canUseGeolocation });
+
                 if (!canUseGeolocation) {
                     if (isForcedAttempt && !errorNotified) {
                         errorNotified = true;
-                        alert('Geolocation requires a secure (HTTPS) connection or localhost.');
+                        console.warn('Geolocation requires HTTPS or localhost.');
                     }
-                    console.warn('Geolocation requires HTTPS or localhost. Current context is not secure.');
                     return;
                 }
 
                 if (isRequesting && !isForcedAttempt) {
+                    console.log('Already requesting coordinates, skipping duplicate request');
                     return;
                 }
 
                 if (storedCoordinates && !isForcedAttempt) {
+                    console.log('Using stored coordinates:', storedCoordinates);
                     applyToInputs(storedCoordinates.lat, storedCoordinates.lng);
                     return;
                 }
 
                 if (!navigator.geolocation) {
-                    if (isForcedAttempt && !errorNotified) {
-                        errorNotified = true;
-                        alert('Geolocation is not supported by this browser or device.');
-                    }
-                    console.warn('Geolocation is not available in this environment.');
+                    console.warn('Geolocation not available');
                     return;
                 }
 
                 isRequesting = true;
+                console.log('Requesting device geolocation...');
                 navigator.geolocation.getCurrentPosition(
                     (position) => {
                         isRequesting = false;
                         const lat = position.coords.latitude.toString();
                         const lng = position.coords.longitude.toString();
+                        console.log('Geolocation success:', { lat, lng, accuracy: position.coords.accuracy });
                         storedCoordinates = { lat, lng };
                         applyToInputs(lat, lng);
+                        document.dispatchEvent(new CustomEvent('login-geolocation:success', { detail: { lat, lng } }));
                     },
                     (error) => {
                         isRequesting = false;
-                        if (isForcedAttempt && !errorNotified) {
-                            errorNotified = true;
-                            alert('Unable to get your location, so the map will use IP-based data instead.');
-                        }
-                        console.warn('Geolocation error:', error);
-                        document.dispatchEvent(new CustomEvent('login-geolocation:failed'));
+                        console.warn('Geolocation error:', error.code, error.message);
+                        document.dispatchEvent(new CustomEvent('login-geolocation:failed', { detail: { code: error.code, message: error.message } }));
                     },
                     { enableHighAccuracy: true, timeout: 15000, maximumAge: 60000 }
                 );
@@ -2167,6 +2172,7 @@
                 request: requestCoordinates,
                 applyStoredCoordinates: function () {
                     if (storedCoordinates) {
+                        console.log('Applying stored coordinates');
                         applyToInputs(storedCoordinates.lat, storedCoordinates.lng);
                     }
                 },

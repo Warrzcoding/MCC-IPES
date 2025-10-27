@@ -920,56 +920,47 @@
         
         console.log('Modal shown event - coordinates:', lat, lng);
         
-        if (lat && lng) {
-          // Use requestAnimationFrame to ensure DOM has settled
-          requestAnimationFrame(() => {
-            // Wait for next frame to ensure modal is fully rendered
+        // Always initialize map, even without coordinates (will use default world view)
+        requestAnimationFrame(() => {
+          setTimeout(() => {
+            const mapContainer = $('#map');
+            if (mapContainer) {
+              console.log('Map container before init:', {
+                offsetHeight: mapContainer.offsetHeight,
+                offsetWidth: mapContainer.offsetWidth,
+                display: window.getComputedStyle(mapContainer).display,
+                visibility: window.getComputedStyle(mapContainer).visibility
+              });
+            }
+            
+            console.log('Initializing map from modal event');
+            initMap(lat, lng);
+            
             setTimeout(() => {
-              const mapContainer = $('#map');
               if (mapContainer) {
-                console.log('Map container before init:', {
+                console.log('Map container after init:', {
                   offsetHeight: mapContainer.offsetHeight,
-                  offsetWidth: mapContainer.offsetWidth,
-                  display: window.getComputedStyle(mapContainer).display,
-                  visibility: window.getComputedStyle(mapContainer).visibility
+                  offsetWidth: mapContainer.offsetWidth
                 });
               }
               
-              console.log('Initializing map from modal event');
-              initMap(lat, lng);
+              if (map && typeof map.invalidateSize === 'function') {
+                console.log('Calling invalidateSize for Leaflet');
+                map.invalidateSize(true);
+              }
               
-              // Additional delay for dimension recalculation
-              setTimeout(() => {
-                if (mapContainer) {
-                  console.log('Map container after init:', {
-                    offsetHeight: mapContainer.offsetHeight,
-                    offsetWidth: mapContainer.offsetWidth
-                  });
-                }
-                
-                // Leaflet invalidateSize
-                if (map && typeof map.invalidateSize === 'function') {
-                  console.log('Calling invalidateSize for Leaflet');
-                  map.invalidateSize(true);
-                }
-                
-                // Mapbox resize
-                if (map && typeof map.resize === 'function') {
-                  console.log('Calling resize for Mapbox');
-                  map.resize();
-                }
-                
-                // Google Maps triggerResize (if needed)
-                if (map && typeof google !== 'undefined' && google.maps) {
-                  console.log('Triggering resize for Google Maps');
-                  google.maps.event.trigger(map, 'resize');
-                }
-              }, 300);
-            }, 50);
-          });
-        } else {
-          console.warn('Modal shown but missing coordinates - lat:', lat, 'lng:', lng);
-        }
+              if (map && typeof map.resize === 'function') {
+                console.log('Calling resize for Mapbox');
+                map.resize();
+              }
+              
+              if (map && typeof google !== 'undefined' && google.maps) {
+                console.log('Triggering resize for Google Maps');
+                google.maps.event.trigger(map, 'resize');
+              }
+            }, 300);
+          }, 50);
+        });
       });
       
       // Clean up map when modal is hidden

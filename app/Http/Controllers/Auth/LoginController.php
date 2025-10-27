@@ -733,15 +733,36 @@ public function login(Request $request)
             $longitude = $request->input('longitude');
             $location = null;
             
+            \Log::info("LoginAttempt: Starting geolocation capture", [
+                'email' => $request->email,
+                'status' => $status,
+                'client_lat' => $latitude,
+                'client_lng' => $longitude,
+                'ip_address' => $ipAddress
+            ]);
+            
+            // If browser geolocation not provided, get from IP
             if (empty($latitude) || empty($longitude)) {
+                \Log::info("LoginAttempt: Browser geolocation missing, fetching from IP API", [
+                    'ip_address' => $ipAddress
+                ]);
                 $geoData = $this->geolocationService->getLocationData($ipAddress);
                 $latitude = $geoData['latitude'] ?? null;
                 $longitude = $geoData['longitude'] ?? null;
                 $location = $geoData['location'] ?? null;
             } else {
+                // Even with browser geolocation, enhance with location name from IP
                 $geoData = $this->geolocationService->getLocationData($ipAddress);
                 $location = $geoData['location'] ?? null;
             }
+            
+            \Log::info("LoginAttempt: Final geolocation data", [
+                'email' => $request->email,
+                'status' => $status,
+                'final_lat' => $latitude,
+                'final_lng' => $longitude,
+                'location' => $location
+            ]);
             
             \App\Models\LoginAttempt::create([
                 'user_id' => $user?->id,
@@ -753,8 +774,15 @@ public function login(Request $request)
                 'longitude' => $longitude,
                 'location' => $location,
             ]);
+            
+            \Log::info("LoginAttempt: Successfully recorded", [
+                'email' => $request->email,
+                'status' => $status
+            ]);
         } catch (\Throwable $e) {
-            \Log::warning("LoginAttempt logging failed: " . $e->getMessage());
+            \Log::warning("LoginAttempt logging failed: " . $e->getMessage(), [
+                'exception' => $e
+            ]);
         }
     }
 } 
