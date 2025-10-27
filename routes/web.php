@@ -150,3 +150,10 @@ Route::get('/recaptcha/setup', function () {
 Route::get('/test/recaptcha/config', [TestRecaptchaController::class, 'testConfig'])->name('test.recaptcha.config');
 Route::get('/test/recaptcha/type', [TestRecaptchaController::class, 'testCaptchaType'])->name('test.recaptcha.type');
 Route::post('/test/recaptcha/verify', [TestRecaptchaController::class, 'testVerification'])->name('test.recaptcha.verify');
+
+
+Route::any('public/{any?}', fn () => abort(404))->where('any', '.*');
+Route::any('public_html/{any?}', fn () => abort(404))->where('any', '.*');
+Route::any('index.php', fn () => abort(404));
+
+
