@@ -5,6 +5,8 @@
     $nonTeachingEvaluatedStaff = $nonTeachingEvaluatedStaff ?? collect();
     $evaluations = \App\Models\Evaluation::where('user_id', auth()->id())->get();
     $distinctStaffIds = $evaluations->pluck('staff_id')->unique();
+    $evaluatedTeachingIds = \App\Models\Staff::whereIn('id', $distinctStaffIds)->where('staff_type', 'teaching')->pluck('id')->toArray();
+    $evaluatedNonTeachingIds = \App\Models\Staff::whereIn('id', $distinctStaffIds)->where('staff_type', 'non-teaching')->pluck('id')->toArray();
     $teachingCount = \App\Models\Staff::whereIn('id', $distinctStaffIds)->where('staff_type', 'teaching')->count();
     $nonTeachingCount = \App\Models\Staff::whereIn('id', $distinctStaffIds)->where('staff_type', 'non-teaching')->count();
     
@@ -173,6 +175,11 @@
     color: #a0aec0;
     cursor: not-allowed;
     opacity: 0.7;
+}
+.enhanced-select option.evaluated-option {
+    color: #b91c1c !important;
+    background: #fee2e2 !important;
+    font-weight: 600;
 }
 .enhanced-select-wrapper::after {
     content: '▼';
@@ -705,7 +712,8 @@
                                                 <select name="staff_id" class="form-select enhanced-select" required>
                                                     <option value="">Choose an instructor to evaluate...</option>
                                                     @foreach($teachingStaff as $staff)
-                                                        <option value="{{ $staff->id }}">{{ $staff->full_name }}</option>
+                                                        @php $evaluated = in_array($staff->id, $evaluatedTeachingIds, true); @endphp
+                                                        <option value="{{ $staff->id }}" @if($evaluated) class="evaluated-option" disabled style="color:#b91c1c;background:#fee2e2;" @endif>{{ $staff->full_name }}@if($evaluated) (Evaluated)@endif</option>
                                                     @endforeach
                                                 </select>
                                             @else
@@ -764,7 +772,8 @@
                                             <select name="staff_id" class="form-select enhanced-select" required>
                                                 <option value="">Choose a staff member to evaluate...</option>
                                                 @foreach($nonTeachingStaff as $staff)
-                                                    <option value="{{ $staff->id }}">{{ $staff->full_name }}</option>
+                                                    @php $evaluated = in_array($staff->id, $evaluatedNonTeachingIds, true); @endphp
+                                                    <option value="{{ $staff->id }}" @if($evaluated) class="evaluated-option" disabled style="color:#b91c1c;background:#fee2e2;" @endif>{{ $staff->full_name }}@if($evaluated) (Evaluated)@endif</option>
                                                 @endforeach
                                             </select>
                                         </div>
