@@ -1442,7 +1442,7 @@
                       <div id="adminErrorBox" class="alert alert-danger d-none" style="border-radius:12px; padding:10px; margin-bottom:15px; display: flex; align-items: center; justify-content: center; text-align: center; font-weight: 600;"></div>                 
                     <div class="mb-3">
                         <label for="admin_email" class="form-label">
-                            <i class="fas fa-envelope"></i> Email dddress
+                            <i class="fas fa-envelope"></i> Email Adddress
                         </label>
                         <div class="input-group">
                             <span class="input-group-text">
