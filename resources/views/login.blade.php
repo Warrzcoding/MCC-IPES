@@ -398,6 +398,57 @@
             box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.15) !important;
         }
 
+        input::-ms-reveal,
+        input::-ms-clear {
+            display: none;
+        }
+
+        .input-group .password-field {
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+
+        .input-group .password-toggle {
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+            border-left: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 14px;
+            min-width: 48px;
+            color: #495057;
+            background-color: #ffffff;
+            transition: all 0.2s ease;
+        }
+
+        .input-group .password-toggle:focus,
+        .input-group .password-toggle:hover {
+            border-color: #28a745 !important;
+            box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.15) !important;
+            outline: none;
+        }
+
+        .input-group .password-toggle:disabled {
+            background-color: #f1f3f5;
+            color: #6c757d;
+            cursor: not-allowed;
+            box-shadow: none !important;
+            border-color: #dee2e6 !important;
+        }
+
+        .input-group .password-toggle .fa-eye,
+        .input-group .password-toggle .fa-eye-slash {
+            pointer-events: none;
+        }
+
+        @media (max-width: 480px) {
+            .input-group .password-toggle {
+                padding: 0 12px;
+                min-width: 44px;
+            }
+        }
+
 
 
         /* Rainbow spinning border effect on focus - only when not hovering */
@@ -1463,8 +1514,11 @@
                             <span class="input-group-text">
                                 <i class="fas fa-key"></i>
                             </span>
-                            <input type="password" class="form-control" id="admin_password" name="password"
-                                   placeholder="Enter your password"   value="" autocomplete="new-password" {{ ($admin_otp_pending && $adminOtpOverlayEnabled) ? 'readonly' : '' }}>
+                            <input type="password" class="form-control password-field" id="admin_password" name="password"
+                                   placeholder="Enter your password" value="" autocomplete="new-password" {{ ($admin_otp_pending && $adminOtpOverlayEnabled) ? 'readonly' : '' }}>
+                            <button type="button" class="btn btn-outline-secondary password-toggle" data-target="#admin_password" aria-label="Toggle password visibility" aria-pressed="false">
+                                <i class="fas fa-eye"></i>
+                            </button>
                         </div>
                     </div>
 
@@ -1512,8 +1566,11 @@
                             <span class="input-group-text">
                                 <i class="fas fa-key"></i>
                             </span>
-                            <input type="password" class="form-control" id="staff_password" name="password"
+                            <input type="password" class="form-control password-field" id="staff_password" name="password"
                                    placeholder="Enter your password" required value="" autocomplete="new-password">
+                            <button type="button" class="btn btn-outline-secondary password-toggle" data-target="#staff_password" aria-label="Toggle password visibility" aria-pressed="false">
+                                <i class="fas fa-eye"></i>
+                            </button>
                         </div>
                     </div>
 
@@ -1566,8 +1623,11 @@
                             <span class="input-group-text">
                                 <i class="fas fa-key"></i>
                             </span>
-                            <input type="password" class="form-control" id="password" name="password"
+                            <input type="password" class="form-control password-field" id="password" name="password"
                                    placeholder="Enter your mccipes password" value="" autocomplete="new-password">
+                            <button type="button" class="btn btn-outline-secondary password-toggle" data-target="#password" aria-label="Toggle password visibility" aria-pressed="false">
+                                <i class="fas fa-eye"></i>
+                            </button>
                         </div>
                     </div>
 
@@ -2224,6 +2284,55 @@
                 });
                 studentForm.addEventListener('focusin', loginGeolocationManager.applyStoredCoordinates);
             }
+
+            const passwordToggles = document.querySelectorAll('.password-toggle');
+            passwordToggles.forEach((button) => {
+                const targetSelector = button.getAttribute('data-target');
+                const targetInput = targetSelector ? document.querySelector(targetSelector) : null;
+                if (!targetInput) {
+                    button.disabled = true;
+                    return;
+                }
+
+                const icon = button.querySelector('i');
+                const updateState = () => {
+                    if (!icon) {
+                        return;
+                    }
+                    if (targetInput.type === 'password') {
+                        icon.classList.add('fa-eye');
+                        icon.classList.remove('fa-eye-slash');
+                        button.setAttribute('aria-pressed', 'false');
+                        button.setAttribute('title', 'Show password');
+                    } else {
+                        icon.classList.remove('fa-eye');
+                        icon.classList.add('fa-eye-slash');
+                        button.setAttribute('aria-pressed', 'true');
+                        button.setAttribute('title', 'Hide password');
+                    }
+                };
+
+                const syncDisabledState = () => {
+                    const shouldDisable = targetInput.disabled || targetInput.hasAttribute('readonly');
+                    button.disabled = shouldDisable;
+                };
+
+                button.addEventListener('click', () => {
+                    if (button.disabled || targetInput.hasAttribute('readonly')) {
+                        return;
+                    }
+                    targetInput.type = targetInput.type === 'password' ? 'text' : 'password';
+                    updateState();
+                    targetInput.focus();
+                    const end = targetInput.value.length;
+                    try {
+                        targetInput.setSelectionRange(end, end);
+                    } catch (error) {}
+                });
+
+                updateState();
+                syncDisabledState();
+            });
         });
 
         // SweetAlert for successful registration
