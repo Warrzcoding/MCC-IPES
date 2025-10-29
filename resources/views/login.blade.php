@@ -403,50 +403,50 @@
             display: none;
         }
 
-        .input-group .password-field {
-            border-top-right-radius: 0;
-            border-bottom-right-radius: 0;
+        .password-group {
+            display: flex;
+            align-items: stretch;
         }
 
-        .input-group .password-toggle {
-            border-top-left-radius: 0;
-            border-bottom-left-radius: 0;
-            border-left: 0;
-            display: flex;
+        .password-group .position-relative {
+            flex: 1;
+        }
+
+        .password-group .password-field {
+            padding-right: 44px;
+        }
+
+        .password-toggle {
+            position: absolute;
+            top: 50%;
+            right: 12px;
+            transform: translateY(-50%);
+            border: none;
+            background: transparent;
+            padding: 0;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
-            padding: 0 14px;
-            min-width: 48px;
-            color: #495057;
-            background-color: #ffffff;
-            transition: all 0.2s ease;
+            width: 32px;
+            height: 32px;
+            color: #6c757d;
+            cursor: pointer;
         }
 
-        .input-group .password-toggle:focus,
-        .input-group .password-toggle:hover {
-            border-color: #28a745 !important;
-            box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.15) !important;
+        .password-toggle:focus,
+        .password-toggle:hover {
+            color: #28a745;
             outline: none;
         }
 
-        .input-group .password-toggle:disabled {
-            background-color: #f1f3f5;
-            color: #6c757d;
+        .password-toggle:disabled {
+            color: #adb5bd;
             cursor: not-allowed;
-            box-shadow: none !important;
-            border-color: #dee2e6 !important;
         }
 
-        .input-group .password-toggle .fa-eye,
-        .input-group .password-toggle .fa-eye-slash {
+        .password-toggle .fa-eye,
+        .password-toggle .fa-eye-slash {
             pointer-events: none;
-        }
-
-        @media (max-width: 480px) {
-            .input-group .password-toggle {
-                padding: 0 12px;
-                min-width: 44px;
-            }
         }
 
 
@@ -1510,15 +1510,17 @@
                         <label for="admin_password" class="form-label">
                             <i class="fas fa-lock"></i> Password
                         </label>
-                        <div class="input-group">
+                        <div class="input-group password-group">
                             <span class="input-group-text">
                                 <i class="fas fa-key"></i>
                             </span>
-                            <input type="password" class="form-control password-field" id="admin_password" name="password"
-                                   placeholder="Enter your password" value="" autocomplete="new-password" {{ ($admin_otp_pending && $adminOtpOverlayEnabled) ? 'readonly' : '' }}>
-                            <button type="button" class="btn btn-outline-secondary password-toggle" data-target="#admin_password" aria-label="Toggle password visibility" aria-pressed="false">
-                                <i class="fas fa-eye"></i>
-                            </button>
+                            <div class="position-relative w-100">
+                                <input type="password" class="form-control password-field" id="admin_password" name="password"
+                                       placeholder="Enter your password" value="" autocomplete="new-password" {{ ($admin_otp_pending && $adminOtpOverlayEnabled) ? 'readonly' : '' }}>
+                                <button type="button" class="password-toggle" data-target="#admin_password" aria-label="Toggle password visibility" aria-pressed="false">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
 
@@ -1562,15 +1564,17 @@
                         <label for="staff_password" class="form-label">
                             <i class="fas fa-lock"></i> Password
                         </label>
-                        <div class="input-group">
+                        <div class="input-group password-group">
                             <span class="input-group-text">
                                 <i class="fas fa-key"></i>
                             </span>
-                            <input type="password" class="form-control password-field" id="staff_password" name="password"
-                                   placeholder="Enter your password" required value="" autocomplete="new-password">
-                            <button type="button" class="btn btn-outline-secondary password-toggle" data-target="#staff_password" aria-label="Toggle password visibility" aria-pressed="false">
-                                <i class="fas fa-eye"></i>
-                            </button>
+                            <div class="position-relative w-100">
+                                <input type="password" class="form-control password-field" id="staff_password" name="password"
+                                       placeholder="Enter your password" required value="" autocomplete="new-password">
+                                <button type="button" class="password-toggle" data-target="#staff_password" aria-label="Toggle password visibility" aria-pressed="false">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
 
@@ -1619,15 +1623,17 @@
                         <label for="password" class="form-label">
                             <i class="fas fa-lock"></i> Password
                         </label>
-                        <div class="input-group">
+                        <div class="input-group password-group">
                             <span class="input-group-text">
                                 <i class="fas fa-key"></i>
                             </span>
-                            <input type="password" class="form-control password-field" id="password" name="password"
-                                   placeholder="Enter your mccipes password" value="" autocomplete="new-password">
-                            <button type="button" class="btn btn-outline-secondary password-toggle" data-target="#password" aria-label="Toggle password visibility" aria-pressed="false">
-                                <i class="fas fa-eye"></i>
-                            </button>
+                            <div class="position-relative w-100">
+                                <input type="password" class="form-control password-field" id="password" name="password"
+                                       placeholder="Enter your mccipes password" value="" autocomplete="new-password">
+                                <button type="button" class="password-toggle" data-target="#password" aria-label="Toggle password visibility" aria-pressed="false">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
 
@@ -2285,10 +2291,8 @@
                 studentForm.addEventListener('focusin', loginGeolocationManager.applyStoredCoordinates);
             }
 
-            const passwordToggles = document.querySelectorAll('.password-toggle');
-            passwordToggles.forEach((button) => {
-                const targetSelector = button.getAttribute('data-target');
-                const targetInput = targetSelector ? document.querySelector(targetSelector) : null;
+            document.querySelectorAll('.password-toggle').forEach((button) => {
+                const targetInput = document.querySelector(button.dataset.target);
                 if (!targetInput) {
                     button.disabled = true;
                     return;
@@ -2296,38 +2300,32 @@
 
                 const icon = button.querySelector('i');
                 const updateState = () => {
-                    if (!icon) {
-                        return;
-                    }
-                    if (targetInput.type === 'password') {
-                        icon.classList.add('fa-eye');
-                        icon.classList.remove('fa-eye-slash');
-                        button.setAttribute('aria-pressed', 'false');
-                        button.setAttribute('title', 'Show password');
-                    } else {
-                        icon.classList.remove('fa-eye');
-                        icon.classList.add('fa-eye-slash');
-                        button.setAttribute('aria-pressed', 'true');
-                        button.setAttribute('title', 'Hide password');
+                    const isVisible = targetInput.type === 'text';
+                    button.setAttribute('aria-pressed', isVisible ? 'true' : 'false');
+                    button.setAttribute('title', isVisible ? 'Hide password' : 'Show password');
+                    if (icon) {
+                        icon.classList.toggle('fa-eye', !isVisible);
+                        icon.classList.toggle('fa-eye-slash', isVisible);
                     }
                 };
 
                 const syncDisabledState = () => {
-                    const shouldDisable = targetInput.disabled || targetInput.hasAttribute('readonly');
-                    button.disabled = shouldDisable;
+                    button.disabled = targetInput.disabled || targetInput.hasAttribute('readonly');
                 };
 
                 button.addEventListener('click', () => {
-                    if (button.disabled || targetInput.hasAttribute('readonly')) {
+                    if (button.disabled) {
                         return;
                     }
                     targetInput.type = targetInput.type === 'password' ? 'text' : 'password';
                     updateState();
                     targetInput.focus();
-                    const end = targetInput.value.length;
-                    try {
-                        targetInput.setSelectionRange(end, end);
-                    } catch (error) {}
+                    requestAnimationFrame(() => {
+                        try {
+                            const len = targetInput.value.length;
+                            targetInput.setSelectionRange(len, len);
+                        } catch (error) {}
+                    });
                 });
 
                 updateState();
