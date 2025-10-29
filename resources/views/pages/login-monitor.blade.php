@@ -26,11 +26,31 @@
   .compact-scale #attempts-table td.text-nowrap { max-width: 140px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
   /* Action button: make smaller and clearer */
-  .compact-scale .view-details { padding: 0.22rem 0.45rem; font-size: 0.78rem; border-radius: 6px; }
-  .compact-scale .view-details i { margin-right: 0.35rem; }
-  .compact-scale .btn-outline-primary.view-details { border-width: 1px; }
-  .compact-scale .delete-attempt { padding: 0.22rem 0.45rem; font-size: 0.78rem; border-radius: 6px; border-width: 1px; }
-  .compact-scale .delete-attempt i { margin-right: 0.35rem; }
+  .compact-scale .view-details,
+  .compact-scale .delete-attempt {
+    padding: 0.22rem 0.45rem;
+    font-size: 0.78rem;
+    border-radius: 6px;
+    border-width: 1px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    min-width: 92px;
+    flex-shrink: 0;
+  }
+  .compact-scale .view-details i,
+  .compact-scale .delete-attempt i { margin: 0; }
+
+  .compact-scale .action-buttons {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+  .compact-scale .timeline-item .action-buttons { align-self: center; width: auto; }
+  .compact-scale #attempts-table td.actions-cell { text-align: center; }
 
   /* Small-screen adjustments for compact view */
   @media (max-width: 576px) {
@@ -258,7 +278,7 @@
                       </div>
                       <div class="ua-muted truncate-2 mt-1"><i class="fas fa-desktop me-1"></i>{{ \Illuminate\Support\Str::limit($ua, 160) }}</div>
                     </div>
-                    <div class="align-self-start d-flex gap-2">
+                    <div class="action-buttons">
                       <button class="btn btn-sm btn-outline-primary view-details" data-id="{{ $attempt->id ?? $loop->index }}" data-email="{{ $email }}" data-ip="{{ $ip }}" data-location="{{ $attempt->location ?? 'Unknown' }}" data-latitude="{{ $attempt->latitude ?? '' }}" data-longitude="{{ $attempt->longitude ?? '' }}" data-usertype="{{ $attempt->user->usertype ?? 'N/A' }}" data-ua="{{ $ua }}">
                         <i class="fas fa-eye"></i> View
                       </button>
@@ -335,8 +355,8 @@
                         @endif
                       </td>
                       <td>{{ $attempt->created_at?->diffForHumans() }}</td>
-                      <td>
-                        <div class="d-flex gap-2">
+                      <td class="actions-cell text-center">
+                        <div class="action-buttons">
                           <button class="btn btn-sm btn-outline-primary view-details" data-id="{{ $attempt->id ?? $loop->index }}" data-email="{{ $attempt->email ?? '-' }}" data-ip="{{ $attempt->ip_address ?? '-' }}" data-location="{{ $attempt->location ?? 'Unknown' }}" data-latitude="{{ $attempt->latitude ?? '' }}" data-longitude="{{ $attempt->longitude ?? '' }}" data-usertype="{{ $attempt->user->usertype ?? 'N/A' }}" data-ua="{{ $ua }}">
                             <i class="fas fa-eye"></i> View
                           </button>
@@ -428,7 +448,7 @@
           </div>
           <div class="col-md-7">
             <h6>Geolocation Mapping</h6>
-            <div id="map" style="height: 400px; width: 100%; border-radius: 8px; overflow: hidden; position: relative; background: #f8f9fa;"></div>
+            <div id="map" style="height: 460px; width: 100%; border-radius: 8px; overflow: hidden; position: relative; background: #f8f9fa;"></div>
           </div>
         </div>
       </div>
@@ -443,8 +463,8 @@
 <style>
   /* Ensure map container has proper dimensions */
   #map {
-    min-height: 400px !important;
-    height: 400px !important;
+    min-height: 460px !important;
+    height: 460px !important;
     width: 100% !important;
     position: relative !important;
     display: block !important;
@@ -455,7 +475,7 @@
   
   /* Fix for Leaflet in modals - ensure proper display */
   #detailsModal #map {
-    min-height: 320px !important;
+    min-height: 360px !important;
     max-height: 100% !important;
     height: 100% !important;
     width: 100% !important;
@@ -492,6 +512,16 @@
     z-index: 1;
   }
 
+  #detailsModal .modal-dialog {
+    max-width: 80vw;
+    width: 100%;
+  }
+  @media (min-width: 1200px) {
+    #detailsModal .modal-dialog {
+      max-width: 1000px;
+    }
+  }
+
   /* Compact modal text & controls for details view */
   #detailsModal .modal-content {
     font-size: 0.90rem; /* slightly reduced overall */
@@ -515,7 +545,7 @@
 
   /* Ensure modal body layout is correct */
   #detailsModal .modal-body {
-    min-height: 350px;
+    min-height: 380px;
     display: flex;
     align-items: stretch;
   }
@@ -523,7 +553,7 @@
   #detailsModal .modal-body .row {
     width: 100%;
     display: grid;
-    grid-template-columns: 1fr 1.4fr;
+    grid-template-columns: 0.85fr 1.65fr;
     gap: 1.5rem;
     align-items: start;
   }
@@ -542,7 +572,7 @@
 
   #detailsModal .modal-body .row .col-md-7 #map {
     flex: 1;
-    min-height: 320px;
+    min-height: 360px;
     height: 100%;
     width: 100%;
   }
@@ -554,8 +584,8 @@
     }
 
     #detailsModal .modal-body .row .col-md-7 #map {
-      min-height: 300px;
-      height: 300px;
+      min-height: 320px !important;
+      height: 320px !important;
     }
   }
 </style>
