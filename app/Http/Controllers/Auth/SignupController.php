@@ -5,7 +5,6 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use App\Models\RequestSignin;
 
@@ -42,12 +41,10 @@ class SignupController extends Controller
             
             $uploadPath = public_path('uploads/students');
             
-            // Create directory if it doesn't exist
             if (!file_exists($uploadPath)) {
                 mkdir($uploadPath, 0755, true);
             }
             
-            // Move uploaded file
             if ($image->move($uploadPath, $imageName)) {
                 $profileImage = $imageName;
             }
