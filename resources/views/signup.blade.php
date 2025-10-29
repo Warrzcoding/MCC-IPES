@@ -301,6 +301,15 @@
             position: relative; /* ensure it layers above background */
             font-size: calc(1rem * var(--signup-scale));
         }
+        @media (min-width: 992px) {
+            .signup-card {
+                --signup-scale: 0.7;
+                min-height: auto;
+                max-height: none;
+                height: auto;
+                overflow: hidden;
+            }
+        }
         .signup-header {
             text-align: center;
             margin-bottom: calc(18px * var(--signup-scale));
