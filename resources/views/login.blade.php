@@ -408,27 +408,13 @@
             align-items: stretch;
         }
 
-        .password-group .position-relative {
-            flex: 1;
-        }
-
-        .password-group .password-field {
-            padding-right: 44px;
-        }
-
         .password-toggle {
-            position: absolute;
-            top: 50%;
-            right: 12px;
-            transform: translateY(-50%);
             border: none;
             background: transparent;
-            padding: 0;
+            padding: 0 12px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 32px;
-            height: 32px;
             color: #6c757d;
             cursor: pointer;
         }
@@ -1514,13 +1500,11 @@
                             <span class="input-group-text">
                                 <i class="fas fa-key"></i>
                             </span>
-                            <div class="position-relative w-100">
-                                <input type="password" class="form-control password-field" id="admin_password" name="password"
-                                       placeholder="Enter your password" value="" autocomplete="new-password" {{ ($admin_otp_pending && $adminOtpOverlayEnabled) ? 'readonly' : '' }}>
-                                <button type="button" class="password-toggle" data-target="#admin_password" aria-label="Toggle password visibility" aria-pressed="false">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                            </div>
+                            <input type="password" class="form-control password-field" id="admin_password" name="password"
+                                   placeholder="Enter your password" value="" autocomplete="new-password" {{ ($admin_otp_pending && $adminOtpOverlayEnabled) ? 'readonly' : '' }}>
+                            <button type="button" class="password-toggle input-group-text" data-target="#admin_password" aria-label="Toggle password visibility" aria-pressed="false">
+                                <i class="fas fa-eye"></i>
+                            </button>
                         </div>
                     </div>
 
@@ -1568,13 +1552,11 @@
                             <span class="input-group-text">
                                 <i class="fas fa-key"></i>
                             </span>
-                            <div class="position-relative w-100">
-                                <input type="password" class="form-control password-field" id="staff_password" name="password"
-                                       placeholder="Enter your password" required value="" autocomplete="new-password">
-                                <button type="button" class="password-toggle" data-target="#staff_password" aria-label="Toggle password visibility" aria-pressed="false">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                            </div>
+                            <input type="password" class="form-control password-field" id="staff_password" name="password"
+                                   placeholder="Enter your password" required value="" autocomplete="new-password">
+                            <button type="button" class="password-toggle input-group-text" data-target="#staff_password" aria-label="Toggle password visibility" aria-pressed="false">
+                                <i class="fas fa-eye"></i>
+                            </button>
                         </div>
                     </div>
 
@@ -1627,13 +1609,11 @@
                             <span class="input-group-text">
                                 <i class="fas fa-key"></i>
                             </span>
-                            <div class="position-relative w-100">
-                                <input type="password" class="form-control password-field" id="password" name="password"
-                                       placeholder="Enter your mccipes password" value="" autocomplete="new-password">
-                                <button type="button" class="password-toggle" data-target="#password" aria-label="Toggle password visibility" aria-pressed="false">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                            </div>
+                            <input type="password" class="form-control password-field" id="password" name="password"
+                                   placeholder="Enter your mccipes password" value="" autocomplete="new-password">
+                            <button type="button" class="password-toggle input-group-text" data-target="#password" aria-label="Toggle password visibility" aria-pressed="false">
+                                <i class="fas fa-eye"></i>
+                            </button>
                         </div>
                     </div>
 
