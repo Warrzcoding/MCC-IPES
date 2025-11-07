@@ -21,38 +21,39 @@
         Options -MultiViews -Indexes
     </IfModule>
 
-     RewriteCond %{THE_REQUEST} \s/+index\.php
-     RewriteRule ^index\.php$ - [R=404,L]
+        # =====================================================
+    # Block direct access to index.php
+    # =====================================================
+    RewriteCond %{THE_REQUEST} \s/+index\.php
+    RewriteRule ^index\.php$ - [R=404,L]
 
+    # =====================================================
+    # Block all direct or internal access to /public or /public_html
+    # Covers:
+    #   /public
+    #   /public/
+    #   /public/index.php
+    #   /public/anything
+    #   /public_html and variants
+    # =====================================================
 
-    # Block direct access to /public and /public/index.php requests
-    RewriteCond %{THE_REQUEST} \s/+public(?:/index\.php)?(?:[?\s]|$) [NC]
+    # Case 1: User typed it directly (browser request)
+    RewriteCond %{THE_REQUEST} \s/+public(?:/index\.php)?(?:[?\s]|$) [NC,OR]
+    RewriteCond %{THE_REQUEST} \s/+public_html(?:/index\.php)?(?:[?\s]|$) [NC]
     RewriteRule ^ - [R=404,L]
 
-
-     # Block direct access to public or public_html directories
-    RewriteRule ^public/?$ - [R=404,L]
-    RewriteRule ^public/.*$ - [R=404,L]
-    RewriteRule ^public_html/?$ - [R=404,L]
-    RewriteRule ^public_html/.*$ - [R=404,L]
-
-
-
-    # Explicitly block direct request to /public or /public_html (no trailing slash)
-    RewriteCond %{REQUEST_URI} ^/public$ [NC,OR]
-    RewriteCond %{REQUEST_URI} ^/public_html$ [NC]
-    RewriteRule ^ - [R=404,L]
-
-       # Block requests that *explicitly* start with /public or /public_html
-    RewriteCond %{REQUEST_URI} ^/public(/|$) [NC,OR]
-    RewriteCond %{REQUEST_URI} ^/public_html(/|$) [NC]
+    # Case 2: Internal or normalized rewrite paths (REQUEST_URI)
+    RewriteCond %{REQUEST_URI} ^/public(/.*)?$ [NC,OR]
+    RewriteCond %{REQUEST_URI} ^/public_html(/.*)?$ [NC]
     RewriteRule ^(public|public_html)(/.*)?$ - [R=404,L]
 
-
+    # =====================================================
     # Normal Laravel routing for everything else
+    # =====================================================
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
+
 
 
 </IfModule>
