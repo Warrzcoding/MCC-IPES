@@ -1,5 +1,10 @@
 <?php
 
+
+if (request()->has('force404')) {
+    abort(404);
+}
+
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\Auth\LoginController;
@@ -20,6 +25,8 @@ use App\Http\Controllers\LoginMonitorController;
 Route::get('/', function () {
     return view('login');
 });
+
+
 
 // Authentication Routes
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
