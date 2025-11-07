@@ -2182,9 +2182,27 @@
                             isRequesting = false;
                             console.warn('Geolocation error:', error.code, error.message);
                             document.dispatchEvent(new CustomEvent('login-geolocation:failed', { detail: { code: error.code, message: error.message } }));
+
+                            // Show user-friendly notification if permission denied
+                            if (error.code === 1) { // PERMISSION_DENIED
+                                // Only show once per session
+                                if (!sessionStorage.getItem('geolocation-denied-notified')) {
+                                    sessionStorage.setItem('geolocation-denied-notified', 'true');
+                                    setTimeout(() => {
+                                        Swal.fire({
+                                            icon: 'info',
+                                            title: 'Location Access Needed',
+                                            text: 'For accurate location tracking, please allow location access in your browser and try again.',
+                                            confirmButtonColor: '#667eea',
+                                            confirmButtonText: 'Got it'
+                                        });
+                                    }, 1000); // Small delay to not interrupt flow
+                                }
+                            }
+
                             resolve(); // Resolve even on error - will fall back to IP
                         },
-                        { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
+                        { enableHighAccuracy: true, timeout: 20000, maximumAge: 60000 }
                     );
                     document.dispatchEvent(new CustomEvent('login-geolocation:requested'));
                 });
