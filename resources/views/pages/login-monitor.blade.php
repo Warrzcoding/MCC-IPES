@@ -413,7 +413,7 @@
 
 {{-- Details Modal --}}
 <div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-xl modal-dialog-centered">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="detailsModalLabel">Login Attempt Details</h5>
@@ -513,49 +513,58 @@
   }
 
   #detailsModal .modal-dialog {
-    max-width: 80vw;
+    max-width: 70vw;
     width: 100%;
   }
   @media (min-width: 1200px) {
     #detailsModal .modal-dialog {
-      max-width: 1000px;
+      max-width: 850px;
     }
   }
 
   /* Compact modal text & controls for details view */
   #detailsModal .modal-content {
-    font-size: 0.90rem; /* slightly reduced overall */
+    font-size: 0.85rem; /* reduced overall */
   }
   #detailsModal .modal-title {
-    font-size: 1.0rem;
+    font-size: 0.90rem;
     font-weight: 700;
   }
   #detailsModal .modal-body table th {
-    font-size: 0.82rem;
+    font-size: 0.75rem;
     width: 32%;
     vertical-align: top;
     padding: 0.35rem 0.5rem;
   }
   #detailsModal .modal-body table td {
-    font-size: 0.88rem;
+    font-size: 0.80rem;
     padding: 0.35rem 0.5rem;
   }
-  #detailsModal .modal-body h6 { font-size: 0.95rem; }
+  #detailsModal .modal-body h6 { font-size: 0.85rem; }
   #detailsModal .modal-footer .btn { padding: 0.35rem 0.6rem; font-size: 0.86rem; }
 
   /* Ensure modal body layout is correct */
   #detailsModal .modal-body {
     min-height: 380px;
+    padding: 0.5rem;
     display: flex;
     align-items: stretch;
   }
 
   #detailsModal .modal-body .row {
     width: 100%;
-    display: grid;
-    grid-template-columns: 0.85fr 1.65fr;
-    gap: 1.5rem;
+    display: flex;
+    gap: 0.5rem;
     align-items: start;
+  }
+
+  #detailsModal .modal-body .row .col-md-5 {
+    width: 250px;
+    flex-shrink: 0;
+  }
+
+  #detailsModal .modal-body .row .col-md-7 {
+    flex: 1;
   }
 
   #detailsModal .modal-body .row .col-md-5 {
@@ -575,12 +584,19 @@
     min-height: 360px;
     height: 100%;
     width: 100%;
+    margin-right: 0;
   }
 
   @media (max-width: 992px) {
     #detailsModal .modal-body .row {
-      grid-template-columns: 1fr;
+      flex-direction: column;
       min-height: auto;
+    }
+
+    #detailsModal .modal-body .row .col-md-5,
+    #detailsModal .modal-body .row .col-md-7 {
+      width: 100%;
+      flex-shrink: 0;
     }
 
     #detailsModal .modal-body .row .col-md-7 #map {
@@ -1015,6 +1031,36 @@
       });
     }
 
+    // Function to update dashboard counts after deletion
+    function updateDashboardCounts(deletedStatus) {
+      const statCards = document.querySelectorAll('.stat-card .h5');
+      if (statCards.length < 4) return;
+
+      // Total Attempts (always decrement)
+      let total = parseInt(statCards[0].textContent.replace(/,/g, '')) - 1;
+      statCards[0].textContent = total.toLocaleString();
+
+      // Page Success
+      if (deletedStatus === 'success') {
+        let success = parseInt(statCards[1].textContent.replace(/,/g, '')) - 1;
+        statCards[1].textContent = success.toLocaleString();
+      }
+
+      // Page Failed
+      if (deletedStatus === 'failed') {
+        let failed = parseInt(statCards[2].textContent.replace(/,/g, '')) - 1;
+        statCards[2].textContent = failed.toLocaleString();
+      }
+
+      // Showing (decrement the first number)
+      const showingText = statCards[3].textContent;
+      const parts = showingText.split(' / ');
+      if (parts.length === 2) {
+        let showing = parseInt(parts[0]) - 1;
+        statCards[3].textContent = showing + ' / ' + parts[1];
+      }
+    }
+
     // Delete attempt button handler
     const deleteButtons = $$('.delete-attempt');
     deleteButtons.forEach(btn => {
@@ -1089,11 +1135,13 @@
                 }).then(() => {
                   // Remove the row from the view
                   const itemRow = btn.closest('.lm-item') || btn.closest('tr');
+                  const status = itemRow ? itemRow.getAttribute('data-status') : null;
                   if (itemRow) {
                     itemRow.style.transition = 'opacity 0.3s ease';
                     itemRow.style.opacity = '0';
                     setTimeout(() => {
                       itemRow.remove();
+                      updateDashboardCounts(status);
                       // Refresh page if no items left
                       const remainingItems = $$('.lm-item').length;
                       if (remainingItems === 0) {
