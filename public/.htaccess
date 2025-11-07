@@ -32,9 +32,7 @@
      RewriteCond %{THE_REQUEST} \s/+public_html(?:[/?\s]|$)
      RewriteRule ^public_html(?:/.*)?$ - [R=404,L]
 
-     # Block /public
-     RewriteCond %{REQUEST_URI} ^/public
-     RewriteRule .* - [R=404,L]
+
 
 
      RewriteCond %{REQUEST_FILENAME} !-d
@@ -43,7 +41,7 @@
 
 </IfModule>
 
-ErrorDocument 404 "This Page Does Not Exist"
+
 
 # Security headers (CSP allows assets)
 <IfModule mod_headers.c>
