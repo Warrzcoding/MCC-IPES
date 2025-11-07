@@ -24,15 +24,17 @@
      RewriteCond %{THE_REQUEST} \s/+index\.php
      RewriteRule ^index\.php$ - [R=404,L]
 
+
+        # Block direct access to /public and /public/index.php requests
+    RewriteCond %{THE_REQUEST} \s/+public(?:/index\.php)?(?:[?\s]|$) [NC]
+    RewriteRule ^ - [R=404,L]
+
+
        # Block direct access to public or public_html directories
     RewriteRule ^public/?$ - [R=404,L]
     RewriteRule ^public/.*$ - [R=404,L]
     RewriteRule ^public_html/?$ - [R=404,L]
     RewriteRule ^public_html/.*$ - [R=404,L]
-
-
-
-
 
      RewriteCond %{REQUEST_FILENAME} !-d
      RewriteCond %{REQUEST_FILENAME} !-f
