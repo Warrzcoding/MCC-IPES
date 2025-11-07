@@ -16,11 +16,15 @@ use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TestRecaptchaController;
 use App\Http\Controllers\SuperAdminController;
 use App\Http\Controllers\LoginMonitorController;
+use App\Http\Controllers\TestController;
 
 // Root route - redirect to login
 Route::get('/', function () {
     return view('login');
 });
+
+// Test route for geolocation debugging
+Route::get('/test-geolocation', [TestController::class, 'checkGeolocation'])->name('test.geolocation');
 
 
 
