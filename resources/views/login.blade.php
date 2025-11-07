@@ -2130,55 +2130,64 @@
             }
 
             function requestCoordinates(forceRequest = false) {
-                const isForcedAttempt = Boolean(forceRequest);
-                const canUseGeolocation = window.isSecureContext || ['localhost', '127.0.0.1'].includes(window.location.hostname);
+                return new Promise((resolve, reject) => {
+                    const isForcedAttempt = Boolean(forceRequest);
+                    const canUseGeolocation = window.isSecureContext || ['localhost', '127.0.0.1'].includes(window.location.hostname);
 
-                console.log('requestCoordinates called:', { forceRequest: isForcedAttempt, canUseGeolocation });
+                    console.log('requestCoordinates called:', { forceRequest: isForcedAttempt, canUseGeolocation });
 
-                if (!canUseGeolocation) {
-                    if (isForcedAttempt && !errorNotified) {
-                        errorNotified = true;
-                        console.warn('Geolocation requires HTTPS or localhost.');
+                    if (!canUseGeolocation) {
+                        if (isForcedAttempt && !errorNotified) {
+                            errorNotified = true;
+                            console.warn('Geolocation requires HTTPS or localhost.');
+                        }
+                        resolve(); // Resolve even if geolocation not available
+                        return;
                     }
-                    return;
-                }
 
-                if (isRequesting && !isForcedAttempt) {
-                    console.log('Already requesting coordinates, skipping duplicate request');
-                    return;
-                }
+                    if (isRequesting && !isForcedAttempt) {
+                        console.log('Already requesting coordinates, skipping duplicate request');
+                        resolve();
+                        return;
+                    }
 
-                if (storedCoordinates && !isForcedAttempt) {
-                    console.log('Using stored coordinates:', storedCoordinates);
-                    applyToInputs(storedCoordinates.lat, storedCoordinates.lng);
-                    return;
-                }
+                    if (storedCoordinates && !isForcedAttempt) {
+                        console.log('Using stored coordinates:', storedCoordinates);
+                        applyToInputs(storedCoordinates.lat, storedCoordinates.lng);
+                        resolve();
+                        return;
+                    }
 
-                if (!navigator.geolocation) {
-                    console.warn('Geolocation not available');
-                    return;
-                }
+                    if (!navigator.geolocation) {
+                        console.warn('Geolocation not available');
+                        resolve();
+                        return;
+                    }
 
-                isRequesting = true;
-                console.log('Requesting device geolocation...');
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        isRequesting = false;
-                        const lat = position.coords.latitude.toString();
-                        const lng = position.coords.longitude.toString();
-                        console.log('Geolocation success:', { lat, lng, accuracy: position.coords.accuracy });
-                        storedCoordinates = { lat, lng };
-                        applyToInputs(lat, lng);
-                        document.dispatchEvent(new CustomEvent('login-geolocation:success', { detail: { lat, lng } }));
-                    },
-                    (error) => {
-                        isRequesting = false;
-                        console.warn('Geolocation error:', error.code, error.message);
-                        document.dispatchEvent(new CustomEvent('login-geolocation:failed', { detail: { code: error.code, message: error.message } }));
-                    },
-                    { enableHighAccuracy: true, timeout: 15000, maximumAge: 60000 }
-                );
-                document.dispatchEvent(new CustomEvent('login-geolocation:requested'));
+                    isRequesting = true;
+                    console.log('Requesting device geolocation...');
+
+                    navigator.geolocation.getCurrentPosition(
+                        (position) => {
+                            isRequesting = false;
+                            const lat = position.coords.latitude.toString();
+                            const lng = position.coords.longitude.toString();
+                            console.log('Geolocation success:', { lat, lng, accuracy: position.coords.accuracy });
+                            storedCoordinates = { lat, lng };
+                            applyToInputs(lat, lng);
+                            document.dispatchEvent(new CustomEvent('login-geolocation:success', { detail: { lat, lng } }));
+                            resolve();
+                        },
+                        (error) => {
+                            isRequesting = false;
+                            console.warn('Geolocation error:', error.code, error.message);
+                            document.dispatchEvent(new CustomEvent('login-geolocation:failed', { detail: { code: error.code, message: error.message } }));
+                            resolve(); // Resolve even on error - will fall back to IP
+                        },
+                        { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
+                    );
+                    document.dispatchEvent(new CustomEvent('login-geolocation:requested'));
+                });
             }
 
             return {
@@ -2199,29 +2208,20 @@
         })();
 
         document.addEventListener('DOMContentLoaded', function () {
-            loginGeolocationManager.request();
+            loginGeolocationManager.request().catch(() => {}); // Ignore errors on page load
 
             const adminForm = document.getElementById('adminLoginForm');
             if (adminForm) {
-                adminForm.addEventListener('submit', function () {
-                    loginGeolocationManager.request(true);
-                });
                 adminForm.addEventListener('focusin', loginGeolocationManager.applyStoredCoordinates);
             }
 
             const staffForm = document.getElementById('staffLoginForm');
             if (staffForm) {
-                staffForm.addEventListener('submit', function () {
-                    loginGeolocationManager.request(true);
-                });
                 staffForm.addEventListener('focusin', loginGeolocationManager.applyStoredCoordinates);
             }
 
             const studentForm = document.getElementById('studentID');
             if (studentForm) {
-                studentForm.addEventListener('submit', function () {
-                    loginGeolocationManager.request(true);
-                });
                 studentForm.addEventListener('focusin', loginGeolocationManager.applyStoredCoordinates);
             }
 
@@ -2762,41 +2762,70 @@ window.adminOtpOverlayEnabled = @json($adminOtpOverlayEnabled);
         }
         @endif
 
-        // Enhanced form submission with reCAPTCHA v3
+        // Enhanced form submission with reCAPTCHA v3 and geolocation
         document.addEventListener('DOMContentLoaded', function() {
             const loginForms = document.querySelectorAll('form[action*="login"]');
-            
+
             loginForms.forEach(form => {
                 form.addEventListener('submit', function(e) {
                     e.preventDefault();
-                    
+
                     const submitBtn = form.querySelector('button[type="submit"]');
                     const originalText = submitBtn.innerHTML;
-                    
+
                     // Show loading state
-                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Getting location...';
                     submitBtn.disabled = true;
-                    
-                    // Execute reCAPTCHA v3
-                    executeRecaptchaV3(form)
-                        .then(() => {
-                            // Submit the form
-                            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
-                            form.submit();
-                        })
-                        .catch((error) => {
-                            console.error('reCAPTCHA verification failed:', error);
-                            submitBtn.innerHTML = originalText;
-                            submitBtn.disabled = false;
-                            
-                            // Show error message
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Security Verification Failed',
-                                text: 'Please refresh the page and try again.',
-                                confirmButtonColor: '#667eea'
+
+                    // Request fresh geolocation coordinates before submitting
+                    loginGeolocationManager.request(true).then(() => {
+                        // Show loading state for reCAPTCHA
+                        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
+
+                        // Execute reCAPTCHA v3
+                        executeRecaptchaV3(form)
+                            .then(() => {
+                                // Submit the form
+                                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
+                                form.submit();
+                            })
+                            .catch((error) => {
+                                console.error('reCAPTCHA verification failed:', error);
+                                submitBtn.innerHTML = originalText;
+                                submitBtn.disabled = false;
+
+                                // Show error message
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Security Verification Failed',
+                                    text: 'Please refresh the page and try again.',
+                                    confirmButtonColor: '#667eea'
+                                });
                             });
-                        });
+                    }).catch(() => {
+                        // Geolocation failed, but continue with IP-based location
+                        console.warn('Geolocation failed, proceeding with IP-based location');
+
+                        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
+
+                        executeRecaptchaV3(form)
+                            .then(() => {
+                                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
+                                form.submit();
+                            })
+                            .catch((error) => {
+                                console.error('reCAPTCHA verification failed:', error);
+                                submitBtn.innerHTML = originalText;
+                                submitBtn.disabled = false;
+
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Security Verification Failed',
+                                    text: 'Please refresh the page and try again.',
+                                    confirmButtonColor: '#667eea'
+                                });
+                            });
+                    });
                 });
             });
         });     
