@@ -1,10 +1,6 @@
 <?php
 
 
-if (request()->has('force404')) {
-    abort(404);
-}
-
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\Auth\LoginController;
