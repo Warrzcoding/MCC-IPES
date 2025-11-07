@@ -6,10 +6,6 @@
     RewriteEngine On
     RewriteBase /
 
-    # Optional HTTPS redirect
-    RewriteCond %{HTTPS} !=on
-    RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
-
     # Protect sensitive files in root
     RewriteRule ^(\.env|\.htaccess|\.htpasswd|composer\.json|composer\.lock|artisan|package\.json|webpack\.mix\.js)$ - [F,L,NC]
 
