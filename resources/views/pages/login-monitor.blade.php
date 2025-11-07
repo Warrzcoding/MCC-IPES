@@ -413,7 +413,7 @@
 
 {{-- Details Modal --}}
 <div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg modal-dialog-centered">
+  <div class="modal-dialog modal-xl modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="detailsModalLabel">Login Attempt Details</h5>
@@ -421,8 +421,8 @@
       </div>
       <div class="modal-body">
         <div class="row">
-          <div class="col-md-5">
-            <h6>Attempt Information</h6>
+          <div class="col-12 col-lg-5 info-section">
+            <h6 class="mb-3">Attempt Information</h6>
             <table class="table table-sm">
               <tr>
                 <th>Email:</th>
@@ -446,8 +446,8 @@
               </tr>
             </table>
           </div>
-          <div class="col-md-7">
-            <h6>Geolocation Mapping</h6>
+          <div class="col-12 col-lg-7 map-section">
+            <h6 class="mb-3">Geolocation Mapping</h6>
             <div id="map" style="height: 460px; width: 100%; border-radius: 8px; overflow: hidden; position: relative; background: #f8f9fa;"></div>
           </div>
         </div>
@@ -463,8 +463,8 @@
 <style>
   /* Ensure map container has proper dimensions */
   #map {
-    min-height: 460px !important;
-    height: 460px !important;
+    min-height: 200px !important;
+    height: 260px !important;
     width: 100% !important;
     position: relative !important;
     display: block !important;
@@ -472,12 +472,45 @@
     border-radius: 8px !important;
     overflow: hidden !important;
   }
+
+  /* Responsive map heights */
+  @media (max-width: 480px) {
+    #map {
+      height: 180px !important;
+    }
+  }
+  @media (min-width: 481px) and (max-width: 575px) {
+    #map {
+      height: 200px !important;
+    }
+  }
+  @media (min-width: 576px) {
+    #map {
+      height: 240px !important;
+    }
+  }
+
+  @media (min-width: 768px) {
+    #map {
+      height: 280px !important;
+    }
+  }
+
+  @media (min-width: 992px) {
+    #map {
+      height: 300px !important;
+    }
+  }
+
+  @media (min-width: 1200px) {
+    #map {
+      height: 320px !important;
+    }
+  }
   
   /* Fix for Leaflet in modals - ensure proper display */
   #detailsModal #map {
-    min-height: 360px !important;
     max-height: 100% !important;
-    height: 100% !important;
     width: 100% !important;
     display: block !important;
   }
@@ -513,14 +546,45 @@
   }
 
   #detailsModal .modal-dialog {
-    max-width: 70vw;
+    max-width: 95vw;
     width: 100%;
+    max-height: 75vh;
+    display: flex;
+    flex-direction: column;
+  }
+  @media (min-width: 576px) {
+    #detailsModal .modal-dialog {
+      max-width: 90vw;
+      max-height: 70vh;
+    }
+  }
+  @media (min-width: 768px) {
+    #detailsModal .modal-dialog {
+      max-width: 80vw;
+      max-height: 65vh;
+    }
+  }
+  @media (min-width: 992px) {
+    #detailsModal .modal-dialog {
+      max-width: 75vw;
+      max-height: 60vh;
+    }
   }
   @media (min-width: 1200px) {
     #detailsModal .modal-dialog {
       max-width: 850px;
+      max-height: 55vh;
     }
   }
+
+  /* Ensure modal content can scroll if needed */
+  #detailsModal .modal-content {
+    max-height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+
 
   /* Compact modal text & controls for details view */
   #detailsModal .modal-content {
@@ -539,69 +603,86 @@
   #detailsModal .modal-body table td {
     font-size: 0.80rem;
     padding: 0.35rem 0.5rem;
+    word-break: break-word;
   }
   #detailsModal .modal-body h6 { font-size: 0.85rem; }
   #detailsModal .modal-footer .btn { padding: 0.35rem 0.6rem; font-size: 0.86rem; }
 
+  /* Mobile table optimizations */
+  @media (max-width: 575px) {
+    #detailsModal .modal-body table th {
+      font-size: 0.70rem;
+      width: 35%;
+      padding: 0.3rem 0.4rem;
+    }
+    #detailsModal .modal-body table td {
+      font-size: 0.75rem;
+      padding: 0.3rem 0.4rem;
+    }
+    #detailsModal .modal-body h6 {
+      font-size: 0.80rem;
+      margin-bottom: 0.75rem;
+    }
+  }
+
   /* Ensure modal body layout is correct */
   #detailsModal .modal-body {
-    min-height: 380px;
-    padding: 0.5rem;
-    display: flex;
-    align-items: stretch;
-  }
-
-  #detailsModal .modal-body .row {
-    width: 100%;
-    display: flex;
-    gap: 0.5rem;
-    align-items: start;
-  }
-
-  #detailsModal .modal-body .row .col-md-5 {
-    width: 250px;
-    flex-shrink: 0;
-  }
-
-  #detailsModal .modal-body .row .col-md-7 {
+    min-height: 250px;
+    padding: 0.75rem;
+    overflow-y: auto;
     flex: 1;
   }
 
-  #detailsModal .modal-body .row .col-md-5 {
-    display: flex;
-    flex-direction: column;
-    min-height: fit-content;
-  }
-
-  #detailsModal .modal-body .row .col-md-7 {
-    display: flex;
-    flex-direction: column;
-    min-height: 100%;
-  }
-
-  #detailsModal .modal-body .row .col-md-7 #map {
-    flex: 1;
-    min-height: 360px;
-    height: 100%;
-    width: 100%;
-    margin-right: 0;
-  }
-
-  @media (max-width: 992px) {
-    #detailsModal .modal-body .row {
-      flex-direction: column;
+  /* Mobile spacing adjustments */
+  @media (max-width: 575px) {
+    #detailsModal .modal-body {
+      padding: 0.5rem;
       min-height: auto;
+      height: auto;
+    }
+    #detailsModal .modal-header {
+      padding: 0.75rem;
+    }
+    #detailsModal .modal-footer {
+      padding: 0.75rem;
+    }
+  }
+
+  @media (max-width: 767px) {
+    #detailsModal .modal-body {
+      padding: 0.6rem;
+      min-height: auto;
+      height: auto;
+    }
+  }
+
+  /* Desktop layout uses Bootstrap grid (col-lg-5 and col-lg-7) */
+
+  /* Mobile layout - ensure proper spacing */
+  @media (max-width: 991px) {
+    #detailsModal .row .col-12 {
+      margin-bottom: 1.5rem;
     }
 
-    #detailsModal .modal-body .row .col-md-5,
-    #detailsModal .modal-body .row .col-md-7 {
-      width: 100%;
-      flex-shrink: 0;
+    #detailsModal .row .col-12:last-child {
+      margin-bottom: 0;
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid #e9ecef;
     }
+  }
 
-    #detailsModal .modal-body .row .col-md-7 #map {
-      min-height: 320px !important;
-      height: 320px !important;
+  @media (max-width: 480px) {
+    #detailsModal #map {
+      min-height: 180px !important;
+      height: 180px !important;
+    }
+  }
+
+  @media (min-width: 481px) and (max-width: 991px) {
+    #detailsModal #map {
+      min-height: 200px !important;
+      height: 200px !important;
     }
   }
 </style>
