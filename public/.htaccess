@@ -1,5 +1,5 @@
 # =========================================================================
-# Laravel Secure .htaccess - Safe & Asset-Friendly (with Laravel 404 integration)
+# Laravel Secure .htaccess - Safe & Asset-Friendly
 # =========================================================================
 
 <IfModule mod_rewrite.c>
@@ -21,23 +21,31 @@
         Options -MultiViews -Indexes
     </IfModule>
 
-    # Block direct access to /index.php
+           # =====================================================
+    # Block direct access to index.php
+    # =====================================================
     RewriteCond %{THE_REQUEST} \s/+index\.php
     RewriteRule ^index\.php$ - [R=404,L]
 
-    # ✅ Use Laravel’s 404 for /public and /public/index.php
-    RewriteCond %{THE_REQUEST} \s/+public(?:/index\.php)?(?:[?\s]|$) [NC]
-    RewriteRule ^ index.php?force404=1 [L]
+    # =====================================================
+    # Block all access attempts that *mention* /public or /public_html
+    # Works even if Apache normalizes internally.
+    # =====================================================
+    RewriteCond %{THE_REQUEST} "^[A-Z]{3,}\s/+public(?:/|$|\s|\?)" [NC,OR]
+    RewriteCond %{THE_REQUEST} "^[A-Z]{3,}\s/+public_html(?:/|$|\s|\?)" [NC]
+    RewriteRule ^ - [R=404,L]
 
-    # Block access to /public_html
-    RewriteCond %{THE_REQUEST} \s/+public_html(?:[/?\s]|$)
-    RewriteRule ^ index.php?force404=1 [L]
-
+    # =====================================================
     # Normal Laravel routing for everything else
+    # =====================================================
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
+
+
 </IfModule>
+
+
 
 # Security headers (CSP allows assets)
 <IfModule mod_headers.c>
@@ -48,9 +56,11 @@
     Header always set X-XSS-Protection "1; mode=block"
     Header always set Content-Security-Policy "default-src 'self'; style-src 'self' 'unsafe-inline' https:; script-src 'self' 'unsafe-inline' https://www.google.com https://www.gstatic.com https://www.recaptcha.net https:; img-src 'self' data: https:; font-src 'self' data: https:; frame-src 'self' https://www.google.com https://www.gstatic.com https://www.recaptcha.net; object-src 'none'; base-uri 'self'; frame-ancestors 'none';"
     Header always set Permissions-Policy "accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=(), fullscreen=(self)"
-    Header always set Access-Control-Allow-Origin "https://mcc-pes.com"
+   # Header always set Content-Security-Policy "default-src 'self'; style-src 'self' 'unsafe-inline' https:; script-src 'self' 'unsafe-inline' https:; object-src 'none';"
+    Header always set access-Control-Allow-Origin "https://mcc-pes.com"
     Header always set Access-Control-Allow-Credentials "true"
-    Header always set Access-Control-Allow-Methods "GET, POST, PUT, PATCH, DELETE, OPTIONS"
+    Header always set Access-Control-Allow-Methods "GET, POST, PUT, PATCH,  DELETE, OPTIONS"
+   
 </IfModule>
 
 # Disable directory listing
