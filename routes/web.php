@@ -24,7 +24,7 @@ Route::get('/', function () {
 });
 
 // Test route for geolocation debugging
-Route::get('/test-geolocation', [TestController::class, 'checkGeolocation'])->name('test.geolocation');
+
 
 
 
