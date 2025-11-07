@@ -449,6 +449,28 @@
             box-shadow: 0 10px 20px rgba(108, 117, 125, 0.3);
             text-decoration: none;
         }
+
+        /* Icon-only back button */
+        .btn-back-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: #6c757d; /* same as secondary */
+            color: #fff;
+            border: none;
+            box-shadow: 0 6px 12px rgba(108, 117, 125, 0.25);
+            transition: transform .2s ease, box-shadow .2s ease, background-color .2s ease;
+        }
+        .btn-back-icon:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 18px rgba(108, 117, 125, 0.35);
+            background: #5b646b;
+            color: #fff;
+        }
+        .btn-back-icon i { font-size: 16px; }
         
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px);}
@@ -529,6 +551,11 @@
             #otp_code {
                 max-width: 180px !important;
                 font-size: 1em !important;
+            }
+
+            /* Ensure back button stays left-aligned on mobile */
+            #backToLoginContainer {
+                align-self: flex-start;
             }
         }
         .password-strength {
@@ -710,13 +737,15 @@
           
         </div>
         
-        <!-- Back to Login button for steps 1, 3, and 4 -->
-        <div class="d-flex justify-content-center mt-3" id="backToLoginContainer">
-            <a href="{{ route('login') }}" class="btn btn-outline-secondary" style="min-width: 140px;">
-                <i class="fas fa-arrow-left me-1"></i> Back to Login
+             <!-- Back to Login button for steps 1, 3, and 4 -->
+               <div id="backToLoginContainer" style="text-align: left; margin-top: 24px;">
+            <a href="{{ route('login') }}" class="btn-back-icon" aria-label="Back to Login">
+                <i class="fas fa-arrow-left"></i>
             </a>
         </div>
+
     </div>
+
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {

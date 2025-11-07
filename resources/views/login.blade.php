@@ -1477,7 +1477,9 @@
                         <button type="submit" name="login" class="btn btn-primary" {{ ($admin_otp_pending && $adminOtpOverlayEnabled) ? 'disabled' : '' }}>
                             <i class="fas fa-sign-in-alt"></i> Login as Administrator
                         </button>
-                        <button type="button" class="btn-back-icon" onclick="resetForm()" aria-label="Back" {{ ($admin_otp_pending && $adminOtpOverlayEnabled) ? 'disabled' : '' }}>
+                    </div>
+                    <div class="mt-3">
+                        <button type="button" class="btn-back-icon admin-back-btn" onclick="resetForm()" aria-label="Back" {{ ($admin_otp_pending && $adminOtpOverlayEnabled) ? 'disabled' : '' }}>
                             <i class="fas fa-arrow-left"></i>
                         </button>
                     </div>

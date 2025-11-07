@@ -297,7 +297,7 @@
             backdrop-filter: blur(15px);
             border-radius: 25px;
             box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
-            padding: 36px;
+            padding: 36px 36px 36px;
             max-width: 320px;
             width: 80%;
             transition: all 0.3s ease;
@@ -721,12 +721,39 @@
                 margin: 15px 0;
                 padding: 12px;
             }
-            
+
             .form-check-label {
                 font-size: 13px;
                 line-height: 1.4;
             }
+
+            /* Ensure back button stays left-aligned on mobile */
+            #backToLoginContainer {
+                align-self: flex-start;
+            }
         }
+
+        /* Icon-only back button */
+        .btn-back-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: #6c757d; /* same as secondary */
+            color: #fff;
+            border: none;
+            box-shadow: 0 6px 12px rgba(108, 117, 125, 0.25);
+            transition: transform .2s ease, box-shadow .2s ease, background-color .2s ease;
+        }
+        .btn-back-icon:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 18px rgba(108, 117, 125, 0.35);
+            background: #5b646b;
+            color: #fff;
+        }
+        .btn-back-icon i { font-size: 16px; }
     </style>
 </head>
 <body>
@@ -823,16 +850,18 @@
             <div class="alert alert-success text-center">
                 Email verified! You may now sign up.
             </div>
-            <a href="{{ route('signup') }}?verified_email=" id="proceedToSignupBtn" class="btn btn-primary">Proceed to Signup</a>
+                      <a href="{{ route('signup') }}?verified_email=" id="proceedToSignupBtn" class="btn btn-primary">Proceed to Signup</a>
         </div>
         
-        <!-- Back to Login button for steps 1 and 3 -->
-        <div class="d-flex justify-content-center mt-3" id="backToLoginContainer">
-            <a href="{{ route('login') }}" class="btn btn-outline-secondary" style="min-width: 140px;">
-                <i class="fas fa-arrow-left me-1"></i> Back to Login
+       <!-- Back to Login button -->
+               <div id="backToLoginContainer" style="text-align: left; margin-top: 24px;">
+            <a href="{{ route('login') }}" class="btn-back-icon" aria-label="Back to Login">
+                <i class="fas fa-arrow-left"></i>
             </a>
         </div>
+
     </div>
+
 
     <!-- Terms and Conditions Modal -->
     <div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
