@@ -36,9 +36,16 @@
     RewriteRule ^public_html/?$ - [R=404,L]
     RewriteRule ^public_html/.*$ - [R=404,L]
 
-     RewriteCond %{REQUEST_FILENAME} !-d
-     RewriteCond %{REQUEST_FILENAME} !-f
-     RewriteRule ^ index.php [L]
+         # Block any request starting with /public or /public_html
+    RewriteCond %{REQUEST_URI} ^/public(/|$) [NC,OR]
+    RewriteCond %{REQUEST_URI} ^/public_html(/|$) [NC]
+    RewriteRule .* - [R=404,L]
+
+    # Normal Laravel routing for everything else
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^ index.php [L]
+
 
 </IfModule>
 
