@@ -26,8 +26,8 @@
      RewriteCond %{THE_REQUEST} \s/+public(?:[/?\s]|$)
      RewriteRule ^public(?:/.*)?$ - [R=404,L]
      RewriteCond %{THE_REQUEST} \s/+public_html(?:[/?\s]|$)
-     RewriteRule ^public_html(?:/.*)?$ - [R=404,L]
-     RewriteRule ^public/index.php(?:/.*)?$ - [R=404,L]
+    
+   
 
 
 
