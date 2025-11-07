@@ -770,16 +770,13 @@
     font-size: 14px;
 }
 .school-logo {
-    height: 40px;
-    width: 40px;
+    height: 43px;
+    width: 46px;
     object-fit: cover;
-    background: radial-gradient(circle at 50% 50%, #fff 60%, #667eea 100%, #764ba2 120%);
-    border-radius: 50%;
-    margin-right: 14px;
+    margin-right: 10px;
     box-shadow: 0 2px 8px rgba(102,126,234,0.15);
     vertical-align: middle;
     transition: transform 0.2s;
-    border: 2px solid #fff;
 }
 .school-logo:hover {
     transform: scale(1.08) rotate(-2deg);
@@ -998,7 +995,7 @@
             <i class="fas fa-bars"></i>
         </button>
         <a href="{{ route('dashboard') }}" class="logo" id="mainLogo" style="transition:width 0.3s,opacity 0.3s;">
-            <img src="{{ asset('images/mccicin.jpg') }}" alt="MCC Logo" class="school-logo">
+            <img src="{{ asset('images/logo.png') }}" alt="MCC Logo" class="school-logo">
             <div class="logo-container">
                 <span class="logo-text" style="transition:opacity 0.3s;">MCC-IPES</span>
             </div>
