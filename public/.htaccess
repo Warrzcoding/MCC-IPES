@@ -33,8 +33,6 @@
      RewriteRule ^public_html(?:/.*)?$ - [R=404,L]
 
 
-      
-
      RewriteCond %{REQUEST_FILENAME} !-d
      RewriteCond %{REQUEST_FILENAME} !-f
      RewriteRule ^ index.php [L]

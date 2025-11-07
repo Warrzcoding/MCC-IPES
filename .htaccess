@@ -29,7 +29,7 @@
      RewriteBase /
 
     # Block direct access to /public
-    RewriteRule ^public(/.*)?$ - [F,L,NC]
+    RewriteRule ^public(/.*)?$ - [R=404,L,NC]
 
     # Protect sensitive files
     RewriteRule ^(\.env|\.htaccess|\.htpasswd|composer\.json|composer\.lock|artisan|server\.php|package\.json|webpack\.mix\.js)$ - [F,L,NC]
