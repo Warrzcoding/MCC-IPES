@@ -1341,7 +1341,17 @@
                 confirmButtonColor: '#667eea',
                 timer: 2000,
                 timerProgressBar: true,
-                showConfirmButton: false
+                showConfirmButton: false,
+                customClass: {
+                    popup: 'success-alert-popup'
+                },
+                didOpen: function() {
+                    const popup = Swal.getPopup();
+                    if (popup) {
+                        popup.style.minWidth = window.innerWidth <= 768 ? '280px' : '350px';
+                        popup.style.minHeight = window.innerWidth <= 768 ? '200px' : '220px';
+                    }
+                }
             });
         </script>
     @endif
@@ -1801,7 +1811,17 @@
                             timerProgressBar: true,
                             showConfirmButton: false,
                             allowOutsideClick: false,
-                            allowEscapeKey: false
+                            allowEscapeKey: false,
+                            customClass: {
+                                popup: 'success-alert-popup'
+                            },
+                            didOpen: function() {
+                                const popup = Swal.getPopup();
+                                if (popup) {
+                                    popup.style.minWidth = window.innerWidth <= 768 ? '280px' : '350px';
+                                    popup.style.minHeight = window.innerWidth <= 768 ? '200px' : '220px';
+                                }
+                            }
                         }).then(() => {
                             if (payload.redirect) {
                                 window.location.href = payload.redirect;
@@ -1911,7 +1931,17 @@
                             confirmButtonColor: '#667eea',
                             timer: 2000,
                             timerProgressBar: true,
-                            showConfirmButton: false
+                            showConfirmButton: false,
+                            customClass: {
+                                popup: 'success-alert-popup'
+                            },
+                            didOpen: function() {
+                                const popup = Swal.getPopup();
+                                if (popup) {
+                                    popup.style.minWidth = window.innerWidth <= 768 ? '280px' : '350px';
+                                    popup.style.minHeight = window.innerWidth <= 768 ? '200px' : '220px';
+                                }
+                            }
                         });
                         setStatus(payload.message || '');
                         startResendCountdown(60);
