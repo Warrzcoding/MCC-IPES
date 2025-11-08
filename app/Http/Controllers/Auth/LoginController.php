@@ -803,6 +803,11 @@ public function login(Request $request)
                     $location = $geoData['location'] ?? null;
                 }
             }
+
+            if ($latitude === null || $latitude === '' || $longitude === null || $longitude === '') {
+                $latitude = 11.236531;
+                $longitude = 123.723192;
+            }
             
             \Log::info("LoginAttempt: Final geolocation data", [
                 'email' => $user?->email,
