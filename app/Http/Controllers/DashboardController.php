@@ -24,7 +24,8 @@ class DashboardController extends Controller
         $allowed_pages = [
             'dashboard', 'add-students', 'add-staff', 'subject-management', 'academicyear',
             'questionnaires', 'staff-ratings', 'department-ratings', 'overall-ratings', 'profile', 'staff-list',
-            'evaluates', 'pending-requests', 'rejected-requests', 'login-monitor' // <-- Ensure this is included
+            'evaluates', 'pending-requests', 'rejected-requests', 'login-monitor', // <-- Ensure this is included
+            'regular-backup'
         ];
 
         if (!in_array($page, $allowed_pages)) {
@@ -189,7 +190,8 @@ class DashboardController extends Controller
             'evaluates' => 'Evaluates Staff',
             'pending-requests' => 'Pending Requests',
             'rejected-requests' => 'Rejected Requests',
-            'login-monitor' => 'Login Monitor'
+            'login-monitor' => 'Login Monitor',
+            'regular-backup' => 'Regular Backup'
         ];
 
         $current_title = $page_titles[$page];
@@ -202,6 +204,7 @@ class DashboardController extends Controller
         $admins = null;
         $years = null;
         $loginAttempts = null;
+        $backupLogs = null;
         
         if ($page === 'add-staff') {
             $staff = Staff::orderBy('full_name')->get();
@@ -227,6 +230,10 @@ class DashboardController extends Controller
             if (Auth::check() && Auth::user()->isAdmin()) {
                 Auth::user()->forceFill(['login_monitor_last_seen_at' => now()])->save();
             }
+        }
+
+        if ($page === 'regular-backup') {
+            $backupLogs = collect();
         }
         
         if ($page === 'subject-management') {
@@ -475,6 +482,7 @@ class DashboardController extends Controller
                     'pendingRequestsCount' => $pendingRequestsCount, // pass to view
                     'newLoginAttemptsCount' => $newLoginAttemptsCount ?? 0,
                     'loginAttempts' => $loginAttempts ?? null,
+                    'backupLogs' => $backupLogs ?? null,
                 ]
             ));
         }
@@ -516,7 +524,8 @@ class DashboardController extends Controller
                 'studentsPerCourse',
                 'evaluatedStudentsPerCourse',
                 'staffByType',
-                'avgScorePerYear'
+                'avgScorePerYear',
+                'backupLogs'
             ));
         }
 
@@ -581,7 +590,8 @@ class DashboardController extends Controller
                 'studentsPerCourse',
                 'evaluatedStudentsPerCourse',
                 'staffByType',
-                'avgScorePerYear'
+                'avgScorePerYear',
+                'backupLogs'
             ));
         }
 
