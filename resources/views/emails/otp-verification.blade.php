@@ -24,11 +24,21 @@
             text-align: center;
             margin-bottom: 30px;
         }
-        .header .logo {
-            display: block;
+        .header .logo-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 110px;
+            height: 110px;
             margin: 0 auto 20px;
-            width: 96px;
+            border-radius: 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            box-shadow: 0 10px 24px rgba(102, 126, 234, 0.25);
+        }
+        .header .logo {
+            width: 70%;
             height: auto;
+            display: block;
         }
         .header h1 {
             color: #333;
@@ -104,7 +114,9 @@
 <body>
     <div class="email-container">
         <div class="header">
-            <img class="logo" src="{{ asset('images/logo.png') }}" alt="MCC-IPES Logo">
+            <div class="logo-wrapper">
+                <img class="logo" src="{{ asset('images/logo.png') }}" alt="MCC-IPES Logo">
+            </div>
             <h1>MCC-IPES Verification</h1>
             <p>Instructors Performance Evaluation System</p>
         </div>

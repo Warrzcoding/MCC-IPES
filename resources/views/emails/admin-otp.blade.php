@@ -8,7 +8,8 @@
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #102a4f; background-color: #f5f7fb; margin: 0; padding: 24px; }
         .container { max-width: 560px; margin: 0 auto; background: #ffffff; border-radius: 16px; padding: 36px; box-shadow: 0 12px 30px rgba(16, 42, 79, 0.12); }
         .header { text-align: center; margin-bottom: 28px; }
-        .header .logo { display: block; margin: 0 auto 16px; width: 96px; height: auto; }
+        .header .logo-wrapper { display: flex; align-items: center; justify-content: center; width: 110px; height: 110px; margin: 0 auto 16px; border-radius: 50%; background: linear-gradient(135deg, #1f8aff, #60a9ff); box-shadow: 0 8px 18px rgba(31, 138, 255, 0.25); }
+        .header .logo { width: 72%; height: auto; display: block; }
         .header h1 { margin: 0; font-size: 22px; font-weight: 700; }
         .intro { margin-bottom: 24px; font-size: 15px; }
         .otp-box { display: inline-block; margin: 0 auto 18px; padding: 12px 24px; border-radius: 12px; background: linear-gradient(135deg, #1f8aff, #60a9ff); color: #ffffff; font-size: 30px; letter-spacing: 12px; font-weight: 700; font-family: 'Courier New', monospace; }
@@ -20,7 +21,9 @@
 <body>
     <div class="container">
         <div class="header">
-            <img class="logo" src="{{ asset('images/logo.png') }}" alt="MCC-IPES Logo">
+            <div class="logo-wrapper">
+                <img class="logo" src="{{ asset('images/logo.png') }}" alt="MCC-IPES Logo">
+            </div>
             <h1>MCC-IPES Administrator Verification</h1>
         </div>
         <div class="intro">
