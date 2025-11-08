@@ -11,6 +11,8 @@
     border-radius: 12px;
     padding: 0.3rem;
     margin-bottom: 0.3rem;
+    display: flex;
+    justify-content: flex-end;
 }
 
 .custom-nav-tabs .nav-link {
@@ -96,6 +98,7 @@
     align-items: center !important;
     min-width: 85px !important;
     font-size: 0.7rem !important;
+    margin-left: 1rem !important;
 }
 
 #approve-selected {

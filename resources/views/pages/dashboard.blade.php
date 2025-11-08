@@ -200,12 +200,35 @@ if (Auth::user()->isAdmin()) {
     .page-full-width .circular-card .text-xs {
         font-size: 0.55rem;
     }
+    .welcome-alert {
+        font-size: 0.85rem;
+    }
+    .welcome-alert .alert-heading {
+        font-size: 1rem;
+    }
     @media (max-width: 992px) {
         .page-full-width {
             max-width: 100%;
         }
     }
 </style>
+
+<!-- Welcome Message -->
+<div class="row">
+    <div class="col-12">
+        <div class="alert alert-info alert-dismissible fade show welcome-alert" role="alert">
+            <h4 class="alert-heading">Welcome, {{ Auth::user()->full_name }}!</h4>
+            <p class="mb-0">
+                @if(Auth::user()->isAdmin())
+                    You are logged in as an Administrator. You can manage students, instructors, questionnaires, and view evaluation results.
+                @else
+                    You are logged in as a Student. You can view all staff members and evaluate their performance using the evaluation forms.
+                @endif
+            </p>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    </div>
+</div>
 
 <div class="row page-full-width">
     @if(Auth::user()->isAdmin())
@@ -690,23 +713,6 @@ if (Auth::user()->isAdmin()) {
             </div>
         </div>
     @endif
-</div>
-
-<!-- Welcome Message -->
-<div class="row">
-    <div class="col-12">
-        <div class="alert alert-info alert-dismissible fade show" role="alert">
-            <h4 class="alert-heading">Welcome, {{ Auth::user()->full_name }}!</h4>
-            <p class="mb-0">
-                @if(Auth::user()->isAdmin())
-                    You are logged in as an Administrator. You can manage students, instructors, questionnaires, and view evaluation results.
-                @else
-                    You are logged in as a Student. You can view all staff members and evaluate their performance using the evaluation forms.
-                @endif
-            </p>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    </div>
 </div>
 
 <!-- Chart.js CDN and Chart Scripts -->

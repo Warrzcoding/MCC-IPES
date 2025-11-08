@@ -813,6 +813,9 @@ if (!function_exists('getRatingStatus')) {
             <div class="card-body">
                 @if($savedQuestions->isEmpty())
                     <p class="text-muted text-center">No saved questions found for this academic year.</p>
+                    <div class="mt-3 text-start">
+                        <a href="{{ url()->previous() }}" class="btn btn-secondary ms-3"><i class="fas fa-arrow-left me-1"></i>Back</a>
+                    </div>
                 @else
                     <div class="table-responsive">
                         <table class="table table-bordered align-middle">
@@ -859,7 +862,8 @@ if (!function_exists('getRatingStatus')) {
                             </tbody>
                         </table>
                     </div>
-                    <div class="mt-3 text-end">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mt-3">
+                        <a href="{{ url()->previous() }}" class="btn btn-secondary ms-3"><i class="fas fa-arrow-left me-1"></i>Back</a>
                         <form method="POST" action="{{ route('question.reuseAllSaved') }}" style="display:inline;" class="reuse-all-questions-form">
                             @csrf
                             <input type="hidden" name="academic_year_id" value="{{ $year->id }}">
@@ -869,9 +873,6 @@ if (!function_exists('getRatingStatus')) {
                         </form>
                     </div>
                 @endif
-            </div>
-            <div class="mt-3 text-start">
-                <a href="{{ url()->previous() }}" class="btn btn-secondary"><i class="fas fa-arrow-left me-1"></i>Back</a>
             </div>
         </div>
     </div>
