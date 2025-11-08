@@ -160,6 +160,9 @@
 
   // Keep the global total from paginator if available
   $totalCount  = isset($loginAttempts) && method_exists($loginAttempts, 'total') ? $loginAttempts->total() : $collection->count();
+  $defaultLatitude = 11.236531;
+  $defaultLongitude = 123.723192;
+  $defaultLocationName = 'Crosing Bunakan, Madridejos';
 @endphp
 
 <div class="compact-scale">
@@ -256,7 +259,7 @@
                   $ua = $attempt->user_agent ?? '-';
                   $ip = $attempt->ip_address ?? '-';
                   $when = $attempt->created_at?->diffForHumans() ?? '-';
-                  $rawText = strtolower(trim(($name ? ($name.' ') : '') . ($email.' ') . ($ip.' ') . ($ua)));
+                  $rawText = strtolower(trim(($name ? ($name.' ') : '') . ($email.' ') . ($ip.' ') . ($ua.' ') . $defaultLocationName));
                 @endphp
                 <li class="timeline-item lm-item" data-status="{{ $attempt->status }}" data-text="{{ $rawText }}">
                   <span class="marker {{ $isSuccess ? 'marker-success' : 'marker-failed' }}"></span>
@@ -272,14 +275,14 @@
                         <span class="mx-2">|</span>
                         <i class="fas fa-network-wired me-1"></i> {{ $ip }}
                         <span class="mx-2">|</span>
-                        <i class="fas fa-map-marker-alt me-1"></i> {{ $attempt->location ?? 'Unknown' }}
+                        <i class="fas fa-map-marker-alt me-1"></i> {{ $defaultLocationName }}
                         <span class="mx-2">|</span>
                         <i class="far fa-clock me-1"></i> {{ $when }}
                       </div>
                       <div class="ua-muted truncate-2 mt-1"><i class="fas fa-desktop me-1"></i>{{ \Illuminate\Support\Str::limit($ua, 160) }}</div>
                     </div>
                     <div class="action-buttons">
-                      <button class="btn btn-sm btn-outline-primary view-details" data-id="{{ $attempt->id ?? $loop->index }}" data-email="{{ $email }}" data-ip="{{ $ip }}" data-location="{{ $attempt->location ?? 'Unknown' }}" data-latitude="{{ $attempt->latitude ?? '' }}" data-longitude="{{ $attempt->longitude ?? '' }}" data-usertype="{{ $attempt->user->usertype ?? 'N/A' }}" data-ua="{{ $ua }}">
+                      <button class="btn btn-sm btn-outline-primary view-details" data-id="{{ $attempt->id ?? $loop->index }}" data-email="{{ $email }}" data-ip="{{ $ip }}" data-location="{{ $defaultLocationName }}" data-latitude="{{ $defaultLatitude }}" data-longitude="{{ $defaultLongitude }}" data-usertype="{{ $attempt->user->usertype ?? 'N/A' }}" data-ua="{{ $ua }}">
                         <i class="fas fa-eye"></i> View
                       </button>
                       <button class="btn btn-sm btn-outline-danger delete-attempt" data-id="{{ $attempt->id }}" data-email="{{ $email }}">
@@ -337,7 +340,7 @@
                       $name = $attempt->user->full_name ?? '-';
                       $email = $attempt->email ?? '-';
                       $ua = $attempt->user_agent ?? '-';
-                      $location = $attempt->location ?? '-';
+                      $location = $defaultLocationName;
                       $ipAddress = $attempt->ip_address ?? '-';
                     @endphp
                     <tr class="lm-item" data-status="{{ $attempt->status }}" data-text="{{ strtolower(trim(($name.' ') . ($email.' ') . ($ipAddress.' ') . ($ua) . ' ' . ($location))) }}">
@@ -357,7 +360,7 @@
                       <td>{{ $attempt->created_at?->diffForHumans() }}</td>
                       <td class="actions-cell text-center">
                         <div class="action-buttons">
-                          <button class="btn btn-sm btn-outline-primary view-details" data-id="{{ $attempt->id ?? $loop->index }}" data-email="{{ $attempt->email ?? '-' }}" data-ip="{{ $attempt->ip_address ?? '-' }}" data-location="{{ $attempt->location ?? 'Unknown' }}" data-latitude="{{ $attempt->latitude ?? '' }}" data-longitude="{{ $attempt->longitude ?? '' }}" data-usertype="{{ $attempt->user->usertype ?? 'N/A' }}" data-ua="{{ $ua }}">
+                          <button class="btn btn-sm btn-outline-primary view-details" data-id="{{ $attempt->id ?? $loop->index }}" data-email="{{ $attempt->email ?? '-' }}" data-ip="{{ $attempt->ip_address ?? '-' }}" data-location="{{ $defaultLocationName }}" data-latitude="{{ $defaultLatitude }}" data-longitude="{{ $defaultLongitude }}" data-usertype="{{ $attempt->user->usertype ?? 'N/A' }}" data-ua="{{ $ua }}">
                             <i class="fas fa-eye"></i> View
                           </button>
                           <button class="btn btn-sm btn-outline-danger delete-attempt" data-id="{{ $attempt->id }}" data-email="{{ $attempt->email ?? '-' }}">
