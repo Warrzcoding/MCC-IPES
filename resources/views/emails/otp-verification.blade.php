@@ -24,17 +24,11 @@
             text-align: center;
             margin-bottom: 30px;
         }
-        .logo {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 50%;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 20px;
-            font-size: 1.5rem;
-            color: white;
+        .header .logo {
+            display: block;
+            margin: 0 auto 20px;
+            width: 96px;
+            height: auto;
         }
         .header h1 {
             color: #333;
@@ -110,7 +104,7 @@
 <body>
     <div class="email-container">
         <div class="header">
-            <div class="logo">🛡️</div>
+            <img class="logo" src="{{ asset('images/logo.png') }}" alt="MCC-IPES Logo">
             <h1>MCC-IPES Verification</h1>
             <p>Instructors Performance Evaluation System</p>
         </div>
