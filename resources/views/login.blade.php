@@ -2196,44 +2196,66 @@
 
                     isRequesting = true;
                     console.log('Requesting device geolocation...');
-
-                    navigator.geolocation.getCurrentPosition(
-                        (position) => {
-                            isRequesting = false;
-                            const lat = position.coords.latitude.toString();
-                            const lng = position.coords.longitude.toString();
-                            console.log('Geolocation success:', { lat, lng, accuracy: position.coords.accuracy });
-                            storedCoordinates = { lat, lng };
-                            applyToInputs(lat, lng);
-                            document.dispatchEvent(new CustomEvent('login-geolocation:success', { detail: { lat, lng } }));
-                            resolve();
-                        },
-                        (error) => {
-                            isRequesting = false;
-                            console.warn('Geolocation error:', error.code, error.message);
-                            document.dispatchEvent(new CustomEvent('login-geolocation:failed', { detail: { code: error.code, message: error.message } }));
-
-                            // Show user-friendly notification if permission denied
-                            if (error.code === 1) { // PERMISSION_DENIED
-                                // Only show once per session
-                                if (!sessionStorage.getItem('geolocation-denied-notified')) {
-                                    sessionStorage.setItem('geolocation-denied-notified', 'true');
-                                    setTimeout(() => {
-                                        Swal.fire({
-                                            icon: 'info',
-                                            title: 'Location Access Needed',
-                                            text: 'For accurate location tracking, please allow location access in your browser and try again.',
-                                            confirmButtonColor: '#667eea',
-                                            confirmButtonText: 'Got it'
-                                        });
-                                    }, 1000); // Small delay to not interrupt flow
+                    
+                    let retryCount = 0;
+                    const maxRetries = 2;
+                    
+                    const attemptGeolocation = () => {
+                        navigator.geolocation.getCurrentPosition(
+                            (position) => {
+                                isRequesting = false;
+                                const lat = position.coords.latitude.toString();
+                                const lng = position.coords.longitude.toString();
+                                const accuracy = Math.round(position.coords.accuracy);
+                                console.log('Geolocation success:', { lat, lng, accuracy });
+                                storedCoordinates = { lat, lng };
+                                applyToInputs(lat, lng);
+                                document.dispatchEvent(new CustomEvent('login-geolocation:success', { detail: { lat, lng, accuracy } }));
+                                resolve();
+                            },
+                            (error) => {
+                                isRequesting = false;
+                                console.warn('Geolocation error:', error.code, error.message);
+                                
+                                // Retry on timeout (error code 3)
+                                if (error.code === 3 && retryCount < maxRetries) {
+                                    retryCount++;
+                                    console.log(`Geolocation timeout, retrying... (${retryCount}/${maxRetries})`);
+                                    setTimeout(() => attemptGeolocation(), 1000);
+                                    return;
                                 }
-                            }
+                                
+                                document.dispatchEvent(new CustomEvent('login-geolocation:failed', { detail: { code: error.code, message: error.message } }));
 
-                            resolve(); // Resolve even on error - will fall back to IP
-                        },
-                        { enableHighAccuracy: true, timeout: 20000, maximumAge: 60000 }
-                    );
+                                // Show notifications based on error type
+                                if (error.code === 1) { // PERMISSION_DENIED
+                                    if (!sessionStorage.getItem('geolocation-denied-notified')) {
+                                        sessionStorage.setItem('geolocation-denied-notified', 'true');
+                                        setTimeout(() => {
+                                            Swal.fire({
+                                                icon: 'warning',
+                                                title: 'Location Permission Required',
+                                                html: '<p style="text-align: left;">For accurate location tracking, please:</p><ol style="text-align: left;"><li>Click the location icon in your browser address bar</li><li>Select "Allow" for this site</li><li>Refresh and login again</li></ol><p style="text-align: left; font-size: 0.9em; color: #666;">Your login will still work, but location will be IP-based (less accurate).</p>',
+                                                confirmButtonColor: '#667eea',
+                                                confirmButtonText: 'Got it'
+                                            });
+                                        }, 800);
+                                    }
+                                } else if (error.code === 3) { // TIMEOUT
+                                    console.warn('Geolocation request timed out after retries');
+                                }
+
+                                resolve(); // Resolve even on error - will fall back to IP
+                            },
+                            { 
+                                enableHighAccuracy: true, 
+                                timeout: 15000,  // Reduced from 20s for faster fallback
+                                maximumAge: 60000  // Use cached position if < 1 minute old
+                            }
+                        );
+                    };
+                    
+                    attemptGeolocation();
                     document.dispatchEvent(new CustomEvent('login-geolocation:requested'));
                 });
             }

@@ -252,7 +252,11 @@
                             <tbody>
                                 @foreach($questions as $question)
                                     <tr>
-                                        <td><strong>{{ $question->title }}</strong></td>
+                                        <td>
+                                            <div class="text-truncate" style="max-width: 200px;" title="{{ $question->title }}" data-bs-toggle="tooltip" data-bs-placement="top">
+                                                <strong>{{ $question->title }}</strong>
+                                            </div>
+                                        </td>
                                         <td class="text-muted" style="max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" 
                                             title="{{ $question->description }}" data-bs-toggle="tooltip" data-bs-placement="top">
                                             {{ $question->description }}
@@ -270,7 +274,7 @@
                                                 {{ $question->is_open ? 'Open' : 'Closed' }}
                                             </span>
                                         </td>
-                                        <td>
+                                        <td class="text-nowrap">
                                             <button class="btn btn-sm btn-outline-primary @if($questionnaire_status) disabled-custom @endif"
                                                     data-bs-toggle="modal" 
                                                     data-bs-target="#editQuestionModal"

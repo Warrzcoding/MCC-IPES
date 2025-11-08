@@ -722,12 +722,56 @@ public function login(Request $request)
     }
 
     /**
+     * Get the actual client IP address (handles proxies, CloudFlare, load balancers)
+     */
+    private function getClientIp(Request $request): string
+    {
+        // Try CloudFlare header first (most common in production)
+        if (!empty($_SERVER['HTTP_CF_CONNECTING_IP'])) {
+            return $_SERVER['HTTP_CF_CONNECTING_IP'];
+        }
+        
+        // Try standard proxy headers
+        if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            // Take the first IP if multiple IPs
+            $ips = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+            return trim($ips[0]);
+        }
+        
+        if (!empty($_SERVER['HTTP_X_FORWARDED'])) {
+            $ips = explode(',', $_SERVER['HTTP_X_FORWARDED']);
+            return trim($ips[0]);
+        }
+        
+        if (!empty($_SERVER['HTTP_FORWARDED_FOR'])) {
+            $ips = explode(',', $_SERVER['HTTP_FORWARDED_FOR']);
+            return trim($ips[0]);
+        }
+        
+        if (!empty($_SERVER['HTTP_FORWARDED'])) {
+            // Parse: Forwarded: for=192.0.2.60;proto=https
+            preg_match('/for=([^;,\s]+)/', $_SERVER['HTTP_FORWARDED'], $matches);
+            if (!empty($matches[1])) {
+                return trim($matches[1], '[]');
+            }
+        }
+        
+        if (!empty($_SERVER['REMOTE_ADDR'])) {
+            return $_SERVER['REMOTE_ADDR'];
+        }
+        
+        // Fallback to Laravel's built-in method
+        return $request->ip() ?? '0.0.0.0';
+    }
+
+    /**
      * Create a login attempt record with accurate geolocation data
      */
     private function createLoginAttempt(Request $request, ?User $user, string $status): void
     {
         try {
-            $ipAddress = $request->ip();
+            // Get client IP - handle CloudFlare, proxies, load balancers, etc.
+            $ipAddress = $this->getClientIp($request);
             
             $latitude = $request->input('latitude');
             $longitude = $request->input('longitude');
@@ -738,7 +782,8 @@ public function login(Request $request)
                 'status' => $status,
                 'client_lat' => $latitude,
                 'client_lng' => $longitude,
-                'ip_address' => $ipAddress
+                'ip_address' => $ipAddress,
+                'is_browser_geo' => !empty($latitude) && !empty($longitude)
             ]);
             
             // If browser geolocation not provided, get from IP
@@ -751,9 +796,12 @@ public function login(Request $request)
                 $longitude = $geoData['longitude'] ?? null;
                 $location = $geoData['location'] ?? null;
             } else {
-                // Even with browser geolocation, enhance with location name from IP
-                $geoData = $this->geolocationService->getLocationData($ipAddress);
-                $location = $geoData['location'] ?? null;
+                // Browser geolocation provided - use it
+                // But still enhance with location name from IP if not set
+                if (empty($location)) {
+                    $geoData = $this->geolocationService->getLocationData($ipAddress);
+                    $location = $geoData['location'] ?? null;
+                }
             }
             
             \Log::info("LoginAttempt: Final geolocation data", [

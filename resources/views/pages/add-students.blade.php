@@ -132,12 +132,10 @@
                     .page-full-width .modal-footer {
                         padding: 0.45rem 0.6rem;
                     }
-                    .page-full-width .modal-body {
-                        padding: 0.6rem;
-                        flex: 1 1 auto;
-                        max-height: calc(95vh - 5.1rem);
-                        overflow-y: auto;
-                    }
+                     .page-full-width .modal-body {
+                      padding: 0.6rem;
+                              }
+
                     body .swal2-popup.view-modal-narrow {
                         width: 340px !important;
                         max-width: 90vw;
@@ -172,6 +170,14 @@
                     }
                     .modal-compact .modal-content {
                         font-size: 0.7rem;
+                        max-height: 95vh;
+                        display: flex;
+                        flex-direction: column;
+                    }
+                    .modal-compact .modal-body {
+                        flex: 1 1 auto;
+                        max-height: calc(95vh - 5.1rem);
+                        overflow-y: auto;
                     }
                     .modal-compact .modal-title {
                         font-size: 0.76rem;

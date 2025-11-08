@@ -10,6 +10,7 @@ class GeolocationService
 {
     /**
      * Get geolocation data for an IP address
+     * Note: For production, ensure you pass the CLIENT IP, not server IP
      *
      * @param string $ipAddress
      * @return array
@@ -24,6 +25,9 @@ class GeolocationService
                 'location' => 'Local/Private Network'
             ];
         }
+
+        // Log for debugging
+        Log::debug("GeolocationService: Fetching location for IP {$ipAddress}");
 
         // Cache key for this IP
         $cacheKey = "geolocation_{$ipAddress}";
