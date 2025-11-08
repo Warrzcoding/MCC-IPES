@@ -789,6 +789,8 @@
                             popup.style.borderRadius = '16px';
                             popup.style.border = '1px solid rgba(255, 255, 255, 0.08)';
                             popup.style.boxShadow = '0 20px 55px rgba(5, 15, 35, 0.45)';
+                            popup.style.minWidth = window.innerWidth <= 768 ? '280px' : '350px';
+                            popup.style.minHeight = window.innerWidth <= 768 ? '200px' : '220px';
                         }
                         // Auto redirect after short delay
                         setTimeout(() => {

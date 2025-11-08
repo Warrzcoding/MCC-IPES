@@ -894,7 +894,14 @@ document.addEventListener('DOMContentLoaded', function() {
                         allowOutsideClick: false,
                         allowEscapeKey: false,
                         customClass: {
-                            popup: 'animated fadeInDown'
+                            popup: 'success-alert-popup animated fadeInDown'
+                        },
+                        didOpen: function() {
+                            const popup = Swal.getPopup();
+                            if (popup) {
+                                popup.style.minWidth = window.innerWidth <= 768 ? '280px' : '350px';
+                                popup.style.minHeight = window.innerWidth <= 768 ? '200px' : '220px';
+                            }
                         }
                     }).catch(function(error) {
                         console.error('SweetAlert error:', error);

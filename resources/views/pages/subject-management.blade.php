@@ -321,32 +321,33 @@
     white-space: normal;
 }
 
-/* Modal sizing */
-#addModal .modal-dialog,
-#editModal .modal-dialog {
-    max-width: 520px;
+/* Modal compaction for both add and edit modals */
+.modal-compact {
+    width: 80vw;
+    max-width: 380px;
 }
-
-#addModal .modal-content,
-#editModal .modal-content {
-    font-size: var(--subject-text-size-base);
+.modal-compact .modal-content {
+    font-size: 0.7rem;
 }
-
-#addModal .modal-title,
-#editModal .modal-title {
-    font-size: var(--subject-text-size-subheading);
+.modal-compact .modal-title {
+    font-size: 0.76rem;
+    font-weight: 600;
 }
-
-#addModal .form-control,
-#addModal .form-select,
-#editModal .form-control,
-#editModal .form-select {
-    font-size: var(--subject-text-size-base);
+.modal-compact .form-label,
+.modal-compact .form-text {
+    font-size: 0.64rem;
 }
-
-#addModal .modal-footer .btn,
-#editModal .modal-footer .btn {
-    font-size: var(--subject-text-size-button);
+.modal-compact .form-control,
+.modal-compact .form-select {
+    font-size: 0.66rem;
+    padding: 0.32rem 0.48rem;
+}
+.modal-compact .modal-footer .btn {
+    font-size: 0.66rem;
+    padding: 0.28rem 0.5rem;
+}
+.modal-compact .form-control::placeholder {
+    font-size: 0.64rem;
 }
 </style>
 
@@ -570,7 +571,7 @@
 
 <!-- Add Subject Modal -->
 <div class="modal fade" id="addModal" tabindex="-1">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-compact">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title"><i class="fas fa-plus me-2"></i>Add New Subject</h5>
@@ -670,7 +671,7 @@
 
 <!-- Edit Subject Modal -->
 <div class="modal fade" id="editModal" tabindex="-1">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-compact">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Edit Subject</h5>

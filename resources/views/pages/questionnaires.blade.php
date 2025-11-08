@@ -8,6 +8,16 @@
             timer: 3000,
             showConfirmButton: false,
             timerProgressBar: true,
+            customClass: {
+                popup: 'success-alert-popup'
+            },
+            didOpen: function() {
+                const popup = Swal.getPopup();
+                if (popup) {
+                    popup.style.minWidth = window.innerWidth <= 768 ? '280px' : '350px';
+                    popup.style.minHeight = window.innerWidth <= 768 ? '200px' : '220px';
+                }
+            },
             showClass: {
                 popup: 'animate__animated animate__fadeInDown'
             },

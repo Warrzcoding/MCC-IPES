@@ -164,6 +164,35 @@
                         font-size: 0.68rem;
                         padding: 0.32rem 0.75rem;
                     }
+
+                    /* Modal compaction for edit modal */
+                    .modal-compact {
+                        width: 80vw;
+                        max-width: 380px;
+                    }
+                    .modal-compact .modal-content {
+                        font-size: 0.7rem;
+                    }
+                    .modal-compact .modal-title {
+                        font-size: 0.76rem;
+                        font-weight: 600;
+                    }
+                    .modal-compact .form-label,
+                    .modal-compact .form-text {
+                        font-size: 0.64rem;
+                    }
+                    .modal-compact .form-control,
+                    .modal-compact .form-select {
+                        font-size: 0.66rem;
+                        padding: 0.32rem 0.48rem;
+                    }
+                    .modal-compact .modal-footer .btn {
+                        font-size: 0.66rem;
+                        padding: 0.28rem 0.5rem;
+                    }
+                    .modal-compact .form-control::placeholder {
+                        font-size: 0.64rem;
+                    }
                 </style>
                 <div class="alert alert-info">
                     <i class="fas fa-info-circle me-2"></i>
@@ -1193,7 +1222,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 <!-- Edit Student Modal -->
 <div class="modal fade" id="editModal" tabindex="-1">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-compact">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Edit Student</h5>

@@ -11,7 +11,17 @@
                 icon: '{{ $icon }}',
                 title: '{{ $title }}',
                 text: @json(session('message')),
-                confirmButtonColor: '#667eea'
+                confirmButtonColor: '#667eea',
+                customClass: {
+                    popup: 'success-alert-popup'
+                },
+                didOpen: function() {
+                    const popup = Swal.getPopup();
+                    if (popup) {
+                        popup.style.minWidth = window.innerWidth <= 768 ? '280px' : '350px';
+                        popup.style.minHeight = window.innerWidth <= 768 ? '200px' : '220px';
+                    }
+                }
             });
         });
     </script>
