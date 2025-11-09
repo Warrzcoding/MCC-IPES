@@ -208,8 +208,8 @@
                       </div>
                     </div>
                     <div class="action-buttons mt-3 mt-md-0">
-                      <button class="btn btn-sm btn-outline-primary view-details" data-name="{{ $jobName }}" data-status="{{ $statusLabel }}" data-storage="{{ $storage }}" data-size="{{ $sizeLabel }}" data-initiated="{{ $initiatedBy }}" data-start="{{ $startTimestamp }}" data-complete="{{ $completeTimestamp }}" data-duration="{{ $durationLabel }}" data-notes="{{ e($notes) }}">
-                        <i class="fas fa-eye"></i> View
+                      <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" data-id="{{ $job->id }}" data-name="{{ $jobName }}">
+                        <i class="fas fa-trash"></i> Delete
                       </button>
                     </div>
                   </div>
@@ -282,8 +282,8 @@
                       <td class="text-nowrap" title="{{ $initiatedBy }}">{{ \Illuminate\Support\Str::limit($initiatedBy, 60) }}</td>
                       <td class="actions-cell text-center">
                         <div class="action-buttons">
-                          <button class="btn btn-sm btn-outline-primary view-details" data-name="{{ $jobName }}" data-status="{{ $statusLabel }}" data-storage="{{ $storage }}" data-size="{{ $sizeLabel }}" data-initiated="{{ $initiatedBy }}" data-start="{{ $startedLabel }}" data-complete="{{ $completedLabel }}" data-duration="{{ $durationLabel }}" data-notes="{{ e($notes) }}">
-                            <i class="fas fa-eye"></i> View
+                          <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" data-id="{{ $job->id }}" data-name="{{ $jobName }}">
+                            <i class="fas fa-trash"></i> Delete
                           </button>
                         </div>
                       </td>
@@ -363,6 +363,45 @@
           <i class="fas fa-download me-2"></i>
           Yes, Download Backup
         </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Confirmation Modal for Backup Deletion -->
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="confirmDeleteModalLabel">
+          <i class="fas fa-trash me-2 text-danger"></i>
+          Confirm Backup Deletion
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="text-center mb-3">
+          <i class="fas fa-exclamation-triangle text-danger" style="font-size: 3rem;"></i>
+        </div>
+        <p class="mb-3">Are you sure you want to delete the backup "<span id="delete-backup-name"></span>"?</p>
+        <div class="alert alert-warning">
+          <i class="fas fa-exclamation-triangle me-2"></i>
+          <strong>Warning:</strong> This action cannot be undone. The backup data will be permanently removed.
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          <i class="fas fa-times me-1"></i>
+          Cancel
+        </button>
+        <form id="delete-form" method="POST" style="display: inline;">
+          @csrf
+          @method('DELETE')
+          <button type="submit" class="btn btn-danger">
+            <i class="fas fa-trash me-2"></i>
+            Yes, Delete Backup
+          </button>
+        </form>
       </div>
     </div>
   </div>
@@ -462,29 +501,22 @@
       });
     });
 
-    const modalElement = $('#backupDetailsModal');
-    const modal = modalElement ? new bootstrap.Modal(modalElement) : null;
-    const setText = (id, value) => {
-      const el = $(`#${id}`);
-      if (el) el.textContent = value;
-    };
+    const deleteModalElement = $('#confirmDeleteModal');
+    const deleteForm = $('#delete-form');
+    const deleteName = $('#delete-backup-name');
 
-    const viewButtons = $$('.view-details');
-    viewButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        setText('modal-name', btn.getAttribute('data-name') || '-');
-        setText('modal-status', btn.getAttribute('data-status') || '-');
-        setText('modal-storage', btn.getAttribute('data-storage') || '-');
-        setText('modal-size', btn.getAttribute('data-size') || '-');
-        setText('modal-initiated', btn.getAttribute('data-initiated') || '-');
-        setText('modal-start', btn.getAttribute('data-start') || '-');
-        setText('modal-complete', btn.getAttribute('data-complete') || '-');
-        setText('modal-duration', btn.getAttribute('data-duration') || '-');
-        const notes = btn.getAttribute('data-notes') || '';
-        setText('modal-notes', notes.trim() !== '' ? notes : 'No additional notes.');
-        if (modal) modal.show();
+    if (deleteModalElement) {
+      deleteModalElement.addEventListener('show.bs.modal', (event) => {
+        const button = event.relatedTarget;
+        const id = button.getAttribute('data-id');
+        const name = button.getAttribute('data-name');
+        deleteName.textContent = name;
+        if (deleteForm) {
+          // Assuming the delete route is /backup/{id} with DELETE method
+          deleteForm.action = `/backup/${id}`;
+        }
       });
-    });
+    }
 
     applyFilter();
   })();
