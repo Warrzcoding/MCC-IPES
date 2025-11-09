@@ -1496,8 +1496,9 @@ $user->password = Hash::make($request->admin_password);
                 'notes' => 'Backup completed successfully',
             ]);
 
-            // Return download response
-            return response()->download($backupFile)->deleteFileAfterSend(true);
+            // Return download response with success message for next visit
+            return response()->download($backupFile)->deleteFileAfterSend(true)
+                ->with('success', 'Database backup completed successfully! File downloaded.');
 
         } catch (\Exception $e) {
             $backupLog->update([
