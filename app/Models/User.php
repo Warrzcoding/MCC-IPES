@@ -62,7 +62,7 @@ class User extends Authenticatable
     // Helper method to check if user is main admin
     public function isMainAdmin()
     {
-        return $this->is_main_admin === true;
+        return (bool) $this->is_main_admin;
     }
 
     // Helper method to check if user can manage admins (only main admin can)
@@ -75,5 +75,33 @@ class User extends Authenticatable
     public function updateLastActive()
     {
         $this->update(['last_active_at' => now()]);
+    }
+
+    /**
+     * Get disabled sidebar features for this admin
+     */
+    public function getDisabledSidebarFeatures(): array
+    {
+        if (!$this->isMainAdmin()) {
+            // Non-main admins should check the main admin's settings
+            $mainAdmin = self::where('is_main_admin', true)->first();
+            if ($mainAdmin) {
+                return SidebarSetting::getDisabledFeaturesForAdmin($mainAdmin->id);
+            }
+            return [];
+        }
+
+        // Main admin gets their own settings
+        return SidebarSetting::getDisabledFeaturesForAdmin($this->id);
+    }
+
+    /**
+     * Set disabled sidebar features for this admin (only main admin can do this)
+     */
+    public function setDisabledSidebarFeatures(array $features): void
+    {
+        if ($this->isMainAdmin()) {
+            SidebarSetting::setDisabledFeaturesForAdmin($this->id, $features);
+        }
     }
 }

@@ -1048,7 +1048,16 @@
     
     <!-- Sidebar Overlay for Mobile -->
     <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
-    
+
+    @php
+        // Main admins always see all features, only non-main admins have restrictions
+        $isMainAdmin = Auth::user()->isMainAdmin();
+        $disabledSidebarFeatures = $isMainAdmin ? [] : Auth::user()->getDisabledSidebarFeatures();
+
+        // Debug: Uncomment to check values
+        // echo "<!-- DEBUG: isMainAdmin=$isMainAdmin, role=" . Auth::user()->role . ", is_main_admin=" . Auth::user()->is_main_admin . ", disabledFeatures=" . json_encode($disabledSidebarFeatures) . " -->";
+    @endphp
+
     <!-- Sidebar -->
     <nav class="sidebar" id="sidebar">
         <div class="nav-section">
@@ -1059,27 +1068,45 @@
             
             @if(Auth::user()->isAdmin())
                 <div class="nav-section-title" style="margin-top: 20px;">Administration</div>
+                @if(!in_array('students', $disabledSidebarFeatures))
                 <a href="{{ route('dashboard', ['page' => 'add-students']) }}" class="nav-link {{ $page === 'add-students' ? 'active' : '' }}">
                     <i class="fas fa-user-plus"></i> Students
                 </a>
-                
+                @endif
+
+                @if(!in_array('staff', $disabledSidebarFeatures))
                 <a href="{{ route('dashboard', ['page' => 'add-staff']) }}" class="nav-link {{ $page === 'add-staff' ? 'active' : '' }}">
                     <i class="fas fa-chalkboard-teacher"></i> Staff
                 </a>
-                
+                @endif
+
+                @if(!in_array('subject-management', $disabledSidebarFeatures))
                 <a href="{{ route('dashboard', ['page' => 'subject-management']) }}" class="nav-link {{ $page === 'subject-management' ? 'active' : '' }}">
                     <i class="fas fa-book"></i> Subject
                 </a>
-                
+                @endif
+
+                @if(!in_array('academicyear', $disabledSidebarFeatures))
                 <a href="{{ route('dashboard', ['page' => 'academicyear']) }}" class="nav-link {{ $page === 'academicyear' ? 'active' : '' }}">
                     <i class="fas fa-clipboard-list"></i> Academic Year
                 </a>
+                @endif
+                @if(!in_array('questionnaires', $disabledSidebarFeatures))
                 <a href="{{ route('dashboard', ['page' => 'questionnaires']) }}" class="nav-link {{ $page === 'questionnaires' ? 'active' : '' }}">
                     <i class="fas fa-clipboard-list"></i> Questionnaires
                 </a>
+                @endif
 
 
-                
+
+                @php
+                    $resultsItemsEnabled = !in_array('staff-ratings', $disabledSidebarFeatures) ||
+                                          !in_array('department-ratings', $disabledSidebarFeatures) ||
+                                          !in_array('overall-ratings', $disabledSidebarFeatures) ||
+                                          !in_array('save-evaluations', $disabledSidebarFeatures);
+                @endphp
+
+                @if($resultsItemsEnabled)
                 <div class="nav-dropdown">
                     <div class="nav-link nav-dropdown-toggle {{ in_array($page, ['staff-ratings', 'department-ratings', 'overall-ratings']) ? 'active' : '' }}" onclick="toggleDropdown(this)">
                         <div style="display: flex; align-items: center;">
@@ -1088,21 +1115,30 @@
                         <i class="fas fa-chevron-down dropdown-arrow"></i>
                     </div>
                     <div class="nav-dropdown-menu">
+                        @if(!in_array('staff-ratings', $disabledSidebarFeatures))
                         <a href="{{ route('dashboard', ['page' => 'staff-ratings']) }}" class="nav-dropdown-item {{ $page === 'staff-ratings' ? 'active' : '' }}">
                             <i class="fas fa-user"></i> Individual
                         </a>
+                        @endif
+                        @if(!in_array('department-ratings', $disabledSidebarFeatures))
                         <a href="{{ route('dashboard', ['page' => 'department-ratings']) }}" class="nav-dropdown-item {{ $page === 'department-ratings' ? 'active' : '' }}">
                             <i class="fas fa-users"></i> Department
                         </a>
+                        @endif
+                        @if(!in_array('overall-ratings', $disabledSidebarFeatures))
                         <a href="{{ route('dashboard', ['page' => 'overall-ratings']) }}" class="nav-dropdown-item {{ $page === 'overall-ratings' ? 'active' : '' }}">
                             <i class="fas fa-chart-bar"></i> Overall Ranking
                         </a>
+                        @endif
+                        @if(!in_array('save-evaluations', $disabledSidebarFeatures))
                         <div style="border-top: 1px solid #e9ecef; margin: 8px 0;"></div>
                         <a href="#" class="nav-dropdown-item" id="sidebarSaveEvaluationsBtn" onclick="handleSaveEvaluations(event)">
                             <i class="fas fa-save"></i> Save Evaluations
                         </a>
+                        @endif
                     </div>
                 </div>
+                @endif
             @endif
             
             @if(Auth::user()->isStudent())
@@ -1206,6 +1242,57 @@
     <!-- SweetAlert2 CDN -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const storageKey = 'ipes.disabledSidebarFeatures';
+        const isMainAdmin = @json(Auth::user()->isMainAdmin());
+        const isAdminRole = @json(Auth::user()->isAdmin());
+        if (!isAdminRole) return;
+        const sidebar = document.getElementById('sidebar');
+        if (!sidebar) return;
+        let keys = [];
+        try {
+            const raw = localStorage.getItem(storageKey);
+            if (raw) {
+                const parsed = JSON.parse(raw);
+                if (Array.isArray(parsed)) {
+                    keys = Array.from(new Set(parsed));
+                }
+            }
+        } catch (e) {}
+        const featureSelectors = {
+            students: "a.nav-link[href*=\"page=add-students\"]",
+            staff: "a.nav-link[href*=\"page=add-staff\"]",
+            'subject-management': "a.nav-link[href*=\"page=subject-management\"]",
+            academicyear: "a.nav-link[href*=\"page=academicyear\"]",
+            questionnaires: "a.nav-link[href*=\"page=questionnaires\"]",
+            'staff-ratings': ".nav-dropdown-menu a.nav-dropdown-item[href*=\"page=staff-ratings\"]",
+            'department-ratings': ".nav-dropdown-menu a.nav-dropdown-item[href*=\"page=department-ratings\"]",
+            'overall-ratings': ".nav-dropdown-menu a.nav-dropdown-item[href*=\"page=overall-ratings\"]",
+            'save-evaluations': "#sidebarSaveEvaluationsBtn"
+        };
+        Object.entries(featureSelectors).forEach(([key, selector]) => {
+            const element = sidebar.querySelector(selector);
+            if (!element) return;
+            if (!isMainAdmin && keys.includes(key)) {
+                element.style.display = 'none';
+            } else {
+                element.style.display = '';
+            }
+        });
+        const resultsDropdown = sidebar.querySelector('.nav-dropdown');
+        if (resultsDropdown) {
+            const toggle = resultsDropdown.querySelector('.nav-dropdown-toggle');
+            if (!isMainAdmin && toggle) {
+                const items = Array.from(resultsDropdown.querySelectorAll('.nav-dropdown-menu .nav-dropdown-item'));
+                const hasVisible = items.some(item => item && item.style.display !== 'none');
+                toggle.style.display = hasVisible ? '' : 'none';
+            } else if (toggle) {
+                toggle.style.display = '';
+            }
+        }
+    });
+</script>
 
 <script>
     // SweetAlert2 Logout Confirmation

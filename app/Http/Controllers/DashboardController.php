@@ -1391,4 +1391,46 @@ $user->password = Hash::make($request->admin_password);
                 ->with('message_type', 'danger');
         }
     }
+
+    /**
+     * Get sidebar settings for the current admin
+     */
+    public function getSidebarSettings(Request $request)
+    {
+        $user = Auth::user();
+
+        if (!$user->isMainAdmin()) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $disabledFeatures = $user->getDisabledSidebarFeatures();
+
+        return response()->json([
+            'disabled_features' => $disabledFeatures
+        ]);
+    }
+
+    /**
+     * Update sidebar settings for the current admin
+     */
+    public function updateSidebarSettings(Request $request)
+    {
+        $user = Auth::user();
+
+        if (!$user->isMainAdmin()) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $request->validate([
+            'disabled_features' => 'required|array',
+            'disabled_features.*' => 'string'
+        ]);
+
+        $user->setDisabledSidebarFeatures($request->disabled_features);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Sidebar settings updated successfully'
+        ]);
+    }
 } 

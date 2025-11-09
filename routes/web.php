@@ -112,7 +112,11 @@ Route::middleware(['auth'])->group(function () {
 
     // Profile Update Route
     Route::post('/dashboard/update-profile', [DashboardController::class, 'updateProfile'])->name('profile.update');
-    
+
+    // Sidebar Settings Routes
+    Route::get('/dashboard/sidebar-settings', [DashboardController::class, 'getSidebarSettings'])->name('sidebar.settings.get');
+    Route::post('/dashboard/sidebar-settings', [DashboardController::class, 'updateSidebarSettings'])->name('sidebar.settings.update');
+
     // Test route for debugging
     Route::get('/dashboard/test-profile', function() {
         return response()->json(['message' => 'Profile route is working', 'user' => Auth::user()->full_name]);

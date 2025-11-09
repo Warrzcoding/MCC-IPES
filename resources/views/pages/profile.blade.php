@@ -4,6 +4,7 @@
         $icon = $type === 'danger' ? 'error' : ($type === 'warning' ? 'warning' : ($type === 'success' ? 'success' : 'info'));
         $title = $type === 'success' ? 'Success' : ($type === 'danger' ? 'Error' : 'Notice');
     @endphp
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -52,6 +53,12 @@
     .compact-scale .form-label { font-size: 0.92rem; }
     .compact-scale .form-control, .compact-scale .form-select { padding: 0.45rem 0.6rem; font-size: 0.92rem; }
     .compact-scale .btn { padding: 0.38rem 0.7rem; font-size: 0.9rem; }
+    .compact-scale .profile-action-btn { padding: 0.28rem 0.5rem; font-size: 0.78rem; }
+    .compact-scale .profile-action-btn i { font-size: 0.85rem; }
+    .compact-scale #sidebarFeatureFilterButton .sidebar-feature-label { font-size: 0.78rem; }
+    .compact-scale #sidebarFeatureFilterButton i { font-size: 0.85rem; }
+    .compact-scale #sidebarFeatureCount { font-size: 0.7rem; padding: 0.15rem 0.35rem; }
+    .compact-scale #sidebarFeatureDropdown .form-check-label { font-size: 0.78rem; }
     .compact-scale .text-muted.small { font-size: 0.78rem; }
     .compact-scale .badge { font-size: 0.78rem; padding: 0.28rem 0.5rem; }
     .compact-scale .table th, .compact-scale .table td { padding: 0.4rem 0.5rem; font-size: 0.86rem; }
@@ -146,7 +153,7 @@
         border: 2px solid #667eea !important;
     }
 
-    /* Tighten modal footer buttons for admin modals */
+    Tighten modal footer buttons for admin modals
     #addAdminModal .modal-footer .btn,
     #editAdminModal .modal-footer .btn {
         padding: 0.28rem 0.48rem;
@@ -369,7 +376,7 @@
                     </div>
                     
                     <div class="d-flex justify-content-end">
-                        <button type="submit" class="btn btn-primary">
+                        <button type="submit" class="btn btn-primary profile-action-btn">
                             <i class="fas fa-save me-2"></i>Update Profile
                         </button>
                     </div>
@@ -457,21 +464,68 @@
 </script>
 @endpush
 
+@php
+    $adminSidebarFeatures = [
+        ['key' => 'students', 'label' => 'Students'],
+        ['key' => 'staff', 'label' => 'Staff'],
+        ['key' => 'subject-management', 'label' => 'Subject'],
+        ['key' => 'academicyear', 'label' => 'Academic Year'],
+        ['key' => 'questionnaires', 'label' => 'Questionnaires'],
+        ['key' => 'staff-ratings', 'label' => 'Results: Individual'],
+        ['key' => 'department-ratings', 'label' => 'Results: Department'],
+        ['key' => 'overall-ratings', 'label' => 'Results: Overall Ranking'],
+        ['key' => 'save-evaluations', 'label' => 'Results: Save Evaluations'],
+    ];
+@endphp
+<div id="sidebarFeatureConfig" data-features='@json($adminSidebarFeatures)' style="display: none;"></div>
+
 @if(Auth::user()->canManageAdmins())
 <!-- Admin Management Section -->
 <div class="row mt-4">
     <div class="col-12">
         <div class="card border-0 shadow-sm">
-            <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">
+            <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <h5 class="mb-0 d-flex align-items-center">
                     <i class="fas fa-users-cog me-2"></i>
                     Admin Management
                 </h5>
-                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addAdminModal">
-                    <i class="fas fa-plus me-2"></i>Add New Admin
-                </button>
+                <div class="d-flex align-items-center gap-2 flex-wrap">
+                    <div class="dropdown">
+                        <button class="btn btn-outline-primary dropdown-toggle d-flex align-items-center profile-action-btn" type="button" id="sidebarFeatureFilterButton" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-filter me-2"></i>
+                            <span class="sidebar-feature-label">Sidebar Filter</span>
+                            <span class="badge bg-primary ms-2" id="sidebarFeatureCount" style="display: none;"></span>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-end p-3" aria-labelledby="sidebarFeatureFilterButton" id="sidebarFeatureDropdown" data-features='@json($adminSidebarFeatures)'>
+                            <div class="text-muted small mb-2">Hidden items affect all non-main admins.</div>
+                            <div class="feature-options">
+                                @foreach($adminSidebarFeatures as $feature)
+                                    <div class="form-check mb-1">
+                                        <input class="form-check-input sidebar-feature-option" type="checkbox" value="{{ $feature['key'] }}" id="sidebar-feature-{{ $feature['key'] }}">
+                                        <label class="form-check-label" for="sidebar-feature-{{ $feature['key'] }}">{{ $feature['label'] }}</label>
+                                    </div>
+                                @endforeach
+                            </div>
+                            <div class="d-flex justify-content-between mt-3">
+                                <button type="button" class="btn btn-sm btn-outline-secondary" id="sidebarFeatureClear">Clear</button>
+                                <button type="button" class="btn btn-sm btn-primary" id="sidebarFeatureConfirm">Confirm</button>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn btn-success profile-action-btn" data-bs-toggle="modal" data-bs-target="#addAdminModal">
+                        <i class="fas fa-plus me-2"></i>Add New Admin
+                    </button>
+                </div>
             </div>
             <div class="card-body">
+                <div class="alert alert-light border d-flex align-items-center justify-content-between flex-wrap gap-2" id="sidebarFeatureSummary" style="display: none;">
+                    <div class="d-flex align-items-center flex-wrap gap-2" id="sidebarFeatureSummaryContent">
+                        <i class="fas fa-eye-slash text-danger"></i>
+                        <span class="fw-semibold">Hidden for non-main admins:</span>
+                        <div class="d-flex flex-wrap gap-2" id="sidebarFeatureSummaryList"></div>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" id="sidebarFeatureSummaryClear">Clear</button>
+                </div>
                 @if(isset($admins) && $admins->count() > 0)
                     <div class="table-responsive">
                         <table class="table table-bordered table-hover" id="adminsTable">
@@ -565,7 +619,7 @@
                     <div class="text-center py-5">
                         <i class="fas fa-users fa-3x text-muted mb-3"></i>
                         <p class="text-muted">No admins found. Start by adding your first admin!</p>
-                        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addAdminModal">
+                        <button class="btn btn-success profile-action-btn" data-bs-toggle="modal" data-bs-target="#addAdminModal">
                             <i class="fas fa-plus me-2"></i>Add Your First Admin
                         </button>
                     </div>
@@ -777,6 +831,277 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    const featureConfigElement = document.getElementById('sidebarFeatureConfig');
+    const isMainAdmin = @json(Auth::user()->isMainAdmin());
+    const isAdminRole = @json(Auth::user()->isAdmin());
+    let featureConfig = [];
+    if (featureConfigElement) {
+        try {
+            const parsed = JSON.parse(featureConfigElement.dataset.features || '[]');
+            if (Array.isArray(parsed)) {
+                featureConfig = parsed;
+            }
+        } catch (e) {}
+    }
+    const featureMap = featureConfig.reduce((acc, item) => {
+        if (item.key) {
+            acc[item.key] = item.label || item.key;
+        }
+        return acc;
+    }, {});
+    const featureSelectors = {
+        students: "a.nav-link[href*=\"page=add-students\"]",
+        staff: "a.nav-link[href*=\"page=add-staff\"]",
+        'subject-management': "a.nav-link[href*=\"page=subject-management\"]",
+        academicyear: "a.nav-link[href*=\"page=academicyear\"]",
+        questionnaires: "a.nav-link[href*=\"page=questionnaires\"]",
+        'staff-ratings': ".nav-dropdown-menu a.nav-dropdown-item[href*=\"page=staff-ratings\"]",
+        'department-ratings': ".nav-dropdown-menu a.nav-dropdown-item[href*=\"page=department-ratings\"]",
+        'overall-ratings': ".nav-dropdown-menu a.nav-dropdown-item[href*=\"page=overall-ratings\"]",
+        'save-evaluations': "#sidebarSaveEvaluationsBtn"
+    };
+    const featureDropdown = document.getElementById('sidebarFeatureDropdown');
+    const featureOptions = featureDropdown ? Array.from(featureDropdown.querySelectorAll('.sidebar-feature-option')) : [];
+    const featureConfirmBtn = document.getElementById('sidebarFeatureConfirm');
+    const featureClearBtn = document.getElementById('sidebarFeatureClear');
+    const featureSummary = document.getElementById('sidebarFeatureSummary');
+    const featureSummaryList = document.getElementById('sidebarFeatureSummaryList');
+    const featureSummaryClear = document.getElementById('sidebarFeatureSummaryClear');
+    const featureCount = document.getElementById('sidebarFeatureCount');
+    let currentKeys = [];
+
+    function loadStoredKeys() {
+        // Load from server via AJAX
+        return fetch('{{ route("sidebar.settings.get") }}', {
+            method: 'GET',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.disabled_features && Array.isArray(data.disabled_features)) {
+                return Array.from(new Set(data.disabled_features.filter(key => featureMap[key])));
+            }
+            return [];
+        })
+        .catch(error => {
+            console.error('Error loading sidebar settings:', error);
+            return [];
+        });
+    }
+
+    function persistKeys(keys) {
+        // Save to server via AJAX
+        return fetch('{{ route("sidebar.settings.update") }}', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                disabled_features: keys
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (!data.success) {
+                throw new Error(data.message || 'Failed to save settings');
+            }
+        })
+        .catch(error => {
+            console.error('Error saving sidebar settings:', error);
+            throw error;
+        });
+    }
+    function updateCheckboxes(keys) {
+        if (!featureOptions.length) return;
+        featureOptions.forEach(option => {
+            option.checked = keys.includes(option.value);
+        });
+    }
+    function updateSummaryView(keys) {
+        if (featureCount) {
+            if (keys.length) {
+                featureCount.textContent = keys.length;
+                featureCount.style.display = 'inline-block';
+            } else {
+                featureCount.textContent = '';
+                featureCount.style.display = 'none';
+            }
+        }
+        if (!featureSummary || !featureSummaryList) return;
+        featureSummaryList.innerHTML = '';
+        if (!keys.length) {
+            featureSummary.style.display = 'none';
+            return;
+        }
+        keys.forEach(key => {
+            const badge = document.createElement('span');
+            badge.className = 'badge bg-secondary';
+            badge.textContent = featureMap[key] || key;
+            featureSummaryList.appendChild(badge);
+        });
+        featureSummary.style.display = 'flex';
+    }
+    function applyVisibility(keys) {
+        if (!isAdminRole) return;
+        const sidebar = document.getElementById('sidebar');
+        if (!sidebar) return;
+        Object.entries(featureSelectors).forEach(([key, selector]) => {
+            const element = sidebar.querySelector(selector);
+            if (!element) return;
+            if (!isMainAdmin && keys.includes(key)) {
+                element.style.display = 'none';
+            } else {
+                element.style.display = '';
+            }
+        });
+        const resultsDropdown = sidebar.querySelector('.nav-dropdown');
+        if (resultsDropdown) {
+            const toggle = resultsDropdown.querySelector('.nav-dropdown-toggle');
+            if (!isMainAdmin) {
+                const items = Array.from(resultsDropdown.querySelectorAll('.nav-dropdown-menu .nav-dropdown-item'));
+                const visible = items.some(item => item && item.style.display !== 'none');
+                if (toggle) {
+                    toggle.style.display = visible ? '' : 'none';
+                }
+            } else if (toggle) {
+                toggle.style.display = '';
+            }
+        }
+    }
+    function commitKeys(keys) {
+        currentKeys = Array.from(new Set(keys.filter(key => featureMap[key])));
+        updateCheckboxes(currentKeys);
+        updateSummaryView(currentKeys);
+        applyVisibility(currentKeys);
+
+        // Persist to server asynchronously
+        persistKeys(currentKeys)
+            .then(() => {
+                // Show success message and reload page
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: 'Sidebar settings have been saved successfully.',
+                    confirmButtonColor: '#667eea'
+                }).then(() => {
+                    location.reload();
+                });
+            })
+            .catch(error => {
+                console.error('Failed to save sidebar settings:', error);
+                // Show error message to user
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Failed to save sidebar settings. Please try again.'
+                });
+            });
+    }
+
+    // Initialize settings on page load
+    loadStoredKeys().then(keys => {
+        currentKeys = keys;
+        updateCheckboxes(currentKeys);
+        updateSummaryView(currentKeys);
+        applyVisibility(currentKeys);
+    });
+    if (featureDropdown) {
+        featureDropdown.addEventListener('show.bs.dropdown', function() {
+            updateCheckboxes(currentKeys);
+        });
+    }
+    if (featureConfirmBtn) {
+        featureConfirmBtn.addEventListener('click', function() {
+            const keys = featureOptions.filter(option => option.checked).map(option => option.value);
+            const selectedLabels = keys.map(key => featureMap[key] || key);
+
+            if (keys.length === 0) {
+                // If no features selected, confirm clearing all restrictions
+                Swal.fire({
+                    title: 'Clear All Restrictions?',
+                    text: 'This will make all sidebar features visible to non-main admins. Are you sure?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#667eea',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Yes, Clear All',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        commitKeys(keys);
+                        // Close the dropdown
+                        const dropdown = bootstrap.Dropdown.getInstance(featureDropdown.closest('.dropdown'));
+                        if (dropdown) dropdown.hide();
+                    }
+                });
+            } else {
+                // If features selected, confirm hiding them
+                Swal.fire({
+                    title: 'Confirm Sidebar Restrictions',
+                    html: `The following features will be hidden from non-main admins:<br><br><strong>${selectedLabels.join(', ')}</strong><br><br>Are you sure you want to apply these changes?`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#667eea',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Yes, Apply Changes',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        commitKeys(keys);
+                        // Close the dropdown
+                        const dropdown = bootstrap.Dropdown.getInstance(featureDropdown.closest('.dropdown'));
+                        if (dropdown) dropdown.hide();
+                    }
+                });
+            }
+        });
+    }
+    if (featureClearBtn) {
+        featureClearBtn.addEventListener('click', function() {
+            Swal.fire({
+                title: 'Clear All Restrictions?',
+                text: 'This will make all sidebar features visible to non-main admins. Are you sure?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#667eea',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, Clear All',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    commitKeys([]);
+                    // Close the dropdown
+                    const dropdown = bootstrap.Dropdown.getInstance(featureDropdown.closest('.dropdown'));
+                    if (dropdown) dropdown.hide();
+                }
+            });
+        });
+    }
+    if (featureSummaryClear) {
+        featureSummaryClear.addEventListener('click', function() {
+            Swal.fire({
+                title: 'Clear All Restrictions?',
+                text: 'This will make all sidebar features visible to non-main admins. Are you sure?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#667eea',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, Clear All',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    commitKeys([]);
+                }
+            });
+        });
+    }
+
     // Profile image preview functionality
     const profileImageInput = document.getElementById('profileImageInput');
     const imagePreview = document.getElementById('imagePreview');
