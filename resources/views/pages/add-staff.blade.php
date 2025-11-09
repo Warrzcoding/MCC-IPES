@@ -725,15 +725,19 @@ function deleteStaff(id, name) {
         showCancelButton: true,
         confirmButtonColor: '#d33',
         cancelButtonColor: '#3085d6',
-        confirmButtonText: '<i class="fas fa-trash"></i> Yes, Delete It',
-        cancelButtonText: '<i class="fas fa-times"></i> Cancel',
+        confirmButtonText: 'Delete',
+        cancelButtonText: 'Cancel',
         reverseButtons: true,
-        width: '500px'
+        width: '500px',
+        customClass: {
+            confirmButton: 'btn btn-danger btn-sm',
+            cancelButton: 'btn btn-secondary btn-sm'
+        }
     }).then((result) => {
         if (result.isConfirmed) {
             document.getElementById('deleteStaffId').value = id;
             document.getElementById('staffName').textContent = name;
-            
+
             // Submit the delete form
             const deleteForm = document.getElementById('deleteStaffForm');
             if (deleteForm) {

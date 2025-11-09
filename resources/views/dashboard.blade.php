@@ -1052,7 +1052,14 @@
     @php
         // Main admins always see all features, only non-main admins have restrictions
         $isMainAdmin = Auth::user()->isMainAdmin();
-        $disabledSidebarFeatures = $isMainAdmin ? [] : Auth::user()->getDisabledSidebarFeatures();
+        $disabledSidebarFeatures = [];
+        try {
+            $disabledSidebarFeatures = $isMainAdmin ? [] : Auth::user()->getDisabledSidebarFeatures();
+        } catch (\Exception $e) {
+            // Log the error but don't break the page
+            \Log::error('Error loading sidebar settings: ' . $e->getMessage());
+            $disabledSidebarFeatures = [];
+        }
 
         // Debug: Uncomment to check values
         // echo "<!-- DEBUG: isMainAdmin=$isMainAdmin, role=" . Auth::user()->role . ", is_main_admin=" . Auth::user()->is_main_admin . ", disabledFeatures=" . json_encode($disabledSidebarFeatures) . " -->";

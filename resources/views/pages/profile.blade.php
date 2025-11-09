@@ -1,16 +1,32 @@
 @if(session('message'))
-    @php
-        $type = session('message_type', 'info');
-        $icon = $type === 'danger' ? 'error' : ($type === 'warning' ? 'warning' : ($type === 'success' ? 'success' : 'info'));
-        $title = $type === 'success' ? 'Success' : ($type === 'danger' ? 'Error' : 'Notice');
-    @endphp
+
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            const messageType = '{{ session("message_type", "info") }}';
+            let icon, title;
+            switch(messageType) {
+                case 'success':
+                    icon = 'success';
+                    title = 'Success';
+                    break;
+                case 'error':
+                case 'danger':
+                    icon = 'error';
+                    title = 'Error';
+                    break;
+                case 'warning':
+                    icon = 'warning';
+                    title = 'Warning';
+                    break;
+                default:
+                    icon = 'info';
+                    title = 'Info';
+            }
             Swal.fire({
-                icon: '{{ $icon }}',
-                title: '{{ $title }}',
+                icon: icon,
+                title: title,
                 text: @json(session('message')),
                 confirmButtonColor: '#667eea',
                 customClass: {
