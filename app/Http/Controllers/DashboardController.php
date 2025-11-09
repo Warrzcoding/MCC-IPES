@@ -28,7 +28,7 @@ class DashboardController extends Controller
             'dashboard', 'add-students', 'add-staff', 'subject-management', 'academicyear',
             'questionnaires', 'staff-ratings', 'department-ratings', 'overall-ratings', 'profile', 'staff-list',
             'evaluates', 'pending-requests', 'rejected-requests', 'login-monitor', // <-- Ensure this is included
-            'regular-backup'
+            'regularbackup'
         ];
 
         if (!in_array($page, $allowed_pages)) {
@@ -235,7 +235,7 @@ class DashboardController extends Controller
             }
         }
 
-        if ($page === 'regular-backup') {
+        if ($page === 'regularbackup') {
             $backupLogs = BackupLog::orderByDesc('created_at')->paginate(15);
         }
         
@@ -644,7 +644,8 @@ class DashboardController extends Controller
             'pendingRequestsCount',
             'pendingRequests',
             'rejectedRequests', // Always include this
-            'loginAttempts'
+            'loginAttempts',
+            'backupLogs'
         ));
     }
 
@@ -1425,7 +1426,7 @@ $user->password = Hash::make($request->admin_password);
         }
 
         $request->validate([
-            'disabled_features' => 'required|array',
+            'disabled_features' => 'present|array',
             'disabled_features.*' => 'string'
         ]);
 

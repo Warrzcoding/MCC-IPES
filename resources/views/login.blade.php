@@ -49,7 +49,7 @@
             background: linear-gradient(135deg, #5a189a 0%, #d0006f 100%);
             background-attachment: fixed;
             min-height: 100vh;
-            display: flex;
+            display: flex; 
             align-items: center;
             justify-content: center;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;

@@ -1104,8 +1104,6 @@
                 </a>
                 @endif
 
-
-
                 @php
                     $resultsItemsEnabled = !in_array('staff-ratings', $disabledSidebarFeatures) ||
                                           !in_array('department-ratings', $disabledSidebarFeatures) ||
