@@ -194,7 +194,7 @@ class DashboardController extends Controller
             'pending-requests' => 'Pending Requests',
             'rejected-requests' => 'Rejected Requests',
             'login-monitor' => 'Login Monitor',
-            'regular-backup' => 'Regular Backup'
+            'regularbackup' => 'Regular Backup'
         ];
 
         $current_title = $page_titles[$page];

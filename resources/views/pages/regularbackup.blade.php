@@ -1,14 +1,15 @@
 <style>
-  .compact-scale { transform-origin: top center; transform: scale(0.92); max-width: 100%; }
+  .compact-scale { font-size: 0.8rem; max-width: 100%; }
   .compact-scale .search-container { padding: 0.9rem; }
   .compact-scale .stat-card { padding: 0.75rem; }
   .compact-scale .stat-icon { width: 36px; height: 36px; }
-  .compact-scale .tab-nav .btn { padding: 0.45rem 0.7rem; font-size: 0.92rem; }
+  .compact-scale .tab-nav .btn { padding: 0.45rem 0.7rem; font-size: 0.8rem; }
   .compact-scale .timeline-item { padding: 0.6rem 0.8rem; }
   .compact-scale .attempt-meta { font-size: 0.78rem; }
   .compact-scale .ua-muted { font-size: 0.72rem; }
-  .compact-scale .btn { padding: 0.375rem 0.6rem; font-size: 0.9rem; }
-  .compact-scale table th, .compact-scale table td { padding: 0.45rem 0.6rem; font-size: 0.88rem; }
+  .compact-scale .btn { padding: 0.375rem 0.6rem; font-size: 0.8rem; }
+  .compact-scale table th, .compact-scale table td { padding: 0.45rem 0.6rem; font-size: 0.8rem; }
+  .compact-scale input, .compact-scale select { font-size: 0.8rem; }
   .compact-scale .back-btn { padding: 0.45rem 0.9rem !important; min-width: 98px !important; }
   @media (max-width: 576px) {
     .compact-scale .timeline-item .fw-semibold { font-size: 0.98rem; }
@@ -48,12 +49,13 @@
   .action-buttons { display: flex; gap: 0.5rem; justify-content: center; align-items: center; width: 100%; }
   .timeline-item .action-buttons { align-self: center; width: auto; }
   #jobs-table td.actions-cell { text-align: center; }
-  #backupDetailsModal .modal-content { font-size: 0.85rem; }
-  #backupDetailsModal .modal-title { font-size: 0.9rem; font-weight: 700; }
-  #backupDetailsModal .modal-body table th { font-size: 0.75rem; width: 32%; vertical-align: top; padding: 0.35rem 0.5rem; }
+  #backupDetailsModal .modal-content { font-size: 0.8rem; }
+  #backupDetailsModal .modal-title { font-size: 0.8rem; font-weight: 700; }
+  #backupDetailsModal .modal-body table th { font-size: 0.8rem; width: 32%; vertical-align: top; padding: 0.35rem 0.5rem; }
   #backupDetailsModal .modal-body table td { font-size: 0.8rem; padding: 0.35rem 0.5rem; word-break: break-word; }
-  #backupDetailsModal .modal-footer .btn { padding: 0.35rem 0.6rem; font-size: 0.86rem; }
-  #modal-notes { min-height: 100px; background: #f8f9fa; border-radius: 8px; padding: 0.75rem; font-size: 0.82rem; color: #495057; }
+  #backupDetailsModal .modal-footer .btn { padding: 0.35rem 0.6rem; font-size: 0.8rem; }
+  #modal-notes { min-height: 100px; background: #f8f9fa; border-radius: 8px; padding: 0.75rem; font-size: 0.8rem; color: #495057; }
+  #confirmBackupModal, #backupDetailsModal { font-size: 0.8rem; }
   @media (max-width: 575px) {
     #backupDetailsModal .modal-body table th { font-size: 0.7rem; width: 35%; padding: 0.3rem 0.4rem; }
     #backupDetailsModal .modal-body table td { font-size: 0.75rem; padding: 0.3rem 0.4rem; }
@@ -83,66 +85,44 @@
     <div class="enhanced-card">
       <div class="card-body p-0">
         <div class="p-4 pb-0">
-          <h5 class="mb-2">
-            <i class="fas fa-database me-2"></i> Regular Backup Activity
-          </h5>
-          <p class="text-muted mb-3">Monitor scheduled backups, durations, and outcomes in one place.</p>
+          <div class="d-flex justify-content-between align-items-start mb-3">
+            <div>
+              <h5 class="mb-2">
+                <i class="fas fa-database me-2"></i> Regular Backup Activity
+              </h5>
+              <p class="text-muted mb-0">Monitor scheduled backups, durations, and outcomes in one place.</p>
+            </div>
+            @if(Auth::user()->isAdmin())
+            <div>
+              <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#confirmBackupModal">
+                <i class="fas fa-download me-2"></i>
+                Download Full Backup
+              </button>
+            </div>
+            @endif
+          </div>
+
+          <!-- Flash Messages -->
+          @if(session('error'))
+          <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            {{ session('error') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          </div>
+          @endif
+
+          @if(session('success'))
+          <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>
+            {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          </div>
+          @endif
         </div>
 
         <hr class="tab-separator">
 
         <div class="p-4 pt-0">
-          <div class="row g-3 mb-3">
-            <div class="col-sm-6 col-lg-3">
-              <div class="stat-card d-flex align-items-center justify-content-between">
-                <div>
-                  <div class="text-muted small">Total Jobs</div>
-                  <div class="h5 mb-0">{{ number_format($totalCount) }}</div>
-                </div>
-                <div class="stat-icon bg-gradient-primary"><i class="fas fa-tasks"></i></div>
-              </div>
-            </div>
-            <div class="col-sm-6 col-lg-3">
-              <div class="stat-card d-flex align-items-center justify-content-between">
-                <div>
-                  <div class="text-muted small">Completed</div>
-                  <div class="h5 mb-0 text-success">{{ number_format($completedCount) }}</div>
-                </div>
-                <div class="stat-icon bg-gradient-success"><i class="fas fa-check"></i></div>
-              </div>
-            </div>
-            <div class="col-sm-6 col-lg-3">
-              <div class="stat-card d-flex align-items-center justify-content-between">
-                <div>
-                  <div class="text-muted small">Failed</div>
-                  <div class="h5 mb-0 text-danger">{{ number_format($failedCount) }}</div>
-                </div>
-                <div class="stat-icon bg-gradient-danger"><i class="fas fa-times"></i></div>
-              </div>
-            </div>
-            <div class="col-sm-6 col-lg-3">
-              <div class="stat-card d-flex align-items-center justify-content-between">
-                <div>
-                  <div class="text-muted small">Running</div>
-                  <div class="h5 mb-0 text-warning">{{ number_format($runningCount) }}</div>
-                </div>
-                <div class="stat-icon bg-gradient-warning"><i class="fas fa-sync-alt"></i></div>
-              </div>
-            </div>
-          </div>
-
-          <div class="row g-3 mb-4">
-            <div class="col-sm-6 col-lg-3">
-              <div class="stat-card d-flex align-items-center justify-content-between">
-                <div>
-                  <div class="text-muted small">Showing</div>
-                  <div class="h5 mb-0">{{ $collection->count() }} / {{ number_format($totalCount) }}</div>
-                </div>
-                <div class="stat-icon bg-gradient-primary"><i class="fas fa-eye"></i></div>
-              </div>
-            </div>
-          </div>
-
           <div class="search-container">
             <div class="row g-2 align-items-end">
               <div class="col-md-6">
@@ -160,7 +140,7 @@
                 </select>
               </div>
               <div class="col-md-3 text-end">
-                <a href="{{ route('dashboard', ['page' => 'regular-backup']) }}" class="btn btn-outline-secondary"><i class="fas fa-sync-alt me-1"></i> Refresh</a>
+                <a href="{{ route('dashboard', ['page' => 'regularbackup']) }}" class="btn btn-outline-secondary"><i class="fas fa-sync-alt me-1"></i> Refresh</a>
               </div>
             </div>
           </div>
@@ -342,21 +322,50 @@
         </div>
       </div>
 
-      <div class="d-flex justify-content-between align-items-center mt-2 pb-3 px-4">
+      <div class="text-start mt-2 pb-3 px-4">
         <a href="{{ route('dashboard', ['page' => 'add-students']) }}" class="btn back-btn">
           <i class="fas fa-arrow-left me-2"></i>
           Back to Students Management
         </a>
-        @if(Auth::user()->isAdmin())
-        <a href="{{ route('backup.download') }}" class="btn btn-success">
-          <i class="fas fa-download me-2"></i>
-          Download Full Backup
-        </a>
-        @endif
       </div>
     </div>
   </div>
 </div>
+</div>
+
+<!-- Confirmation Modal for Backup Download -->
+<div class="modal fade" id="confirmBackupModal" tabindex="-1" aria-labelledby="confirmBackupModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="confirmBackupModalLabel">
+          <i class="fas fa-database me-2 text-success"></i>
+          Confirm Database Backup
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="text-center mb-3">
+          <i class="fas fa-exclamation-triangle text-warning" style="font-size: 3rem;"></i>
+        </div>
+        <p class="mb-3">Are you sure you want to download a full backup of the database?</p>
+        <div class="alert alert-info">
+          <i class="fas fa-info-circle me-2"></i>
+          <strong>Note:</strong> This will create a complete SQL dump of all database tables and data. The process may take a few minutes depending on database size.
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          <i class="fas fa-times me-1"></i>
+          Cancel
+        </button>
+        <a href="{{ route('backup.download') }}" class="btn btn-success">
+          <i class="fas fa-download me-2"></i>
+          Yes, Download Backup
+        </a>
+      </div>
+    </div>
+  </div>
 </div>
 
 <div class="modal fade" id="backupDetailsModal" tabindex="-1" aria-labelledby="backupDetailsModalLabel" aria-hidden="true">
