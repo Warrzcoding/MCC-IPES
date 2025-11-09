@@ -662,17 +662,35 @@
                 padding: 20px;
                 border-radius: 15px;
             }
-            
+
             .page-title {
                 font-size: 24px;
             }
-            
+
             .header .logo {
                 font-size: 24px;
             }
-            
+
             .social-links {
                 justify-content: center;
+            }
+
+            /* Center content on mobile for both admin and student dashboards */
+            .content-card.page-full-width {
+                width: 98%;
+                margin: 0 auto;
+            }
+
+            /* Remove any inherited margins that might cause centering issues */
+            .main-content {
+                margin-left: 0 !important;
+                margin-right: 0 !important;
+            }
+
+            /* Remove column padding for included pages */
+            .main-content > .content-card.page-full-width > [class*="col-"] {
+                padding-left: 0 !important;
+                padding-right: 0 !important;
             }
         }
         

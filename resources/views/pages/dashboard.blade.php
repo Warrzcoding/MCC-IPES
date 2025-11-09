@@ -211,6 +211,63 @@ if (Auth::user()->isAdmin()) {
             max-width: 100%;
         }
     }
+    @media (max-width: 768px) {
+        .page-full-width {
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+        }
+
+        .page-full-width > .col-12 {
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+        }
+
+        .page-full-width .row.justify-content-center .row.justify-content-center {
+            padding-left: 0;
+            padding-right: 0;
+        }
+        .page-full-width .row.justify-content-center .row.justify-content-center .col-xl-3 {
+            padding-left: 0.25rem;
+            padding-right: 0.25rem;
+        }
+        .page-full-width .row.justify-content-center .analytics-section {
+            padding-left: 0;
+            padding-right: 0;
+        }
+        .page-full-width .row.justify-content-center .analytics-section .col-lg-6,
+        .page-full-width .row.justify-content-center .analytics-section .col-12 {
+            padding-left: 0.25rem;
+            padding-right: 0.25rem;
+        }
+
+        /* Student dashboard mobile centering */
+        .page-full-width .row.justify-content-center .circular-card {
+            margin: 0 auto !important;
+            max-width: 120px;
+        }
+
+        .page-full-width .row.justify-content-center .col-12.col-md-8 .card {
+            margin: 0 auto !important;
+            max-width: 95% !important;
+        }
+
+        .page-full-width .row.justify-content-center .col-6.col-sm-6.col-md-4 {
+            padding-left: 0.375rem !important;
+            padding-right: 0.25rem !important;
+        }
+
+        /* Additional mobile centering for student dashboard */
+        .page-full-width .row.justify-content-center .col-12.mb-4 .row.justify-content-center {
+            margin-left: 0.75rem;
+            margin-right: 0;
+        }
+
+        /* Evaluation progress section mobile centering */
+        .page-full-width .row.justify-content-center .col-12.col-md-8 {
+            padding-left: 0.5rem !important;
+            padding-right: 0.25rem !important;
+        }
+    }
 </style>
 
 <!-- Welcome Message -->
@@ -230,67 +287,74 @@ if (Auth::user()->isAdmin()) {
     </div>
 </div>
 
-<div class="row page-full-width">
-    @if(Auth::user()->isAdmin())
+<div class="row page-full-width justify-content-center">
+    <div class="col-12 col-lg-10 col-xl-8">
+        @if(Auth::user()->isAdmin())
         <!-- Admin Dashboard -->
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-primary shadow h-100 py-2" style="border-left: 4px solid #667eea;">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Students</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $stats['students'] }}</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-users fa-2x text-gray-600"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-info shadow h-100 py-2" style="border-left: 4px solid #17a2b8;">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Instructors</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $stats['instructors'] }}</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-chalkboard-teacher fa-2x text-gray-300"></i>
+        <div class="row justify-content-center">
+            <div class="col-12">
+                <div class="row justify-content-center">
+                    <div class="col-xl-3 col-md-6 mb-4 d-flex justify-content-center">
+                        <div class="card border-left-primary shadow h-100 py-2" style="border-left: 4px solid #667eea; max-width: 100%; margin: 0 auto;">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Students</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $stats['students'] }}</div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-users fa-2x text-gray-600"></i>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-success shadow h-100 py-2" style="border-left: 4px solid #28a745;">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Non-Teaching Staff</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $stats['non_teaching_staff'] }}</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-user-tie fa-2x text-gray-300"></i>
+
+                    <div class="col-xl-3 col-md-6 mb-4 d-flex justify-content-center">
+                        <div class="card border-left-info shadow h-100 py-2" style="border-left: 4px solid #17a2b8; max-width: 100%; margin: 0 auto;">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Instructors</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $stats['instructors'] }}</div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-chalkboard-teacher fa-2x text-gray-300"></i>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-warning shadow h-100 py-2" style="border-left: 4px solid #ffcf3e;">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Subjects</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $stats['subjects'] }}</div>
+
+                    <div class="col-xl-3 col-md-6 mb-4 d-flex justify-content-center">
+                        <div class="card border-left-success shadow h-100 py-2" style="border-left: 4px solid #28a745; max-width: 100%; margin: 0 auto;">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Non-Teaching Staff</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $stats['non_teaching_staff'] }}</div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-user-tie fa-2x text-gray-300"></i>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-auto">
-                            <i class="fas fa-book fa-2x text-gray-300"></i>
+                    </div>
+
+                    <div class="col-xl-3 col-md-6 mb-4 d-flex justify-content-center">
+                        <div class="card border-left-warning shadow h-100 py-2" style="border-left: 4px solid #ffcf3e; max-width: 100%; margin: 0 auto;">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Subjects</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $stats['subjects'] }}</div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-book fa-2x text-gray-300"></i>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -299,50 +363,54 @@ if (Auth::user()->isAdmin()) {
         
         <!-- DATA ANALYTICS CHARTS (Admin Only) -->
         @if(Auth::user()->isAdmin())
-        <div class="row mb-4 analytics-section" style="background: linear-gradient(135deg, #f8fafc 0%, #e3e6f3 100%); border-radius: 18px; box-shadow: 0 8px 32px rgba(102, 126, 234, 0.10); padding: 18px 8px 8px 8px;">
-           
-            <div class="col-lg-6 col-md-12 mb-4 d-flex align-items-stretch">
-                <div class="card shadow-lg w-100 h-100 border-0 analytics-card" style="min-height: 320px; max-height: 340px; border-radius: 18px; transition: box-shadow 0.3s;">
-                    <div class="card-header py-2 bg-white border-0" style="border-radius: 18px 18px 0 0;">
-                        <h6 class="m-0 font-weight-bold text-primary">Students per Course (and Evaluated)</h6>
-                    </div>
-                    <div class="card-body d-flex flex-column justify-content-end p-2" style="height: 280px;">
-                        <div style="height: 240px; display: flex; align-items: center; justify-content: center; width: 100%;">
-                            <canvas id="studentsPerCourseChart" style="width: 100% !important; height: 100% !important; max-width: 100%; max-height: 100%;"></canvas>
+        <div class="row justify-content-center mb-4">
+            <div class="col-12">
+                <div class="row justify-content-center analytics-section" style="background: linear-gradient(135deg, #f8fafc 0%, #e3e6f3 100%); border-radius: 18px; box-shadow: 0 8px 32px rgba(102, 126, 234, 0.10); padding: 18px 8px 8px 8px;">
+
+                    <div class="col-lg-6 col-md-12 mb-4 d-flex align-items-stretch justify-content-center">
+                        <div class="card shadow-lg w-100 h-100 border-0 analytics-card" style="min-height: 320px; max-height: 340px; border-radius: 18px; transition: box-shadow 0.3s; max-width: 100%; margin: 0 auto;">
+                            <div class="card-header py-2 bg-white border-0" style="border-radius: 18px 18px 0 0;">
+                                <h6 class="m-0 font-weight-bold text-primary">Students per Course (and Evaluated)</h6>
+                            </div>
+                            <div class="card-body d-flex flex-column justify-content-end p-2" style="height: 280px;">
+                                <div style="height: 240px; display: flex; align-items: center; justify-content: center; width: 100%;">
+                                    <canvas id="studentsPerCourseChart" style="width: 100% !important; height: 100% !important; max-width: 100%; max-height: 100%;"></canvas>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
-            <!-- Staff by Type Doughnut Chart -->
-             <div class="col-lg-6 col-md-12 mb-4 d-flex align-items-stretch">
-                <div class="card shadow-lg w-100 h-100 border-0 analytics-card" style="min-height: 320px; max-height: 340px; border-radius: 18px; transition: box-shadow 0.3s;">
-                    <div class="card-header py-2 bg-white border-0" style="border-radius: 18px 18px 0 0;">
-                        <h6 class="m-0 font-weight-bold text-primary">Teaching Staff by Department & Non-Teaching</h6>
-                    </div>
-                    <div class="card-body d-flex flex-column justify-content-center p-2" style="overflow: hidden; height: 180px; min-height: 120px;">
-                        <div style="width: 100%; height: 100%; display: flex; justify-content: center; align-items: center;">
-                            <canvas id="staffByTypeChart" style="width: 100% !important; height: 100% !important; max-width: 100%; max-height: 100%;"></canvas>
+                    <!-- Staff by Type Doughnut Chart -->
+                     <div class="col-lg-6 col-md-12 mb-4 d-flex align-items-stretch justify-content-center">
+                        <div class="card shadow-lg w-100 h-100 border-0 analytics-card" style="min-height: 320px; max-height: 340px; border-radius: 18px; transition: box-shadow 0.3s; max-width: 100%; margin: 0 auto;">
+                            <div class="card-header py-2 bg-white border-0" style="border-radius: 18px 18px 0 0;">
+                                <h6 class="m-0 font-weight-bold text-primary">Teaching Staff by Department & Non-Teaching</h6>
+                            </div>
+                            <div class="card-body d-flex flex-column justify-content-center p-2" style="overflow: hidden; height: 180px; min-height: 120px;">
+                                <div style="width: 100%; height: 100%; display: flex; justify-content: center; align-items: center;">
+                                    <canvas id="staffByTypeChart" style="width: 100% !important; height: 100% !important; max-width: 100%; max-height: 100%;"></canvas>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
-            
-           <!-- Staff Performance Improvement per Academic Year/Semester (Enhanced Line Chart) -->
-           <div class="col-12 mb-4 d-flex align-items-stretch">
-                <div class="card shadow-lg w-100 h-100 border-0 analytics-card" style="min-height: 340px; max-height: 400px; border-radius: 18px; transition: box-shadow 0.3s;">
-                    <div class="card-header py-2 bg-white border-0 d-flex justify-content-between align-items-center" style="border-radius: 18px 18px 0 0;">
-                        <h6 class="m-0 font-weight-bold text-primary" id="staffPerformanceTitle">Staff Performance Improvement (Avg. Score per Academic Year, Archived)</h6>
-                        <div class="btn-group btn-group-sm" role="group">
-                            <button type="button" class="btn btn-outline-primary active" id="yearlyViewBtn" onclick="toggleStaffPerformanceView('yearly')">
-                                <i class="fas fa-calendar-alt"></i> Yearly
-                            </button>
-                            <button type="button" class="btn btn-outline-primary" id="semesterViewBtn" onclick="toggleStaffPerformanceView('semester')">
-                                <i class="fas fa-calendar"></i> Semester
-                            </button>
+
+                   <!-- Staff Performance Improvement per Academic Year/Semester (Enhanced Line Chart) -->
+                   <div class="col-12 mb-4 d-flex align-items-stretch justify-content-center">
+                        <div class="card shadow-lg w-100 h-100 border-0 analytics-card" style="min-height: 340px; max-height: 400px; border-radius: 18px; transition: box-shadow 0.3s; max-width: 100%; margin: 0 auto;">
+                            <div class="card-header py-2 bg-white border-0 d-flex justify-content-between align-items-center" style="border-radius: 18px 18px 0 0;">
+                                <h6 class="m-0 font-weight-bold text-primary" id="staffPerformanceTitle">Staff Performance Improvement (Avg. Score per Academic Year, Archived)</h6>
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <button type="button" class="btn btn-outline-primary active" id="yearlyViewBtn" onclick="toggleStaffPerformanceView('yearly')">
+                                        <i class="fas fa-calendar-alt"></i> Yearly
+                                    </button>
+                                    <button type="button" class="btn btn-outline-primary" id="semesterViewBtn" onclick="toggleStaffPerformanceView('semester')">
+                                        <i class="fas fa-calendar"></i> Semester
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body d-flex flex-column justify-content-center p-2" style="height: 220px; width: 100%;">
+                                <canvas id="staffPerformanceStatsPerYearChart" height="140" style="width: 100% !important;"></canvas>
+                            </div>
                         </div>
-                    </div>
-                    <div class="card-body d-flex flex-column justify-content-center p-2" style="height: 220px; width: 100%;">
-                        <canvas id="staffPerformanceStatsPerYearChart" height="140" style="width: 100% !important;"></canvas>
                     </div>
                 </div>
             </div>
@@ -501,7 +569,7 @@ if (Auth::user()->isAdmin()) {
         <!-- Student Dashboard -->
         <div class="col-12 mb-4">
             <div class="row justify-content-center">
-                <div class="col-6 col-sm-6 col-md-4 d-flex justify-content-center mb-3">
+                <div class="col-6 col-sm-6 col-md-4 mb-3" style="display: flex; justify-content: center; align-items: center;">
                     <div class="circular-card shadow student-card" style="width: 120px; height: 120px; border-radius: 50%; background: linear-gradient(135deg, #ff7f2f 0%, #ffcf3e 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; text-align: center; position: relative; overflow: hidden;" 
                          title="Department Instructors: {{ $evaluatedDepartmentInstructors }} out of {{ $stats['department_instructors'] }} evaluated ({{ round($departmentInstructorCompletion) }}% complete)">
                         <!-- Completion Status Indicator -->
@@ -536,7 +604,7 @@ if (Auth::user()->isAdmin()) {
                 </div>
 
 
-                <div class="col-6 col-sm-6 col-md-4 d-flex justify-content-center mb-3">
+                <div class="col-6 col-sm-6 col-md-4 mb-3" style="display: flex; justify-content: center; align-items: center;">
                     <div class="circular-card shadow student-card" style="width: 120px; height: 120px; border-radius: 50%; background: linear-gradient(135deg, #28a745 0%, #20c997 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; text-align: center; position: relative; overflow: hidden;" 
                          title="Non-Teaching Staff: {{ $evaluatedNonTeachingStaff }} out of {{ $stats['non_teaching_staff'] }} evaluated ({{ round($nonTeachingStaffCompletion) }}% complete)">
                         <!-- Completion Status Indicator -->
@@ -575,7 +643,7 @@ if (Auth::user()->isAdmin()) {
             
             <!-- Evaluation Status Summary -->
             <div class="row justify-content-center mt-3">
-                <div class="col-12 col-md-8">
+                <div class="col-12 col-md-8" style="display: flex; justify-content: center;">
                     <div class="card border-0 shadow-sm" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 15px;">
                         <div class="card-body p-3">
                             <h6 class="text-center mb-3 font-weight-bold text-primary">
@@ -713,6 +781,7 @@ if (Auth::user()->isAdmin()) {
             </div>
         </div>
     @endif
+    </div>
 </div>
 
 <!-- Chart.js CDN and Chart Scripts -->
