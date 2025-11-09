@@ -176,7 +176,8 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 28px;
+            gap: 0;
+            width: 100%;
         }
         .otp-utility-actions button {
             background: none;
@@ -1632,7 +1633,6 @@
                 </button>
                 <div class="otp-utility-actions">
                     <button type="button" id="adminOtpResendButton">Resend Code</button>
-                    <button type="button" id="adminOtpCancelButton">Cancel</button>
                 </div>
             </div>
             <div class="otp-status" id="adminOtpStatus" role="status">{{ $admin_otp_message }}</div>
@@ -1684,7 +1684,6 @@
             const inputs = Array.from(overlay.querySelectorAll('#adminOtpInputs input'));
             const submitButton = document.getElementById('adminOtpSubmitButton');
             const resendButton = document.getElementById('adminOtpResendButton');
-            const cancelButton = document.getElementById('adminOtpCancelButton');
             const backButton = document.getElementById('adminOtpBackButton');
             const errorBox = document.getElementById('adminOtpError');
             const statusBox = document.getElementById('adminOtpStatus');
@@ -1729,9 +1728,6 @@
                 statusBox.textContent = message || '';
             }
             function toggleLoadingState(isLoading) {
-                if (cancelButton) {
-                    cancelButton.disabled = isLoading;
-                }
                 if (backButton) {
                     backButton.disabled = isLoading;
                 }
@@ -2051,30 +2047,6 @@
                 }
                 if (resendButton) {
                     resendButton.addEventListener('click', resendOtp);
-                }
-                if (cancelButton) {
-                    cancelButton.addEventListener('click', async () => {
-                        try {
-                            toggleLoadingState(true);
-                            const response = await fetch(@json(route('admin.otp.cancel')), {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                    'X-CSRF-TOKEN': csrfToken,
-                                    Accept: 'application/json'
-                                },
-                                body: JSON.stringify({})
-                            });
-                            if (!response.ok) {
-                                throw new Error('Cancel failed');
-                            }
-                        } catch (error) {
-                            console.error('Failed to cancel admin OTP session:', error);
-                        } finally {
-                            toggleLoadingState(false);
-                            window.location.href = loginUrl;
-                        }
-                    });
                 }
                 if (backButton) {
                     backButton.addEventListener('click', () => {
