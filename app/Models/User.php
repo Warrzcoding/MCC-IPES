@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-use App\Models\SidebarSetting;
 
 class User extends Authenticatable
 {
@@ -83,17 +82,22 @@ class User extends Authenticatable
      */
     public function getDisabledSidebarFeatures(): array
     {
-        if (!$this->isMainAdmin()) {
-            // Non-main admins should check the main admin's settings
-            $mainAdmin = self::where('is_main_admin', true)->first();
-            if ($mainAdmin) {
-                return SidebarSetting::getDisabledFeaturesForAdmin($mainAdmin->id);
+        try {
+            if (!$this->isMainAdmin()) {
+                // Non-main admins should check the main admin's settings
+                $mainAdmin = self::where('is_main_admin', true)->first();
+                if ($mainAdmin) {
+                    return SidebarSetting::getDisabledFeaturesForAdmin($mainAdmin->id);
+                }
+                return [];
             }
+
+            // Main admin gets their own settings
+            return SidebarSetting::getDisabledFeaturesForAdmin($this->id);
+        } catch (\Exception $e) {
+            \Log::error('Error in getDisabledSidebarFeatures: ' . $e->getMessage());
             return [];
         }
-
-        // Main admin gets their own settings
-        return SidebarSetting::getDisabledFeaturesForAdmin($this->id);
     }
 
     /**

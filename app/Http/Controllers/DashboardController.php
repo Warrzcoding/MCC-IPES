@@ -802,7 +802,7 @@ $user->password = Hash::make($request->admin_password);
             
             \Log::info('Admin created successfully:', ['id' => $user->id, 'username' => $user->username]);
             
-            return redirect()->back()
+            return redirect()->route('dashboard', ['page' => 'profile'])
                 ->with('message', 'Admin added successfully!')
                 ->with('message_type', 'success');
                 
@@ -929,7 +929,7 @@ $user->password = Hash::make($request->admin_password);
             
             $user->delete();
             
-            return redirect()->back()
+            return redirect()->route('dashboard', ['page' => 'profile'])
                 ->with('message', 'Admin deleted successfully!')
                 ->with('message_type', 'success');
                 
