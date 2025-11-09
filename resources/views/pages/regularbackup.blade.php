@@ -342,11 +342,17 @@
         </div>
       </div>
 
-      <div class="text-start mt-2 pb-3 px-4">
+      <div class="d-flex justify-content-between align-items-center mt-2 pb-3 px-4">
         <a href="{{ route('dashboard', ['page' => 'add-students']) }}" class="btn back-btn">
           <i class="fas fa-arrow-left me-2"></i>
           Back to Students Management
         </a>
+        @if(Auth::user()->isAdmin())
+        <a href="{{ route('backup.download') }}" class="btn btn-success">
+          <i class="fas fa-download me-2"></i>
+          Download Full Backup
+        </a>
+        @endif
       </div>
     </div>
   </div>

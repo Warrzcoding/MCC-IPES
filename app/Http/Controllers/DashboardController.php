@@ -13,6 +13,9 @@ use App\Models\Subject;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 use App\Models\RequestSignin;
+use App\Models\BackupLog;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Storage;
 
 class DashboardController extends Controller
 {
@@ -233,7 +236,7 @@ class DashboardController extends Controller
         }
 
         if ($page === 'regular-backup') {
-            $backupLogs = collect();
+            $backupLogs = BackupLog::orderByDesc('created_at')->paginate(15);
         }
         
         if ($page === 'subject-management') {
@@ -1432,5 +1435,79 @@ $user->password = Hash::make($request->admin_password);
             'success' => true,
             'message' => 'Sidebar settings updated successfully'
         ]);
+    }
+
+    public function downloadBackup()
+    {
+        if (!Auth::user()->isAdmin()) {
+            abort(403);
+        }
+
+        $jobName = 'Full Database Backup - ' . now()->format('Y-m-d H:i:s');
+        $initiatedBy = Auth::user()->full_name ?? 'System';
+
+        // Create backup log entry
+        $backupLog = BackupLog::create([
+            'job_name' => $jobName,
+            'status' => 'running',
+            'initiated_by' => $initiatedBy,
+            'started_at' => now(),
+        ]);
+
+        try {
+            // Database connection details
+            $dbHost = config('database.connections.mysql.host');
+            $dbName = config('database.connections.mysql.database');
+            $dbUser = config('database.connections.mysql.username');
+            $dbPass = config('database.connections.mysql.password');
+
+            // Generate backup file path
+            $backupDir = storage_path('app/backups');
+            if (!is_dir($backupDir)) {
+                mkdir($backupDir, 0755, true);
+            }
+            $backupFile = $backupDir . '/backup_' . date('Y-m-d_H-i-s') . '.sql';
+
+            // Run mysqldump command
+            $command = "mysqldump --host={$dbHost} --user={$dbUser} --password={$dbPass} {$dbName} > \"{$backupFile}\"";
+            $output = [];
+            $returnCode = 0;
+            exec($command, $output, $returnCode);
+
+            if ($returnCode !== 0) {
+                throw new \Exception('mysqldump command failed with code: ' . $returnCode);
+            }
+
+            if (!file_exists($backupFile)) {
+                throw new \Exception('Backup file was not created');
+            }
+
+            // Get file size
+            $sizeBytes = filesize($backupFile);
+            $sizeMB = round($sizeBytes / 1048576, 2); // Convert to MB
+
+            // Update log
+            $backupLog->update([
+                'status' => 'completed',
+                'storage_path' => $backupFile,
+                'size_mb' => $sizeMB,
+                'completed_at' => now(),
+                'duration_seconds' => now()->diffInSeconds($backupLog->started_at),
+                'notes' => 'Backup completed successfully',
+            ]);
+
+            // Return download response
+            return response()->download($backupFile)->deleteFileAfterSend(true);
+
+        } catch (\Exception $e) {
+            $backupLog->update([
+                'status' => 'failed',
+                'completed_at' => now(),
+                'duration_seconds' => now()->diffInSeconds($backupLog->started_at),
+                'notes' => 'Backup failed: ' . $e->getMessage(),
+            ]);
+
+            return back()->with('error', 'Backup failed: ' . $e->getMessage());
+        }
     }
 } 

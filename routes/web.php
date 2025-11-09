@@ -117,6 +117,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard/sidebar-settings', [DashboardController::class, 'getSidebarSettings'])->name('sidebar.settings.get');
     Route::post('/dashboard/sidebar-settings', [DashboardController::class, 'updateSidebarSettings'])->name('sidebar.settings.update');
 
+    // Backup Routes
+    Route::get('/admin/backup/download', [DashboardController::class, 'downloadBackup'])->name('backup.download');
+
     // Test route for debugging
     Route::get('/dashboard/test-profile', function() {
         return response()->json(['message' => 'Profile route is working', 'user' => Auth::user()->full_name]);
