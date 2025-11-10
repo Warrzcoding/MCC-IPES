@@ -1538,8 +1538,12 @@ $user->password = Hash::make($request->admin_password);
             ]);
 
             // Return download response with success message for next visit
-            return response()->download($backupFile)->deleteFileAfterSend(true)
-                ->with('success', 'Database backup completed successfully! File downloaded.');
+            // Keep file on server for additional access, don't delete after send
+            $filename = basename($backupFile);
+            return response()->download($backupFile, $filename, [
+                'Content-Type' => 'application/sql',
+                'Content-Disposition' => 'attachment; filename="' . $filename . '"'
+            ])->with('success', 'Database backup completed successfully! File downloaded to your PC and saved on server at: ' . $backupFile);
 
         } catch (\Exception $e) {
             $backupLog->update([
