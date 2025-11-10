@@ -291,9 +291,9 @@ if (Auth::user()->isAdmin()) {
     <div class="col-12">
         @if(Auth::user()->isAdmin())
         <!-- Admin Dashboard -->
-        <div class="row justify-content-center">
+        <div class="row">
             <div class="col-12">
-                <div class="row justify-content-center">
+                <div class="row">
                     <div class="col-xl-3 col-md-6 mb-4">
                         <div class="card border-left-primary shadow h-100 py-2" style="border-left: 4px solid #667eea;">
                             <div class="card-body">
@@ -363,9 +363,9 @@ if (Auth::user()->isAdmin()) {
         
         <!-- DATA ANALYTICS CHARTS (Admin Only) -->
         @if(Auth::user()->isAdmin())
-        <div class="row justify-content-center mb-4">
+        <div class="row mb-4">
             <div class="col-12">
-                <div class="row justify-content-center analytics-section" style="background: linear-gradient(135deg, #f8fafc 0%, #e3e6f3 100%); border-radius: 18px; box-shadow: 0 8px 32px rgba(102, 126, 234, 0.10); padding: 18px 8px 8px 8px;">
+                <div class="row analytics-section" style="background: linear-gradient(135deg, #f8fafc 0%, #e3e6f3 100%); border-radius: 18px; box-shadow: 0 8px 32px rgba(102, 126, 234, 0.10); padding: 18px 8px 8px 8px;">
 
                     <div class="col-lg-6 col-md-12 mb-4 d-flex align-items-stretch">
                         <div class="card shadow-lg w-100 h-100 border-0 analytics-card" style="min-height: 320px; max-height: 340px; border-radius: 18px; transition: box-shadow 0.3s; ">
