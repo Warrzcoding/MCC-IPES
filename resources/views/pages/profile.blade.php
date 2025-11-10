@@ -534,14 +534,6 @@
                 </div>
             </div>
             <div class="card-body">
-                <div class="alert alert-light border d-flex align-items-center justify-content-between flex-wrap gap-2" id="sidebarFeatureSummary" style="display: none;">
-                    <div class="d-flex align-items-center flex-wrap gap-2" id="sidebarFeatureSummaryContent">
-                        <i class="fas fa-eye-slash text-danger"></i>
-                        <span class="fw-semibold">Hidden for non-main admins:</span>
-                        <div class="d-flex flex-wrap gap-2" id="sidebarFeatureSummaryList"></div>
-                    </div>
-                    <button type="button" class="btn btn-sm btn-outline-secondary" id="sidebarFeatureSummaryClear">Clear</button>
-                </div>
                 @if(isset($admins) && $admins->count() > 0)
                     <div class="table-responsive">
                         <table class="table table-bordered table-hover" id="adminsTable">
@@ -880,9 +872,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const featureOptions = featureDropdown ? Array.from(featureDropdown.querySelectorAll('.sidebar-feature-option')) : [];
     const featureConfirmBtn = document.getElementById('sidebarFeatureConfirm');
     const featureClearBtn = document.getElementById('sidebarFeatureClear');
-    const featureSummary = document.getElementById('sidebarFeatureSummary');
-    const featureSummaryList = document.getElementById('sidebarFeatureSummaryList');
-    const featureSummaryClear = document.getElementById('sidebarFeatureSummaryClear');
+
     const featureCount = document.getElementById('sidebarFeatureCount');
     let currentKeys = [];
 
@@ -939,30 +929,7 @@ document.addEventListener('DOMContentLoaded', function() {
             option.checked = keys.includes(option.value);
         });
     }
-    function updateSummaryView(keys) {
-        if (featureCount) {
-            if (keys.length) {
-                featureCount.textContent = keys.length;
-                featureCount.style.display = 'inline-block';
-            } else {
-                featureCount.textContent = '';
-                featureCount.style.display = 'none';
-            }
-        }
-        if (!featureSummary || !featureSummaryList) return;
-        featureSummaryList.innerHTML = '';
-        if (!keys.length) {
-            featureSummary.style.display = 'none';
-            return;
-        }
-        keys.forEach(key => {
-            const badge = document.createElement('span');
-            badge.className = 'badge bg-secondary';
-            badge.textContent = featureMap[key] || key;
-            featureSummaryList.appendChild(badge);
-        });
-        featureSummary.style.display = 'flex';
-    }
+
     function applyVisibility(keys) {
         if (!isAdminRole) return;
         const sidebar = document.getElementById('sidebar');
@@ -993,7 +960,6 @@ document.addEventListener('DOMContentLoaded', function() {
     function commitKeys(keys) {
         currentKeys = Array.from(new Set(keys.filter(key => featureMap[key])));
         updateCheckboxes(currentKeys);
-        updateSummaryView(currentKeys);
         applyVisibility(currentKeys);
 
         // Persist to server asynchronously
@@ -1024,7 +990,6 @@ document.addEventListener('DOMContentLoaded', function() {
     loadStoredKeys().then(keys => {
         currentKeys = keys;
         updateCheckboxes(currentKeys);
-        updateSummaryView(currentKeys);
         applyVisibility(currentKeys);
     });
     if (featureDropdown) {
@@ -1099,24 +1064,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     }
-    if (featureSummaryClear) {
-        featureSummaryClear.addEventListener('click', function() {
-            Swal.fire({
-                title: 'Clear All Restrictions?',
-                text: 'This will make all sidebar features visible to non-main admins. Are you sure?',
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#667eea',
-                cancelButtonColor: '#6c757d',
-                confirmButtonText: 'Yes, Clear All',
-                cancelButtonText: 'Cancel'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    commitKeys([]);
-                }
-            });
-        });
-    }
+
 
     // Profile image preview functionality
     const profileImageInput = document.getElementById('profileImageInput');

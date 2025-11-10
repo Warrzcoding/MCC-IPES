@@ -823,7 +823,7 @@ $user->password = Hash::make($request->admin_password);
     {
         // Check if current user is main admin
         if (!Auth::user()->canManageAdmins()) {
-            return redirect()->back()
+            return redirect()->route('dashboard', ['page' => 'profile'])
                 ->with('message', 'Only main admin can manage other admins.')
                 ->with('message_type', 'danger');
         }
@@ -836,9 +836,9 @@ $user->password = Hash::make($request->admin_password);
             'admin_course' => 'required|string|max:255',
             'admin_profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
-        
+
         if ($validator->fails()) {
-            return redirect()->back()
+            return redirect()->route('dashboard', ['page' => 'profile'])
                 ->withErrors($validator)
                 ->withInput()
                 ->with('message', 'Validation failed. Please check your input.')
@@ -850,7 +850,7 @@ $user->password = Hash::make($request->admin_password);
             
             // Prevent admin from editing themselves through this method
             if ($user->id === Auth::id()) {
-                return redirect()->back()
+                return redirect()->route('dashboard', ['page' => 'profile'])
                     ->with('message', 'You cannot edit your own admin account through this form.')
                     ->with('message_type', 'warning');
             }
@@ -884,13 +884,13 @@ $user->password = Hash::make($request->admin_password);
             }
             
             $user->save();
-            
-            return redirect()->back()
+
+            return redirect()->route('dashboard', ['page' => 'profile'])
                 ->with('message', 'Admin updated successfully!')
                 ->with('message_type', 'success');
                 
         } catch (\Exception $e) {
-            return redirect()->back()
+            return redirect()->route('dashboard', ['page' => 'profile'])
                 ->withInput()
                 ->with('message', 'Error updating admin. Please try again.')
                 ->with('message_type', 'danger');
