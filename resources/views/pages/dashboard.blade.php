@@ -252,19 +252,19 @@ if (Auth::user()->isAdmin()) {
         }
 
         .page-full-width .row.justify-content-center .col-6.col-sm-6.col-md-4 {
-            padding-left: 0.375rem !important;
+            padding-left: 0.625rem !important;
             padding-right: 0.25rem !important;
         }
 
         /* Additional mobile centering for student dashboard */
         .page-full-width .row.justify-content-center .col-12.mb-4 .row.justify-content-center {
-            margin-left: 0.75rem;
+            margin-left: 1.25rem;
             margin-right: 0;
         }
 
         /* Evaluation progress section mobile centering */
         .page-full-width .row.justify-content-center .col-12.col-md-8 {
-            padding-left: 0.5rem !important;
+            padding-left: 0.75rem !important;
             padding-right: 0.25rem !important;
         }
     }
@@ -288,14 +288,14 @@ if (Auth::user()->isAdmin()) {
 </div>
 
 <div class="row page-full-width justify-content-center">
-    <div class="col-12 col-lg-10 col-xl-8">
+    <div class="col-12">
         @if(Auth::user()->isAdmin())
         <!-- Admin Dashboard -->
         <div class="row justify-content-center">
             <div class="col-12">
                 <div class="row justify-content-center">
-                    <div class="col-xl-3 col-md-6 mb-4 d-flex justify-content-center">
-                        <div class="card border-left-primary shadow h-100 py-2" style="border-left: 4px solid #667eea; max-width: 100%; margin: 0 auto;">
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card border-left-primary shadow h-100 py-2" style="border-left: 4px solid #667eea;">
                             <div class="card-body">
                                 <div class="row no-gutters align-items-center">
                                     <div class="col mr-2">
@@ -310,8 +310,8 @@ if (Auth::user()->isAdmin()) {
                         </div>
                     </div>
 
-                    <div class="col-xl-3 col-md-6 mb-4 d-flex justify-content-center">
-                        <div class="card border-left-info shadow h-100 py-2" style="border-left: 4px solid #17a2b8; max-width: 100%; margin: 0 auto;">
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card border-left-info shadow h-100 py-2" style="border-left: 4px solid #17a2b8;">
                             <div class="card-body">
                                 <div class="row no-gutters align-items-center">
                                     <div class="col mr-2">
@@ -326,8 +326,8 @@ if (Auth::user()->isAdmin()) {
                         </div>
                     </div>
 
-                    <div class="col-xl-3 col-md-6 mb-4 d-flex justify-content-center">
-                        <div class="card border-left-success shadow h-100 py-2" style="border-left: 4px solid #28a745; max-width: 100%; margin: 0 auto;">
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card border-left-success shadow h-100 py-2" style="border-left: 4px solid #28a745;">
                             <div class="card-body">
                                 <div class="row no-gutters align-items-center">
                                     <div class="col mr-2">
@@ -342,8 +342,8 @@ if (Auth::user()->isAdmin()) {
                         </div>
                     </div>
 
-                    <div class="col-xl-3 col-md-6 mb-4 d-flex justify-content-center">
-                        <div class="card border-left-warning shadow h-100 py-2" style="border-left: 4px solid #ffcf3e; max-width: 100%; margin: 0 auto;">
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card border-left-warning shadow h-100 py-2" style="border-left: 4px solid #ffcf3e;">
                             <div class="card-body">
                                 <div class="row no-gutters align-items-center">
                                     <div class="col mr-2">
@@ -367,8 +367,8 @@ if (Auth::user()->isAdmin()) {
             <div class="col-12">
                 <div class="row justify-content-center analytics-section" style="background: linear-gradient(135deg, #f8fafc 0%, #e3e6f3 100%); border-radius: 18px; box-shadow: 0 8px 32px rgba(102, 126, 234, 0.10); padding: 18px 8px 8px 8px;">
 
-                    <div class="col-lg-6 col-md-12 mb-4 d-flex align-items-stretch justify-content-center">
-                        <div class="card shadow-lg w-100 h-100 border-0 analytics-card" style="min-height: 320px; max-height: 340px; border-radius: 18px; transition: box-shadow 0.3s; max-width: 100%; margin: 0 auto;">
+                    <div class="col-lg-6 col-md-12 mb-4 d-flex align-items-stretch">
+                        <div class="card shadow-lg w-100 h-100 border-0 analytics-card" style="min-height: 320px; max-height: 340px; border-radius: 18px; transition: box-shadow 0.3s; width: 100%;">
                             <div class="card-header py-2 bg-white border-0" style="border-radius: 18px 18px 0 0;">
                                 <h6 class="m-0 font-weight-bold text-primary">Students per Course (and Evaluated)</h6>
                             </div>
@@ -380,8 +380,8 @@ if (Auth::user()->isAdmin()) {
                         </div>
                     </div>
                     <!-- Staff by Type Doughnut Chart -->
-                     <div class="col-lg-6 col-md-12 mb-4 d-flex align-items-stretch justify-content-center">
-                        <div class="card shadow-lg w-100 h-100 border-0 analytics-card" style="min-height: 320px; max-height: 340px; border-radius: 18px; transition: box-shadow 0.3s; max-width: 100%; margin: 0 auto;">
+                     <div class="col-lg-6 col-md-12 mb-4 d-flex align-items-stretch">
+                        <div class="card shadow-lg w-100 h-100 border-0 analytics-card" style="min-height: 320px; max-height: 340px; border-radius: 18px; transition: box-shadow 0.3s; width: 100%;">
                             <div class="card-header py-2 bg-white border-0" style="border-radius: 18px 18px 0 0;">
                                 <h6 class="m-0 font-weight-bold text-primary">Teaching Staff by Department & Non-Teaching</h6>
                             </div>
@@ -394,8 +394,8 @@ if (Auth::user()->isAdmin()) {
                     </div>
 
                    <!-- Staff Performance Improvement per Academic Year/Semester (Enhanced Line Chart) -->
-                   <div class="col-12 mb-4 d-flex align-items-stretch justify-content-center">
-                        <div class="card shadow-lg w-100 h-100 border-0 analytics-card" style="min-height: 340px; max-height: 400px; border-radius: 18px; transition: box-shadow 0.3s; max-width: 100%; margin: 0 auto;">
+                   <div class="col-12 mb-4 d-flex align-items-stretch">
+                        <div class="card shadow-lg w-100 h-100 border-0 analytics-card" style="min-height: 340px; max-height: 400px; border-radius: 18px; transition: box-shadow 0.3s; width: 100%;">
                             <div class="card-header py-2 bg-white border-0 d-flex justify-content-between align-items-center" style="border-radius: 18px 18px 0 0;">
                                 <h6 class="m-0 font-weight-bold text-primary" id="staffPerformanceTitle">Staff Performance Improvement (Avg. Score per Academic Year, Archived)</h6>
                                 <div class="btn-group btn-group-sm" role="group">
