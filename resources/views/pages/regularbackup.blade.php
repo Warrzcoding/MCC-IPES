@@ -359,10 +359,12 @@
           <i class="fas fa-times me-1"></i>
           Cancel
         </button>
-        <a href="{{ route('backup.download') }}" class="btn btn-success">
-          <i class="fas fa-download me-2"></i>
-          Yes, Download Backup
-        </a>
+        <form id="backupDownloadForm" action="{{ route('backup.download') }}" method="GET" style="display: inline;">
+          <button type="submit" class="btn btn-success" id="downloadBtn">
+            <i class="fas fa-download me-2"></i>
+            Yes, Download Backup
+          </button>
+        </form>
       </div>
     </div>
   </div>
@@ -520,4 +522,52 @@
 
     applyFilter();
   })();
+
+  // Handle backup download form submission
+  document.getElementById('backupDownloadForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const downloadBtn = document.getElementById('downloadBtn');
+    const originalText = downloadBtn.innerHTML;
+
+    // Show loading state
+    downloadBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Creating Backup...';
+    downloadBtn.disabled = true;
+
+    // Close modal
+    const modal = bootstrap.Modal.getInstance(document.getElementById('confirmBackupModal'));
+    if (modal) {
+      modal.hide();
+    }
+
+    // Submit form to trigger download
+    this.submit();
+
+    // Show success message after a short delay
+    setTimeout(function() {
+      // Show success alert
+      const alertHtml = `
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+          <i class="fas fa-check-circle me-2"></i>
+          Database backup completed successfully! The file is downloading to your PC and has been saved on the server.
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+      `;
+
+      // Insert alert at the top of the page
+      const container = document.querySelector('.enhanced-card .card-body .p-4.pb-0');
+      if (container) {
+        container.insertAdjacentHTML('afterbegin', alertHtml);
+      }
+
+      // Reset button state
+      downloadBtn.innerHTML = originalText;
+      downloadBtn.disabled = false;
+
+      // Refresh the page after 3 seconds to show updated backup logs
+      setTimeout(function() {
+        window.location.reload();
+      }, 3000);
+    }, 2000);
+  });
 </script>
