@@ -368,7 +368,7 @@ if (Auth::user()->isAdmin()) {
                 <div class="row justify-content-center analytics-section" style="background: linear-gradient(135deg, #f8fafc 0%, #e3e6f3 100%); border-radius: 18px; box-shadow: 0 8px 32px rgba(102, 126, 234, 0.10); padding: 18px 8px 8px 8px;">
 
                     <div class="col-lg-6 col-md-12 mb-4 d-flex align-items-stretch">
-                        <div class="card shadow-lg w-100 h-100 border-0 analytics-card" style="min-height: 320px; max-height: 340px; border-radius: 18px; transition: box-shadow 0.3s; width: 100%;">
+                        <div class="card shadow-lg w-100 h-100 border-0 analytics-card" style="min-height: 320px; max-height: 340px; border-radius: 18px; transition: box-shadow 0.3s; ">
                             <div class="card-header py-2 bg-white border-0" style="border-radius: 18px 18px 0 0;">
                                 <h6 class="m-0 font-weight-bold text-primary">Students per Course (and Evaluated)</h6>
                             </div>
@@ -381,7 +381,7 @@ if (Auth::user()->isAdmin()) {
                     </div>
                     <!-- Staff by Type Doughnut Chart -->
                      <div class="col-lg-6 col-md-12 mb-4 d-flex align-items-stretch">
-                        <div class="card shadow-lg w-100 h-100 border-0 analytics-card" style="min-height: 320px; max-height: 340px; border-radius: 18px; transition: box-shadow 0.3s; width: 100%;">
+                        <div class="card shadow-lg w-100 h-100 border-0 analytics-card" style="min-height: 320px; max-height: 340px; border-radius: 18px; transition: box-shadow 0.3s; ">
                             <div class="card-header py-2 bg-white border-0" style="border-radius: 18px 18px 0 0;">
                                 <h6 class="m-0 font-weight-bold text-primary">Teaching Staff by Department & Non-Teaching</h6>
                             </div>
@@ -395,7 +395,7 @@ if (Auth::user()->isAdmin()) {
 
                    <!-- Staff Performance Improvement per Academic Year/Semester (Enhanced Line Chart) -->
                    <div class="col-12 mb-4 d-flex align-items-stretch">
-                        <div class="card shadow-lg w-100 h-100 border-0 analytics-card" style="min-height: 340px; max-height: 400px; border-radius: 18px; transition: box-shadow 0.3s; width: 100%;">
+                        <div class="card shadow-lg w-100 h-100 border-0 analytics-card" style="min-height: 340px; max-height: 400px; border-radius: 18px; transition: box-shadow 0.3s; ">
                             <div class="card-header py-2 bg-white border-0 d-flex justify-content-between align-items-center" style="border-radius: 18px 18px 0 0;">
                                 <h6 class="m-0 font-weight-bold text-primary" id="staffPerformanceTitle">Staff Performance Improvement (Avg. Score per Academic Year, Archived)</h6>
                                 <div class="btn-group btn-group-sm" role="group">
@@ -407,7 +407,7 @@ if (Auth::user()->isAdmin()) {
                                     </button>
                                 </div>
                             </div>
-                            <div class="card-body d-flex flex-column justify-content-center p-2" style="height: 220px; width: 100%;">
+                            <div class="card-body d-flex flex-column justify-content-center p-2" style="height: 220px; ">
                                 <canvas id="staffPerformanceStatsPerYearChart" height="140" style="width: 100% !important;"></canvas>
                             </div>
                         </div>
