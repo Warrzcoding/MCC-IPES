@@ -647,7 +647,7 @@ if (Auth::user()->isAdmin()) {
                     <div class="card border-0 shadow-sm" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 15px;">
                         <div class="card-body p-3">
                             <h6 class="text-center mb-3 font-weight-bold text-primary">
-                                <i class="fas fa-chart-pie me-2"></i>Your Evaluation Progress
+                                <i class="fas fa-chart-pie me-2"></i>Your Evaluation Progress!
                             </h6>
                             <div class="row text-center">
                                 <!-- Department Instructors Status -->
