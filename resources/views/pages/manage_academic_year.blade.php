@@ -1488,6 +1488,25 @@ if (!function_exists('getRatingStatus')) {
 document.querySelectorAll('.reuse-question-form').forEach(form => {
     form.addEventListener('submit', function(e) {
         e.preventDefault();
+
+        // Check if there's an active academic year
+        @php
+            $hasActiveYear = \App\Models\AcademicYear::where('is_active', true)->exists();
+        @endphp
+        @if(!$hasActiveYear)
+            Swal.fire({
+                title: 'No Active Academic Year!',
+                text: 'Please set a new academic year as active first.',
+                icon: 'error',
+                confirmButtonText: 'OK',
+                confirmButtonColor: '#d33',
+                showClass: {
+                    popup: 'animate__animated animate__shakeX'
+                }
+            });
+            return;
+        @endif
+
         Swal.fire({
             title: 'Reuse this saved question?',
             text: 'Are you sure you want to reuse this saved question?',
@@ -1506,6 +1525,25 @@ document.querySelectorAll('.reuse-question-form').forEach(form => {
 document.querySelectorAll('.reuse-all-questions-form').forEach(form => {
     form.addEventListener('submit', function(e) {
         e.preventDefault();
+
+        // Check if there's an active academic year
+        @php
+            $hasActiveYear = \App\Models\AcademicYear::where('is_active', true)->exists();
+        @endphp
+        @if(!$hasActiveYear)
+            Swal.fire({
+                title: 'No Active Academic Year!',
+                text: 'Please set a new academic year as active first.',
+                icon: 'error',
+                confirmButtonText: 'OK',
+                confirmButtonColor: '#d33',
+                showClass: {
+                    popup: 'animate__animated animate__shakeX'
+                }
+            });
+            return;
+        @endif
+
         Swal.fire({
             title: 'Reuse ALL saved questions?',
             text: 'Are you sure you want to reuse ALL saved questions?',

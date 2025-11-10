@@ -23,11 +23,20 @@ class AcademicYearController extends Controller
             'year' => 'required|string|max:255',
             'semester' => 'required|integer|in:1,2',
         ]);
-        
+
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput()->with('message', 'Validation failed.')->with('message_type', 'danger');
         }
-        
+
+        // Check if evaluations table is not empty
+        $evaluationsExist = \DB::table('evaluations')->exists();
+        if ($evaluationsExist) {
+            return redirect()->back()
+                ->withInput()
+                ->with('message', 'Still have previous evaluation please save it first before adding a new academic year.')
+                ->with('message_type', 'error');
+        }
+
         // Check for unique combination of year and semester
         $exists = AcademicYear::where('year', $request->year)
                              ->where('semester', $request->semester)

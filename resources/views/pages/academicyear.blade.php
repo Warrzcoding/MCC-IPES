@@ -1,10 +1,4 @@
-@if(session('message') && session('message_type') != 'success')
-    <div class="alert alert-info alert-dismissible fade show" role="alert">
-        <i class="fas fa-info-circle me-2"></i>
-        {{ session('message') }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-@endif
+
 
 @if($errors->any())
     <script>
@@ -27,9 +21,20 @@
 @if(session('message') && session('message_type') == 'error')
     <script>
     document.addEventListener('DOMContentLoaded', function() {
+        const message = '{{ session('message') }}';
+        let title = 'Error!';
+
+        if (message.toLowerCase().includes('previous evaluation')) {
+            title = 'Previous Evaluations Pending!';
+        } else if (message.toLowerCase().includes('already exists')) {
+            title = 'Duplicate Entry!';
+        } else {
+            title = 'Error!';
+        }
+
         Swal.fire({
-            title: 'Duplicate Entry!',
-            text: '{{ session('message') }}',
+            title: title,
+            text: message,
             icon: 'error',
             confirmButtonText: 'OK',
             confirmButtonColor: '#d33',
