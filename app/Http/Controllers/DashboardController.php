@@ -1555,4 +1555,34 @@ $user->password = Hash::make($request->admin_password);
             return back()->with('error', 'Backup failed: ' . $e->getMessage());
         }
     }
+
+    public function deleteBackup($id)
+    {
+        if (!Auth::user()->isAdmin()) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
+        }
+
+        try {
+            $backupLog = BackupLog::findOrFail($id);
+
+            // Delete the physical file if it exists
+            if ($backupLog->storage_path && file_exists($backupLog->storage_path)) {
+                unlink($backupLog->storage_path);
+            }
+
+            // Delete the database record
+            $backupLog->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Backup deleted successfully'
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to delete backup: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 } 

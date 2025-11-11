@@ -5,15 +5,15 @@
   .compact-scale .stat-icon { width: 36px; height: 36px; }
   .compact-scale .tab-nav .btn { padding: 0.45rem 0.7rem; font-size: 0.8rem; }
   .compact-scale .timeline-item { padding: 0.6rem 0.8rem; }
-  .compact-scale .attempt-meta { font-size: 0.78rem; }
-  .compact-scale .ua-muted { font-size: 0.72rem; }
+  .compact-scale .attempt-meta { font-size: clamp(0.72rem, 0.7rem + 0.16vw, 0.86rem); }
+  .compact-scale .ua-muted { font-size: clamp(0.68rem, 0.66rem + 0.16vw, 0.82rem); }
   .compact-scale .btn { padding: 0.375rem 0.6rem; font-size: 0.8rem; }
-  .compact-scale table th, .compact-scale table td { padding: 0.45rem 0.6rem; font-size: 0.8rem; }
+  .compact-scale table th, .compact-scale table td { padding: 0.45rem 0.6rem; font-size: clamp(0.7rem, 0.68rem + 0.16vw, 0.84rem); line-height: 1.35; }
   .compact-scale input, .compact-scale select { font-size: 0.8rem; }
   .compact-scale .back-btn { padding: 0.45rem 0.9rem !important; min-width: 98px !important; }
+  .compact-scale .timeline-item .fw-semibold { font-size: clamp(0.82rem, 0.78rem + 0.22vw, 0.98rem); }
   @media (max-width: 576px) {
-    .compact-scale .timeline-item .fw-semibold { font-size: 0.98rem; }
-    .compact-scale #jobs-table th, .compact-scale #jobs-table td { font-size: 0.9rem; padding: 0.4rem 0.5rem; }
+    .compact-scale #jobs-table th, .compact-scale #jobs-table td { padding: 0.4rem 0.5rem; }
   }
   .enhanced-card { border: none; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); overflow: hidden; }
   .tab-separator { border: none; height: 2px; background: linear-gradient(90deg, #e9ecef 0%, #dee2e6 50%, #e9ecef 100%); margin: 0.5rem 2rem 0.75rem 2rem; border-radius: 2px; }
@@ -46,7 +46,16 @@
   .status-running { background: rgba(245,158,11,0.14); color: #92400e; border: 1px solid rgba(245,158,11,0.28); }
   .truncate-1 { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
   .truncate-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-  .action-buttons { display: flex; gap: 0.5rem; justify-content: center; align-items: center; width: 100%; }
+  .action-buttons { display: flex; gap: 0.5rem; justify-content: center; align-items: center; width: 100%; flex-wrap: nowrap; }
+  .action-buttons .delete-btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; padding: 0.4rem 0.85rem; min-width: 108px; font-weight: 600; white-space: nowrap; border-radius: 999px; transition: transform 0.2s ease, box-shadow 0.2s ease; flex-shrink: 0; }
+  .action-buttons .delete-btn .fas { font-size: 0.85rem; }
+  .action-buttons .delete-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 18px rgba(220, 53, 69, 0.2); }
+  .action-buttons .delete-btn:focus-visible { outline: 3px solid rgba(220, 53, 69, 0.35); outline-offset: 2px; }
+  .action-buttons .delete-btn .delete-label { letter-spacing: 0.02em; }
+  @media (max-width: 576px) {
+    .action-buttons .delete-btn { min-width: 46px; padding: 0.4rem; }
+    .action-buttons .delete-btn .delete-label { display: none; }
+  }
   .timeline-item .action-buttons { align-self: center; width: auto; }
   #jobs-table td.actions-cell { text-align: center; }
   #backupDetailsModal .modal-content { font-size: 0.8rem; }
@@ -208,8 +217,9 @@
                       </div>
                     </div>
                     <div class="action-buttons mt-3 mt-md-0">
-                      <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" data-id="{{ $job->id }}" data-name="{{ $jobName }}">
-                        <i class="fas fa-trash"></i> Delete
+                      <button type="button" class="btn btn-sm btn-outline-danger delete-btn" data-id="{{ $job->id }}" data-name="{{ $jobName }}">
+                        <i class="fas fa-trash"></i>
+                        <span class="delete-label">Delete</span>
                       </button>
                     </div>
                   </div>
@@ -282,8 +292,9 @@
                       <td class="text-nowrap" title="{{ $initiatedBy }}">{{ \Illuminate\Support\Str::limit($initiatedBy, 60) }}</td>
                       <td class="actions-cell text-center">
                         <div class="action-buttons">
-                          <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" data-id="{{ $job->id }}" data-name="{{ $jobName }}">
-                            <i class="fas fa-trash"></i> Delete
+                          <button type="button" class="btn btn-sm btn-outline-danger delete-btn" data-id="{{ $job->id }}" data-name="{{ $jobName }}">
+                            <i class="fas fa-trash"></i>
+                            <span class="delete-label">Delete</span>
                           </button>
                         </div>
                       </td>
@@ -370,44 +381,7 @@
   </div>
 </div>
 
-<!-- Confirmation Modal for Backup Deletion -->
-<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="confirmDeleteModalLabel">
-          <i class="fas fa-trash me-2 text-danger"></i>
-          Confirm Backup Deletion
-        </h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <div class="text-center mb-3">
-          <i class="fas fa-exclamation-triangle text-danger" style="font-size: 3rem;"></i>
-        </div>
-        <p class="mb-3">Are you sure you want to delete the backup "<span id="delete-backup-name"></span>"?</p>
-        <div class="alert alert-warning">
-          <i class="fas fa-exclamation-triangle me-2"></i>
-          <strong>Warning:</strong> This action cannot be undone. The backup data will be permanently removed.
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-          <i class="fas fa-times me-1"></i>
-          Cancel
-        </button>
-        <form id="delete-form" method="POST" style="display: inline;">
-          @csrf
-          @method('DELETE')
-          <button type="submit" class="btn btn-danger">
-            <i class="fas fa-trash me-2"></i>
-            Yes, Delete Backup
-          </button>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
+
 
 <div class="modal fade" id="backupDetailsModal" tabindex="-1" aria-labelledby="backupDetailsModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg modal-dialog-centered">
@@ -503,22 +477,80 @@
       });
     });
 
-    const deleteModalElement = $('#confirmDeleteModal');
-    const deleteForm = $('#delete-form');
-    const deleteName = $('#delete-backup-name');
-
-    if (deleteModalElement) {
-      deleteModalElement.addEventListener('show.bs.modal', (event) => {
-        const button = event.relatedTarget;
+    // Handle delete button clicks
+    document.addEventListener('click', function(e) {
+      if (e.target.closest('button[data-id]')) {
+        const button = e.target.closest('button[data-id]');
         const id = button.getAttribute('data-id');
         const name = button.getAttribute('data-name');
-        deleteName.textContent = name;
-        if (deleteForm) {
-          // Assuming the delete route is /backup/{id} with DELETE method
-          deleteForm.action = `/backup/${id}`;
-        }
-      });
-    }
+
+        // Show SweetAlert confirmation
+        Swal.fire({
+          title: 'Delete Backup?',
+          text: `Are you sure you want to delete the backup "${name}"? This action cannot be undone.`,
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#dc3545',
+          cancelButtonColor: '#6c757d',
+          confirmButtonText: 'Yes, Delete',
+          cancelButtonText: 'Cancel'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            // Show loading
+            Swal.fire({
+              title: 'Deleting...',
+              text: 'Please wait while we delete the backup.',
+              allowOutsideClick: false,
+              showConfirmButton: false,
+              willOpen: () => {
+                Swal.showLoading();
+              }
+            });
+
+            // Send delete request
+            fetch(`/admin/backup/${id}`, {
+              method: 'DELETE',
+              headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+              }
+            })
+            .then(response => response.json())
+            .then(data => {
+              if (data.success) {
+                Swal.fire({
+                  icon: 'success',
+                  title: 'Deleted!',
+                  text: data.message,
+                  timer: 2000,
+                  timerProgressBar: true
+                }).then(() => {
+                  // Remove the backup item from the UI
+                  button.closest('.timeline-item, tr').remove();
+                  // Refresh the page to update counts
+                  window.location.reload();
+                });
+              } else {
+                Swal.fire({
+                  icon: 'error',
+                  title: 'Error',
+                  text: data.message || 'Failed to delete backup'
+                });
+              }
+            })
+            .catch(error => {
+              console.error('Delete error:', error);
+              Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'An error occurred while deleting the backup: ' + error.message
+              });
+            });
+          }
+        });
+      }
+    });
 
     applyFilter();
   })();
@@ -545,29 +577,22 @@
 
     // Show success message after a short delay
     setTimeout(function() {
-      // Show success alert
-      const alertHtml = `
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-          <i class="fas fa-check-circle me-2"></i>
-          Database backup completed successfully! The file is downloading to your PC and has been saved on the server.
-          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-      `;
-
-      // Insert alert at the top of the page
-      const container = document.querySelector('.enhanced-card .card-body .p-4.pb-0');
-      if (container) {
-        container.insertAdjacentHTML('afterbegin', alertHtml);
-      }
-
       // Reset button state
       downloadBtn.innerHTML = originalText;
       downloadBtn.disabled = false;
 
-      // Refresh the page after 3 seconds to show updated backup logs
-      setTimeout(function() {
+      // Show SweetAlert success message
+      Swal.fire({
+        icon: 'success',
+        title: 'Backup Completed!',
+        text: 'Database backup completed successfully! The file is downloading to your PC and has been saved on the server.',
+        confirmButtonText: 'OK',
+        timer: 3000,
+        timerProgressBar: true
+      }).then(() => {
+        // Refresh the page to show updated backup logs
         window.location.reload();
-      }, 3000);
+      });
     }, 2000);
   });
 </script>
