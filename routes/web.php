@@ -119,6 +119,7 @@ Route::middleware(['auth'])->group(function () {
 
     // Backup Routes
     Route::get('/admin/backup/download', [DashboardController::class, 'downloadBackup'])->name('backup.download');
+    Route::delete('/admin/backup/{id}', [DashboardController::class, 'deleteBackup'])->name('backup.delete');
 
     // Test route for debugging
     Route::get('/dashboard/test-profile', function() {
