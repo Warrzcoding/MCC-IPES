@@ -485,7 +485,7 @@
 
                 const formData = new FormData(this);
 
-                fetch(this.action, {
+                fetch('/dashboard/update-profile', {
                     method: 'POST',
                     body: formData,
                     credentials: 'same-origin',
