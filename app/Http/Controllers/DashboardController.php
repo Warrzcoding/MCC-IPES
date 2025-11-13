@@ -668,6 +668,9 @@ class DashboardController extends Controller
         ]);
         
         if ($validator->fails()) {
+            if ($request->ajax() || $request->expectsJson()) {
+                return response()->json(['success' => false, 'message' => 'Validation failed. Please check your input.', 'errors' => $validator->errors()]);
+            }
             return redirect()->back()
                 ->withErrors($validator)
                 ->withInput()
@@ -729,11 +732,17 @@ class DashboardController extends Controller
             
             $user->save();
 
+            if ($request->ajax() || $request->expectsJson()) {
+                return response()->json(['success' => true, 'message' => 'Profile updated successfully!']);
+            }
             return redirect()->back()
                 ->with('message', 'Profile updated successfully!')
                 ->with('message_type', 'success');
 
         } catch (\Exception $e) {
+            if ($request->ajax() || $request->expectsJson()) {
+                return response()->json(['success' => false, 'message' => 'Error updating profile. Please try again.']);
+            }
             return redirect()->back()
                 ->withInput()
                 ->with('message', 'Error updating profile. Please try again.')

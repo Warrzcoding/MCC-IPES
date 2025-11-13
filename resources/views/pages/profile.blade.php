@@ -507,10 +507,14 @@
                                 confirmButtonColor: '#667eea'
                             });
                         } else {
+                            let errorText = data.message;
+                            if (data.errors) {
+                                errorText += '\n' + Object.values(data.errors).flat().join('\n');
+                            }
                             Swal.fire({
                                 icon: 'error',
                                 title: 'Error',
-                                text: data.message,
+                                text: errorText,
                                 confirmButtonColor: '#667eea'
                             });
                         }
