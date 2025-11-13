@@ -488,7 +488,9 @@
                 fetch(this.action, {
                     method: 'POST',
                     body: formData,
+                    credentials: 'same-origin',
                     headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
                         'X-Requested-With': 'XMLHttpRequest',
                         'Accept': 'application/json'
                     }
