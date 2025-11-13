@@ -651,7 +651,7 @@ class DashboardController extends Controller
 
     public function updateProfile(Request $request)
     {
-        \Log::info('Profile update method called', ['user_id' => Auth::id(), 'request_data' => $request->all()]);
+        \Log::info('Profile update method called', ['user_id' => Auth::id(), 'request_method' => $request->method(), 'request_url' => $request->url(), 'is_ajax' => $request->ajax(), 'expects_json' => $request->expectsJson()]);
         $user = Auth::user();
         
         $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
