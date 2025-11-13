@@ -729,25 +729,11 @@ class DashboardController extends Controller
             
             $user->save();
 
-            if ($request->expectsJson() || $request->ajax()) {
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Profile updated successfully!'
-                ]);
-            }
-
             return redirect()->back()
                 ->with('message', 'Profile updated successfully!')
                 ->with('message_type', 'success');
 
         } catch (\Exception $e) {
-            if ($request->expectsJson() || $request->ajax()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Error updating profile. Please try again.'
-                ], 500);
-            }
-
             return redirect()->back()
                 ->withInput()
                 ->with('message', 'Error updating profile. Please try again.')
