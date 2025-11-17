@@ -1015,7 +1015,7 @@
         <a href="{{ route('dashboard') }}" class="logo" id="mainLogo" style="transition:width 0.3s,opacity 0.3s;">
             <img src="{{ asset('images/logo.png') }}" alt="MCC Logo" class="school-logo">
             <div class="logo-container">
-                <span class="logo-text" style="transition:opacity 0.3s;">MCC-IPESSS</span>
+                <span class="logo-text" style="transition:opacity 0.3s;">MCC-IPES</span>
             </div>
         </a>
         <div class="user-menu">
