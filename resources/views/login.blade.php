@@ -2982,11 +2982,38 @@ window.adminOtpOverlayEnabled = @json($adminOtpOverlayEnabled);
                         }
                         
                         if (result.isConfirmed) {
+                            let downloadUrl = '';
+                            let appType = '';
+                            
                             if (selectedType === 'android') {
-                                window.location.href = '{{ asset('apk/android/students_ipes.apk') }}';
+                                downloadUrl = '{{ asset('apk/android/students_ipes.apk') }}';
+                                appType = 'Android';
                             } else if (selectedType === 'ios') {
-                                window.location.href = '{{ asset('apk/ios/students_ipes.ipa') }}';
+                                downloadUrl = '{{ asset('apk/ios/students_ipes.ipa') }}';
+                                appType = 'iOS';
                             }
+                            
+                            fetch(downloadUrl, { method: 'HEAD' })
+                                .then(response => {
+                                    if (response.ok) {
+                                        window.location.href = downloadUrl;
+                                    } else {
+                                        Swal.fire({
+                                            icon: 'info',
+                                            title: 'Not Available',
+                                            text: `Application is not yet available for ${appType}`,
+                                            confirmButtonColor: '#667eea'
+                                        });
+                                    }
+                                })
+                                .catch(() => {
+                                    Swal.fire({
+                                        icon: 'info',
+                                        title: 'Not Available',
+                                        text: `Application is not yet available for ${appType}`,
+                                        confirmButtonColor: '#667eea'
+                                    });
+                                });
                         }
                     });
                 }, 800);
