@@ -1486,7 +1486,7 @@
 
                     <div class="d-grid gap-2">
                         <button type="submit" name="login" class="btn btn-primary" {{ ($admin_otp_pending && $adminOtpOverlayEnabled) ? 'disabled' : '' }}>
-                            <i class="fas fa-sign-in-alt"></i> Login as Administrator
+                            <i class="fas fa-sign-in-alt"></i> Login as Administratorss
                         </button>
                     </div>
                     <div class="mt-3">
