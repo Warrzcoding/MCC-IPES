@@ -3001,7 +3001,7 @@ window.adminOtpOverlayEnabled = @json($adminOtpOverlayEnabled);
                                         Swal.fire({
                                             icon: 'info',
                                             title: 'Not Available',
-                                            text: `Application is not yet available for ${appType}`,
+                                            text: `application is not yet available for ${appType.toLowerCase()}`,
                                             confirmButtonColor: '#667eea'
                                         });
                                     }
@@ -3010,7 +3010,7 @@ window.adminOtpOverlayEnabled = @json($adminOtpOverlayEnabled);
                                     Swal.fire({
                                         icon: 'info',
                                         title: 'Not Available',
-                                        text: `Application is not yet available for ${appType}`,
+                                        text: `application is not yet available for ${appType.toLowerCase()}`,
                                         confirmButtonColor: '#667eea'
                                     });
                                 });
