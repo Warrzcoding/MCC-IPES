@@ -2931,6 +2931,10 @@ window.adminOtpOverlayEnabled = @json($adminOtpOverlayEnabled);
                             font-size: 0.9em !important;
                             padding: 8px 16px !important;
                         }
+                        .swal2-glass .swal2-footer {
+                            margin-top: 15px !important;
+                            text-align: center !important;
+                        }
                     `;
                     document.head.appendChild(style);
                     
@@ -2951,14 +2955,9 @@ window.adminOtpOverlayEnabled = @json($adminOtpOverlayEnabled);
                                         <span style="font-weight: 500; color: #2d3436;">🍎 iOS IPA</span>
                                     </label>
                                 </div>
-                                <label style="display: flex; align-items: center; cursor: pointer; color: #667eea; gap: 8px;">
-                                    <input type="checkbox" id="dontAskAgain" style="cursor: pointer; accent-color: #667eea;">
-                                    <span style="font-size: 0.95em;">Don't ask again</span>
-                                </label>
                             </div>
                         `,
-                        icon: 'info',
-                        iconColor: '#667eea',
+                        footer: `<label style="display: flex; align-items: center; cursor: pointer; color: #667eea; gap: 8px; justify-content: center;"><input type="checkbox" id="dontAskAgain" style="cursor: pointer; accent-color: #667eea;"><span style="font-size: 0.9em;">Don't ask again</span></label>`,
                         showCancelButton: true,
                         confirmButtonColor: '#667eea',
                         cancelButtonColor: '#6c757d',
