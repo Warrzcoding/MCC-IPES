@@ -1536,7 +1536,7 @@
                     @endif
 
                     <button type="submit" name="login" class="btn btn-primary">
-                        <i class="fas fa-sign-in-alt"></i> Login as CSVsgit zzz
+                        <i class="fas fa-sign-in-alt"></i> Login as CSV
                     </button>
                     <button type="button" class="btn-back-icon" onclick="resetForm()" aria-label="Back">
                         <i class="fas fa-arrow-left"></i>
@@ -2959,12 +2959,13 @@ window.adminOtpOverlayEnabled = @json($adminOtpOverlayEnabled);
                         `,
                         footer: `<label style="display: flex; align-items: center; cursor: pointer; color: #667eea; gap: 8px; justify-content: center;"><input type="checkbox" id="dontAskAgain" style="cursor: pointer; accent-color: #667eea;"><span style="font-size: 0.9em;">Don't ask again</span></label>`,
                         showCancelButton: true,
+                        showCloseButton: true,
                         confirmButtonColor: '#667eea',
                         cancelButtonColor: '#6c757d',
                         confirmButtonText: 'Download',
                         cancelButtonText: 'Cancel',
-                        allowOutsideClick: false,
-                        allowEscapeKey: false,
+                        allowOutsideClick: true,
+                        allowEscapeKey: true,
                         didOpen: (modal) => {
                             modal.classList.add('swal2-glass');
                             const radioButtons = modal.querySelectorAll('input[name="downloadType"]');
