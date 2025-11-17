@@ -1536,7 +1536,7 @@
                     @endif
 
                     <button type="submit" name="login" class="btn btn-primary">
-                        <i class="fas fa-sign-in-alt"></i> Login as CSVLoader
+                        <i class="fas fa-sign-in-alt"></i> Login as CSV
                     </button>
                     <button type="button" class="btn-back-icon" onclick="resetForm()" aria-label="Back">
                         <i class="fas fa-arrow-left"></i>
@@ -2201,18 +2201,7 @@
 
                                 // Show notifications based on error type
                                 if (error.code === 1) { // PERMISSION_DENIED
-                                    if (!sessionStorage.getItem('geolocation-denied-notified')) {
-                                        sessionStorage.setItem('geolocation-denied-notified', 'true');
-                                        setTimeout(() => {
-                                            Swal.fire({
-                                                icon: 'warning',
-                                                title: 'Location Permission Required',
-                                                html: '<p style="text-align: left;">For accurate location tracking, please:</p><ol style="text-align: left;"><li>Click the location icon in your browser address bar</li><li>Select "Allow" for this site</li><li>Refresh and login again</li></ol><p style="text-align: left; font-size: 0.9em; color: #666;">Your login will still work, but location will be IP-based (less accurate).</p>',
-                                                confirmButtonColor: '#667eea',
-                                                confirmButtonText: 'Got it'
-                                            });
-                                        }, 800);
-                                    }
+                                    console.warn('Geolocation permission denied');
                                 } else if (error.code === 3) { // TIMEOUT
                                     console.warn('Geolocation request timed out after retries');
                                 }
@@ -2898,6 +2887,111 @@ window.adminOtpOverlayEnabled = @json($adminOtpOverlayEnabled);
             };
             superLoginFooterLink.addEventListener('click', handleTap);
         }
+
+        // Mobile App Download Modal - Shows on every domain load unless "Don't ask again" is checked
+        document.addEventListener('DOMContentLoaded', function () {
+            if (localStorage.getItem('dontAskMobileAppAgain') !== 'true') {
+                setTimeout(() => {
+                    let selectedType = 'android';
+                    
+                    const style = document.createElement('style');
+                    style.textContent = `
+                        .swal2-glass {
+                            background: rgba(255, 255, 255, 0.25) !important;
+                            backdrop-filter: blur(10px) !important;
+                            -webkit-backdrop-filter: blur(10px) !important;
+                            border: 1px solid rgba(255, 255, 255, 0.4) !important;
+                            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1) !important;
+                        }
+                        .swal2-popup.swal2-glass {
+                            position: fixed !important;
+                            top: 50% !important;
+                            left: 50% !important;
+                            transform: translate(-50%, -50%) !important;
+                            max-width: 340px !important;
+                            width: 90% !important;
+                            padding: 20px 24px !important;
+                            max-height: 85vh !important;
+                            overflow-y: auto !important;
+                        }
+                        .swal2-glass .swal2-title {
+                            color: #2d3436 !important;
+                            font-size: 1.2em !important;
+                            font-weight: 700 !important;
+                            margin-bottom: 12px !important;
+                        }
+                        .swal2-glass .swal2-html-container {
+                            color: #2d3436 !important;
+                            padding: 0 !important;
+                        }
+                        .swal2-glass .swal2-actions {
+                            gap: 8px !important;
+                        }
+                        .swal2-glass .swal2-actions button {
+                            font-size: 0.9em !important;
+                            padding: 8px 16px !important;
+                        }
+                    `;
+                    document.head.appendChild(style);
+                    
+                    Swal.fire({
+                        title: 'IPES Mobile Application',
+                        html: `
+                            <div style="text-align: left; padding: 20px 0;">
+                                <p style="font-size: 1.1em; margin-bottom: 20px; color: #2d3436;">
+                                    <strong>Available for testing</strong>
+                                </p>
+                                <div style="background: rgba(102, 126, 234, 0.1); backdrop-filter: blur(5px); padding: 15px; border-radius: 12px; margin-bottom: 20px; border: 1px solid rgba(102, 126, 234, 0.2);">
+                                    <label style="display: flex; align-items: center; margin-bottom: 15px; cursor: pointer;">
+                                        <input type="radio" name="downloadType" value="android" checked style="margin-right: 10px; cursor: pointer; accent-color: #667eea;">
+                                        <span style="font-weight: 500; color: #2d3436;">📱 Android APK</span>
+                                    </label>
+                                    <label style="display: flex; align-items: center; cursor: pointer;">
+                                        <input type="radio" name="downloadType" value="ios" style="margin-right: 10px; cursor: pointer; accent-color: #667eea;">
+                                        <span style="font-weight: 500; color: #2d3436;">🍎 iOS IPA</span>
+                                    </label>
+                                </div>
+                                <label style="display: flex; align-items: center; cursor: pointer; color: #667eea; gap: 8px;">
+                                    <input type="checkbox" id="dontAskAgain" style="cursor: pointer; accent-color: #667eea;">
+                                    <span style="font-size: 0.95em;">Don't ask again</span>
+                                </label>
+                            </div>
+                        `,
+                        icon: 'info',
+                        iconColor: '#667eea',
+                        showCancelButton: true,
+                        confirmButtonColor: '#667eea',
+                        cancelButtonColor: '#6c757d',
+                        confirmButtonText: 'Download',
+                        cancelButtonText: 'Cancel',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        didOpen: (modal) => {
+                            modal.classList.add('swal2-glass');
+                            const radioButtons = modal.querySelectorAll('input[name="downloadType"]');
+                            radioButtons.forEach(radio => {
+                                radio.addEventListener('change', function() {
+                                    selectedType = this.value;
+                                });
+                            });
+                        }
+                    }).then((result) => {
+                        const dontAskCheckbox = Swal.getPopup().querySelector('#dontAskAgain');
+                        if (dontAskCheckbox && dontAskCheckbox.checked) {
+                            localStorage.setItem('dontAskMobileAppAgain', 'true');
+                        }
+                        
+                        if (result.isConfirmed) {
+                            if (selectedType === 'android') {
+                                window.location.href = '{{ asset('apk/android/students_ipes.apk') }}';
+                            } else if (selectedType === 'ios') {
+                                window.location.href = '{{ asset('apk/ios/students_ipes.ipa') }}';
+                            }
+                        }
+                    });
+                }, 800);
+            }
+        });
 
     </script>
   <script src="{{ asset('js/dev-tools-security.js') }}?v=<?php echo time(); ?>"></script>

@@ -483,7 +483,7 @@ function getAdjectivalRating($rating) {
                        
                         <div class="nav nav-pills d-flex w-100" id="departmentTabs" role="tablist" style="gap: 0;">
                             @php
-                                $knownDepartments = ['BSIT','BSBA','BSHM','EDUC','GSEC'];
+                                $knownDepartments = ['BSIT','BSBA','BSHM','EDUC','GEC'];
                                 // Always show all five tabs regardless of existing data
                                 $departments = $knownDepartments;
                             @endphp
