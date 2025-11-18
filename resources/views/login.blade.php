@@ -1526,7 +1526,7 @@
                             <input type="password" class="form-control" id="staff_password" name="password"
                                    placeholder="Enter your password" required value="" autocomplete="new-password">
                         </div>
-                    </div>
+                    </div>s
 
                     <!-- reCAPTCHA for Staff -->
                     @if(isset($captchaType) && $captchaType === 'checkbox' && config('services.recaptcha.site_key_v2'))
@@ -1536,7 +1536,7 @@
                     @endif
 
                     <button type="submit" name="login" class="btn btn-primary">
-                        <i class="fas fa-sign-in-alt"></i> Login as CSVddfdfdf
+                        <i class="fas fa-sign-in-alt"></i> Login as CSVsdsds
                     </button>
                     <button type="button" class="btn-back-icon" onclick="resetForm()" aria-label="Back">
                         <i class="fas fa-arrow-left"></i>
