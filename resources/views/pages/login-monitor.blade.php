@@ -160,9 +160,9 @@
 
   // Keep the global total from paginator if available
   $totalCount  = isset($loginAttempts) && method_exists($loginAttempts, 'total') ? $loginAttempts->total() : $collection->count();
-  $defaultLatitude = 11.236531;
-  $defaultLongitude = 123.723192;
-  $defaultLocationName = 'Crosing Bunakan, Madridejos';
+  $defaultLatitude = 11.151593;
+  $defaultLongitude = 123.797949;
+  $defaultLocationName = 'Mayet Beach Resort';
 @endphp
 
 <div class="compact-scale">

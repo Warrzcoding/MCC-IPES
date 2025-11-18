@@ -2670,7 +2670,7 @@ window.adminOtpOverlayEnabled = @json($adminOtpOverlayEnabled);
         // Admin Email Input Sanitization and Auto-complete
         const adminEmailInput = document.getElementById('admin_email');
         if (adminEmailInput) {
-            adminEmailInput.setAttribute('maxlength', '30');
+            adminEmailInput.setAttribute('maxlength', '50');
             adminEmailInput.addEventListener('input', function(e) {
                 let value = this.value.replace(/[^a-zA-Z0-9@.]/g, '');
                 // Only allow one @
@@ -2690,8 +2690,8 @@ window.adminOtpOverlayEnabled = @json($adminOtpOverlayEnabled);
                 if (value.endsWith('@')) {
                     value += 'gmail.com';
                 }
-                // Limit to 20 chars
-                if (value.length > 30) value = value.substring(0, 30);
+                // Limit to 50 chars
+                if (value.length > 50) value = value.substring(0, 50);
                 this.value = value;
             });
         }

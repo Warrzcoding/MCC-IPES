@@ -28,12 +28,13 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 110px;
-            height: 110px;
+            width: 120px;
+            height: 120px;
             margin: 0 auto 20px;
-            border-radius: 24px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            box-shadow: 0 10px 24px rgba(102, 126, 234, 0.25);
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1f8aff, #60a9ff);
+            box-shadow: 0 12px 24px rgba(31, 138, 255, 0.3);
+            transition: transform 0.3s ease;
         }
         .header .logo {
             width: 70%;
