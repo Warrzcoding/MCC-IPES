@@ -1160,24 +1160,29 @@ document.addEventListener('DOMContentLoaded', function () {
                                                 }
                                             @endphp
                                             <div class="status-container">
-                                                <div style="font-size: 0.7rem;">
-                                                    <strong>Instructors:</strong> {{ $teachingCount ?? 0 }}/{{ $totalTeachingStaff ?? 0 }}
-                                                    @if(($totalTeachingStaff ?? 0) > 0 && ($teachingCount ?? 0) >= ($totalTeachingStaff ?? 0))
-                                                        <span class="badge bg-success">Done</span>
-                                                    @elseif(($teachingCount ?? 0) > 0)
-                                                        <span class="badge bg-warning">Progress</span>
-                                                    @else
-                                                        <span class="badge bg-primary">Never</span>
-                                                    @endif
-                                                    <br>
-                                                    <strong>Non-teaching:</strong> {{ $nonTeachingCount ?? 0 }}/{{ $totalNonTeachingStaff ?? 0 }}
-                                                    @if(($totalNonTeachingStaff ?? 0) > 0 && ($nonTeachingCount ?? 0) >= ($totalNonTeachingStaff ?? 0))
-                                                        <span class="badge bg-success">Done</span>
-                                                    @elseif(($nonTeachingCount ?? 0) > 0)
-                                                        <span class="badge" style="background-color: #ff8c00;">Progress</span>
-                                                    @else
-                                                        <span class="badge bg-primary">Never</span>
-                                                    @endif
+                                                <div style="font-size: 0.7rem; display: flex; align-items: center; gap: 0.5rem;">
+                                                    <div>
+                                                        <i class="fas fa-chalkboard-teacher"></i>
+                                                        <strong>{{ $teachingCount ?? 0 }}/{{ $totalTeachingStaff ?? 0 }}</strong>
+                                                        @if(($totalTeachingStaff ?? 0) > 0 && ($teachingCount ?? 0) >= ($totalTeachingStaff ?? 0))
+                                                            <span class="badge bg-success">Done</span>
+                                                        @elseif(($teachingCount ?? 0) > 0)
+                                                            <span class="badge bg-warning">Progress</span>
+                                                        @else
+                                                            <span class="badge bg-primary">Never</span>
+                                                        @endif
+                                                    </div>
+                                                    <div>
+                                                        <i class="fas fa-users"></i>
+                                                        <strong>{{ $nonTeachingCount ?? 0 }}/{{ $totalNonTeachingStaff ?? 0 }}</strong>
+                                                        @if(($totalNonTeachingStaff ?? 0) > 0 && ($nonTeachingCount ?? 0) >= ($totalNonTeachingStaff ?? 0))
+                                                            <span class="badge bg-success">Done</span>
+                                                        @elseif(($nonTeachingCount ?? 0) > 0)
+                                                            <span class="badge" style="background-color: #ff8c00;">Progress</span>
+                                                        @else
+                                                            <span class="badge bg-primary">Never</span>
+                                                        @endif
+                                                    </div>
                                                 </div>
                                             </div>
                                         </td>
