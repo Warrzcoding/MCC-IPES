@@ -619,7 +619,7 @@
                 <i class="fas fa-key"></i>
             </div>
             <h2>Reset Password</h2>
-            <p>Verify your Microsoft 365 Account</p>
+            <p>Verify your Account</p>
         </div>
         
         <!-- Step 1: Email Verification -->
@@ -627,15 +627,13 @@
             <form id="resetEmailForm" method="POST" action="{{ route('password.reset.send_verification') }}">
                 @csrf
                 <div class="mb-3 text-center">
-                    <label for="ms365_email" class="form-label w-100 text-center">Microsoft 365 Email</label>
+                    <label for="ms365_email" class="form-label w-100 text-center">Email Address</label>
                     <div class="input-group">
-                        <span class="input-group-text bg-white"><i class="fab fa-microsoft text-primary"></i></span>
+                        <span class="input-group-text bg-white"><i class="fas fa-envelope text-primary"></i></span>
                         <input type="email" class="form-control" id="ms365_email" name="ms365_email"
-                               placeholder="your.email@mcclawis.edu.ph" required autofocus
-                               pattern="^[a-zA-Z0-9._%+-]+@mcclawis\.([eE][dD][uU]|[eE][dD][iI])\.ph$"
+                               placeholder="your.email@example.com" required autofocus
                                inputmode="email"
-                               autocomplete="email"
-                               title="Email must end with @mcclawis.edu.ph or @mcclawis.edi.ph">
+                               autocomplete="email">
                     </div>
                 </div>
                 <button type="submit" class="btn btn-primary" id="sendVerificationBtn">
@@ -754,7 +752,7 @@
             const passwordForm = document.getElementById('resetPasswordForm');
             const step1 = document.getElementById('resetStep1');
             const emailInput = document.getElementById('ms365_email');
-            const allowedEmailPattern = /^[a-zA-Z0-9._%+-]+@mcclawis\.(edu|edi)\.ph$/i;
+            const allowedEmailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i;
             const step2 = document.getElementById('resetStep2');
             const step3 = document.getElementById('resetStep3');
             const step4 = document.getElementById('resetStep4');
@@ -848,41 +846,15 @@
                 }
             }
 
-            function handleEmailDomainAutofill(event) {
-                const inputValue = event.target.value;
-                const atIndex = inputValue.indexOf('@');
-                if (atIndex !== -1) {
-                    const localPart = inputValue.slice(0, atIndex);
-                    event.target.value = `${localPart}@mcclawis.edu.ph`;
-                    // Allow both @mcclawis.edu.ph and @mcclawis.edi.ph domains
-                }
-            }
+
 
             function enforceEmailPattern(event) {
                 const input = event.target;
                 let value = input.value.replace(/\s+/g, '');
-                const atIndex = value.indexOf('@');
-                let localPart = atIndex === -1 ? value : value.slice(0, atIndex);
+                input.value = value;
 
-                localPart = localPart
-                    .replace(/[^A-Za-z.]/g, '')
-                    .replace(/\.{2,}/g, '.')
-                    .replace(/^\./, '');
-
-                if (atIndex !== -1) {
-                    localPart = localPart.replace(/\.$/, '');
-                    input.value = localPart ? `${localPart}@mcclawis.edu.ph` : '';
-                    // Allow both @mcclawis.edu.ph and @mcclawis.edi.ph domains
-                } else {
-                    input.value = localPart;
-                }
-
-                if (atIndex !== -1 && localPart) {
-                    if (!allowedEmailPattern.test(input.value)) {
-                        input.setCustomValidity('Email must end with @mcclawis.edu.ph or @mcclawis.edi.ph');
-                    } else {
-                        input.setCustomValidity('');
-                    }
+                if (value && !allowedEmailPattern.test(value)) {
+                    input.setCustomValidity('Please enter a valid email address');
                 } else {
                     input.setCustomValidity('');
                 }
@@ -891,7 +863,7 @@
             function validateEmailBeforeSubmit(inputElement) {
                 const value = inputElement.value.trim();
                 if (!allowedEmailPattern.test(value)) {
-                    inputElement.setCustomValidity('Email must be firstname.lastname@mcclawis.edu.ph or sample.firstname.lastname@mcclawis.edu.ph');
+                    inputElement.setCustomValidity('Please enter a valid email address');
                     inputElement.reportValidity();
                     return false;
                 }
@@ -900,7 +872,6 @@
             }
 
             if (emailInput) {
-                emailInput.addEventListener('blur', handleEmailDomainAutofill);
                 emailInput.addEventListener('input', enforceEmailPattern, { passive: true });
             }
 

@@ -22,31 +22,35 @@ class PasswordResetController extends Controller
     public function sendVerification(Request $request)
     {
         try {
+            \Log::info("Password reset attempt for email: " . $request->ms365_email);
+
             $request->validate([
-                'ms365_email' => 'required|email|regex:/^[a-zA-Z0-9._%+-]+@mcclawis\.(edu|edi)\.ph$/i'
+                'ms365_email' => 'required|email'
             ]);
 
             $email = $request->ms365_email;
+            \Log::info("Email passed validation: " . $email);
 
-            // TEMPORARY: Skip user validation for testing - always allow OTP sending
-            // TODO: Re-enable user validation in production
-            /*
-            // Check if user exists with student role
-            $user = User::where('email', $email)->where('role', 'student')->first();
+            // Check if user exists in User table (approved users) or RequestSignin table (pending approval)
+            $user = User::where('email', $email)->first();
+            $pendingUser = RequestSignin::where('email', $email)->first();
 
-            if (!$user) {
+            \Log::info("User found in users table: " . ($user ? 'YES' : 'NO'));
+            \Log::info("User found in request_signin table: " . ($pendingUser ? 'YES' : 'NO'));
+
+            if (!$user && !$pendingUser) {
+                \Log::info("No user found for email: " . $email);
                 return response()->json([
                     'status' => 'error',
-                    'message' => 'No student account found with this Microsoft 365 email address. Please contact your administrator.'
+                    'message' => 'No account found with this Microsoft 365 email address. Please complete registration first.'
                 ]);
             }
-            */
 
         } catch (\Illuminate\Validation\ValidationException $e) {
-            \Log::error("Validation error: " . json_encode($e->errors()));
+            \Log::error("Validation error for email '" . $request->ms365_email . "': " . json_encode($e->errors()));
             return response()->json([
                 'status' => 'error',
-                'message' => 'Invalid email format. Email must end with @mcclawis.edu.ph or @mcclawis.edi.ph'
+                'message' => 'Please enter a valid email address.'
             ]);
         } catch (\Exception $e) {
             \Log::error("Unexpected error in sendVerification: " . $e->getMessage());
