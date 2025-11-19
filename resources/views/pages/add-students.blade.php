@@ -1160,34 +1160,40 @@ document.addEventListener('DOMContentLoaded', function () {
                                                 }
                                             @endphp
                                             <div class="status-container">
-                                                <div class="dual-badge-container">
-                                                    <div class="dual-badge-item">
-                                                        @if($instructorsComplete)
-                                                            <span class="dual-badge" style="background-color: #90EE90; color: #000;">Done</span>
-                                                        @elseif($teachingCount > 0)
-                                                            <span class="dual-badge bg-warning text-dark">Progress</span>
-                                                        @else
-                                                            <span class="dual-badge bg-primary">Never</span>
-                                                        @endif
-                                                    </div>
-                                                    <div class="dual-badge-item">
-                                                        @if($nonTeachingComplete)
-                                                            <span class="dual-badge bg-success">Done</span>
-                                                        @elseif($nonTeachingCount > 0)
-                                                            <span class="dual-badge" style="background-color: #ff8c00; color: #fff;">Progress</span>
-                                                        @else
-                                                            <span class="dual-badge bg-primary">Never</span>
-                                                        @endif
-                                                    </div>
-                                                </div>
-                                                <div class="dual-count-container">
-                                                    <div class="dual-count-item">
-                                                        <i class="fas fa-chalkboard-teacher"></i> {{ $teachingCount ?? 0 }}/{{ $totalTeachingStaff ?? 0 }}
-                                                    </div>
-                                                    <div class="dual-count-item">
-                                                        <i class="fas fa-users"></i> {{ $nonTeachingCount ?? 0 }}/{{ $totalNonTeachingStaff ?? 0 }}
-                                                    </div>
-                                                </div>
+                                                <table style="width: 100%; border-collapse: collapse; margin: 0; table-layout: fixed;">
+                                                    <tr>
+                                                        <td style="width: 50%; padding: 0 1px 2px 0; text-align: center;">
+                                                            @if($instructorsComplete)
+                                                                <span class="badge" style="background-color: #90EE90; color: #000; font-size: 0.7rem; padding: 0.3em 0.2em; width: 100%; display: block; min-width: 80px; box-sizing: border-box;">Done</span>
+                                                            @elseif($teachingCount > 0)
+                                                                <span class="badge bg-warning" style="font-size: 0.7rem; padding: 0.3em 0.2em; width: 100%; display: block; min-width: 80px; box-sizing: border-box;">Progress</span>
+                                                            @else
+                                                                <span class="badge bg-primary" style="font-size: 0.7rem; padding: 0.3em 0.2em; width: 100%; display: block; min-width: 80px; box-sizing: border-box;">Never</span>
+                                                            @endif
+                                                        </td>
+                                                        <td style="width: 50%; padding: 0 0 2px 1px; text-align: center;">
+                                                            @if($nonTeachingComplete)
+                                                                <span class="badge bg-success" style="font-size: 0.7rem; padding: 0.3em 0.2em; width: 100%; display: block; min-width: 80px; box-sizing: border-box;">Done</span>
+                                                            @elseif($nonTeachingCount > 0)
+                                                                <span class="badge" style="background-color: #ff8c00; color: #fff; font-size: 0.7rem; padding: 0.3em 0.2em; width: 100%; display: block; min-width: 80px; box-sizing: border-box;">Progress</span>
+                                                            @else
+                                                                <span class="badge bg-primary" style="font-size: 0.7rem; padding: 0.3em 0.2em; width: 100%; display: block; min-width: 80px; box-sizing: border-box;">Never</span>
+                                                            @endif
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="padding: 0 1px 0 0; text-align: center; font-size: 0.65rem; white-space: nowrap;">
+                                                            <span class="text-info">
+                                                                <i class="fas fa-chalkboard-teacher"></i> {{ $teachingCount }}/{{ $totalTeachingStaff }} Instructors
+                                                            </span>
+                                                        </td>
+                                                        <td style="padding: 0 0 0 1px; text-align: center; font-size: 0.65rem; white-space: nowrap;">
+                                                            <span class="text-secondary">
+                                                                <i class="fas fa-users"></i> {{ $nonTeachingCount }}/{{ $totalNonTeachingStaff }} Non-teaching
+                                                            </span>
+                                                        </td>
+                                                    </tr>
+                                                </table>
                                             </div>
                                         </td>
                                         <td class="actions-column">
