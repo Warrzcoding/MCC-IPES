@@ -91,11 +91,12 @@
                         font-size: 0.6rem;
                         padding: 0.16rem 0.2rem;
                     }
-                    .page-full-width .badge,
-                    .page-full-width .status-container span,
                     .page-full-width .status-container .text-info,
                     .page-full-width .status-container .text-secondary {
                         font-size: 0.56rem;
+                    }
+                    .page-full-width .badge {
+                        font-size: 0.7rem;
                     }
                     .page-full-width .fs-5,
                     .page-full-width .fs-6,
@@ -650,10 +651,8 @@
 }
 
 .evaluation-status-compact .status-container {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.25rem;
+  display: block;
+  width: 100%;
 }
 
 /* Allow evaluation status column to wrap */
@@ -667,9 +666,15 @@
 }
 
 .evaluation-status-compact .badge {
-  font-size: 0.75rem;
-  padding: 0.25em 0.5em;
+  font-size: 0.7rem;
+  padding: 0.3em 0.2em;
   line-height: 1.2;
+  font-weight: 600;
+  border-radius: 0.25rem;
+  display: block;
+  width: 100%;
+  min-width: 80px;
+  box-sizing: border-box;
 }
 
 .evaluation-status-compact .status-counts {
@@ -878,6 +883,7 @@
   width: 230px;
   max-width: 230px;
   white-space: normal;
+  overflow: visible;
 }
 
 #studentsTable th:nth-child(11), /* Actions */
@@ -1154,20 +1160,20 @@ document.addEventListener('DOMContentLoaded', function () {
                                                     <tr>
                                                         <td style="width: 50%; padding: 0 1px 2px 0; text-align: center;">
                                                             @if($instructorsComplete)
-                                                                <span class="badge" style="background-color: #90EE90; color: #000; font-size: 0.7rem; padding: 0.3em 0.2em; width: 100%; display: block; min-width: 80px; box-sizing: border-box;">Done</span>
+                                                                <span class="badge" style="background-color: #90EE90; color: #000;">Done</span>
                                                             @elseif($teachingCount > 0)
-                                                                <span class="badge bg-warning" style="font-size: 0.7rem; padding: 0.3em 0.2em; width: 100%; display: block; min-width: 80px; box-sizing: border-box;">Progress</span>
+                                                                <span class="badge bg-warning">Progress</span>
                                                             @else
-                                                                <span class="badge bg-primary" style="font-size: 0.7rem; padding: 0.3em 0.2em; width: 100%; display: block; min-width: 80px; box-sizing: border-box;">Never</span>
+                                                                <span class="badge bg-primary">Never</span>
                                                             @endif
                                                         </td>
                                                         <td style="width: 50%; padding: 0 0 2px 1px; text-align: center;">
                                                             @if($nonTeachingComplete)
-                                                                <span class="badge bg-success" style="font-size: 0.7rem; padding: 0.3em 0.2em; width: 100%; display: block; min-width: 80px; box-sizing: border-box;">Done</span>
+                                                                <span class="badge bg-success">Done</span>
                                                             @elseif($nonTeachingCount > 0)
-                                                                <span class="badge" style="background-color: #ff8c00; color: #fff; font-size: 0.7rem; padding: 0.3em 0.2em; width: 100%; display: block; min-width: 80px; box-sizing: border-box;">Progress</span>
+                                                                <span class="badge" style="background-color: #ff8c00; color: #fff;">Progress</span>
                                                             @else
-                                                                <span class="badge bg-primary" style="font-size: 0.7rem; padding: 0.3em 0.2em; width: 100%; display: block; min-width: 80px; box-sizing: border-box;">Never</span>
+                                                                <span class="badge bg-primary">Never</span>
                                                             @endif
                                                         </td>
                                                     </tr>
