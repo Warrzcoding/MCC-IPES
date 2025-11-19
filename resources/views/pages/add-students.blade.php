@@ -1778,7 +1778,7 @@ function formatSchoolId(input) {
                 if (!searchFilter) {
                     found = true;
                 } else {
-                    for (let j = 0; j < cells.length - 2; j++) { // -2 to exclude Actions column
+                    for (let j = 0; j < cells.length - 1; j++) { // -1 to exclude only Actions column
                         if (cells[j] && cells[j].textContent.toUpperCase().indexOf(searchFilter) > -1) {
                             found = true;
                             break;
@@ -1788,15 +1788,18 @@ function formatSchoolId(input) {
 
                 // Check status filter (independent of search)
                 if (statusFilter) {
-                    const statusCell = cells[8]; // Evaluation Status column (moved due to Section column)
+                    const statusCell = cells[8]; // Evaluation Status column (0-indexed: 8th column)
                     if (statusCell) {
                         const statusText = statusCell.textContent.trim().toLowerCase();
                         if (statusFilter === 'Done') {
-                            statusMatch = statusText.includes('done');
+                            // Match if both badges show "Done"
+                            statusMatch = statusText.split('done').length - 1 === 2;
                         } else if (statusFilter === 'In Progress') {
-                            statusMatch = statusText.includes('in progress');
+                            // Match if has at least one "Progress" and no "Never"
+                            statusMatch = statusText.includes('progress') && !statusText.includes('never');
                         } else if (statusFilter === 'Never Evaluated') {
-                            statusMatch = statusText.includes('never evaluated');
+                            // Match if both badges show "Never"
+                            statusMatch = statusText.split('never').length - 1 === 2;
                         }
                     }
                 }
