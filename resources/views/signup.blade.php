@@ -1576,7 +1576,8 @@
                         { value: 'FM-1H', label: 'FM-1H' },
                         { value: 'FM-1I', label: 'FM-1I' },
                         { value: 'FM-1J', label: 'FM-1J' },
-                        { value: 'FM-1K', label: 'FM-1K' }
+                        { value: 'FM-1K', label: 'FM-1K' },
+                        { value: 'FM-1L', label: 'FM-1L' }
                     ],
                     '2nd Year': [
                         { value: 'FM-2A', label: 'FM-2A' },
@@ -1589,7 +1590,8 @@
                         { value: 'FM-2H', label: 'FM-2H' },
                         { value: 'FM-2I', label: 'FM-2I' },
                         { value: 'FM-2J', label: 'FM-2J' },
-                        { value: 'FM-2K', label: 'FM-2K' }
+                        { value: 'FM-2K', label: 'FM-2K' },
+                        { value: 'FM-2L', label: 'FM-2L' }
                     ],
                     '3rd Year': [
                         { value: 'FM-3A', label: 'FM-3A' },
@@ -1602,7 +1604,8 @@
                         { value: 'FM-3H', label: 'FM-3H' },
                         { value: 'FM-3I', label: 'FM-3I' },
                         { value: 'FM-3J', label: 'FM-3J' },
-                        { value: 'FM-3K', label: 'FM-3K' }
+                        { value: 'FM-3K', label: 'FM-3K' },
+                        { value: 'FM-3L', label: 'FM-3L' }
                     ],
                     '4th Year': [
                         { value: 'FM-4A', label: 'FM-4A' },
@@ -1615,7 +1618,8 @@
                         { value: 'FM-4H', label: 'FM-4H' },
                         { value: 'FM-4I', label: 'FM-4I' },
                         { value: 'FM-4J', label: 'FM-4J' },
-                        { value: 'FM-4K', label: 'FM-4K' }
+                        { value: 'FM-4K', label: 'FM-4K' },
+                        { value: 'FM-4L', label: 'FM-4L' }
                     ]
                 },
                 'BSED': {
