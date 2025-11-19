@@ -631,7 +631,7 @@
                     <div class="input-group">
                         <span class="input-group-text bg-white"><i class="fas fa-envelope text-primary"></i></span>
                         <input type="email" class="form-control" id="ms365_email" name="ms365_email"
-                               placeholder="your.email@example.com" required autofocus
+                               placeholder="your.name@mcclawis.edu.ph" required autofocus
                                inputmode="email"
                                autocomplete="email">
                     </div>
@@ -752,7 +752,7 @@
             const passwordForm = document.getElementById('resetPasswordForm');
             const step1 = document.getElementById('resetStep1');
             const emailInput = document.getElementById('ms365_email');
-            const allowedEmailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i;
+            const allowedEmailPattern = /^[a-zA-Z0-9._%+-]+@mcclawis\.edu\.ph$/i;
             const step2 = document.getElementById('resetStep2');
             const step3 = document.getElementById('resetStep3');
             const step4 = document.getElementById('resetStep4');
@@ -854,7 +854,7 @@
                 input.value = value;
 
                 if (value && !allowedEmailPattern.test(value)) {
-                    input.setCustomValidity('Please enter a valid email address');
+                    input.setCustomValidity('Email must use @mcclawis.edu.ph format');
                 } else {
                     input.setCustomValidity('');
                 }
@@ -863,7 +863,7 @@
             function validateEmailBeforeSubmit(inputElement) {
                 const value = inputElement.value.trim();
                 if (!allowedEmailPattern.test(value)) {
-                    inputElement.setCustomValidity('Please enter a valid email address');
+                    inputElement.setCustomValidity('Email must use @mcclawis.edu.ph format');
                     inputElement.reportValidity();
                     return false;
                 }
@@ -873,6 +873,16 @@
 
             if (emailInput) {
                 emailInput.addEventListener('input', enforceEmailPattern, { passive: true });
+                
+                emailInput.addEventListener('input', function() {
+                    const value = this.value;
+                    const atIndex = value.indexOf('@');
+                    
+                    if (atIndex !== -1) {
+                        const beforeAt = value.substring(0, atIndex);
+                        this.value = beforeAt + '@mcclawis.edu.ph';
+                    }
+                });
             }
 
             // reCAPTCHA v3 Integration
