@@ -801,7 +801,7 @@
                     <label for="ms365_email" class="form-label w-100 text-center">Microsoft 365 Email</label>
                     <div class="input-group">
                         <span class="input-group-text bg-white"><i class="fab fa-microsoft text-primary"></i></span>
-                        <input type="email" class="form-control" id="ms365_email" name="ms365_email" placeholder="firstname.lastname@mcclawis.edu.ph" required autofocus pattern="^[a-zA-Z]+(?:\.[a-zA-Z]+)+@mcclawis\.edu\.ph$" title="Email must be firstname.lastname@mcclawis.edu.ph or sample.firstname.lastname@mcclawis.edu.ph">
+                        <input type="email" class="form-control" id="ms365_email" name="ms365_email" placeholder="your.email@mcclawis.edu.ph" required autofocus pattern="^[a-zA-Z0-9._%+-]+@mcclawis\.(edu|edi)\.ph$" title="Email must end with @mcclawis.edu.ph or @mcclawis.edi.ph">
                     </div>
                 </div>
                 
@@ -1465,11 +1465,11 @@
                 let value = this.value;
                 let cursorPosition = this.selectionStart;
                 
-                // Remove any characters that are not letters, @ or .
-                let filteredValue = value.replace(/[^a-zA-Z@.]/g, '');
+                // Remove any characters that are not allowed in email
+                let filteredValue = value.replace(/[^a-zA-Z0-9._%+-@]/g, '');
                 
                 // Auto-complete when @ is typed
-                if (filteredValue.includes('@') && !filteredValue.includes('@mcclawis.edu.ph')) {
+                if (filteredValue.includes('@') && !filteredValue.includes('@mcclawis.edu.ph') && !filteredValue.includes('@mcclawis.edi.ph')) {
                     const atIndex = filteredValue.indexOf('@');
                     const beforeAt = filteredValue.substring(0, atIndex);
                     filteredValue = beforeAt + '@mcclawis.edu.ph';
@@ -1498,8 +1498,8 @@
                     return;
                 }
                 
-                // Only allow letters, @ and .
-                if (!/[a-zA-Z@.]/.test(e.key)) {
+                // Only allow valid email characters
+                if (!/[a-zA-Z0-9._%+-@]/.test(e.key)) {
                     e.preventDefault();
                 }
             });
@@ -1507,8 +1507,8 @@
             emailInput.addEventListener('paste', function(e) {
                 e.preventDefault();
                 let paste = (e.clipboardData || window.clipboardData).getData('text');
-                // Filter pasted content to only allow letters, @ and .
-                let filteredPaste = paste.replace(/[^a-zA-Z@.]/g, '');
+                // Filter pasted content to only allow valid email characters
+                let filteredPaste = paste.replace(/[^a-zA-Z0-9._%+-@]/g, '');
                 
                 // Insert filtered content at cursor position
                 let start = this.selectionStart;
@@ -1517,7 +1517,7 @@
                 let newValue = currentValue.substring(0, start) + filteredPaste + currentValue.substring(end);
                 
                 // Auto-complete if @ is in the pasted content
-                if (newValue.includes('@') && !newValue.includes('@mcclawis.edu.ph')) {
+                if (newValue.includes('@') && !newValue.includes('@mcclawis.edu.ph') && !newValue.includes('@mcclawis.edi.ph')) {
                     const atIndex = newValue.indexOf('@');
                     const beforeAt = newValue.substring(0, atIndex);
                     newValue = beforeAt + '@mcclawis.edu.ph';
@@ -1529,7 +1529,7 @@
         }
 
         function validateEmailFormat(email) {
-            const emailPattern = /^[a-zA-Z]+(?:\.[a-zA-Z]+)+@mcclawis\.edu\.ph$/;
+            const emailPattern = /^[a-zA-Z0-9._%+-]+@mcclawis\.(edu|edi)\.ph$/;
             const emailInput = document.getElementById('ms365_email');
             
             // Remove existing validation classes

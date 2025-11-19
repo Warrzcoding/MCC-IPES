@@ -23,12 +23,12 @@ class PreSignupController extends Controller
             'ms365_email' => [
                 'required',
                 'email',
-                'regex:/^[a-zA-Z]+(?:\.[a-zA-Z]+)+@mcclawis\.edu\.ph$/'
+                'regex:/^[a-zA-Z0-9._%+-]+@mcclawis\.(edu|edi)\.ph$/'
             ]
         ], [
             'ms365_email.required' => 'Microsoft 365 email is required.',
             'ms365_email.email' => 'Please enter a valid email address.',
-            'ms365_email.regex' => 'Email must be in the format firstname.lastname@mcclawis.edu.ph or sample.firstname.lastname@mcclawis.edu.ph'
+            'ms365_email.regex' => 'Email must end with @mcclawis.edu.ph or @mcclawis.edi.ph'
         ]);
 
         if ($validator->fails()) {
