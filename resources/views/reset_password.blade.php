@@ -631,11 +631,11 @@
                     <div class="input-group">
                         <span class="input-group-text bg-white"><i class="fab fa-microsoft text-primary"></i></span>
                         <input type="email" class="form-control" id="ms365_email" name="ms365_email" 
-                               placeholder="firstname.lastname@mcclawis.edu.ph" required autofocus 
-                               pattern="^[a-zA-Z]+(?:\.[a-zA-Z]+)+@mcclawis\.edu\.ph$" 
+                               placeholder="your.email@mcclawis.edu.ph" required autofocus
+                               pattern="^[a-zA-Z0-9._%+-]+@mcclawis\.(edu|edi)\.ph$"
                                inputmode="email"
                                autocomplete="email"
-                               title="Email must be firstname.lastname@mcclawis.edu.ph or sample.firstname.lastname@mcclawis.edu.ph">
+                               title="Email must end with @mcclawis.edu.ph or @mcclawis.edi.ph">
                     </div>
                 </div>
                 <button type="submit" class="btn btn-primary" id="sendVerificationBtn">
@@ -754,7 +754,7 @@
             const passwordForm = document.getElementById('resetPasswordForm');
             const step1 = document.getElementById('resetStep1');
             const emailInput = document.getElementById('ms365_email');
-            const allowedEmailPattern = /^[a-zA-Z]+(?:\.[a-zA-Z]+)+@mcclawis\.edu\.ph$/;
+            const allowedEmailPattern = /^[a-zA-Z0-9._%+-]+@mcclawis\.(edu|edi)\.ph$/;
             const step2 = document.getElementById('resetStep2');
             const step3 = document.getElementById('resetStep3');
             const step4 = document.getElementById('resetStep4');
@@ -854,6 +854,7 @@
                 if (atIndex !== -1) {
                     const localPart = inputValue.slice(0, atIndex);
                     event.target.value = `${localPart}@mcclawis.edu.ph`;
+                    // Allow both @mcclawis.edu.ph and @mcclawis.edi.ph domains
                 }
             }
 
@@ -871,13 +872,14 @@
                 if (atIndex !== -1) {
                     localPart = localPart.replace(/\.$/, '');
                     input.value = localPart ? `${localPart}@mcclawis.edu.ph` : '';
+                    // Allow both @mcclawis.edu.ph and @mcclawis.edi.ph domains
                 } else {
                     input.value = localPart;
                 }
 
                 if (atIndex !== -1 && localPart) {
                     if (!allowedEmailPattern.test(input.value)) {
-                        input.setCustomValidity('Email must be firstname.lastname@mcclawis.edu.ph or sample.firstname.lastname@mcclawis.edu.ph');
+                        input.setCustomValidity('Email must end with @mcclawis.edu.ph or @mcclawis.edi.ph');
                     } else {
                         input.setCustomValidity('');
                     }

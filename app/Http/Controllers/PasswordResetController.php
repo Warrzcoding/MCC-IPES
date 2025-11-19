@@ -22,7 +22,7 @@ class PasswordResetController extends Controller
     {
         try {
             $request->validate([
-                'ms365_email' => 'required|email|regex:/^[a-zA-Z]+(?:\.[a-zA-Z]+)+@mcclawis\.edu\.ph$/'
+                'ms365_email' => 'required|email|regex:/^[a-zA-Z0-9._%+-]+@mcclawis\.(edu|edi)\.ph$/'
             ]);
 
             $email = $request->ms365_email;
@@ -45,7 +45,7 @@ class PasswordResetController extends Controller
             \Log::error("Validation error: " . json_encode($e->errors()));
             return response()->json([
                 'status' => 'error',
-                'message' => 'Invalid email format. Please use the format: firstname.lastname@mcclawis.edu.ph or sample.firstname.lastname@mcclawis.edu.ph'
+                'message' => 'Invalid email format. Email must end with @mcclawis.edu.ph or @mcclawis.edi.ph'
             ]);
         } catch (\Exception $e) {
             \Log::error("Unexpected error in sendVerification: " . $e->getMessage());
