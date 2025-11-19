@@ -1184,7 +1184,7 @@ function confirmDeleteSubject(code, name, section) {
 function duplicateSubjectData(subjectCode, subjectName, department, year, section, semester, instructor, subjectType) {
     // Clear the form first
     document.getElementById('addSubjectForm').reset();
-    
+
     // Populate the add modal with the subject data (excluding subject code to avoid duplicates)
     document.getElementById('sub_name').value = subjectName;
     document.getElementById('sub_department').value = department;
@@ -1193,18 +1193,18 @@ function duplicateSubjectData(subjectCode, subjectName, department, year, sectio
     document.getElementById('semester').value = semester;
     document.getElementById('assign_instructor').value = instructor || '';
     document.getElementById('subject_type').value = subjectType || 'Major';
-    
+
     // Clear subject code field and focus on it so user can enter new code
     document.getElementById('sub_code').value = '';
     document.getElementById('sub_code').focus();
-    
+
     // Populate sections for add modal based on selected department and year
     populateAddSections();
-    
+
     // Show a notification that this is a duplicate operation
     const modalTitle = document.querySelector('#addModal .modal-title');
     modalTitle.innerHTML = '<i class="fas fa-copy me-2"></i>Duplicate Subject - Enter New Subject Code';
-    
+
     // Reset the modal title when modal is closed
     document.getElementById('addModal').addEventListener('hidden.bs.modal', function() {
         modalTitle.innerHTML = '<i class="fas fa-plus me-2"></i>Add New Subject';
@@ -1252,7 +1252,7 @@ function validateSubjectCode(input) {
 
 function validateSubjectName(input) {
     const value = input.value;
-    
+
     if (value.length > 50) {
         input.setCustomValidity('Subject name cannot exceed 50 characters');
         input.classList.add('is-invalid');
@@ -1262,6 +1262,103 @@ function validateSubjectName(input) {
         input.classList.remove('is-invalid');
         input.classList.add('is-valid');
         return true;
+    }
+}
+
+
+
+// Function to populate sections for add modal
+function populateSections() {
+    const departmentSelect = document.getElementById('sub_department');
+    const yearSelect = document.getElementById('sub_year');
+    const sectionSelect = document.getElementById('section');
+
+    const department = departmentSelect.value;
+    const year = yearSelect.value;
+
+    // Clear existing options
+    sectionSelect.innerHTML = '<option value="">Select section...</option>';
+
+    if (department && year && sectionData[department] && sectionData[department][year]) {
+        const sections = sectionData[department][year];
+        sections.forEach(section => {
+            const option = document.createElement('option');
+            option.value = section.value;
+            option.textContent = section.label;
+            sectionSelect.appendChild(option);
+        });
+
+        // Enable the section dropdown
+        sectionSelect.disabled = false;
+    } else {
+        // Disable the section dropdown if department or year is not selected
+        sectionSelect.disabled = true;
+    }
+}
+
+// Function to populate sections for add modal
+function populateAddSections() {
+    const departmentSelect = document.getElementById('sub_department');
+    const yearSelect = document.getElementById('sub_year');
+    const sectionSelect = document.getElementById('section');
+
+    const department = departmentSelect.value;
+    const year = yearSelect.value;
+
+    // Clear existing options
+    sectionSelect.innerHTML = '<option value="">Select section...</option>';
+
+    if (department && year && sectionData[department] && sectionData[department][year]) {
+        const sections = sectionData[department][year];
+        sections.forEach(section => {
+            const option = document.createElement('option');
+            option.value = section.value;
+            option.textContent = section.label;
+            sectionSelect.appendChild(option);
+        });
+
+        // Enable the section dropdown
+        sectionSelect.disabled = false;
+    } else {
+        // Disable the section dropdown if department or year is not selected
+        sectionSelect.disabled = true;
+    }
+}
+
+// Function to populate sections for edit modal (preserves current selection)
+function populateEditSections() {
+    const departmentSelect = document.getElementById('editDepartment');
+    const yearSelect = document.getElementById('editYear');
+    const sectionSelect = document.getElementById('editSection');
+
+    const department = departmentSelect.value;
+    const year = yearSelect.value;
+
+    // Remember currently set section (e.g., from loadSubjectData)
+    const currentValue = sectionSelect.value;
+
+    // Clear existing options
+    sectionSelect.innerHTML = '<option value="">Select section...</option>';
+
+    if (department && year && sectionData[department] && sectionData[department][year]) {
+        const sections = sectionData[department][year];
+        sections.forEach(section => {
+            const option = document.createElement('option');
+            option.value = section.value;
+            option.textContent = section.label;
+            sectionSelect.appendChild(option);
+        });
+
+        // Re-select previously chosen section if it exists in the list
+        if (currentValue) {
+            sectionSelect.value = currentValue;
+        }
+
+        // Enable the section dropdown
+        sectionSelect.disabled = false;
+    } else {
+        // Disable the section dropdown if department or year is not selected
+        sectionSelect.disabled = true;
     }
 }
 
@@ -1507,100 +1604,7 @@ const sectionData = {
     }
 };
 
-// Function to populate sections for add modal
-function populateSections() {
-    const departmentSelect = document.getElementById('sub_department');
-    const yearSelect = document.getElementById('sub_year');
-    const sectionSelect = document.getElementById('section');
-    
-    const department = departmentSelect.value;
-    const year = yearSelect.value;
-    
-    // Clear existing options
-    sectionSelect.innerHTML = '<option value="">Select section...</option>';
-    
-    if (department && year && sectionData[department] && sectionData[department][year]) {
-        const sections = sectionData[department][year];
-        sections.forEach(section => {
-            const option = document.createElement('option');
-            option.value = section.value;
-            option.textContent = section.label;
-            sectionSelect.appendChild(option);
-        });
-        
-        // Enable the section dropdown
-        sectionSelect.disabled = false;
-    } else {
-        // Disable the section dropdown if department or year is not selected
-        sectionSelect.disabled = true;
-    }
-}
 
-// Function to populate sections for add modal
-function populateAddSections() {
-    const departmentSelect = document.getElementById('sub_department');
-    const yearSelect = document.getElementById('sub_year');
-    const sectionSelect = document.getElementById('section');
-    
-    const department = departmentSelect.value;
-    const year = yearSelect.value;
-    
-    // Clear existing options
-    sectionSelect.innerHTML = '<option value="">Select section...</option>';
-    
-    if (department && year && sectionData[department] && sectionData[department][year]) {
-        const sections = sectionData[department][year];
-        sections.forEach(section => {
-            const option = document.createElement('option');
-            option.value = section.value;
-            option.textContent = section.label;
-            sectionSelect.appendChild(option);
-        });
-        
-        // Enable the section dropdown
-        sectionSelect.disabled = false;
-    } else {
-        // Disable the section dropdown if department or year is not selected
-        sectionSelect.disabled = true;
-    }
-}
-
-// Function to populate sections for edit modal (preserves current selection)
-function populateEditSections() {
-    const departmentSelect = document.getElementById('editDepartment');
-    const yearSelect = document.getElementById('editYear');
-    const sectionSelect = document.getElementById('editSection');
-
-    const department = departmentSelect.value;
-    const year = yearSelect.value;
-
-    // Remember currently set section (e.g., from loadSubjectData)
-    const currentValue = sectionSelect.value;
-
-    // Clear existing options
-    sectionSelect.innerHTML = '<option value="">Select section...</option>';
-
-    if (department && year && sectionData[department] && sectionData[department][year]) {
-        const sections = sectionData[department][year];
-        sections.forEach(section => {
-            const option = document.createElement('option');
-            option.value = section.value;
-            option.textContent = section.label;
-            sectionSelect.appendChild(option);
-        });
-
-        // Re-select previously chosen section if it exists in the list
-        if (currentValue) {
-            sectionSelect.value = currentValue;
-        }
-
-        // Enable the section dropdown
-        sectionSelect.disabled = false;
-    } else {
-        // Disable the section dropdown if department or year is not selected
-        sectionSelect.disabled = true;
-    }
-}
 
 // Function to populate sections for filter (legacy - kept for compatibility)
 function populateFilterSections() {
@@ -2560,4 +2564,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+
 </script> 
