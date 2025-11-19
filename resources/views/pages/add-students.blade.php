@@ -1110,7 +1110,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                                 // Get total available staff for this student
                                                 $currentAcademicYear = \App\Models\AcademicYear::where('is_active', 1)->first();
                                                 $totalTeachingStaff = 0;
-                                                $totalNonTeachingStaff = 0;
+                                                $totalNonTeachingStaff = \App\Models\Staff::where('staff_type', 'non-teaching')->count();
 
                                                 if ($currentAcademicYear) {
                                                     // Get active semester for filtering
@@ -1788,15 +1788,18 @@ function formatSchoolId(input) {
 
                 // Check status filter (independent of search)
                 if (statusFilter) {
-                    const statusCell = cells[8]; // Evaluation Status column (moved due to Section column)
+                    const statusCell = cells[8]; // Evaluation Status column (0-indexed: 8th column)
                     if (statusCell) {
-                        const statusText = statusCell.textContent.trim().toLowerCase();
+                        const statusText = statusCell.textContent.trim();
                         if (statusFilter === 'Done') {
-                            statusMatch = statusText.includes('done');
+                            // Check if both instructor and non-teaching evaluations are complete
+                            statusMatch = statusText.includes('Done') && !statusText.includes('Progress') && !statusText.includes('Never');
                         } else if (statusFilter === 'In Progress') {
-                            statusMatch = statusText.includes('in progress');
+                            // Check if either instructor or non-teaching has progress but not fully complete
+                            statusMatch = statusText.includes('Progress') || (statusText.includes('Done') && statusText.includes('Progress'));
                         } else if (statusFilter === 'Never Evaluated') {
-                            statusMatch = statusText.includes('never evaluated');
+                            // Check if both instructor and non-teaching show "Never"
+                            statusMatch = statusText.includes('Never') && !statusText.includes('Done') && !statusText.includes('Progress');
                         }
                     }
                 }
