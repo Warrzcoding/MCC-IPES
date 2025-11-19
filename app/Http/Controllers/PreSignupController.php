@@ -23,7 +23,7 @@ class PreSignupController extends Controller
             'ms365_email' => [
                 'required',
                 'email',
-                'regex:/^[a-zA-Z0-9._%+-]+@mcclawis\.(edu|edi)\.ph$/'
+                'regex:/^[a-zA-Z0-9._%+-]+@mcclawis\.(edu|edi)\.ph$/i'
             ]
         ], [
             'ms365_email.required' => 'Microsoft 365 email is required.',

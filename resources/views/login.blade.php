@@ -1564,7 +1564,7 @@
                             <input type="email" class="form-control" id="email" name="email"
                                    placeholder="your.email@mcclawis.edu.ph"
                                    value="{{ session('verified_student_email', '') }}" autocomplete="off"
-                                   pattern="^[a-zA-Z0-9._%+-]+@mcclawis\.(edu|edi)\.ph$"
+                                   pattern="^[a-zA-Z0-9._%+-]+@mcclawis\.([eE][dD][uU]|[eE][dD][iI])\.ph$"
                                    title="Email must end with @mcclawis.edu.ph or @mcclawis.edi.ph">
                         </div>
                     </div>

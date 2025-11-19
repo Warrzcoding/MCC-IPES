@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use App\Models\User;
+use App\Models\RequestSignin;
 
 class PasswordResetController extends Controller
 {
@@ -152,24 +153,28 @@ class PasswordResetController extends Controller
                 ]);
             }
 
-            // TEMPORARY: Skip user validation for testing - find any user with this email
+            // Check if user exists in User table (approved users) or RequestSignin table (pending approval)
             $user = User::where('email', $request->ms365_email)->first();
+            $pendingUser = \App\Models\RequestSignin::where('email', $request->ms365_email)->first();
 
-            if (!$user) {
+            if (!$user && !$pendingUser) {
                 return response()->json([
-                    'status' => 'error', 
-                    'message' => 'User not found with this email address.'
+                    'status' => 'error',
+                    'message' => 'No account found with this email address. Please complete registration first.'
                 ]);
             }
 
-            // Update the password
-            $user->password = Hash::make($request->new_password);
-            $user->save();
+            // Use the user record if it exists, otherwise use pending user data for password reset
+            $targetUser = $user ?: $pendingUser;
+
+            // Update the password on the appropriate table
+            $targetUser->password = Hash::make($request->new_password);
+            $targetUser->save();
 
             // Clear the session data
             Session::forget(['reset_otp', 'reset_email', 'reset_otp_expires', 'reset_otp_verified']);
 
-            \Log::info("Password reset successful for user: {$request->ms365_email}");
+            \Log::info("Password reset successful for " . ($user ? "approved user" : "pending user") . ": {$request->ms365_email}");
 
             return response()->json([
                 'status' => 'success', 

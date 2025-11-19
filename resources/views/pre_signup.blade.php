@@ -801,7 +801,7 @@
                     <label for="ms365_email" class="form-label w-100 text-center">Microsoft 365 Email</label>
                     <div class="input-group">
                         <span class="input-group-text bg-white"><i class="fab fa-microsoft text-primary"></i></span>
-                        <input type="email" class="form-control" id="ms365_email" name="ms365_email" placeholder="your.email@mcclawis.edu.ph" required autofocus pattern="^[a-zA-Z0-9._%+-]+@mcclawis\.(edu|edi)\.ph$" title="Email must end with @mcclawis.edu.ph or @mcclawis.edi.ph">
+                        <input type="email" class="form-control" id="ms365_email" name="ms365_email" placeholder="your.email@mcclawis.edu.ph" required autofocus pattern="^[a-zA-Z0-9._%+-]+@mcclawis\.([eE][dD][uU]|[eE][dD][iI])\.ph$" title="Email must end with @mcclawis.edu.ph or @mcclawis.edi.ph">
                     </div>
                 </div>
                 
