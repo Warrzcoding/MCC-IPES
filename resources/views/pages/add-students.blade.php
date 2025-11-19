@@ -874,8 +874,9 @@
 
 #studentsTable th:nth-child(10), /* Evaluation Status */
 #studentsTable td:nth-child(10) {
-  min-width: 160px;
-  max-width: 200px;
+  min-width: 230px;
+  width: 230px;
+  max-width: 230px;
   white-space: normal;
 }
 
@@ -1790,16 +1791,19 @@ function formatSchoolId(input) {
                 if (statusFilter) {
                     const statusCell = cells[8]; // Evaluation Status column (0-indexed: 8th column)
                     if (statusCell) {
-                        const statusText = statusCell.textContent.trim().toLowerCase();
+                        // Get all badge elements in the status cell
+                        const badges = statusCell.querySelectorAll('.badge');
+                        const badgeTexts = Array.from(badges).map(badge => badge.textContent.trim().toLowerCase());
+
                         if (statusFilter === 'Done') {
                             // Match if both badges show "Done"
-                            statusMatch = statusText.split('done').length - 1 === 2;
+                            statusMatch = badgeTexts.length === 2 && badgeTexts.every(text => text === 'done');
                         } else if (statusFilter === 'In Progress') {
-                            // Match if has at least one "Progress" and no "Never"
-                            statusMatch = statusText.includes('progress') && !statusText.includes('never');
+                            // Match if at least one badge shows "Progress" and no "Never"
+                            statusMatch = badgeTexts.includes('progress') && !badgeTexts.includes('never');
                         } else if (statusFilter === 'Never Evaluated') {
                             // Match if both badges show "Never"
-                            statusMatch = statusText.split('never').length - 1 === 2;
+                            statusMatch = badgeTexts.length === 2 && badgeTexts.every(text => text === 'never');
                         }
                     }
                 }
