@@ -94,6 +94,8 @@
                     .page-full-width .status-container .text-info,
                     .page-full-width .status-container .text-secondary {
                         font-size: 0.56rem;
+                        visibility: visible;
+                        opacity: 1;
                     }
                     .page-full-width .badge {
                         font-size: 0.7rem;
@@ -651,30 +653,83 @@
 }
 
 .evaluation-status-compact .status-container {
-  display: block;
-  width: 100%;
+  display: block !important;
+  width: 100% !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
 }
 
 /* Allow evaluation status column to wrap */
 .evaluation-status-compact {
   white-space: normal !important;
+  visibility: visible !important;
+  opacity: 1 !important;
 }
 
-/* Allow evaluation status column to wrap */
-.evaluation-status-compact {
-  white-space: normal !important;
+/* Ensure nested table elements are visible */
+.evaluation-status-compact table {
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+.evaluation-status-compact table td {
+  visibility: visible !important;
+  opacity: 1 !important;
+  overflow: visible !important;
+  pointer-events: auto !important;
 }
 
 .evaluation-status-compact .badge {
-  font-size: 0.7rem;
-  padding: 0.3em 0.2em;
-  line-height: 1.2;
-  font-weight: 600;
-  border-radius: 0.25rem;
-  display: block;
-  width: 100%;
-  min-width: 80px;
-  box-sizing: border-box;
+  font-size: 0.7rem !important;
+  padding: 0.3em 0.2em !important;
+  line-height: 1.2 !important;
+  font-weight: 600 !important;
+  border-radius: 0.25rem !important;
+  display: block !important;
+  width: 100% !important;
+  min-width: 80px !important;
+  box-sizing: border-box !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+/* Ensure Bootstrap badge colors are applied */
+.evaluation-status-compact .badge.bg-primary {
+  background-color: #0d6efd !important;
+  color: #fff !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+.evaluation-status-compact .badge.bg-warning {
+  background-color: #ffc107 !important;
+  color: #000 !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+.evaluation-status-compact .badge.bg-success {
+  background-color: #198754 !important;
+  color: #fff !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+/* Handle badges with inline styles */
+.evaluation-status-compact .badge[style*="background-color"] {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
 }
 
 .evaluation-status-compact .status-counts {
@@ -884,6 +939,7 @@
   max-width: 230px;
   white-space: normal;
   overflow: visible;
+  visibility: visible !important;
 }
 
 #studentsTable th:nth-child(11), /* Actions */
@@ -995,9 +1051,9 @@
         {{ $pendingCount }}
     </span>
 </a>
-<a href="{{ route('dashboard', ['page' => 'login-monitor']) }}" class="btn btn-warning me-2 {{ ($newLoginAttemptsCount ?? 0) > 0 ? 'glow-active' : '' }}" id="loginMonitoringBtn" type="button" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-placement="top-end" data-bs-custom-class="popover-sm" data-bs-content="Monitor Login">
+<!--<a href="{{ route('dashboard', ['page' => 'login-monitor']) }}" class="btn btn-warning me-2 {{ ($newLoginAttemptsCount ?? 0) > 0 ? 'glow-active' : '' }}" id="loginMonitoringBtn" type="button" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-placement="top-end" data-bs-custom-class="popover-sm" data-bs-content="Monitor Login">
     <i id="loginMonitorIcon" class="fas fa-user-shield"></i>
-</a>
+</a>-->
 <a href="{{ route('dashboard', ['page' => 'regularbackup']) }}" class="btn btn-warning me-2" id="regularBackupBtn" type="button" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-placement="top-end" data-bs-custom-class="popover-sm" data-bs-content="Regular Backup">
     <i class="fas fa-database"></i>
 </a>
@@ -1785,7 +1841,9 @@ function formatSchoolId(input) {
                 if (!searchFilter) {
                     found = true;
                 } else {
-                    for (let j = 0; j < cells.length - 1; j++) { // -1 to exclude only Actions column
+                    for (let j = 0; j < cells.length; j++) {
+                        // Skip evaluation status column (index 8) and actions column (index 9)
+                        if (j === 8 || j === 9) continue;
                         if (cells[j] && cells[j].textContent.toUpperCase().indexOf(searchFilter) > -1) {
                             found = true;
                             break;
