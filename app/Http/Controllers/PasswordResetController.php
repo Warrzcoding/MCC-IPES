@@ -22,7 +22,7 @@ class PasswordResetController extends Controller
     {
         try {
             $request->validate([
-                'ms365_email' => 'required|email|regex:/^[a-zA-Z0-9._%+-]+@mcclawis\.(edu|edi)\.ph$/'
+                'ms365_email' => 'required|email|regex:/^[a-zA-Z0-9._%+-]+@mcclawis\.(edu|edi)\.ph$/i'
             ]);
 
             $email = $request->ms365_email;

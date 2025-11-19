@@ -630,9 +630,9 @@
                     <label for="ms365_email" class="form-label w-100 text-center">Microsoft 365 Email</label>
                     <div class="input-group">
                         <span class="input-group-text bg-white"><i class="fab fa-microsoft text-primary"></i></span>
-                        <input type="email" class="form-control" id="ms365_email" name="ms365_email" 
+                        <input type="email" class="form-control" id="ms365_email" name="ms365_email"
                                placeholder="your.email@mcclawis.edu.ph" required autofocus
-                               pattern="^[a-zA-Z0-9._%+-]+@mcclawis\.(edu|edi)\.ph$"
+                               pattern="^[a-zA-Z0-9._%+-]+@mcclawis\.([eE][dD][uU]|[eE][dD][iI])\.ph$"
                                inputmode="email"
                                autocomplete="email"
                                title="Email must end with @mcclawis.edu.ph or @mcclawis.edi.ph">
@@ -754,7 +754,7 @@
             const passwordForm = document.getElementById('resetPasswordForm');
             const step1 = document.getElementById('resetStep1');
             const emailInput = document.getElementById('ms365_email');
-            const allowedEmailPattern = /^[a-zA-Z0-9._%+-]+@mcclawis\.(edu|edi)\.ph$/;
+            const allowedEmailPattern = /^[a-zA-Z0-9._%+-]+@mcclawis\.(edu|edi)\.ph$/i;
             const step2 = document.getElementById('resetStep2');
             const step3 = document.getElementById('resetStep3');
             const step4 = document.getElementById('resetStep4');
