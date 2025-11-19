@@ -791,7 +791,7 @@
 
 #studentsTable {
   min-width: 100%;
-  table-layout: fixed;
+  table-layout: auto;
   white-space: nowrap;
   font-size: 0.68rem;
 }
@@ -988,9 +988,9 @@
         {{ $pendingCount }}
     </span>
 </a>
-<!--<a href="{{ route('dashboard', ['page' => 'login-monitor']) }}" class="btn btn-warning me-2 {{ ($newLoginAttemptsCount ?? 0) > 0 ? 'glow-active' : '' }}" id="loginMonitoringBtn" type="button" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-placement="top-end" data-bs-custom-class="popover-sm" data-bs-content="Monitor Login">
+<a href="{{ route('dashboard', ['page' => 'login-monitor']) }}" class="btn btn-warning me-2 {{ ($newLoginAttemptsCount ?? 0) > 0 ? 'glow-active' : '' }}" id="loginMonitoringBtn" type="button" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-placement="top-end" data-bs-custom-class="popover-sm" data-bs-content="Monitor Login">
     <i id="loginMonitorIcon" class="fas fa-user-shield"></i>
-</a>-->
+</a>
 <a href="{{ route('dashboard', ['page' => 'regularbackup']) }}" class="btn btn-warning me-2" id="regularBackupBtn" type="button" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-placement="top-end" data-bs-custom-class="popover-sm" data-bs-content="Regular Backup">
     <i class="fas fa-database"></i>
 </a>
@@ -1101,63 +1101,52 @@ document.addEventListener('DOMContentLoaded', function () {
                                         <td>{{ $student->section ?? 'N/A' }}</td>
                                         <td class="evaluation-status-compact">
                                             @php
-                                                try {
-                                                    // Calculate evaluation counts using same logic as evaluates.blade.php
-                                                    $evaluations = \App\Models\Evaluation::where('user_id', $student->id)->get();
-                                                    $distinctStaffIds = $evaluations->pluck('staff_id')->unique();
-                                                    $teachingCount = \App\Models\Staff::whereIn('id', $distinctStaffIds)->where('staff_type', 'teaching')->count();
-                                                    $nonTeachingCount = \App\Models\Staff::whereIn('id', $distinctStaffIds)->where('staff_type', 'non-teaching')->count();
+                                                // Calculate evaluation counts using same logic as evaluates.blade.php
+                                                $evaluations = \App\Models\Evaluation::where('user_id', $student->id)->get();
+                                                $distinctStaffIds = $evaluations->pluck('staff_id')->unique();
+                                                $teachingCount = \App\Models\Staff::whereIn('id', $distinctStaffIds)->where('staff_type', 'teaching')->count();
+                                                $nonTeachingCount = \App\Models\Staff::whereIn('id', $distinctStaffIds)->where('staff_type', 'non-teaching')->count();
 
-                                                    // Get total available staff for this student
-                                                    $currentAcademicYear = \App\Models\AcademicYear::where('is_active', 1)->first();
-                                                    $totalTeachingStaff = 0;
+                                                // Get total available staff for this student
+                                                $currentAcademicYear = \App\Models\AcademicYear::where('is_active', 1)->first();
+                                                $totalTeachingStaff = 0;
+                                                $totalNonTeachingStaff = 0;
+
+                                                if ($currentAcademicYear) {
+                                                    // Get active semester for filtering
+                                                    $activeSemester = $currentAcademicYear ? (string) $currentAcademicYear->semester : null;
+
+                                                    // Get instructor names for student's specific course, year level, section, and active semester
+                                                    $instructorNames = \App\Models\Subject::whereRaw('LOWER(TRIM(sub_department)) = ?', [strtolower(trim($student->course))])
+                                                        ->whereRaw('LOWER(TRIM(sub_year)) = ?', [strtolower(trim($student->year_level))])
+                                                        ->whereRaw('LOWER(TRIM(section)) = ?', [strtolower(trim($student->section))])
+                                                        ->when($activeSemester, function ($q) use ($activeSemester) {
+                                                            $sem = strtolower(trim((string) $activeSemester));
+                                                            $aliases = in_array($sem, ['2','2nd','second','second semester','sem 2','semester 2'])
+                                                                ? ['2','2nd','second','second semester','sem 2','semester 2']
+                                                                : ['1','1st','first','first semester','sem 1','semester 1'];
+                                                            $q->where(function ($qq) use ($aliases) {
+                                                                foreach ($aliases as $a) {
+                                                                    $qq->orWhereRaw('LOWER(TRIM(semester)) = ?', [$a]);
+                                                                }
+                                                            });
+                                                        })
+                                                        ->whereNotNull('assign_instructor')
+                                                        ->where('assign_instructor', '!=', '')
+                                                        ->distinct('assign_instructor')
+                                                        ->pluck('assign_instructor');
+
+                                                    // Count actual teaching staff records that match these instructor names
+                                                    $totalTeachingStaff = \App\Models\Staff::whereIn('full_name', $instructorNames)
+                                                        ->where('staff_type', 'teaching')
+                                                        ->count();
                                                     $totalNonTeachingStaff = \App\Models\Staff::where('staff_type', 'non-teaching')->count();
-
-                                                    if ($currentAcademicYear) {
-                                                        // Get active semester for filtering
-                                                        $activeSemester = $currentAcademicYear ? (string) $currentAcademicYear->semester : null;
-
-                                                        // Get instructor names for student's specific course, year level, section, and active semester
-                                                        $instructorNames = \App\Models\Subject::whereRaw('LOWER(TRIM(sub_department)) = ?', [strtolower(trim($student->course))])
-                                                            ->whereRaw('LOWER(TRIM(sub_year)) = ?', [strtolower(trim($student->year_level))])
-                                                            ->whereRaw('LOWER(TRIM(section)) = ?', [strtolower(trim($student->section))])
-                                                            ->when($activeSemester, function ($q) use ($activeSemester) {
-                                                                $sem = strtolower(trim((string) $activeSemester));
-                                                                $aliases = in_array($sem, ['2','2nd','second','second semester','sem 2','semester 2'])
-                                                                    ? ['2','2nd','second','second semester','sem 2','semester 2']
-                                                                    : ['1','1st','first','first semester','sem 1','semester 1'];
-                                                                $q->where(function ($qq) use ($aliases) {
-                                                                    foreach ($aliases as $a) {
-                                                                        $qq->orWhereRaw('LOWER(TRIM(semester)) = ?', [$a]);
-                                                                    }
-                                                                });
-                                                            })
-                                                            ->whereNotNull('assign_instructor')
-                                                            ->where('assign_instructor', '!=', '')
-                                                            ->distinct('assign_instructor')
-                                                            ->pluck('assign_instructor');
-
-                                                        // Count actual teaching staff records that match these instructor names
-                                                        $totalTeachingStaff = \App\Models\Staff::whereIn('full_name', $instructorNames)
-                                                            ->where('staff_type', 'teaching')
-                                                            ->count();
-                                                        $totalNonTeachingStaff = \App\Models\Staff::where('staff_type', 'non-teaching')->count();
-                                                    }
-
-                                                    // Determine completion status for each category
-                                                    $instructorsComplete = ($totalTeachingStaff > 0 && $teachingCount >= $totalTeachingStaff);
-                                                    $nonTeachingComplete = ($totalNonTeachingStaff > 0 && $nonTeachingCount >= $totalNonTeachingStaff);
-                                                    $fullyComplete = $instructorsComplete && $nonTeachingComplete;
-                                                } catch (\Exception $e) {
-                                                    // Fallback values if there's an error
-                                                    $teachingCount = 0;
-                                                    $nonTeachingCount = 0;
-                                                    $totalTeachingStaff = 0;
-                                                    $totalNonTeachingStaff = 0;
-                                                    $instructorsComplete = false;
-                                                    $nonTeachingComplete = false;
-                                                    $fullyComplete = false;
                                                 }
+
+                                                // Determine completion status for each category
+                                                $instructorsComplete = ($totalTeachingStaff > 0 && $teachingCount >= $totalTeachingStaff);
+                                                $nonTeachingComplete = ($totalNonTeachingStaff > 0 && $nonTeachingCount >= $totalNonTeachingStaff);
+                                                $fullyComplete = $instructorsComplete && $nonTeachingComplete;
                                             @endphp
                                             <div class="status-container">
                                                 <table style="width: 100%; border-collapse: collapse; margin: 0; table-layout: fixed;">
@@ -1799,18 +1788,15 @@ function formatSchoolId(input) {
 
                 // Check status filter (independent of search)
                 if (statusFilter) {
-                    const statusCell = cells[8]; // Evaluation Status column (0-indexed: 8th column)
+                    const statusCell = cells[8]; // Evaluation Status column (moved due to Section column)
                     if (statusCell) {
-                        const statusText = statusCell.textContent.trim();
+                        const statusText = statusCell.textContent.trim().toLowerCase();
                         if (statusFilter === 'Done') {
-                            // Check if both instructor and non-teaching evaluations are complete
-                            statusMatch = statusText.includes('Done') && !statusText.includes('Progress') && !statusText.includes('Never');
+                            statusMatch = statusText.includes('done');
                         } else if (statusFilter === 'In Progress') {
-                            // Check if either instructor or non-teaching has progress but not fully complete
-                            statusMatch = statusText.includes('Progress') || (statusText.includes('Done') && statusText.includes('Progress'));
+                            statusMatch = statusText.includes('in progress');
                         } else if (statusFilter === 'Never Evaluated') {
-                            // Check if both instructor and non-teaching show "Never"
-                            statusMatch = statusText.includes('Never') && !statusText.includes('Done') && !statusText.includes('Progress');
+                            statusMatch = statusText.includes('never evaluated');
                         }
                     }
                 }
