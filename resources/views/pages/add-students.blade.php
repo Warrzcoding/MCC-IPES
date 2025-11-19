@@ -1160,28 +1160,32 @@ document.addEventListener('DOMContentLoaded', function () {
                                                 }
                                             @endphp
                                             <div class="status-container">
-                                                <div style="font-size: 0.7rem; display: flex; align-items: center; gap: 0.5rem;">
-                                                    <div>
-                                                        <i class="fas fa-chalkboard-teacher"></i>
-                                                        <strong>{{ $teachingCount ?? 0 }}/{{ $totalTeachingStaff ?? 0 }}</strong>
-                                                        @if(($totalTeachingStaff ?? 0) > 0 && ($teachingCount ?? 0) >= ($totalTeachingStaff ?? 0))
-                                                            <span class="badge bg-success">Done</span>
-                                                        @elseif(($teachingCount ?? 0) > 0)
-                                                            <span class="badge bg-warning">Progress</span>
+                                                <div class="dual-badge-container">
+                                                    <div class="dual-badge-item">
+                                                        @if($instructorsComplete)
+                                                            <span class="dual-badge" style="background-color: #90EE90; color: #000;">Done</span>
+                                                        @elseif($teachingCount > 0)
+                                                            <span class="dual-badge bg-warning text-dark">Progress</span>
                                                         @else
-                                                            <span class="badge bg-primary">Never</span>
+                                                            <span class="dual-badge bg-primary">Never</span>
                                                         @endif
                                                     </div>
-                                                    <div>
-                                                        <i class="fas fa-users"></i>
-                                                        <strong>{{ $nonTeachingCount ?? 0 }}/{{ $totalNonTeachingStaff ?? 0 }}</strong>
-                                                        @if(($totalNonTeachingStaff ?? 0) > 0 && ($nonTeachingCount ?? 0) >= ($totalNonTeachingStaff ?? 0))
-                                                            <span class="badge bg-success">Done</span>
-                                                        @elseif(($nonTeachingCount ?? 0) > 0)
-                                                            <span class="badge" style="background-color: #ff8c00;">Progress</span>
+                                                    <div class="dual-badge-item">
+                                                        @if($nonTeachingComplete)
+                                                            <span class="dual-badge bg-success">Done</span>
+                                                        @elseif($nonTeachingCount > 0)
+                                                            <span class="dual-badge" style="background-color: #ff8c00; color: #fff;">Progress</span>
                                                         @else
-                                                            <span class="badge bg-primary">Never</span>
+                                                            <span class="dual-badge bg-primary">Never</span>
                                                         @endif
+                                                    </div>
+                                                </div>
+                                                <div class="dual-count-container">
+                                                    <div class="dual-count-item">
+                                                        <i class="fas fa-chalkboard-teacher"></i> {{ $teachingCount ?? 0 }}/{{ $totalTeachingStaff ?? 0 }}
+                                                    </div>
+                                                    <div class="dual-count-item">
+                                                        <i class="fas fa-users"></i> {{ $nonTeachingCount ?? 0 }}/{{ $totalNonTeachingStaff ?? 0 }}
                                                     </div>
                                                 </div>
                                             </div>
