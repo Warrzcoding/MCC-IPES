@@ -32,7 +32,7 @@ class TestEmail extends Command
         try {
             $this->info('📧 Sending test email...');
             
-            Mail::raw('🎉 Gmail SMTP Test Successful!
+            Mail::raw('🎉 SendGrid SMTP Test Successful!
 
 Your MCC-IPES email configuration is working perfectly!
 
@@ -46,13 +46,13 @@ Configuration Details:
 Time: ' . now() . '
 
 This is a test email from your MCC-IPES system.', function ($message) {
-                $message->to(config('mail.mailers.smtp.username'))
+                $message->to(config('mail.from.address'))
                         ->subject('MCC-IPES Email Test - ' . now());
             });
 
             $this->newLine();
             $this->info('✅ SUCCESS: Test email sent successfully!');
-            $this->info('📧 Check your inbox: ' . config('mail.mailers.smtp.username'));
+            $this->info('📧 Check your inbox: ' . config('mail.from.address'));
             $this->info('📝 Subject: MCC-IPES Email Test');
             $this->newLine();
             
