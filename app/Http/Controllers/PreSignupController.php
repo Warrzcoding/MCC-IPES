@@ -129,11 +129,41 @@ class PreSignupController extends Controller
 
         } catch (\Exception $e) {
             \Log::error("Pre-signup OTP verification error: " . $e->getMessage());
-            
+
             return response()->json([
                 'status' => 'error',
                 'message' => 'An error occurred during verification. Please try again.'
             ]);
+        }
+    }
+
+    // Show the ID check form
+    public function showIdCheckForm()
+    {
+        return view('idcheck');
+    }
+
+    // Handle checking the school ID
+    public function checkId(Request $request)
+    {
+        $request->validate([
+            'school_id' => 'required|string|regex:/^[0-9]{4}-[0-9]{4}$/'
+        ], [
+            'school_id.required' => 'School ID is required.',
+            'school_id.regex' => 'School ID must be in format: 0000-0000 (e.g., 2024-0001)'
+        ]);
+
+        // Check if the school ID exists in the users table
+        $user = User::where('school_id', $request->school_id)->first();
+
+        if ($user) {
+            // Store the verified school ID in session for later use
+            Session::put('checked_school_id', $request->school_id);
+            Session::put('checked_user_type', $user->role);
+
+            return redirect()->route('idcheck')->with('success', 'School ID found! You can now proceed with registration.');
+        } else {
+            return redirect()->route('idcheck')->with('error', 'School ID not found. Please check your ID or contact support.');
         }
     }
 }
