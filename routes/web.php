@@ -43,6 +43,10 @@ Route::get('/pre-signup', [PreSignupController::class, 'showForm'])->name('pre_s
 Route::post('/pre-signup/send-verification', [PreSignupController::class, 'sendVerification'])->middleware('throttle.otp:3,10')->name('pre_signup.send_verification');
 Route::post('/pre-signup/verify-otp', [PreSignupController::class, 'verifyOtp'])->name('pre_signup.verify_otp');
 
+// ID Check Routes
+Route::get('/idcheck', [PreSignupController::class, 'showIdCheckForm'])->name('idcheck');
+Route::post('/idcheck', [PreSignupController::class, 'checkId'])->name('idcheck.submit');
+
 // Signup Routes
 Route::get('/signup', [SignupController::class, 'showSignupForm'])->name('signup');
 Route::post('/signup', [SignupController::class, 'signup'])->name('signup.submit');
