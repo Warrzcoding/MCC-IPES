@@ -599,19 +599,12 @@ public function login(Request $request)
         $user->admin_otp_last_sent_at = now();
         $user->save();
 
+        // Send admin OTP synchronously
         try {
-            Mail::mailer('admin_smtp')->to($user->email)->send(new AdminOtpMail($otp, $user->full_name, 5));
+            \Illuminate\Support\Facades\Mail::to($user->email)->send(new \App\Mail\AdminOtpMail($otp, $user->full_name, 5));
         } catch (\Throwable $exception) {
-            \Log::warning('Admin OTP mailer resend failed, attempting default transport: ' . $exception->getMessage());
-            try {
-                Mail::to($user->email)->send(new AdminOtpMail($otp, $user->full_name, 5));
-            } catch (\Throwable $fallbackException) {
-                \Log::error('Admin OTP mail resend fallback failed: ' . $fallbackException->getMessage());
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'Unable to send verification code. Please try again later.',
-                ], 500);
-            }
+            \Log::error('Admin OTP mail failed: ' . $exception->getMessage());
+            // Continue anyway - user will see the OTP form
         }
 
         Session::put('admin_otp_pending', true);
