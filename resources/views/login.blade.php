@@ -1438,7 +1438,7 @@
                     </div>
                     <!-- Student Signup Link -->
                     <div class="signup-link">
-                        <p>Temporarily under maintainance? <!--<a href="{{ route('pre_signup') }}">
+                        <p>System is temporarily under maintainance? <!--<a href="{{ route('pre_signup') }}">
                             <i class="fas fa-user-plus"></i> Sign up here
                         </a>--></p>
                     </div>
