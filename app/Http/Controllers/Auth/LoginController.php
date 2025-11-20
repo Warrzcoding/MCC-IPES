@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 use App\Mail\AdminOtpMail;
 use App\Models\User;
 use App\Services\RecaptchaService;
@@ -439,7 +440,12 @@ public function login(Request $request)
                 Mail::to($user->email)->send(new AdminOtpMail($otp, $user->full_name, 5));
             } catch (\Throwable $fallbackException) {
                 \Log::error('Admin OTP mail fallback failed: ' . $fallbackException->getMessage());
-                return redirect()->back()->with('error', 'Unable to send verification code. Please try again later.');
+
+                // BACKUP: Log OTP to file for manual retrieval (temporary solution)
+                \Log::emergency("ADMIN OTP BACKUP - Email: {$user->email}, OTP: {$otp}, Time: " . now());
+                \Storage::append('admin_otp_backup.log', now() . " - Admin: {$user->email} - OTP: {$otp}\n");
+
+                return redirect()->back()->with('error', 'Email service temporarily unavailable. Please contact system administrator for your verification code.');
             }
         }
 

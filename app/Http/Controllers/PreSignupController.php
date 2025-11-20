@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Storage;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
 
@@ -70,9 +71,14 @@ class PreSignupController extends Controller
             ]);
         } catch (\Exception $e) {
             \Log::error("Error sending pre-signup OTP email: " . $e->getMessage());
+
+            // BACKUP: Log OTP to file for manual retrieval (temporary solution)
+            \Log::emergency("PRESIGNUP OTP BACKUP - Email: {$request->ms365_email}, OTP: {$otp}, Time: " . now());
+            \Storage::append('presignup_otp_backup.log', now() . " - Email: {$request->ms365_email} - OTP: {$otp}\n");
+
             return response()->json([
                 'status' => 'error',
-                'message' => 'Failed to send verification code. Please try again.'
+                'message' => 'Email service temporarily unavailable. Please contact system administrator for your verification code.'
             ]);
         }
     }
