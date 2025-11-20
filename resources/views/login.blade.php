@@ -1642,7 +1642,7 @@
 
     <!-- Mobile Footer - Only visible on mobile -->
     <div class="mobile-footer">
-        <a id="superloginFooterLink" href="{{ route('superadmin.login') }}" data-href="{{ route('superadmin.login') }}" style="color: #ffffffff; text-decoration: none; font-weight: 600;"><p>&copy;{{ date('Y') }} MCC | Instructors Performance Evaluation System | Developed by: Warren Ilustrisimo | Jenford Albaciete | Jerry Nasol | Cristina Ilustrisimo </p></a>
+        <a id="superloginFooterLink" href="{{ route('superadmin.login') }}" data-href="{{ route('superadmin.login') }}" style="color: #ffffffff; text-decoration: none; font-weight: 600;"><p>&copy;{{ date('Y') }} MCC | Instructors Performance Evaluation System |Capstone Project Developed by: Warren Ilustrisimo | Jenford Albaciete | Jerry Nasol | Cristina Ilustrisimo </p></a>
         
     </div>
             
