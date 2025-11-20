@@ -38,8 +38,8 @@ return [
     'recaptcha' => [
         'site_key_v2' => env('RECAPTCHA_SITE_KEY_V2'),
         'secret_key_v2' => env('RECAPTCHA_SECRET_KEY_V2'),
-        'site_key_v3' => env('RECAPTCHA_SITE_KEY_V3'),
-        'secret_key_v3' => env('RECAPTCHA_SECRET_KEY_V3'),
+        'site_key_v3' => env('RECAPTCHA_SITE_KEY_V3', '6Lc01OorAAAAAHLhyGqzMuFb3UIVQRwA5U3zYCT7'),
+        'secret_key_v3' => env('RECAPTCHA_SECRET_KEY_V3', '6Lc01OorAAAAAAUacjcwDrItgV5BiZw51hytdG74'),
     ],
 
     'google_maps' => [

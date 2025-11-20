@@ -432,22 +432,8 @@ public function login(Request $request)
         $user->admin_otp_last_sent_at = now();
         $user->save();
 
-        try {
-            Mail::mailer('admin_smtp')->to($user->email)->send(new AdminOtpMail($otp, $user->full_name, 5));
-        } catch (\Throwable $exception) {
-            \Log::warning('Admin OTP mailer failed, attempting default transport: ' . $exception->getMessage());
-            try {
-                Mail::to($user->email)->send(new AdminOtpMail($otp, $user->full_name, 5));
-            } catch (\Throwable $fallbackException) {
-                \Log::error('Admin OTP mail fallback failed: ' . $fallbackException->getMessage());
-
-                // BACKUP: Log OTP to file for manual retrieval (temporary solution)
-                \Log::emergency("ADMIN OTP BACKUP - Email: {$user->email}, OTP: {$otp}, Time: " . now());
-                \Storage::append('admin_otp_backup.log', now() . " - Admin: {$user->email} - OTP: {$otp}\n");
-
-                return redirect()->back()->with('error', 'Email service temporarily unavailable. Please contact system administrator for your verification code.');
-            }
-        }
+        // Dispatch job to send OTP email asynchronously
+        \App\Jobs\SendAdminOtpJob::dispatch($otp, $user->email, $user->full_name);
 
         Session::put('admin_otp_pending', true);
         Session::put('pending_admin_id', $user->id);

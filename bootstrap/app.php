@@ -16,6 +16,7 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withCommands([
         FixPermissionsCommand::class,
+        \App\Console\Commands\MonitorOtpQueues::class,
     ])
     ->withExceptions(function (Exceptions $exceptions): void {
         //

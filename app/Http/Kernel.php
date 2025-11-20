@@ -56,6 +56,7 @@ class Kernel extends HttpKernel
         'account.lockout' => \App\Http\Middleware\CheckAccountLockout::class,
         'track.activity' => \App\Http\Middleware\TrackUserActivity::class,
         'superadmin' => \App\Http\Middleware\SuperAdminMiddleware::class,
+        'throttle.otp' => \App\Http\Middleware\ThrottleOtpRequests::class,
     ];
 
     /**

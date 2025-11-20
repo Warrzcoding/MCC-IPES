@@ -58,29 +58,15 @@ class PreSignupController extends Controller
         Session::put('pre_signup_email', $request->ms365_email);
         Session::put('pre_signup_otp_expires', now()->addMinutes(5));
 
-        // Send email with OTP (HTML template)
-        try {
-            \Illuminate\Support\Facades\Mail::to($request->ms365_email)
-                ->send(new \App\Mail\OtpVerificationMail($otp, $request->ms365_email, 5));
+        // Dispatch job to send OTP email asynchronously
+        \App\Jobs\SendPreSignupOtpJob::dispatch($otp, $request->ms365_email);
 
-            \Log::info("Pre-signup OTP sent to {$request->ms365_email}: {$otp}");
+        \Log::info("Pre-signup OTP queued for {$request->ms365_email}: {$otp}");
 
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Verification code sent to your Microsoft 365 email. Please check your inbox.'
-            ]);
-        } catch (\Exception $e) {
-            \Log::error("Error sending pre-signup OTP email: " . $e->getMessage());
-
-            // BACKUP: Log OTP to file for manual retrieval (temporary solution)
-            \Log::emergency("PRESIGNUP OTP BACKUP - Email: {$request->ms365_email}, OTP: {$otp}, Time: " . now());
-            \Storage::append('presignup_otp_backup.log', now() . " - Email: {$request->ms365_email} - OTP: {$otp}\n");
-
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Email service temporarily unavailable. Please contact system administrator for your verification code.'
-            ]);
-        }
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Verification code sent to your Microsoft 365 email. Please check your inbox.'
+        ]);
     }
 
     // Handle verifying the OTP

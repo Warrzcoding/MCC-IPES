@@ -32,7 +32,7 @@ Route::get('/', function () {
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login'])->name('login.submit');
 Route::post('/admin/otp/verify', [LoginController::class, 'verifyAdminOtp'])->name('admin.otp.verify');
-Route::post('/admin/otp/resend', [LoginController::class, 'resendAdminOtp'])->name('admin.otp.resend');
+Route::post('/admin/otp/resend', [LoginController::class, 'resendAdminOtp'])->middleware('throttle.otp:3,10')->name('admin.otp.resend');
 Route::post('/admin/otp/cancel', [LoginController::class, 'cancelAdminOtp'])->name('admin.otp.cancel');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::post('/verify-student-id', [LoginController::class, 'verifyStudentId'])->name('verify.student.id');
@@ -40,7 +40,7 @@ Route::get('/clear-student-verification', [LoginController::class, 'clearStudent
 
 //login Routes
 Route::get('/pre-signup', [PreSignupController::class, 'showForm'])->name('pre_signup');
-Route::post('/pre-signup/send-verification', [PreSignupController::class, 'sendVerification'])->name('pre_signup.send_verification');
+Route::post('/pre-signup/send-verification', [PreSignupController::class, 'sendVerification'])->middleware('throttle.otp:3,10')->name('pre_signup.send_verification');
 Route::post('/pre-signup/verify-otp', [PreSignupController::class, 'verifyOtp'])->name('pre_signup.verify_otp');
 
 // Signup Routes
