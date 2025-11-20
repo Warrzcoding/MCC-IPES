@@ -630,6 +630,9 @@
             .form-horizontal .form-control, .form-horizontal .form-select {
                 padding: 12px 14px;
             }
+            .form-navigation .nav-btn-submit {
+                min-height: 44px;
+            }
         }
         
         @media (max-width: 480px) {
@@ -638,6 +641,9 @@
                 max-width: 95vw;
                 min-height: 300px;
                 margin: 10px auto;
+            }
+            .form-navigation .nav-btn-submit {
+                min-height: 44px;
             }
             .signup-header .logo {
                 width: 32px;
