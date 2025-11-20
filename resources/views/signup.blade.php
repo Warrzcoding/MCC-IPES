@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=yes">
     <title>Sign Up - Office Performance Evaluation System</title>
      <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -644,6 +644,16 @@
             }
             .form-navigation .nav-btn-submit {
                 min-height: 44px;
+                -webkit-tap-highlight-color: rgba(102, 126, 234, 0.1);
+                -webkit-touch-callout: none;
+                -webkit-user-select: none;
+                -moz-user-select: none;
+                -ms-user-select: none;
+                user-select: none;
+                cursor: pointer;
+                -webkit-appearance: none;
+                border: none;
+                outline: none;
             }
             .signup-header .logo {
                 width: 32px;
