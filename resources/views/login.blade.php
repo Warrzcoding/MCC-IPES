@@ -1606,9 +1606,9 @@
 
                 <!-- Student Signup Link -->
                 <div class="signup-link">
-                   <p>Don't have an account? <a href="{{ route('pre_signup', ['type' => 'student', 'school_id' => $student_data['school_id']]) }}">
+                   <p>Don't have an account?<!-- <a href="{{ route('pre_signup', ['type' => 'student', 'school_id' => $student_data['school_id']]) }}">
                         <i class="fas fa-user-plus"></i> Sign up here
-                    </a></p>
+                    </a>--></p>
                 </div>
             @endif      
     </div>
