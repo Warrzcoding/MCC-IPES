@@ -932,8 +932,8 @@
   max-width: 80px;
 }
 
-#studentsTable th:nth-child(10), /* Evaluation Status */
-#studentsTable td:nth-child(10) {
+#studentsTable th:nth-child(9), /* Evaluation Status */
+#studentsTable td:nth-child(9) {
   min-width: 230px;
   width: 230px;
   max-width: 230px;
@@ -942,8 +942,8 @@
   visibility: visible !important;
 }
 
-#studentsTable th:nth-child(11), /* Actions */
-#studentsTable td:nth-child(11) {
+#studentsTable th:nth-child(10), /* Actions */
+#studentsTable td:nth-child(10) {
   width: 120px;
   min-width: 120px;
   max-width: 120px;
@@ -1234,12 +1234,12 @@ document.addEventListener('DOMContentLoaded', function () {
                                                         </td>
                                                     </tr>
                                                     <tr>
-                                                        <td style="padding: 0 1px 0 0; text-align: center; font-size: 0.65rem; white-space: nowrap;">
+                                                        <td style="padding: 0 1px 0 0; text-align: center; font-size: 0.65rem; white-space: normal; overflow: visible;">
                                                             <span class="text-info">
                                                                 <i class="fas fa-chalkboard-teacher"></i> {{ $teachingCount }}/{{ $totalTeachingStaff }} Instructors
                                                             </span>
                                                         </td>
-                                                        <td style="padding: 0 0 0 1px; text-align: center; font-size: 0.65rem; white-space: nowrap;">
+                                                        <td style="padding: 0 0 0 1px; text-align: center; font-size: 0.65rem; white-space: normal; overflow: visible;">
                                                             <span class="text-secondary">
                                                                 <i class="fas fa-users"></i> {{ $nonTeachingCount }}/{{ $totalNonTeachingStaff }} Non-teaching
                                                             </span>
