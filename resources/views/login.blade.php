@@ -1438,9 +1438,9 @@
                     </div>
                     <!-- Student Signup Link -->
                     <div class="signup-link">
-                        <p>Don't have an account? <a href="{{ route('pre_signup') }}">
+                        <p>System Temporary Under Troubleshooting?<!-- <a href="{{ route('pre_signup') }}">
                             <i class="fas fa-user-plus"></i> Sign up here
-                        </a></p>
+                        </a>--></p>
                       <!--  <p>Don't have an account? <a href="{{ route('idcheck') }}">
                             <i class="fas fa-user-plus"></i> Sign up here
                         </a></p>-->
