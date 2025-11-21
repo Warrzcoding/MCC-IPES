@@ -28,6 +28,16 @@ class RequestSigninController extends Controller
     public function approve($id)
     {
         $request = RequestSignin::findOrFail($id);
+        
+        // Check for duplicate email and school_id
+        $existingUser = User::where('email', $request->email)
+                            ->orWhere('school_id', $request->school_id)
+                            ->first();
+        
+        if ($existingUser) {
+            return redirect()->back()->with('message', 'User with this email or school ID already exists. Request not approved.')->with('message_type', 'danger');
+        }
+        
         DB::beginTransaction();
         try {
             // Create user
@@ -70,8 +80,20 @@ class RequestSigninController extends Controller
         DB::beginTransaction();
         try {
             $requests = RequestSignin::whereIn('id', $ids)->get();
+            $approvedCount = 0;
+            $skippedCount = 0;
 
             foreach ($requests as $req) {
+                // Check for duplicate email and school_id
+                $existingUser = User::where('email', $req->email)
+                                    ->orWhere('school_id', $req->school_id)
+                                    ->first();
+                
+                if ($existingUser) {
+                    $skippedCount++;
+                    continue;
+                }
+                
                 // Create user based on request
                 User::create([
                     'username' => $req->username,
@@ -94,10 +116,17 @@ class RequestSigninController extends Controller
 
                 // Delete request after creating user
                 $req->delete();
+                $approvedCount++;
             }
 
             DB::commit();
-            return redirect()->back()->with('message', count($requests) . ' request(s) approved!')->with('message_type', 'success');
+            $message = "$approvedCount request(s) approved";
+            if ($skippedCount > 0) {
+                $message .= ", $skippedCount skipped (duplicate email/school_id).";
+            } else {
+                $message .= "!";
+            }
+            return redirect()->back()->with('message', $message)->with('message_type', 'success');
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()->with('message', 'Error approving selected requests: ' . $e->getMessage())->with('message_type', 'danger');
