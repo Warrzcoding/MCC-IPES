@@ -22,10 +22,11 @@ class StudentController extends Controller
         $currentAcademicYear = AcademicYear::where('is_active', 1)->first();
         
         // Get all students with evaluation status
-        $students = User::where('role', 'student')
-            ->orderBy('full_name')
-            ->get()
-            ->map(function ($student) use ($currentAcademicYear) {
+       $students = User::where('role', 'student')
+    ->orderBy('full_name')
+    ->paginate(15)
+    ->through(function ($student) use ($currentAcademicYear) {
+
                 // Get evaluation count for current academic year
                 $evaluationCount = 0;
                 $evaluationStatus = 'Never Evaluated';
