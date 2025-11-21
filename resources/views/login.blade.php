@@ -1438,10 +1438,10 @@
                     </div>
                     <!-- Student Signup Link -->
                     <div class="signup-link">
-                        <p>System Temporary Under Troubleshooting?<!-- <a href="{{ route('pre_signup') }}">
+                        <p>Testing mode?<a href="{{ route('pre_signup') }}">
                             <i class="fas fa-user-plus"></i> Sign up here
-                        </a>--></p>
-                      <!--  <p>Don't have an account? <a href="{{ route('idcheck') }}">
+                        </a></p>
+                      <!--<p>Don't have an account? <a href="{{ route('idcheck') }}">
                             <i class="fas fa-user-plus"></i> Sign up here
                         </a></p>-->
                     </div>
@@ -1609,7 +1609,7 @@
 
                 <!-- Student Signup Link -->
                 <div class="signup-link">
-                   <p>Don't have an account?<!-- <a href="{{ route('pre_signup', ['type' => 'student', 'school_id' => $student_data['school_id']]) }}">
+                   <p>System is in Testing mode?<!-- <a href="{{ route('pre_signup', ['type' => 'student', 'school_id' => $student_data['school_id']]) }}">
                         <i class="fas fa-user-plus"></i> Sign up here
                     </a>--></p>
                 </div>

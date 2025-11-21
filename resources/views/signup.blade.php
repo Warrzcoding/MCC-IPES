@@ -295,6 +295,7 @@
             min-height: calc(100vh - 48px);
             max-height: calc(100vh - 48px);
             overflow-y: auto;
+            overflow-x: hidden;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -398,6 +399,8 @@
             gap: calc(12px * var(--signup-scale));
             width: 100%;
             margin-top: calc(1.2rem * var(--signup-scale));
+            position: relative;
+            z-index: 1000;
         }
         .form-navigation .nav-btn {
             display: inline-flex;
@@ -430,9 +433,25 @@
             min-width: 0;
         }
         .form-navigation .nav-btn-submit {
-            padding: calc(0.35rem * var(--signup-scale)) calc(0.85rem * var(--signup-scale));
-            min-height: calc(44px * var(--signup-scale));
+            padding: calc(0.5rem * var(--signup-scale)) calc(0.85rem * var(--signup-scale));
+            min-height: calc(48px * var(--signup-scale));
             font-size: calc(0.96rem * var(--signup-scale));
+            touch-action: manipulation;
+            -webkit-user-select: none;
+            user-select: none;
+            transition: all 0.15s ease;
+            line-height: 1.2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .form-navigation .nav-btn-submit:active {
+            transform: scale(0.98);
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.25);
+        }
+        .form-navigation .nav-btn-submit:focus {
+            outline: 2px solid #667eea;
+            outline-offset: 2px;
         }
         .form-horizontal .form-label {
             font-size: calc(0.98rem * var(--signup-scale));
@@ -623,6 +642,7 @@
             .signup-card {
                 padding: 20px 16px;
                 max-width: 90vw;
+                padding-bottom: 100px;
             }
             .form-horizontal {
                 max-width: 100%;
@@ -630,8 +650,50 @@
             .form-horizontal .form-control, .form-horizontal .form-select {
                 padding: 12px 14px;
             }
+            .form-navigation {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                width: 100%;
+                padding: 12px 16px;
+                padding-bottom: max(12px, env(safe-area-inset-bottom));
+                background: #fff;
+                border-top: 1px solid #e9ecef;
+                box-shadow: 0 -2px 8px rgba(0,0,0,0.08);
+                z-index: 1000;
+                gap: 10px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            }
             .form-navigation .nav-btn-submit {
-                min-height: 44px;
+                min-height: 52px;
+                padding: 12px 16px;
+                -webkit-tap-highlight-color: transparent;
+                cursor: pointer;
+                border: none;
+                outline: none;
+                position: relative;
+                z-index: 1001;
+                font-size: 15px;
+                font-weight: 700;
+                touch-action: manipulation;
+                -webkit-user-select: none;
+                user-select: none;
+                transition: all 0.15s ease;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .form-navigation .nav-btn-submit:active {
+                transform: scale(0.97);
+                box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+            }
+            .form-navigation .nav-btn-submit:focus,
+            .form-navigation .nav-btn-submit:focus-visible {
+                outline: 3px solid rgba(102, 126, 234, 0.5);
+                outline-offset: -3px;
             }
         }
         
@@ -641,19 +703,54 @@
                 max-width: 95vw;
                 min-height: 300px;
                 margin: 10px auto;
+                padding-bottom: 90px;
+            }
+            .form-navigation {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                width: 100%;
+                padding: 12px;
+                padding-bottom: max(12px, env(safe-area-inset-bottom));
+                background: #fff;
+                border-top: 1px solid #e9ecef;
+                box-shadow: 0 -2px 8px rgba(0,0,0,0.08);
+                z-index: 1000;
+                gap: 8px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
             }
             .form-navigation .nav-btn-submit {
-                min-height: 44px;
-                -webkit-tap-highlight-color: rgba(102, 126, 234, 0.1);
+                min-height: 54px;
+                padding: 14px 18px;
+                -webkit-tap-highlight-color: transparent;
                 -webkit-touch-callout: none;
-                -webkit-user-select: none;
-                -moz-user-select: none;
-                -ms-user-select: none;
-                user-select: none;
                 cursor: pointer;
-                -webkit-appearance: none;
                 border: none;
                 outline: none;
+                position: relative;
+                z-index: 1001;
+                font-size: 16px;
+                font-weight: 700;
+                touch-action: manipulation;
+                -webkit-user-select: none;
+                user-select: none;
+                transition: all 0.15s ease;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+            }
+            .form-navigation .nav-btn-submit:active {
+                transform: scale(0.96);
+                box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.1), 0 4px 12px rgba(102, 126, 234, 0.35);
+            }
+            .form-navigation .nav-btn-submit:focus,
+            .form-navigation .nav-btn-submit:focus-visible {
+                outline: 3px solid rgba(102, 126, 234, 0.6);
+                outline-offset: -3px;
             }
             .signup-header .logo {
                 width: 32px;
@@ -1074,6 +1171,21 @@
             const prevBtn = document.getElementById('prevBtn');
             const nextBtn = document.getElementById('nextBtn');
             const submitBtn = document.getElementById('submitBtn');
+            
+            if (submitBtn) {
+                submitBtn.addEventListener('touchstart', function(e) {
+                    this.style.transform = 'scale(0.95)';
+                }, { passive: true });
+                
+                submitBtn.addEventListener('touchend', function(e) {
+                    this.style.transform = 'scale(1)';
+                }, { passive: true });
+                
+                submitBtn.addEventListener('touchcancel', function(e) {
+                    this.style.transform = 'scale(1)';
+                }, { passive: true });
+            }
+            
             function showStep(step) {
                 stepGroups.forEach((group, idx) => {
                     group.style.display = (idx === step - 1) ? '' : 'none';
