@@ -1894,12 +1894,13 @@ document.addEventListener('DOMContentLoaded', function() {
     if (table && !$.fn.DataTable.isDataTable(table)) {
         $('#studentsTable').DataTable({
             pageLength: 15,
-            lengthChange: false,
-            searching: false,
+            lengthChange: true,
+            lengthMenu: [[15, 20, 25, 50, -1], [15, 20, 25, 50, "All"]],
+            searching: true,
             ordering: true,
             info: true,
             paging: true,
-            dom: '<"row"<"col-sm-6"i><"col-sm-6"p>>rt<"row"<"col-sm-6"l><"col-sm-6"p>>',
+            dom: '<"row"<"col-sm-6"l><"col-sm-6"f>>rt<"row"<"col-sm-6"i><"col-sm-6"p>>',
             language: {
                 paginate: {
                     previous: '<i class="fas fa-chevron-left"></i> Previous',
@@ -1908,7 +1909,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     last: '<i class="fas fa-step-forward"></i>'
                 },
                 info: 'Showing _START_ to _END_ of _TOTAL_ students',
-                infoEmpty: 'No students to display'
+                infoEmpty: 'No students to display',
+                lengthMenu: 'Show _MENU_ students per page',
+                search: 'Search students:'
             },
             columnDefs: [
                 { orderable: false, targets: [0, 9] }

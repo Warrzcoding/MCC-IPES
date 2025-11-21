@@ -260,61 +260,80 @@ class DashboardController extends Controller
             // Get the active academic year (where is_active = 1)
             $currentAcademicYear = AcademicYear::where('is_active', 1)->first();
             
-            // Get all students with evaluation status
+            // OPTIMIZATION: Get teaching and non-teaching staff counts ONCE (not in loop)
+            $totalTeachingStaffCount = \App\Models\Staff::where('staff_type', 'teaching')->count();
+            $totalNonTeachingStaffCount = \App\Models\Staff::where('staff_type', 'non-teaching')->count();
+            
+            // OPTIMIZATION: Get question IDs ONCE (not in loop)
+            $academicYearQuestions = [];
+            if ($currentAcademicYear) {
+                $academicYearQuestions = \App\Models\Question::where('academic_year_id', $currentAcademicYear->id)->pluck('id')->toArray();
+            }
+            
+            // Get students with evaluation status - paginated (15 per page)
             $students = User::where('role', 'student')
                 ->orderBy('full_name')
-                ->get()
-                ->map(function ($student) use ($currentAcademicYear) {
-                    // Get evaluation count for current academic year
-                    $evaluationCount = 0;
-                    $evaluationStatus = 'Never Evaluated';
+                ->paginate(15);
+            
+            // Get ALL evaluations for paginated students in ONE query
+            $studentIds = $students->pluck('id')->toArray();
+            $allEvaluations = \App\Models\Evaluation::whereIn('user_id', $studentIds)->get();
+            
+            // Get ALL subjects for paginated students in ONE query
+            $allSubjects = \App\Models\Subject::whereNotNull('assign_instructor')
+                ->where('assign_instructor', '!=', '')
+                ->get();
+            
+            // Add evaluation status to each student
+            $students->getCollection()->transform(function ($student) use ($currentAcademicYear, $academicYearQuestions, $totalTeachingStaffCount, $totalNonTeachingStaffCount, $allEvaluations, $allSubjects) {
+                $evaluationCount = 0;
+                $evaluationStatus = 'Never Evaluated';
+                $evaluated_instructors = 0;
+                $total_instructors = 0;
+                $evaluated_nonteaching = 0;
+                $total_nonteaching = $totalNonTeachingStaffCount;
+                
+                if (!empty($academicYearQuestions)) {
+                    // Filter evaluations for this student from pre-fetched data
+                    $studentEvals = $allEvaluations->filter(function ($e) use ($student, $academicYearQuestions) {
+                        return $e->user_id == $student->id && in_array($e->question_id, $academicYearQuestions);
+                    });
                     
-                    if ($currentAcademicYear) {
-                        // Get questions for current academic year
-                        $academicYearQuestions = \App\Models\Question::where('academic_year_id', $currentAcademicYear->id)->pluck('id');
-                        
-                        if ($academicYearQuestions->count() > 0) {
-                            // Count distinct staff evaluated by this student in current academic year
-                            $evaluationCount = \App\Models\Evaluation::where('user_id', $student->id)
-                                ->whereIn('question_id', $academicYearQuestions)
-                                ->distinct('staff_id')
-                                ->count('staff_id');
-                            
-                            // Get instructor names for student's specific course, year level, and section
-                            $instructorNames = \App\Models\Subject::whereRaw('LOWER(TRIM(sub_department)) = ?', [strtolower(trim($student->course))])
-                                ->whereRaw('LOWER(TRIM(sub_year)) = ?', [strtolower(trim($student->year_level))])
-                                ->whereRaw('LOWER(TRIM(section)) = ?', [strtolower(trim($student->section))])
-                                ->whereNotNull('assign_instructor')
-                                ->where('assign_instructor', '!=', '')
-                                ->distinct('assign_instructor')
-                                ->pluck('assign_instructor');
-                            
-                            // Count actual teaching staff records that match these instructor names
-                            $instructorsCount = \App\Models\Staff::whereIn('full_name', $instructorNames)
-                                ->where('staff_type', 'teaching')
-                                ->count();
-                            
-                            // Get all non-teaching staff count
-                            $nonTeachingStaffCount = \App\Models\Staff::where('staff_type', 'non-teaching')->count();
-                            
-                            // Total staff count = instructors for student's course/year + all non-teaching staff
-                            $totalStaffCount = $instructorsCount + $nonTeachingStaffCount;
-                            
-                            if ($evaluationCount > 0) {
-                                if ($evaluationCount >= $totalStaffCount) {
-                                    $evaluationStatus = "Done ({$evaluationCount}/{$totalStaffCount} staff)";
-                                } else {
-                                    $evaluationStatus = "In Progress ({$evaluationCount}/{$totalStaffCount} staff)";
-                                }
-                            }
+                    $evaluationCount = $studentEvals->pluck('staff_id')->unique()->count();
+                    
+                    // Get instructor names for student's specific course/year/section from pre-fetched data
+                    $instructorNames = $allSubjects->filter(function ($s) use ($student) {
+                        return strtolower(trim($s->sub_department)) === strtolower(trim($student->course ?? ''))
+                            && strtolower(trim($s->sub_year)) === strtolower(trim($student->year_level ?? ''))
+                            && strtolower(trim($s->section)) === strtolower(trim($student->section ?? ''));
+                    })->pluck('assign_instructor')->unique();
+                    
+                    // Simple counts
+                    $total_instructors = min($instructorNames->count(), $totalTeachingStaffCount);
+                    $evaluated_instructors = min($evaluationCount, $total_instructors);
+                    $evaluated_nonteaching = min($evaluationCount, $total_nonteaching);
+                    
+                    $totalStaffCount = $total_instructors + $total_nonteaching;
+                    
+                    if ($evaluationCount > 0) {
+                        if ($evaluationCount >= $totalStaffCount) {
+                            $evaluationStatus = "Done ({$evaluationCount}/{$totalStaffCount} staff)";
+                        } else {
+                            $evaluationStatus = "In Progress ({$evaluationCount}/{$totalStaffCount} staff)";
                         }
                     }
-                    
-                    $student->evaluation_count = $evaluationCount;
-                    $student->evaluation_status = $evaluationStatus;
-                    
-                    return $student;
-                });
+                }
+                
+                $student->evaluation_count = $evaluationCount;
+                $student->evaluation_status = $evaluationStatus;
+                $student->evaluated_instructors = $evaluated_instructors;
+                $student->total_instructors = $total_instructors;
+                $student->evaluated_nonteaching = $evaluated_nonteaching;
+                $student->total_nonteaching = $total_nonteaching;
+                
+                return $student;
+            });
+            
             // Get count of pending signup requests
             $pendingRequestsCount = RequestSignin::where('status', 'pending')->count();
         }
