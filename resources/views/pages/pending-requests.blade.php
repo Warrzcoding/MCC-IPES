@@ -358,51 +358,64 @@ small {
 }
 
 .pagination {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     margin-bottom: 0.5rem;
+    gap: 0.2rem;
 }
 
 .pagination .page-link {
-    padding: 0.25rem 0.5rem;
-    font-size: 0.75rem;
-    min-width: auto;
+    padding: 0.15rem 0.3rem !important;
+    font-size: 0.7rem !important;
+    min-width: auto !important;
+    line-height: 1 !important;
+    height: auto !important;
+    border: 1px solid #dee2e6;
 }
 
 .pagination .page-link i {
-    font-size: 0.65rem !important;
+    font-size: 0.6rem !important;
+    line-height: 1 !important;
 }
 
 .pagination .page-item.active .page-link {
-    font-size: 0.75rem;
+    font-size: 0.7rem !important;
+    padding: 0.15rem 0.3rem !important;
+}
+
+.pagination .page-item:first-child .page-link,
+.pagination .page-item:last-child .page-link {
+    border-radius: 3px !important;
 }
 
 @media (max-width: 768px) {
     .pagination {
-        font-size: 0.7rem;
+        font-size: 0.65rem;
+        gap: 0.15rem;
     }
 
     .pagination .page-link {
-        padding: 0.2rem 0.4rem;
-        font-size: 0.7rem;
+        padding: 0.12rem 0.25rem !important;
+        font-size: 0.65rem !important;
     }
 
     .pagination .page-link i {
-        font-size: 0.6rem !important;
+        font-size: 0.55rem !important;
     }
 }
 
 @media (max-width: 576px) {
     .pagination {
-        font-size: 0.65rem;
+        font-size: 0.6rem;
+        gap: 0.1rem;
     }
 
     .pagination .page-link {
-        padding: 0.15rem 0.35rem;
-        font-size: 0.65rem;
+        padding: 0.1rem 0.2rem !important;
+        font-size: 0.6rem !important;
     }
 
     .pagination .page-link i {
-        font-size: 0.55rem !important;
+        font-size: 0.5rem !important;
     }
 }
 </style>
