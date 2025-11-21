@@ -557,9 +557,9 @@ small {
             <!-- Enhanced Back Button -->
             <div class="text-start mt-4 pb-3">
                 <a href="{{ route('dashboard', ['page' => 'add-students']) }}" class="btn back-btn">
-                    <i class="fas fa-arrow-left me-2"></i>
+                   <!-- <i class="fas fa-arrow-left me-2"></i>-->
                     <span class="d-none d-sm-inline">Back to Students Management</span>
-                    <span class="d-sm-none">Back</span>
+                 <!--   <span class="d-sm-none">Back</span>-->
                 </a>
             </div>
         </div>
