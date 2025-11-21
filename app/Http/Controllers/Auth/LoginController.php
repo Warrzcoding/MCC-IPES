@@ -437,15 +437,15 @@ public function login(Request $request)
             \Illuminate\Support\Facades\Mail::mailer('admin_smtp')->to($user->email)->send(new \App\Mail\AdminOtpMail($otp, $user->full_name, 5));
             \Log::info("Admin OTP email sent successfully to {$user->email}");
         } catch (\Throwable $exception) {
-            \Log::warning('Admin OTP mailer failed, attempting default transport: ' . $exception->getMessage());
+            \Log::warning('Admin OTP admin_smtp mailer failed: ' . $exception->getMessage(), ['exception' => $exception]);
             try {
                 \Illuminate\Support\Facades\Mail::to($user->email)->send(new \App\Mail\AdminOtpMail($otp, $user->full_name, 5));
-                \Log::info("Admin OTP email sent via fallback to {$user->email}");
+                \Log::info("Admin OTP email sent via fallback (default mailer) to {$user->email}");
             } catch (\Throwable $fallbackException) {
-                \Log::error('Admin OTP mail fallback failed: ' . $fallbackException->getMessage());
+                \Log::error('Admin OTP default mailer fallback failed: ' . $fallbackException->getMessage(), ['exception' => $fallbackException]);
                 // BACKUP: Log OTP to file for manual retrieval
                 \Log::emergency("ADMIN OTP BACKUP - Email: {$user->email}, OTP: {$otp}, Time: " . now());
-                \Illuminate\Support\Facades\Storage::append('admin_otp_backup.log', now() . " - Admin: {$user->email} - OTP: {$otp}\n");
+                \Illuminate\Support\Facades\Storage::append('storage/admin_otp_backup.log', now() . " - Admin: {$user->email} - OTP: {$otp}\n");
             }
         }
 
