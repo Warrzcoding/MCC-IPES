@@ -33,7 +33,7 @@ class AdminOtpMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'emails.admin-otp',
+            html: 'emails.admin-otp',
             with: [
                 'otpCode' => $this->otpCode,
                 'adminName' => $this->adminName,
