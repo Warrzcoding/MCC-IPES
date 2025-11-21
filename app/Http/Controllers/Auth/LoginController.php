@@ -618,12 +618,13 @@ public function login(Request $request)
             \Illuminate\Support\Facades\Mail::mailer('admin_smtp')->to($user->email)->send(new \App\Mail\AdminOtpMail($otp, $user->full_name, 5));
             \Log::info("Admin OTP resend email sent successfully to {$user->email}");
         } catch (\Throwable $exception) {
-            \Log::warning('Admin OTP resend with admin_smtp failed, attempting default transport: ' . $exception->getMessage());
+            \Log::warning('Admin OTP resend with admin_smtp failed, attempting default transport: ' . $exception->getMessage(), ['exception' => $exception]);
             try {
                 \Illuminate\Support\Facades\Mail::to($user->email)->send(new \App\Mail\AdminOtpMail($otp, $user->full_name, 5));
                 \Log::info("Admin OTP resend email sent via fallback to {$user->email}");
             } catch (\Throwable $fallbackException) {
-                \Log::error('Admin OTP resend mail fallback failed: ' . $fallbackException->getMessage());
+                \Log::error('Admin OTP resend mail fallback failed: ' . $fallbackException->getMessage(), ['exception' => $fallbackException]);
+                \Illuminate\Support\Facades\Storage::append('storage/admin_otp_backup.log', now() . " - RESEND - Admin: {$user->email} - OTP: {$otp}\n");
             }
         }
 

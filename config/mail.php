@@ -52,12 +52,16 @@ return [
 
         'admin_smtp' => [
             'transport' => 'smtp',
-            'host' => env('ADMIN_MAIL_HOST', env('MAIL_HOST', '127.0.0.1')),
-            'port' => env('ADMIN_MAIL_PORT', env('MAIL_PORT', 2525)),
-            'encryption' => env('ADMIN_MAIL_ENCRYPTION', env('MAIL_ENCRYPTION', 'tls')),
-            'username' => env('ADMIN_MAIL_USERNAME', env('MAIL_USERNAME')),
-            'password' => env('ADMIN_MAIL_PASSWORD', env('MAIL_PASSWORD')),
-            'timeout' => null,
+            'host' => env('ADMIN_MAIL_HOST') ?: env('MAIL_HOST', 'smtp.gmail.com'),
+            'port' => env('ADMIN_MAIL_PORT') ?: env('MAIL_PORT', 587),
+            'encryption' => env('ADMIN_MAIL_ENCRYPTION') ?: env('MAIL_ENCRYPTION', 'tls'),
+            'username' => env('ADMIN_MAIL_USERNAME') ?: env('MAIL_USERNAME'),
+            'password' => env('ADMIN_MAIL_PASSWORD') ?: env('MAIL_PASSWORD'),
+            'timeout' => 10,
+            'from' => [
+                'address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),
+                'name' => env('MAIL_FROM_NAME', 'MCC-IPES'),
+            ],
         ],
         'ses' => [
             'transport' => 'ses',
