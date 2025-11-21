@@ -637,7 +637,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         .search-input-group .form-control:focus + .search-icon {
-            color: #667eea;
+            color: #acea66ff;
         }
     `;
     document.head.appendChild(style);
