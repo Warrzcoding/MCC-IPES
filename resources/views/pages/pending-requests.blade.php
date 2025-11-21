@@ -361,30 +361,55 @@ small {
     font-size: 0.7rem;
     margin-bottom: 0.5rem;
     gap: 0.2rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.pagination .page-item {
+    display: inline-block;
 }
 
 .pagination .page-link {
-    padding: 0.15rem 0.3rem !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0.25rem 0.35rem !important;
     font-size: 0.7rem !important;
-    min-width: auto !important;
+    min-width: 24px !important;
+    min-height: 24px !important;
     line-height: 1 !important;
-    height: auto !important;
     border: 1px solid #dee2e6;
+    border-radius: 3px;
+    background-color: white;
+    color: #667eea;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.pagination .page-link:hover {
+    background-color: #f8f9fa;
+    border-color: #667eea;
+    color: #667eea;
 }
 
 .pagination .page-link i {
-    font-size: 0.6rem !important;
+    font-size: 0.65rem !important;
     line-height: 1 !important;
+    margin: 0 !important;
 }
 
 .pagination .page-item.active .page-link {
-    font-size: 0.7rem !important;
-    padding: 0.15rem 0.3rem !important;
+    background-color: #667eea !important;
+    border-color: #667eea !important;
+    color: white !important;
+    font-weight: 600;
 }
 
-.pagination .page-item:first-child .page-link,
-.pagination .page-item:last-child .page-link {
-    border-radius: 3px !important;
+.pagination .page-item.disabled .page-link {
+    color: #ccc;
+    cursor: not-allowed;
+    background-color: #f8f9fa;
+    border-color: #dee2e6;
 }
 
 @media (max-width: 768px) {
@@ -394,12 +419,14 @@ small {
     }
 
     .pagination .page-link {
-        padding: 0.12rem 0.25rem !important;
+        padding: 0.2rem 0.3rem !important;
         font-size: 0.65rem !important;
+        min-width: 22px !important;
+        min-height: 22px !important;
     }
 
     .pagination .page-link i {
-        font-size: 0.55rem !important;
+        font-size: 0.6rem !important;
     }
 }
 
@@ -410,12 +437,14 @@ small {
     }
 
     .pagination .page-link {
-        padding: 0.1rem 0.2rem !important;
+        padding: 0.18rem 0.25rem !important;
         font-size: 0.6rem !important;
+        min-width: 20px !important;
+        min-height: 20px !important;
     }
 
     .pagination .page-link i {
-        font-size: 0.5rem !important;
+        font-size: 0.55rem !important;
     }
 }
 </style>

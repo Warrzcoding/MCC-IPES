@@ -51,7 +51,49 @@
         </tbody>
     </table>
     <div class="d-flex justify-content-center mt-3">
-        {{ $rejectedRequests->appends(request()->except('page'))->links() }}
+        <nav aria-label="Page navigation">
+            <ul class="pagination pagination-sm mb-0">
+                @if ($rejectedRequests->onFirstPage())
+                    <li class="page-item disabled">
+                        <span class="page-link">
+                            <i class="fas fa-chevron-left"></i>
+                        </span>
+                    </li>
+                @else
+                    <li class="page-item">
+                        <a class="page-link" href="{{ $rejectedRequests->appends(request()->except('page'))->previousPageUrl() }}">
+                            <i class="fas fa-chevron-left"></i>
+                        </a>
+                    </li>
+                @endif
+
+                @foreach ($rejectedRequests->getUrlRange(1, $rejectedRequests->lastPage()) as $page => $url)
+                    @if ($page == $rejectedRequests->currentPage())
+                        <li class="page-item active">
+                            <span class="page-link">{{ $page }}</span>
+                        </li>
+                    @else
+                        <li class="page-item">
+                            <a class="page-link" href="{{ $url }}{{ request()->query() ? '&' . http_build_query(request()->except('page')) : '' }}">{{ $page }}</a>
+                        </li>
+                    @endif
+                @endforeach
+
+                @if ($rejectedRequests->hasMorePages())
+                    <li class="page-item">
+                        <a class="page-link" href="{{ $rejectedRequests->appends(request()->except('page'))->nextPageUrl() }}">
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </li>
+                @else
+                    <li class="page-item disabled">
+                        <span class="page-link">
+                            <i class="fas fa-chevron-right"></i>
+                        </span>
+                    </li>
+                @endif
+            </ul>
+        </nav>
     </div>
     @endif
 </div>
