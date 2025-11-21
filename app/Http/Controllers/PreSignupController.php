@@ -49,23 +49,15 @@ class PreSignupController extends Controller
             ], 422);
         }
 
-        // If email doesn't exist, proceed with sending verification
-        // Generate OTP (6 digits)
-        $otp = str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT);
-        
-        // Store OTP and email in session with expiration (5 minutes)
-        Session::put('pre_signup_otp', $otp);
+        // Email is valid and not registered - bypass OTP, mark as verified immediately
         Session::put('pre_signup_email', $request->ms365_email);
-        Session::put('pre_signup_otp_expires', now()->addMinutes(5));
+        Session::put('pre_signup_otp_verified', true);
 
-        // Dispatch job to send OTP email asynchronously
-        \App\Jobs\SendPreSignupOtpJob::dispatch($otp, $request->ms365_email);
-
-        \Log::info("Pre-signup OTP queued for {$request->ms365_email}: {$otp}");
+        \Log::info("Pre-signup email verified for {$request->ms365_email} (OTP bypass)");
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Verification code sent to your Microsoft 365 email. Please check your inbox.'
+            'message' => 'Email verified successfully. Proceeding to signup...'
         ]);
     }
 
