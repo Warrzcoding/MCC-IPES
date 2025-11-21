@@ -479,7 +479,7 @@ small {
                                             <input type="text" id="pendingSearch" class="form-control" placeholder="Search by name, username, email, or school ID...">
                                         </div>
                                         <button id="approve-selected" class="btn btn-success" title="Approve selected rows">
-                                            <i class="fas fa-check-double me-1"></i> Approve Selected
+                                            <i class="fas fa-check-double me-1"></i> Approve Selectecd
                                         </button>
                                     </div>
                                     <small class="text-muted mt-1 d-block">
