@@ -64,8 +64,50 @@
             @endforeach
         </tbody>
     </table>
-    <div class="d-flex justify-content-center mt-3">
-        {{ $pendingRequests->appends(request()->except('page'))->links() }}
+    <div style="text-align: center; margin-top: 1rem; margin-bottom: 1rem;">
+        <nav aria-label="Page navigation" style="display: inline-block;">
+            <ul class="pagination mb-0">
+                @if ($pendingRequests->onFirstPage())
+                    <li class="page-item disabled">
+                        <span class="page-link">
+                            <i class="fas fa-chevron-left"></i>
+                        </span>
+                    </li>
+                @else
+                    <li class="page-item">
+                        <a class="page-link" href="{{ $pendingRequests->appends(request()->except('page'))->previousPageUrl() }}">
+                            <i class="fas fa-chevron-left"></i>
+                        </a>
+                    </li>
+                @endif
+
+                @foreach ($pendingRequests->getUrlRange(1, $pendingRequests->lastPage()) as $page => $url)
+                    @if ($page == $pendingRequests->currentPage())
+                        <li class="page-item active">
+                            <span class="page-link">{{ $page }}</span>
+                        </li>
+                    @else
+                        <li class="page-item">
+                            <a class="page-link" href="{{ $url }}{{ request()->query() ? '&' . http_build_query(request()->except('page')) : '' }}">{{ $page }}</a>
+                        </li>
+                    @endif
+                @endforeach
+
+                @if ($pendingRequests->hasMorePages())
+                    <li class="page-item">
+                        <a class="page-link" href="{{ $pendingRequests->appends(request()->except('page'))->nextPageUrl() }}">
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </li>
+                @else
+                    <li class="page-item disabled">
+                        <span class="page-link">
+                            <i class="fas fa-chevron-right"></i>
+                        </span>
+                    </li>
+                @endif
+            </ul>
+        </nav>
     </div>
 
     <!-- Hidden bulk approve form -->

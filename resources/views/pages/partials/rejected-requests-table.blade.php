@@ -50,9 +50,9 @@
             @endforeach
         </tbody>
     </table>
-    <div class="d-flex justify-content-center mt-3">
-        <nav aria-label="Page navigation">
-            <ul class="pagination pagination-sm mb-0">
+    <div style="text-align: center; margin-top: 1rem; margin-bottom: 1rem;">
+        <nav aria-label="Page navigation" style="display: inline-block;">
+            <ul class="pagination mb-0">
                 @if ($rejectedRequests->onFirstPage())
                     <li class="page-item disabled">
                         <span class="page-link">

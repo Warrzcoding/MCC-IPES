@@ -358,42 +358,47 @@ small {
 }
 
 .pagination {
-    font-size: 0.7rem;
-    margin-bottom: 0.5rem;
-    gap: 0.2rem;
+    display: flex !important;
+    list-style: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    gap: 0.25rem;
+    justify-content: center;
     align-items: center;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
 }
 
 .pagination .page-item {
-    display: inline-block;
+    display: inline-flex !important;
+    margin: 0 !important;
 }
 
 .pagination .page-link {
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
-    padding: 0.25rem 0.35rem !important;
-    font-size: 0.7rem !important;
-    min-width: 24px !important;
-    min-height: 24px !important;
+    padding: 0.3rem 0.45rem !important;
+    font-size: 0.75rem !important;
+    min-width: 26px !important;
+    min-height: 26px !important;
     line-height: 1 !important;
-    border: 1px solid #dee2e6;
-    border-radius: 3px;
-    background-color: white;
-    color: #667eea;
-    text-decoration: none;
+    border: 1px solid #ddd !important;
+    border-radius: 3px !important;
+    background-color: white !important;
+    color: #495057 !important;
+    text-decoration: none !important;
+    cursor: pointer;
     transition: all 0.2s ease;
 }
 
-.pagination .page-link:hover {
-    background-color: #f8f9fa;
-    border-color: #667eea;
-    color: #667eea;
+.pagination .page-link:hover:not(.disabled) {
+    background-color: #f8f9fa !important;
+    border-color: #667eea !important;
+    color: #667eea !important;
 }
 
 .pagination .page-link i {
-    font-size: 0.65rem !important;
+    font-size: 0.7rem !important;
     line-height: 1 !important;
     margin: 0 !important;
 }
@@ -402,19 +407,35 @@ small {
     background-color: #667eea !important;
     border-color: #667eea !important;
     color: white !important;
-    font-weight: 600;
+    font-weight: 600 !important;
 }
 
 .pagination .page-item.disabled .page-link {
-    color: #ccc;
-    cursor: not-allowed;
-    background-color: #f8f9fa;
-    border-color: #dee2e6;
+    color: #999 !important;
+    cursor: not-allowed !important;
+    background-color: #f8f9fa !important;
+    border-color: #ddd !important;
 }
 
 @media (max-width: 768px) {
     .pagination {
-        font-size: 0.65rem;
+        gap: 0.2rem;
+    }
+
+    .pagination .page-link {
+        padding: 0.25rem 0.35rem !important;
+        font-size: 0.7rem !important;
+        min-width: 24px !important;
+        min-height: 24px !important;
+    }
+
+    .pagination .page-link i {
+        font-size: 0.65rem !important;
+    }
+}
+
+@media (max-width: 576px) {
+    .pagination {
         gap: 0.15rem;
     }
 
@@ -427,24 +448,6 @@ small {
 
     .pagination .page-link i {
         font-size: 0.6rem !important;
-    }
-}
-
-@media (max-width: 576px) {
-    .pagination {
-        font-size: 0.6rem;
-        gap: 0.1rem;
-    }
-
-    .pagination .page-link {
-        padding: 0.18rem 0.25rem !important;
-        font-size: 0.6rem !important;
-        min-width: 20px !important;
-        min-height: 20px !important;
-    }
-
-    .pagination .page-link i {
-        font-size: 0.55rem !important;
     }
 }
 </style>
@@ -508,7 +511,7 @@ small {
                                             <input type="text" id="pendingSearch" class="form-control" placeholder="Search by name, username, email, or school ID...">
                                         </div>
                                         <button id="approve-selected" class="btn btn-success" title="Approve selected rows">
-                                            <i class="fas fa-check-double me-1"></i> Approve Selectecd
+                                            <i class="fas fa-check-double me-1"></i> Approve Selected
                                         </button>
                                     </div>
                                     <small class="text-muted mt-1 d-block">
