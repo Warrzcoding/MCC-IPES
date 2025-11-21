@@ -356,6 +356,55 @@ small {
         padding: 0.6rem !important;
     }
 }
+
+.pagination {
+    font-size: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+.pagination .page-link {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    min-width: auto;
+}
+
+.pagination .page-link i {
+    font-size: 0.65rem !important;
+}
+
+.pagination .page-item.active .page-link {
+    font-size: 0.75rem;
+}
+
+@media (max-width: 768px) {
+    .pagination {
+        font-size: 0.7rem;
+    }
+
+    .pagination .page-link {
+        padding: 0.2rem 0.4rem;
+        font-size: 0.7rem;
+    }
+
+    .pagination .page-link i {
+        font-size: 0.6rem !important;
+    }
+}
+
+@media (max-width: 576px) {
+    .pagination {
+        font-size: 0.65rem;
+    }
+
+    .pagination .page-link {
+        padding: 0.15rem 0.35rem;
+        font-size: 0.65rem;
+    }
+
+    .pagination .page-link i {
+        font-size: 0.55rem !important;
+    }
+}
 </style>
 
 @if(session('message'))
