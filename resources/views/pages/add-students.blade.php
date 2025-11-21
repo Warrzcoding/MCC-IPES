@@ -1889,10 +1889,38 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
+<!-- DataTables CSS -->
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+
+<script>
 document.addEventListener('DOMContentLoaded', function() {
-    const table = document.getElementById('studentsTable');
-    if (table && !$.fn.DataTable.isDataTable(table)) {
-        $('#studentsTable').DataTable({
+    console.log('DOM loaded, checking for jQuery and table...');
+
+    // Wait for jQuery to be available
+    const checkJQuery = setInterval(function() {
+        if (typeof $ !== 'undefined' && $.fn) {
+            clearInterval(checkJQuery);
+            console.log('jQuery loaded, loading DataTables...');
+
+            // Load DataTables JS
+            const dataTablesScript = document.createElement('script');
+            dataTablesScript.src = 'https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js';
+            dataTablesScript.onload = function() {
+                console.log('DataTables core loaded, loading Bootstrap integration...');
+                const dataTablesBootstrapScript = document.createElement('script');
+                dataTablesBootstrapScript.src = 'https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js';
+                dataTablesBootstrapScript.onload = function() {
+                    console.log('DataTables Bootstrap loaded, initializing...');
+
+                    // Wait a bit more for DOM to be fully ready
+                    setTimeout(function() {
+                        const table = document.getElementById('studentsTable');
+                        console.log('Table element:', table);
+
+                        if (table && !$.fn.DataTable.isDataTable(table)) {
+                            console.log('Initializing DataTable on table with', table.rows.length, 'rows...');
+
+                            const dataTable = $('#studentsTable').DataTable({
             pageLength: 15,
             lengthChange: true,
             lengthMenu: [[15, 20, 25, 50, -1], [15, 20, 25, 50, "All"]],
@@ -1916,8 +1944,48 @@ document.addEventListener('DOMContentLoaded', function() {
             columnDefs: [
                 { orderable: false, targets: [0, 9] }
             ],
-            order: [[1, 'asc']]
-        });
-    }
+            order: [[1, 'asc']],
+            initComplete: function() {
+                console.log('DataTable initialization complete');
+                // Ensure search input is visible
+                const searchInput = $(this).closest('.dataTables_wrapper').find('.dataTables_filter input');
+                if (searchInput.length) {
+                    console.log('Search input found and should be visible');
+                } else {
+                    console.warn('Search input not found');
+                }
+            }
+                            });
+
+                            console.log('DataTable initialized successfully with', dataTable.rows().count(), 'total rows');
+
+                            // Test search functionality
+                            setTimeout(function() {
+                                console.log('Testing search functionality...');
+                                dataTable.search('test').draw();
+                                setTimeout(function() {
+                                    console.log('Search test complete, found', dataTable.rows({search: 'applied'}).count(), 'matching rows');
+                                    dataTable.search('').draw(); // Clear search
+                                }, 500);
+                            }, 1000);
+
+                        } else {
+                            console.log('DataTable already initialized or table not found');
+                        }
+                    }, 100); // Small delay to ensure DOM is ready
+                };
+                document.head.appendChild(dataTablesBootstrapScript);
+            };
+            document.head.appendChild(dataTablesScript);
+        } else {
+            console.log('jQuery not available yet, waiting...');
+        }
+    }, 100); // Check every 100ms for jQuery
+
+    // Timeout after 10 seconds
+    setTimeout(function() {
+        clearInterval(checkJQuery);
+        console.error('Timeout: jQuery not loaded within 10 seconds');
+    }, 10000);
 });
 </script> 

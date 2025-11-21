@@ -24,8 +24,8 @@ class StudentController extends Controller
         // Get all students with evaluation status
        $students = User::where('role', 'student')
     ->orderBy('full_name')
-    ->paginate(15)
-    ->through(function ($student) use ($currentAcademicYear) {
+    ->get()
+    ->map(function ($student) use ($currentAcademicYear) {
 
                 // Get evaluation count for current academic year
                 $evaluationCount = 0;
