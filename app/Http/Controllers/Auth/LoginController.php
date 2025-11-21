@@ -615,10 +615,16 @@ public function login(Request $request)
 
         // Send admin OTP synchronously
         try {
-            \Illuminate\Support\Facades\Mail::to($user->email)->send(new \App\Mail\AdminOtpMail($otp, $user->full_name, 5));
+            \Illuminate\Support\Facades\Mail::mailer('admin_smtp')->to($user->email)->send(new \App\Mail\AdminOtpMail($otp, $user->full_name, 5));
+            \Log::info("Admin OTP resend email sent successfully to {$user->email}");
         } catch (\Throwable $exception) {
-            \Log::error('Admin OTP mail failed: ' . $exception->getMessage());
-            // Continue anyway - user will see the OTP form
+            \Log::warning('Admin OTP resend with admin_smtp failed, attempting default transport: ' . $exception->getMessage());
+            try {
+                \Illuminate\Support\Facades\Mail::to($user->email)->send(new \App\Mail\AdminOtpMail($otp, $user->full_name, 5));
+                \Log::info("Admin OTP resend email sent via fallback to {$user->email}");
+            } catch (\Throwable $fallbackException) {
+                \Log::error('Admin OTP resend mail fallback failed: ' . $fallbackException->getMessage());
+            }
         }
 
         Session::put('admin_otp_pending', true);

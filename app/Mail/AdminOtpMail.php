@@ -34,6 +34,11 @@ class AdminOtpMail extends Mailable
     {
         return new Content(
             view: 'emails.admin-otp',
+            with: [
+                'otpCode' => $this->otpCode,
+                'adminName' => $this->adminName,
+                'expiryMinutes' => $this->expiryMinutes,
+            ],
         );
     }
 

@@ -40,6 +40,11 @@ class OtpVerificationMail extends Mailable
     {
         return new Content(
             view: 'emails.otp-verification',
+            with: [
+                'otpCode' => $this->otpCode,
+                'email' => $this->email,
+                'expiryMinutes' => $this->expiryMinutes,
+            ],
         );
     }
 

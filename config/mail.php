@@ -51,11 +51,12 @@ return [
 
         'admin_smtp' => [
             'transport' => 'smtp',
+            'scheme' => env('ADMIN_MAIL_SCHEME', env('MAIL_SCHEME', 'tls')),
             'host' => env('ADMIN_MAIL_HOST', env('MAIL_HOST', '127.0.0.1')),
             'port' => env('ADMIN_MAIL_PORT', env('MAIL_PORT', 2525)),
             'username' => env('ADMIN_MAIL_USERNAME', env('MAIL_USERNAME')),
             'password' => env('ADMIN_MAIL_PASSWORD', env('MAIL_PASSWORD')),
-            'encryption' => env('ADMIN_MAIL_ENCRYPTION', env('MAIL_ENCRYPTION')),
+            'encryption' => env('ADMIN_MAIL_ENCRYPTION', env('MAIL_ENCRYPTION', 'tls')),
             'timeout' => null,
             'local_domain' => env('ADMIN_MAIL_EHLO_DOMAIN', env('MAIL_EHLO_DOMAIN', parse_url(env('APP_URL', 'http://localhost'), PHP_URL_HOST))),
         ],
