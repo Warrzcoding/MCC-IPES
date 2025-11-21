@@ -1116,7 +1116,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     <p class="text-muted text-center py-4">No students found.</p>
                 @else
                     <div class="table-responsive">
-                        <table class="table table-bordered table-sm" id="studentsTable">
+                        <table class="table table-bordered table-sm table-striped align-middle" id="studentsTable">
                             <thead>
                                 <tr>
                                     <th>Profile</th>
@@ -1397,6 +1397,65 @@ document.addEventListener('DOMContentLoaded', function () {
 
 <!-- SweetAlert2 CDN -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<!-- jQuery (required for DataTables) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- DataTables CSS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+
+<!-- DataTables JS -->
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+
+<style>
+    .dataTables_wrapper {
+        margin-top: 1rem;
+    }
+    
+    .dataTables_paginate {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid #dee2e6;
+    }
+    
+    .dataTables_paginate .paginate_button {
+        padding: 0.5rem 0.75rem;
+        margin: 0 2px;
+        border: 1px solid #dee2e6;
+        border-radius: 0.375rem;
+        background-color: #fff;
+        color: #0d6efd;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .dataTables_paginate .paginate_button:hover:not(.disabled) {
+        background-color: #0d6efd;
+        color: #fff;
+        border-color: #0d6efd;
+    }
+    
+    .dataTables_paginate .paginate_button.current {
+        background-color: #0d6efd;
+        color: #fff;
+        border-color: #0d6efd;
+        font-weight: 600;
+    }
+    
+    .dataTables_paginate .paginate_button.disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+    
+    .dataTables_info {
+        font-size: 0.875rem;
+        color: #6c757d;
+    }
+</style>
 
 <script>
 function deleteStudent(id, name) {
@@ -1965,7 +2024,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 @endif
-
 // Form submission handling with SweetAlert
 document.addEventListener('DOMContentLoaded', function() {
     // Handle edit form submission
@@ -2079,6 +2137,35 @@ document.addEventListener('DOMContentLoaded', function() {
                     confirmButtonText: 'OK'
                 });
             });
+        });
+    }
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    const table = document.getElementById('studentsTable');
+    if (table && !$.fn.DataTable.isDataTable(table)) {
+        $('#studentsTable').DataTable({
+            pageLength: 15,
+            lengthChange: false,
+            searching: false,
+            ordering: true,
+            info: true,
+            paging: true,
+            dom: '<"row"<"col-sm-6"i><"col-sm-6"p>>rt<"row"<"col-sm-6"l><"col-sm-6"p>>',
+            language: {
+                paginate: {
+                    previous: '<i class="fas fa-chevron-left"></i> Previous',
+                    next: 'Next <i class="fas fa-chevron-right"></i>',
+                    first: '<i class="fas fa-step-backward"></i>',
+                    last: '<i class="fas fa-step-forward"></i>'
+                },
+                info: 'Showing _START_ to _END_ of _TOTAL_ students',
+                infoEmpty: 'No students to display'
+            },
+            columnDefs: [
+                { orderable: false, targets: [0, 9] }
+            ],
+            order: [[1, 'asc']]
         });
     }
 });
