@@ -1189,20 +1189,30 @@
                             method: 'POST',
                             body: formData,
                             headers: {
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || document.querySelector('input[name="_token"]').value
+                                'Accept': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || document.querySelector('input[name="_token"]').value,
+                                'X-Requested-With': 'XMLHttpRequest'
                             }
                         });
                     })
                 .then(response => {
                     if (!response.ok) {
-                        return response.json().then(data => {
-                            throw new Error(data.message || `HTTP error! status: ${response.status}`);
+                        return response.text().then(text => {
+                            try {
+                                const data = JSON.parse(text);
+                                throw new Error(data.message || `HTTP error! status: ${response.status}`);
+                            } catch (e) {
+                                if (e.message.startsWith('HTTP')) throw e;
+                                throw new Error(`Server error (${response.status}). Please try again.`);
+                            }
                         });
                     }
-                    return response.json();
+                    return response.json().catch(err => {
+                        throw new Error('Invalid response from server. Please try again.');
+                    });
                 })
                 .then(data => {
-                    if (data.status === 'success') {
+                    if (data && data.status === 'success') {
                         step1.style.display = 'none';
                         step2.style.display = 'block';
                         otpEmail.value = email;
@@ -1224,7 +1234,7 @@
                         Swal.fire({
                             icon: 'error',
                             title: 'Email Already Registered',
-                            text: data.message,
+                            text: data?.message || 'An error occurred. Please try again.',
                             confirmButtonColor: '#667eea',
                             confirmButtonText: 'Try Again'
                         }).then(() => {
