@@ -819,32 +819,10 @@
             </form>
         </div>
         <div id="preSignupStep2" style="display:none;">
-            <form id="preSignupOtpForm" method="POST" action="{{ route('pre_signup.verify_otp') }}">
-                @csrf
-                <input type="hidden" name="ms365_email" id="otp_email">
-                <div class="mb-3 text-center">
-                    <div class="alert alert-info" id="otpTimerAlert">
-                        <i class="fas fa-clock"></i>
-                        <span id="otpTimerText">Time remaining: <span id="otpCountdown">05:00</span></span>
-                    </div>
-                </div>
-                <div class="mb-3 text-center">
-                    <label for="otp_code" class="form-label">Enter the 6-digit code sent to your Outlook email</label>
-                    <div class="d-flex justify-content-center">
-                        <input type="tel" class="form-control text-center"   id="otp_code" name="otp_code" maxlength="6" pattern="\d{6}" inputmode="numeric" required 
-                               style="letter-spacing: 0.5em; font-size: 1.2em; font-weight: 600; max-width: 200px;">
-                    </div>
-                </div>
-                <button type="submit" class="btn btn-success mb-3" id="verifyOtpBtn">Verify Code</button>
-                
-                <!-- Horizontal button layout -->
-                <div class="d-flex justify-content-between gap-2 mt-2">
-                   
-                    <button type="button" class="btn btn-outline-primary flex-fill" id="resendOtpBtn" style="display:none; min-width: 0;">
-                        <i class="fas fa-redo me-1"></i> Resend Code
-                    </button>
-                </div>
-            </form>
+            <input type="hidden" name="ms365_email" id="otp_email">
+            <div class="alert alert-info text-center">
+                <i class="fas fa-spinner fa-spin"></i> Redirecting to signup...
+            </div>
         </div>
         <div id="preSignupStep3" style="display:none;">
             <div class="alert alert-success text-center">
@@ -984,10 +962,6 @@
         const termsModalElement = document.getElementById('termsModal');
         const termsLink = document.getElementById('termsLink');
 
-        let otpTimer;
-        let otpTimeLeft = 300; // 5 minutes in seconds
-        const OTP_TIMEOUT = 300; // 5 minutes in seconds
-        
         // Function to manage back button visibility
         function updateBackButtonVisibility() {
             if (step2.style.display !== 'none') {
@@ -1118,112 +1092,33 @@
             sendVerificationBtn.disabled = true;
         }
 
-        function startOtpTimer() {
-            otpTimeLeft = OTP_TIMEOUT;
-            updateOtpTimerDisplay();
 
-            otpTimer = setInterval(() => {
-                otpTimeLeft--;
-                updateOtpTimerDisplay();
-
-                if (otpTimeLeft <= 0) {
-                    clearInterval(otpTimer);
-                    otpTimeExpired();
-                }
-            }, 1000);
-        }
-
-        function updateOtpTimerDisplay() {
-            const minutes = Math.floor(otpTimeLeft / 60);
-            const seconds = otpTimeLeft % 60;
-            const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-
-            otpCountdown.textContent = timeString;
-
-            if (otpTimeLeft <= 60) {
-                otpTimerAlert.className = 'alert alert-danger';
-                otpTimerAlert.innerHTML = '<i class="fas fa-exclamation-triangle"></i> <span id="otpTimerText">Time remaining: <span id="otpCountdown">' + timeString + '</span></span>';
-                resendOtpBtn.style.display = 'block';
-            } else if (otpTimeLeft <= 120) {
-                otpTimerAlert.className = 'alert alert-warning';
-                otpTimerAlert.innerHTML = '<i class="fas fa-clock"></i> <span id="otpTimerText">Time remaining: <span id="otpCountdown">' + timeString + '</span></span>';
-            } else {
-                otpTimerAlert.className = 'alert alert-info';
-                otpTimerAlert.innerHTML = '<i class="fas fa-clock"></i> <span id="otpTimerText">Time remaining: <span id="otpCountdown">' + timeString + '</span></span>';
-            }
-        }
-
-        function otpTimeExpired() {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Time Expired',
-                text: 'The verification code has expired. Please request a new one.',
-                confirmButtonColor: '#667eea'
-            }).then(() => {
-                // Return to email verification step
-                step2.style.display = 'none';
-                step1.style.display = 'block';
-                document.getElementById('otp_code').value = '';
-                resendOtpBtn.style.display = 'none';
-                updateBackButtonVisibility();
-            });
-        }
-
-        function stopOtpTimer() {
-            if (otpTimer) {
-                clearInterval(otpTimer);
-            }
-        }
 
         function resetPreSignupForm() {
-            // Smooth transition to step 1
             step2.style.display = 'none';
             step3.style.display = 'none';
             step1.style.display = 'block';
             updateBackButtonVisibility();
             
-            // Clear the email input with animation
             const emailInput = document.getElementById('ms365_email');
             if (emailInput) {
                 emailInput.value = '';
                 emailInput.classList.remove('valid', 'invalid');
                 
-                // Add reset animation
                 emailInput.classList.add('reset-animation');
                 setTimeout(() => {
                     emailInput.classList.remove('reset-animation');
-                    emailInput.focus(); // Focus back to email input for better UX
+                    emailInput.focus();
                 }, 600);
             }
             
-            // Reset any form validation states
             const form = document.getElementById('preSignupEmailForm');
             if (form) {
                 form.classList.remove('was-validated');
             }
             
-            // Clear OTP related data
-            const otpCodeInput = document.getElementById('otp_code');
-            if (otpCodeInput) {
-                otpCodeInput.value = '';
-            }
             otpEmail.value = '';
             
-            // Stop any running timer
-            stopOtpTimer();
-            
-            // Hide resend button
-            if (resendOtpBtn) {
-                resendOtpBtn.style.display = 'none';
-            }
-            
-            // Reset timer alert to default state
-            if (otpTimerAlert) {
-                otpTimerAlert.className = 'alert alert-info';
-                otpTimerAlert.innerHTML = '<i class="fas fa-clock"></i> <span id="otpTimerText">Time remaining: <span id="otpCountdown">05:00</span></span>';
-            }
-            
-            // Reset terms checkbox and acceptance
             if (acceptTermsCheckbox) {
                 acceptTermsCheckbox.checked = false;
                 termsAccepted = false;
@@ -1308,24 +1203,24 @@
                 })
                 .then(data => {
                     if (data.status === 'success') {
-                        // Email is valid and not duplicate, proceed to OTP step
                         step1.style.display = 'none';
                         step2.style.display = 'block';
                         otpEmail.value = email;
-                        startOtpTimer();
                         updateBackButtonVisibility();
                         
-                        // Show success message
                         Swal.fire({
                             icon: 'success',
-                            title: 'Verification Code Sent!',
-                            text: data.message,
-                            confirmButtonColor: '#667eea',
-                            timer: 3000,
-                            timerProgressBar: true
+                            title: 'Email Verified!',
+                            text: 'Redirecting to signup...',
+                            timer: 2000,
+                            timerProgressBar: true,
+                            showConfirmButton: false,
+                            allowOutsideClick: false,
+                            allowEscapeKey: false
+                        }).then(() => {
+                            window.location.href = `{{ route('signup') }}?verified_email=${encodeURIComponent(email)}`;
                         });
                     } else {
-                        // Show error message
                         Swal.fire({
                             icon: 'error',
                             title: 'Email Already Registered',
@@ -1333,7 +1228,6 @@
                             confirmButtonColor: '#667eea',
                             confirmButtonText: 'Try Again'
                         }).then(() => {
-                            // Auto reset form after error alert is dismissed
                             resetPreSignupForm();
                         });
                     }
@@ -1357,153 +1251,7 @@
                 });
             });
         }
-        if(otpForm) {
-            otpForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const otpCode = document.getElementById('otp_code').value;
-                const email = otpEmail.value;
-                const submitBtn = otpForm.querySelector('button[type="submit"]');
-                const originalBtnText = submitBtn.innerHTML;
-                
-                // Disable button and show loading state
-                submitBtn.disabled = true;
-                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
-                
-                // Create FormData object
-                const formData = new FormData(otpForm);
-                
-                // Send AJAX request to verify OTP
-                fetch(otpForm.action, {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || document.querySelector('input[name="_token"]').value
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        // OTP is correct - show success and redirect
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Email Verified!',
-                            text: 'Your Microsoft 365 email has been successfully verified. Redirecting to signup...',
-                            timer: 2000,
-                            timerProgressBar: true,
-                            showConfirmButton: false,
-                            allowOutsideClick: false,
-                            allowEscapeKey: false
-                        }).then(() => {
-                            // Stop timer and redirect to signup
-                            stopOtpTimer();
-                            window.location.href = `{{ route('signup') }}?verified_email=${encodeURIComponent(email)}`;
-                        });
-                    } else {
-                        // OTP is incorrect - show error
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Incorrect OTP',
-                            text: data.message,
-                            confirmButtonColor: '#667eea',
-                            confirmButtonText: 'Try Again'
-                        });
-                        
-                        // Clear the OTP input and focus it
-                        document.getElementById('otp_code').value = '';
-                        document.getElementById('otp_code').focus();
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Verification Error',
-                        text: 'Unable to verify OTP. Please check your connection and try again.',
-                        confirmButtonColor: '#667eea'
-                    });
-                })
-                .finally(() => {
-                    // Re-enable button and restore original text
-                    submitBtn.disabled = false;
-                    submitBtn.innerHTML = originalBtnText;
-                });
-            });
-        }
 
-        // Resend OTP button logic:
-        if(resendOtpBtn) {
-            resendOtpBtn.addEventListener('click', function() {
-                const email = otpEmail.value;
-                resendOtpBtn.disabled = true;
-                resendOtpBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Resending...';
-
-                // Create form data for resend request
-                const formData = new FormData();
-                formData.append('ms365_email', email);
-                formData.append('_token', document.querySelector('input[name="_token"]').value);
-
-                // Send AJAX request to resend verification
-                fetch('{{ route("pre_signup.send_verification") }}', {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        startOtpTimer();
-                        document.getElementById('otp_code').value = '';
-                        resendOtpBtn.style.display = 'none';
-
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Code Resent!',
-                            text: data.message,
-                            confirmButtonColor: '#667eea'
-                        });
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: data.message,
-                            confirmButtonColor: '#667eea'
-                        }).then(() => {
-                            // Auto reset form after resend error alert is dismissed
-                            resetPreSignupForm();
-                        });
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Connection Error',
-                        text: 'Unable to resend verification code. Please try again.',
-                        confirmButtonColor: '#667eea'
-                    }).then(() => {
-                        // Auto reset form after resend connection error alert is dismissed
-                        resetPreSignupForm();
-                    });
-                })
-                .finally(() => {
-                    resendOtpBtn.disabled = false;
-                    resendOtpBtn.innerHTML = '<i class="fas fa-redo"></i> Resend Code';
-                });
-            });
-        }
-
-        const otpInput = document.getElementById('otp_code');
-        if (otpInput) {
-            otpInput.addEventListener('input', function(e) {
-                // Remove any non-digit character and limit to 6 digits
-                this.value = this.value.replace(/\D/g, '').slice(0, 6);
-            });
-        }
 
         // Email input validation and auto-completion
         const emailInput = document.getElementById('ms365_email');
