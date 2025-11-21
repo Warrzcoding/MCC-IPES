@@ -398,6 +398,7 @@
             gap: calc(12px * var(--signup-scale));
             width: 100%;
             margin-top: calc(1.2rem * var(--signup-scale));
+            pointer-events: auto;
         }
         .form-navigation .nav-btn {
             display: inline-flex;
@@ -412,6 +413,8 @@
             flex: 0 0 auto;
             min-width: calc(108px * var(--signup-scale));
             transition: all 0.2s ease;
+            pointer-events: auto;
+            cursor: pointer;
         }
         .form-navigation .nav-btn i {
             font-size: calc(1rem * var(--signup-scale));
@@ -433,6 +436,9 @@
             padding: calc(0.35rem * var(--signup-scale)) calc(0.85rem * var(--signup-scale));
             min-height: calc(44px * var(--signup-scale));
             font-size: calc(0.96rem * var(--signup-scale));
+            pointer-events: auto;
+            cursor: pointer;
+            touch-action: manipulation;
         }
         .form-horizontal .form-label {
             font-size: calc(0.98rem * var(--signup-scale));
@@ -625,12 +631,23 @@
                 padding: 16px 12.8px;
                 max-width: 90vw;
                 padding-bottom: 80px;
+                overflow-y: scroll;
             }
             .form-horizontal {
                 max-width: 100%;
             }
             .form-horizontal .form-control, .form-horizontal .form-select {
                 padding: 9.6px 11.2px;
+            }
+            .form-navigation {
+                pointer-events: auto !important;
+                z-index: 100;
+            }
+            .form-navigation .nav-btn,
+            .form-navigation .nav-btn-submit {
+                pointer-events: auto !important;
+                cursor: pointer !important;
+                touch-action: manipulation !important;
             }
         }
         
@@ -642,6 +659,19 @@
                 min-height: 240px;
                 margin: 8px auto;
                 padding-bottom: 72px;
+                overflow-y: scroll;
+            }
+            .form-navigation {
+                pointer-events: auto !important;
+                z-index: 100;
+            }
+            .form-navigation .nav-btn,
+            .form-navigation .nav-btn-submit {
+                pointer-events: auto !important;
+                cursor: pointer !important;
+                touch-action: manipulation !important;
+                -webkit-user-select: none !important;
+                user-select: none !important;
             }
             .signup-header .logo {
                 width: 25.6px;
@@ -718,6 +748,17 @@
         @media (max-width: 360px) {
             .signup-card {
                 --signup-scale: 0.8;
+                overflow-y: scroll;
+            }
+            .form-navigation {
+                pointer-events: auto !important;
+                z-index: 100;
+            }
+            .form-navigation .nav-btn,
+            .form-navigation .nav-btn-submit {
+                pointer-events: auto !important;
+                cursor: pointer !important;
+                touch-action: manipulation !important;
             }
             .upload-buttons-row {
                 gap: 4px;
