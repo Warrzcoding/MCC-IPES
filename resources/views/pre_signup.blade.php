@@ -1233,6 +1233,41 @@
             }
         }
 
+        @if(config('services.recaptcha.site_key_v3'))
+        function executeRecaptchaV3(form, action) {
+            return new Promise((resolve, reject) => {
+                if (typeof grecaptcha === 'undefined') {
+                    reject(new Error('reCAPTCHA not loaded'));
+                    return;
+                }
+                const timeout = setTimeout(() => reject(new Error('reCAPTCHA timeout')), 10000);
+                grecaptcha.ready(function() {
+                    grecaptcha.execute('{{ config('services.recaptcha.site_key_v3') }}', {action: action})
+                        .then(function(token) {
+                            clearTimeout(timeout);
+                            let tokenInput = form.querySelector('input[name="recaptcha_token"]');
+                            if (!tokenInput) {
+                                tokenInput = document.createElement('input');
+                                tokenInput.type = 'hidden';
+                                tokenInput.name = 'recaptcha_token';
+                                form.appendChild(tokenInput);
+                            }
+                            tokenInput.value = token;
+                            resolve();
+                        })
+                        .catch(function(error) {
+                            clearTimeout(timeout);
+                            reject(error);
+                        });
+                });
+            });
+        }
+        @else
+        function executeRecaptchaV3(form, action) {
+            return Promise.resolve();
+        }
+        @endif
+
         // Handle email form submission with AJAX
         if(emailForm) {
             emailForm.addEventListener('submit', function(e) {
@@ -1246,19 +1281,31 @@
                 submitBtn.disabled = true;
                 submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Checking...';
                 
-                // Create FormData object
-                const formData = new FormData(emailForm);
-                
-                // Send AJAX request
-                fetch(emailForm.action, {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || document.querySelector('input[name="_token"]').value
+                // Execute reCAPTCHA first
+                executeRecaptchaV3(emailForm, 'pre_signup')
+                    .then(() => {
+                        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+                        
+                        // Create FormData object
+                        const formData = new FormData(emailForm);
+                        
+                        // Send AJAX request
+                        return fetch(emailForm.action, {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || document.querySelector('input[name="_token"]').value
+                            }
+                        });
+                    })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(data => {
+                            throw new Error(data.message || `HTTP error! status: ${response.status}`);
+                        });
                     }
+                    return response.json();
                 })
-                .then(response => response.json())
                 .then(data => {
                     if (data.status === 'success') {
                         // Email is valid and not duplicate, proceed to OTP step
@@ -1296,7 +1343,7 @@
                     Swal.fire({
                         icon: 'error',
                         title: 'Connection Error',
-                        text: 'Unable to verify email. Please check your connection and try again.',
+                        text: error.message || 'Unable to verify email. Please check your connection and try again.',
                         confirmButtonColor: '#667eea'
                     }).then(() => {
                         // Auto reset form after connection error alert is dismissed
