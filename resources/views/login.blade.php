@@ -1398,7 +1398,7 @@
                     <form method="POST" id="userTypeForm">
                         <div class="mb-4">
                             <label for="user_type" class="form-label">
-                                <i class="fas fa-user-tag"></i> Select User Type
+                                <i class="fas fa-user-tag"></i> Select User Types
                             </label>
                             <select class="form-select" id="user_type" name="user_type" onchange="handleUserTypeChange()" required>
                                 <option value="">Choose your role...</option>
