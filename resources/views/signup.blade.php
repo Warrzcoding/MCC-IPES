@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=yes">
+     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <title>Sign Up - Office Performance Evaluation System</title>
      <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -295,7 +295,6 @@
             min-height: calc(100vh - 48px);
             max-height: calc(100vh - 48px);
             overflow-y: auto;
-            overflow-x: hidden;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -304,7 +303,7 @@
         }
         @media (min-width: 992px) {
             .signup-card {
-                --signup-scale: 0.7;
+                --signup-scale: 0.8;
                 min-height: auto;
                 max-height: none;
                 height: auto;
@@ -399,8 +398,6 @@
             gap: calc(12px * var(--signup-scale));
             width: 100%;
             margin-top: calc(1.2rem * var(--signup-scale));
-            position: relative;
-            z-index: 1000;
         }
         .form-navigation .nav-btn {
             display: inline-flex;
@@ -433,25 +430,9 @@
             min-width: 0;
         }
         .form-navigation .nav-btn-submit {
-            padding: calc(0.5rem * var(--signup-scale)) calc(0.85rem * var(--signup-scale));
-            min-height: calc(48px * var(--signup-scale));
+            padding: calc(0.35rem * var(--signup-scale)) calc(0.85rem * var(--signup-scale));
+            min-height: calc(44px * var(--signup-scale));
             font-size: calc(0.96rem * var(--signup-scale));
-            touch-action: manipulation;
-            -webkit-user-select: none;
-            user-select: none;
-            transition: all 0.15s ease;
-            line-height: 1.2;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .form-navigation .nav-btn-submit:active {
-            transform: scale(0.98);
-            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.25);
-        }
-        .form-navigation .nav-btn-submit:focus {
-            outline: 2px solid #667eea;
-            outline-offset: 2px;
         }
         .form-horizontal .form-label {
             font-size: calc(0.98rem * var(--signup-scale));
@@ -640,168 +621,78 @@
         /* Tablet and medium screens */
         @media (max-width: 768px) and (min-width: 481px) {
             .signup-card {
-                padding: 20px 16px;
+                --signup-scale: 0.8;
+                padding: 16px 12.8px;
                 max-width: 90vw;
-                padding-bottom: 100px;
+                padding-bottom: 80px;
             }
             .form-horizontal {
                 max-width: 100%;
             }
             .form-horizontal .form-control, .form-horizontal .form-select {
-                padding: 12px 14px;
-            }
-            .form-navigation {
-                position: fixed;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                width: 100%;
-                padding: 12px 16px;
-                padding-bottom: max(12px, env(safe-area-inset-bottom));
-                background: #fff;
-                border-top: 1px solid #e9ecef;
-                box-shadow: 0 -2px 8px rgba(0,0,0,0.08);
-                z-index: 1000;
-                gap: 10px;
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-            }
-            .form-navigation .nav-btn-submit {
-                min-height: 52px;
-                padding: 12px 16px;
-                -webkit-tap-highlight-color: transparent;
-                cursor: pointer;
-                border: none;
-                outline: none;
-                position: relative;
-                z-index: 1001;
-                font-size: 15px;
-                font-weight: 700;
-                touch-action: manipulation;
-                -webkit-user-select: none;
-                user-select: none;
-                transition: all 0.15s ease;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-            .form-navigation .nav-btn-submit:active {
-                transform: scale(0.97);
-                box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-            }
-            .form-navigation .nav-btn-submit:focus,
-            .form-navigation .nav-btn-submit:focus-visible {
-                outline: 3px solid rgba(102, 126, 234, 0.5);
-                outline-offset: -3px;
+                padding: 9.6px 11.2px;
             }
         }
         
         @media (max-width: 480px) {
             .signup-card {
-                padding: 16px 12px;
+                --signup-scale: 0.8;
+                padding: 12.8px 9.6px;
                 max-width: 95vw;
-                min-height: 300px;
-                margin: 10px auto;
-                padding-bottom: 90px;
-            }
-            .form-navigation {
-                position: fixed;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                width: 100%;
-                padding: 12px;
-                padding-bottom: max(12px, env(safe-area-inset-bottom));
-                background: #fff;
-                border-top: 1px solid #e9ecef;
-                box-shadow: 0 -2px 8px rgba(0,0,0,0.08);
-                z-index: 1000;
-                gap: 8px;
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-            }
-            .form-navigation .nav-btn-submit {
-                min-height: 54px;
-                padding: 14px 18px;
-                -webkit-tap-highlight-color: transparent;
-                -webkit-touch-callout: none;
-                cursor: pointer;
-                border: none;
-                outline: none;
-                position: relative;
-                z-index: 1001;
-                font-size: 16px;
-                font-weight: 700;
-                touch-action: manipulation;
-                -webkit-user-select: none;
-                user-select: none;
-                transition: all 0.15s ease;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                gap: 8px;
-            }
-            .form-navigation .nav-btn-submit:active {
-                transform: scale(0.96);
-                box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.1), 0 4px 12px rgba(102, 126, 234, 0.35);
-            }
-            .form-navigation .nav-btn-submit:focus,
-            .form-navigation .nav-btn-submit:focus-visible {
-                outline: 3px solid rgba(102, 126, 234, 0.6);
-                outline-offset: -3px;
+                min-height: 240px;
+                margin: 8px auto;
+                padding-bottom: 72px;
             }
             .signup-header .logo {
-                width: 32px;
-                height: 32px;
-                font-size: 1rem;
-                margin-bottom: 8px;
+                width: 25.6px;
+                height: 25.6px;
+                font-size: 0.8rem;
+                margin-bottom: 6.4px;
             }
             .signup-header h2 {
-                font-size: 1rem;
-                margin-bottom: 4px;
+                font-size: 0.8rem;
+                margin-bottom: 3.2px;
             }
             .signup-header p {
-                font-size: 12px;
+                font-size: 9.6px;
             }
             .step-indicator-wrapper {
-                max-width: 120px;
+                max-width: 96px;
             }
             .step-circle {
-                width: 18px;
-                height: 18px;
-                font-size: 0.75rem;
+                width: 14.4px;
+                height: 14.4px;
+                font-size: 0.6rem;
             }
             .step-connector {
-                height: 2px;
-                margin: 0 2px;
+                height: 1.6px;
+                margin: 0 1.6px;
             }
             .form-horizontal {
                 max-width: 100%;
-                gap: 0.8rem;
+                gap: 0.64rem;
             }
             .form-horizontal .form-label {
-                font-size: 0.9rem;
-                margin-bottom: 0.3rem;
+                font-size: 0.72rem;
+                margin-bottom: 0.24rem;
             }
             .form-horizontal .form-control, .form-horizontal .form-select {
-                font-size: 14px;
-                padding: 12px 14px;
-                border-radius: 8px;
+                font-size: 11.2px;
+                padding: 9.6px 11.2px;
+                border-radius: 6.4px;
             }
             .btn-primary, .btn-secondary {
-                font-size: 14px;
-                padding: 12px 0;
-                border-radius: 8px;
+                font-size: 11.2px;
+                padding: 9.6px 0;
+                border-radius: 6.4px;
             }
             .image-preview-compact img {
-                width: 50px !important;
-                height: 50px !important;
+                width: 40px !important;
+                height: 40px !important;
             }
             .upload-btn {
-                font-size: 11px;
-                padding: 5px 8px;
+                font-size: 8.8px;
+                padding: 4px 6.4px;
             }
             .upload-buttons-row {
                 gap: 6px;
@@ -820,6 +711,20 @@
             }
             .camera-btn {
                 width: 100%;
+            }
+        }
+        
+        /* Extra small screens (phones under 360px) */
+        @media (max-width: 360px) {
+            .signup-card {
+                --signup-scale: 0.8;
+            }
+            .upload-buttons-row {
+                gap: 4px;
+            }
+            .camera-video {
+                max-width: 200px;
+                height: 120px;
             }
         }
     </style>
@@ -1171,21 +1076,6 @@
             const prevBtn = document.getElementById('prevBtn');
             const nextBtn = document.getElementById('nextBtn');
             const submitBtn = document.getElementById('submitBtn');
-            
-            if (submitBtn) {
-                submitBtn.addEventListener('touchstart', function(e) {
-                    this.style.transform = 'scale(0.95)';
-                }, { passive: true });
-                
-                submitBtn.addEventListener('touchend', function(e) {
-                    this.style.transform = 'scale(1)';
-                }, { passive: true });
-                
-                submitBtn.addEventListener('touchcancel', function(e) {
-                    this.style.transform = 'scale(1)';
-                }, { passive: true });
-            }
-            
             function showStep(step) {
                 stepGroups.forEach((group, idx) => {
                     group.style.display = (idx === step - 1) ? '' : 'none';
@@ -1704,8 +1594,7 @@
                         { value: 'FM-1H', label: 'FM-1H' },
                         { value: 'FM-1I', label: 'FM-1I' },
                         { value: 'FM-1J', label: 'FM-1J' },
-                        { value: 'FM-1K', label: 'FM-1K' },
-                        { value: 'FM-1L', label: 'FM-1L' }
+                        { value: 'FM-1K', label: 'FM-1K' }
                     ],
                     '2nd Year': [
                         { value: 'FM-2A', label: 'FM-2A' },
@@ -1718,8 +1607,7 @@
                         { value: 'FM-2H', label: 'FM-2H' },
                         { value: 'FM-2I', label: 'FM-2I' },
                         { value: 'FM-2J', label: 'FM-2J' },
-                        { value: 'FM-2K', label: 'FM-2K' },
-                        { value: 'FM-2L', label: 'FM-2L' }
+                        { value: 'FM-2K', label: 'FM-2K' }
                     ],
                     '3rd Year': [
                         { value: 'FM-3A', label: 'FM-3A' },
@@ -1732,8 +1620,7 @@
                         { value: 'FM-3H', label: 'FM-3H' },
                         { value: 'FM-3I', label: 'FM-3I' },
                         { value: 'FM-3J', label: 'FM-3J' },
-                        { value: 'FM-3K', label: 'FM-3K' },
-                        { value: 'FM-3L', label: 'FM-3L' }
+                        { value: 'FM-3K', label: 'FM-3K' }
                     ],
                     '4th Year': [
                         { value: 'FM-4A', label: 'FM-4A' },
@@ -1746,8 +1633,7 @@
                         { value: 'FM-4H', label: 'FM-4H' },
                         { value: 'FM-4I', label: 'FM-4I' },
                         { value: 'FM-4J', label: 'FM-4J' },
-                        { value: 'FM-4K', label: 'FM-4K' },
-                        { value: 'FM-4L', label: 'FM-4L' }
+                        { value: 'FM-4K', label: 'FM-4K' }
                     ]
                 },
                 'BSED': {
