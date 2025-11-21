@@ -1601,9 +1601,9 @@
                         <a href="{{ route('clear.student.verification') }}" class="btn-back-icon" aria-label="Back">
                             <i class="fas fa-arrow-left"></i>
                         </a>
-                      <!--  <a href="{{ route('password.request') }}" class="forgot-link">
+                       <a href="{{ route('password.request') }}" class="forgot-link">
                             Forgot Password?
-                        </a>-->
+                        </a>
                     </div>
                 </form>
 
