@@ -815,7 +815,7 @@
                     </div>
                 </div>
                 
-                <button type="submit" class="btn btn-primary" id="sendVerificationBtn" disabled>Send Verification Code</button>
+                <button type="submit" class="btn btn-primary" id="sendVerificationBtn" disabled>Continue</button>
             </form>
         </div>
         <div id="preSignupStep2" style="display:none;">
