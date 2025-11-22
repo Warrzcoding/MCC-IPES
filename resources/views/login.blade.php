@@ -1440,9 +1440,9 @@
 
                     <!-- Student Signup Link -->
                     <div class="signup-link">
-                        <p>Please report any issues accessing IPES Application! Thank you!!<a href="{{ route('pre_signup') }}">
+                        <p>Please report any issues accessing IPES Application! Thank you!!<!--<a href="{{ route('pre_signup') }}">
                             <i class="fas fa-user-plus"></i> Sign up here
-                        </a></p>
+                        </a>--></p>
                       <!--<p>System is under testing mode , Please try signup again if you have not been approve! Thank you!<a href="{{ route('idcheck') }}">
                             <i class="fas fa-user-plus"></i> Sign up here
                         </a></p>-->
@@ -1605,9 +1605,9 @@
                         <a href="{{ route('clear.student.verification') }}" class="btn-back-icon" aria-label="Back">
                             <i class="fas fa-arrow-left"></i>
                         </a>
-                        <a href="{{ route('password.request') }}" class="forgot-link">
+                      <!--  <a href="{{ route('password.request') }}" class="forgot-link">
                             Forgot Password?
-                        </a>
+                        </a>-->
                     </div>
                 </form>
 
