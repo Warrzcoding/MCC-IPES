@@ -50,6 +50,8 @@ Route::post('/idcheck', [PreSignupController::class, 'checkId'])->name('idcheck.
 // Signup Routes
 Route::get('/signup', [SignupController::class, 'showSignupForm'])->name('signup');
 Route::post('/signup', [SignupController::class, 'signup'])->name('signup.submit');
+Route::post('/check-duplicate-id', [SignupController::class, 'checkDuplicateId'])->name('check.duplicate.id');
+Route::post('/check-user-id-availability', [SignupController::class, 'checkUserIdAvailability'])->name('check.user.id.availability');
 
 // Password Reset Routes
 Route::get('/reset-password', [PasswordResetController::class, 'showResetForm'])->name('password.reset');

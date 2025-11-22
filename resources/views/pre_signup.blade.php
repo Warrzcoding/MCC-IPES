@@ -1196,19 +1196,11 @@
                         });
                     })
                 .then(response => {
-                    if (!response.ok) {
-                        return response.text().then(text => {
-                            try {
-                                const data = JSON.parse(text);
-                                throw new Error(data.message || `HTTP error! status: ${response.status}`);
-                            } catch (e) {
-                                if (e.message.startsWith('HTTP')) throw e;
-                                throw new Error(`Server error (${response.status}). Please try again.`);
-                            }
-                        });
-                    }
                     return response.json().catch(err => {
-                        throw new Error('Invalid response from server. Please try again.');
+                        // If JSON parsing fails, try to get text
+                        return response.text().then(text => {
+                            throw new Error(text || `Server error (${response.status}). Please try again.`);
+                        });
                     });
                 })
                 .then(data => {
@@ -1217,7 +1209,7 @@
                         step2.style.display = 'block';
                         otpEmail.value = email;
                         updateBackButtonVisibility();
-                        
+
                         Swal.fire({
                             icon: 'success',
                             title: 'Email Verified!',
@@ -1231,9 +1223,14 @@
                             window.location.href = `{{ route('signup') }}?verified_email=${encodeURIComponent(email)}`;
                         });
                     } else {
+                        // Handle error responses (including 422 validation errors)
+                        const errorTitle = data?.status === 'error' && data?.message?.includes('already registered')
+                            ? 'Microsoft Account Already in Use'
+                            : 'Verification Failed';
+
                         Swal.fire({
                             icon: 'error',
-                            title: 'Email Already Registered',
+                            title: errorTitle,
                             text: data?.message || 'An error occurred. Please try again.',
                             confirmButtonColor: '#667eea',
                             confirmButtonText: 'Try Again'

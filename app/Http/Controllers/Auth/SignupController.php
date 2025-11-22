@@ -22,11 +22,11 @@ class SignupController extends Controller
     public function signup(Request $request)
     {
         $request->validate([
-            'username' => 'required|string|unique:request_signin',
-            'email' => 'required|email|unique:request_signin',
+            'username' => 'required|string',
+            'email' => 'required|email',
             'password' => 'required|string|min:6|confirmed',
             'full_name' => 'required|string',
-            'school_id' => 'required|string|unique:request_signin|regex:/^\d{4}-\d{4}$/',
+            'school_id' => 'required|string|regex:/^\d{4}-\d{4}$/',
             'course' => 'required|string|in:BSIT,BSHM,BSBA,BSED,BEED',
             'year_level' => 'required|string|in:1st Year,2nd Year,3rd Year,4th Year',
             'section' => 'required|string',
@@ -77,14 +77,46 @@ class SignupController extends Controller
     public function checkDuplicateId(Request $request)
     {
         $school_id = $request->input('school_id');
-        if (!$school_id) {
-            return response()->json(['exists' => false, 'message' => 'No ID provided.'], 400);
+
+        if ($school_id) {
+            $existsInUsers = \App\Models\User::where('school_id', $school_id)->exists();
+            $existsInRequests = \App\Models\RequestSignin::where('school_id', $school_id)->exists();
+
+            if ($existsInUsers) {
+                return response()->json([
+                    'exists' => true,
+                    'message' => 'This School ID is already in use.',
+                    'table' => 'users'
+                ]);
+            } elseif ($existsInRequests) {
+                return response()->json([
+                    'exists' => true,
+                    'message' => 'This School ID is already registered or pending approval.',
+                    'table' => 'request_signin'
+                ]);
+            }
         }
-        $existsInUsers = \App\Models\User::where('school_id', $school_id)->exists();
-        $existsInRequests = \App\Models\RequestSignin::where('school_id', $school_id)->exists();
-        if ($existsInUsers || $existsInRequests) {
-            return response()->json(['exists' => true, 'message' => 'School ID already exists.']);
-        }
+
+
+
         return response()->json(['exists' => false]);
+    }
+
+    public function checkUserIdAvailability(Request $request)
+    {
+        $school_id = $request->input('school_id');
+
+        if ($school_id) {
+            $existsInUsers = \App\Models\User::where('school_id', $school_id)->exists();
+
+            if ($existsInUsers) {
+                return response()->json([
+                    'available' => false,
+                    'message' => 'This School ID is already registered and in use.'
+                ]);
+            }
+        }
+
+        return response()->json(['available' => true]);
     }
 }

@@ -33,7 +33,7 @@ class RequestSigninController extends Controller
         $existingUser = User::where('email', $request->email)
                             ->orWhere('school_id', $request->school_id)
                             ->first();
-        
+
         if ($existingUser) {
             return redirect()->back()->with('message', 'User with this email or school ID already exists. Request not approved.')->with('message_type', 'danger');
         }
@@ -88,7 +88,7 @@ class RequestSigninController extends Controller
                 $existingUser = User::where('email', $req->email)
                                     ->orWhere('school_id', $req->school_id)
                                     ->first();
-                
+
                 if ($existingUser) {
                     $skippedCount++;
                     continue;
