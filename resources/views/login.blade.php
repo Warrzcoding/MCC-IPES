@@ -1565,10 +1565,10 @@
                                 <i class="fab fa-microsoft text-primary"></i>
                             </span>
                             <input type="email" class="form-control" id="email" name="email"
-                                   placeholder="your.email@mcclawis.edu.ph"
-                                   value="{{ session('verified_student_email', '') }}" autocomplete="off"
-                                   pattern="^[a-zA-Z0-9._%+-]+@mcclawis\.([eE][dD][uU]|[eE][dD][iI])\.ph$"
-                                   title="Email must end with @mcclawis.edu.ph or @mcclawis.edi.ph">
+                                placeholder="your.email@mcclawis.edu.ph"
+                                value="{{ session('verified_student_email', '') }}" autocomplete="off"
+                                pattern="^[A-Za-z.\-]+@mcclawis\.([eE][dD][uU]|[eE][dD][iI])\.ph$"
+                                title="Local part may contain letters, dot (.) and hyphen (-); must end with @mcclawis.edu.ph or @mcclawis.edi.ph">
                         </div>
                     </div>
 
@@ -2704,25 +2704,26 @@ window.adminOtpOverlayEnabled = @json($adminOtpOverlayEnabled);
         if (studentEmailInput) {
             studentEmailInput.setAttribute('maxlength', '40');
             studentEmailInput.addEventListener('input', function(e) {
-                let value = this.value.replace(/[^a-zA-Z0-9@.]/g, '');
+                // Allow only letters, dot and hyphen in the local part and @ and dot for the domain
+                let value = this.value.replace(/[^A-Za-z@.\-]/g, '');
                 // Only allow one @
                 const atCount = (value.match(/@/g) || []).length;
                 if (atCount > 1) value = value.replace(/@/g, (m, i) => i === value.indexOf('@') ? '@' : '');
-                // Only allow . after @
+                // If there's a domain part, ensure it only contains letters and dots (no digits)
                 if (value.includes('@')) {
                     let parts = value.split('@');
                     if (parts[1].includes('.')) {
-                        parts[1] = parts[1].replace(/[^a-zA-Z0-9.]/g, '');
+                        parts[1] = parts[1].replace(/[^A-Za-z.]/g, '');
                     } else {
-                        parts[1] = parts[1].replace(/[^a-zA-Z0-9]/g, '');
+                        parts[1] = parts[1].replace(/[^A-Za-z]/g, '');
                     }
                     value = parts.join('@');
                 }
-                // Auto-complete @mcclawis.edu.ph
+                // Auto-complete @mcclawis.edu.ph when user types '@'
                 if (value.endsWith('@')) {
                     value += 'mcclawis.edu.ph';
                 }
-                // Limit to 20 chars
+                // Limit to 40 chars
                 if (value.length > 40) value = value.substring(0, 40);
                 this.value = value;
             });
