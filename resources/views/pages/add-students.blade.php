@@ -245,6 +245,7 @@
                         border-color: #dee2e6;
                         cursor: not-allowed;
                         opacity: 0.6;
+                        pointer-events: none;
                     }
 
                     .page-btn i {
@@ -1399,13 +1400,50 @@ document.addEventListener('DOMContentLoaded', function () {
                                     @endif
 
                                     {{-- Page Numbers --}}
-                                    @foreach($students->getUrlRange(1, $students->lastPage()) as $page => $url)
-                                        @if($page == $students->currentPage())
+                                    @php
+                                        $currentPage = $students->currentPage();
+                                        $lastPage = $students->lastPage();
+                                        $showPages = 8; // Number of page buttons to show
+                                        $halfShow = floor($showPages / 2);
+
+                                        // Calculate start and end page numbers
+                                        $startPage = max(1, $currentPage - $halfShow);
+                                        $endPage = min($lastPage, $currentPage + $halfShow);
+
+                                        // Adjust if we're near the beginning or end
+                                        if ($endPage - $startPage + 1 < $showPages) {
+                                            if ($startPage == 1) {
+                                                $endPage = min($lastPage, $startPage + $showPages - 1);
+                                            } elseif ($endPage == $lastPage) {
+                                                $startPage = max(1, $endPage - $showPages + 1);
+                                            }
+                                        }
+                                    @endphp
+
+                                    {{-- Show first page if not in range --}}
+                                    @if($startPage > 1)
+                                        <a href="{{ $students->url(1) }}" class="page-btn">1</a>
+                                        @if($startPage > 2)
+                                            <span class="page-btn disabled">...</span>
+                                        @endif
+                                    @endif
+
+                                    {{-- Show page range --}}
+                                    @for($page = $startPage; $page <= $endPage; $page++)
+                                        @if($page == $currentPage)
                                             <span class="page-btn active">{{ $page }}</span>
                                         @else
-                                            <a href="{{ $url }}" class="page-btn">{{ $page }}</a>
+                                            <a href="{{ $students->url($page) }}" class="page-btn">{{ $page }}</a>
                                         @endif
-                                    @endforeach
+                                    @endfor
+
+                                    {{-- Show last page if not in range --}}
+                                    @if($endPage < $lastPage)
+                                        @if($endPage < $lastPage - 1)
+                                            <span class="page-btn disabled">...</span>
+                                        @endif
+                                        <a href="{{ $students->url($lastPage) }}" class="page-btn">{{ $lastPage }}</a>
+                                    @endif
 
                                     {{-- Next Button --}}
                                     @if($students->hasMorePages())
