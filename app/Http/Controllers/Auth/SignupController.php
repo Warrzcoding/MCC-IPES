@@ -22,10 +22,10 @@ class SignupController extends Controller
     public function signup(Request $request)
     {
         $request->validate([
-            'username' => 'required|string',
+            'username' => 'required|string|regex:/^[A-Za-z\.]+$/|max:50',
             'email' => 'required|email',
             'password' => 'required|string|min:6|confirmed',
-            'full_name' => 'required|string',
+            'full_name' => 'required|string|regex:/^[A-Za-z\s\.]+$/|max:50',
             'school_id' => 'required|string|regex:/^\d{4}-\d{4}$/',
             'course' => 'required|string|in:BSIT,BSHM,BSBA,BSED,BEED',
             'year_level' => 'required|string|in:1st Year,2nd Year,3rd Year,4th Year',

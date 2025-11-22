@@ -358,7 +358,7 @@
                     </label>
                     <input type="text" class="form-control @error('full_name') is-invalid @enderror"
                            id="full_name" name="full_name" value="{{ old('full_name') }}" required
-                           pattern="[A-Za-z\s]+" maxlength="30"
+                           pattern="[A-Za-z\s\.]+" maxlength="50"
                            placeholder="Enter full name">
                     @error('full_name')
                         <div class="invalid-feedback">{{ $message }}</div>
@@ -371,7 +371,7 @@
                     </label>
                     <input type="text" class="form-control @error('username') is-invalid @enderror"
                            id="username" name="username" value="{{ old('username') }}" required
-                           pattern="[A-Za-z0-9]+" maxlength="20"
+                           pattern="[A-Za-z\.]+" maxlength="50"
                            placeholder="Enter username">
                     @error('username')
                         <div class="invalid-feedback">{{ $message }}</div>
@@ -540,6 +540,38 @@
                         };
                         reader.readAsDataURL(file);
                     }
+                });
+            }
+
+            // Full Name input sanitization (letters, spaces, and dots only)
+            const fullNameInput = document.getElementById('full_name');
+            if (fullNameInput) {
+                fullNameInput.addEventListener('input', function(e) {
+                    let value = e.target.value;
+                    value = value.replace(/[^A-Za-z\s\.]/g, '').substring(0, 50);
+                    e.target.value = value;
+                });
+                fullNameInput.addEventListener('paste', function(e) {
+                    e.preventDefault();
+                    const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+                    let cleanedText = pastedText.replace(/[^A-Za-z\s\.]/g, '').substring(0, 50);
+                    e.target.value = cleanedText;
+                });
+            }
+
+            // Username input sanitization (letters and dots only)
+            const usernameInput = document.getElementById('username');
+            if (usernameInput) {
+                usernameInput.addEventListener('input', function(e) {
+                    let value = e.target.value;
+                    value = value.replace(/[^A-Za-z\.]/g, '').substring(0, 50);
+                    e.target.value = value;
+                });
+                usernameInput.addEventListener('paste', function(e) {
+                    e.preventDefault();
+                    const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+                    let cleanedText = pastedText.replace(/[^A-Za-z\.]/g, '').substring(0, 50);
+                    e.target.value = cleanedText;
                 });
             }
 
@@ -932,8 +964,13 @@
             const signupForm = document.getElementById('signupForm');
             const submitBtn = document.getElementById('submitBtn');
 
+            let isSubmitting = false;
+
             signupForm.addEventListener('submit', async function(e) {
                 e.preventDefault();
+
+                if (isSubmitting) return;
+                isSubmitting = true;
 
                 // Basic validation
                 const fullName = document.getElementById('full_name').value.trim();
@@ -944,24 +981,26 @@
                 const passwordConfirm = document.getElementById('password_confirmation').value;
 
                 // Validate full name
-                if (!/^[A-Za-z\s]+$/.test(fullName) || fullName.length > 30) {
+                if (!/^[A-Za-z\s\.]+$/.test(fullName) || fullName.length > 50) {
                     Swal.fire({
                         icon: 'error',
                         title: 'Invalid Full Name',
-                        text: 'Please enter a valid full name (only letters and spaces, max 30 characters).',
+                        text: 'Please enter a valid full name (only letters, spaces, and dots, max 50 characters).',
                         confirmButtonColor: '#667eea',
                     });
+                    isSubmitting = false;
                     return false;
                 }
 
                 // Validate username
-                if (!/^[A-Za-z0-9]+$/.test(username) || username.length > 20) {
+                if (!/^[A-Za-z\.]+$/.test(username) || username.length > 50) {
                     Swal.fire({
                         icon: 'error',
                         title: 'Invalid Username',
-                        text: 'Please enter a valid username (only letters and numbers, max 20 characters).',
+                        text: 'Please enter a valid username (only letters and dots, max 50 characters).',
                         confirmButtonColor: '#667eea',
                     });
+                    isSubmitting = false;
                     return false;
                 }
 
@@ -974,6 +1013,7 @@
                         html: `Password must include:<br>• ${passwordResult.feedback.join('<br>• ')}`,
                         confirmButtonColor: '#667eea',
                     });
+                    isSubmitting = false;
                     return false;
                 }
 
@@ -985,6 +1025,7 @@
                         text: 'Passwords do not match.',
                         confirmButtonColor: '#667eea',
                     });
+                    isSubmitting = false;
                     return false;
                 }
 
@@ -1024,6 +1065,7 @@
                         schoolIdField.scrollIntoView({ behavior: 'smooth', block: 'center' });
                         schoolIdField.focus();
 
+                        isSubmitting = false;
                         return false;
                     }
                 } catch (error) {
@@ -1034,6 +1076,7 @@
                         text: 'Unable to verify school ID availability. Please try again.',
                         confirmButtonColor: '#667eea',
                     });
+                    isSubmitting = false;
                     return false;
                 }
 
@@ -1051,6 +1094,7 @@
                         console.error('reCAPTCHA verification failed:', error);
                         submitBtn.innerHTML = '<i class="fas fa-user-plus"></i> Create Account';
                         submitBtn.disabled = false;
+                        isSubmitting = false;
 
                         Swal.fire({
                             icon: 'error',
