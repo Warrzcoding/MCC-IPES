@@ -30,51 +30,53 @@
             background: white;
             border-radius: 10px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            padding: 1.6rem;
-            max-width: 400px;
-            width: 100%;
-            margin: 0.8rem;
+            padding: 1.28rem;
+            max-width: 320px;
+            width: 80%;
+            margin: 0.64rem;
         }
 
         .signup-header {
             text-align: center;
-            margin-bottom: 1.2rem;
+            margin-bottom: 0.96rem;
         }
 
         .signup-header h2 {
-            margin: 0.5rem 0 0.25rem 0;
-            font-size: 1.5rem;
+            margin: 0.4rem 0 0.2rem 0;
+            font-size: 1.2rem;
         }
 
         .signup-header p {
-            margin: 0 0 0.5rem 0;
-            font-size: 0.9rem;
+            margin: 0 0 0.4rem 0;
+            font-size: 0.72rem;
         }
 
         .signup-header .logo {
-            width: 48px;
-            height: 48px;
+            width: 38.4px;
+            height: 38.4px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 0.4rem;
-            font-size: 1.2rem;
+            margin: 0 auto 0.32rem;
+            font-size: 0.96rem;
             color: white;
         }
 
         .form-label {
             font-weight: 600;
             color: #333;
-            margin-bottom: 0.4rem;
+            margin-bottom: 0.32rem;
+            font-size: 0.8rem;
         }
 
         .form-control, .form-select {
             border-radius: 8px;
             border: 1px solid #ddd;
-            padding: 0.6rem;
-            font-size: 0.9rem;
+            padding: 0.48rem;
+            font-size: 0.72rem;
+            height: 32px;
         }
 
         .form-control:focus, .form-select:focus {
@@ -86,9 +88,11 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border: none;
             border-radius: 8px;
-            padding: 0.6rem 1.6rem;
+            padding: 0.48rem 1.28rem;
             font-weight: 600;
             width: 100%;
+            font-size: 0.8rem;
+            height: 32px;
         }
 
         .btn-primary:hover {
@@ -97,9 +101,10 @@
 
         .signup-link {
             text-align: center;
-            margin-top: 0.8rem;
-            padding-top: 0.8rem;
+            margin-top: 0.64rem;
+            padding-top: 0.64rem;
             border-top: 1px solid #eee;
+            font-size: 0.72rem;
         }
 
         .signup-link a {
@@ -114,17 +119,18 @@
 
         .image-upload-section {
             text-align: center;
-            margin-bottom: 1.2rem;
-            padding: 0.6rem;
+            margin-bottom: 0.96rem;
+            padding: 0.48rem;
             border: 2px dashed #ddd;
             border-radius: 8px;
+            font-size: 0.65rem;
         }
 
         .image-preview {
-            width: 64px;
-            height: 64px;
+            width: 51.2px;
+            height: 51.2px;
             border-radius: 50%;
-            margin: 0 auto 0.4rem;
+            margin: 0 auto 0.32rem;
             border: 3px solid #667eea;
             object-fit: cover;
         }
@@ -133,9 +139,10 @@
             background: #f8f9fa;
             border: 1px solid #667eea;
             color: #667eea;
-            padding: 0.4rem 0.8rem;
+            padding: 0.32rem 0.64rem;
             border-radius: 6px;
             cursor: pointer;
+            font-size: 0.7rem;
         }
 
         .upload-btn:hover {
@@ -144,11 +151,11 @@
         }
 
         .password-strength {
-            margin-top: 0.4rem;
+            margin-top: 0.32rem;
         }
 
         .password-strength-bar {
-            height: 3px;
+            height: 2.4px;
             background: #eee;
             border-radius: 2px;
             overflow: hidden;
@@ -160,8 +167,8 @@
         }
 
         .password-strength-text {
-            font-size: 0.875rem;
-            margin-top: 0.125rem;
+            font-size: 0.7rem;
+            margin-top: 0.1rem;
         }
 
         .password-weak { background: #dc3545; }
@@ -169,16 +176,79 @@
         .password-good { background: #28a745; }
         .password-strong { background: #20c997; }
 
+        .mb-2 {
+            margin-bottom: 0.48rem !important;
+        }
+        
+        .mt-2 {
+            margin-top: 0.48rem !important;
+        }
+
         @media (max-width: 576px) {
             .signup-container {
-                padding: 1.2rem;
-                margin: 0.4rem;
+                padding: 0.96rem;
+                margin: 0.32rem;
+                max-width: 90%;
+                width: 90%;
+            }
+
+            .signup-header {
+                margin-bottom: 0.8rem;
+            }
+
+            .signup-header h2 {
+                font-size: 1rem;
+                margin: 0.32rem 0 0.16rem 0;
+            }
+
+            .signup-header p {
+                font-size: 0.65rem;
+                margin: 0 0 0.32rem 0;
             }
 
             .signup-header .logo {
-                width: 40px;
-                height: 40px;
-                font-size: 1rem;
+                width: 32px;
+                height: 32px;
+                font-size: 0.8rem;
+                margin: 0 auto 0.24rem;
+            }
+            
+            .form-label {
+                font-size: 0.7rem;
+                margin-bottom: 0.24rem;
+            }
+            
+            .form-control, .form-select {
+                height: 28px;
+                padding: 0.4rem;
+                font-size: 0.68rem;
+            }
+            
+            .btn-primary {
+                height: 28px;
+                padding: 0.4rem;
+                font-size: 0.72rem;
+            }
+            
+            .image-preview {
+                width: 45px;
+                height: 45px;
+            }
+            
+            .image-upload-section {
+                margin-bottom: 0.8rem;
+                padding: 0.4rem;
+                font-size: 0.6rem;
+            }
+            
+            .signup-link {
+                margin-top: 0.48rem;
+                padding-top: 0.48rem;
+                font-size: 0.65rem;
+            }
+            
+            .mb-2 {
+                margin-bottom: 0.4rem !important;
             }
         }
 
