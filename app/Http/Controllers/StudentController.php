@@ -16,14 +16,32 @@ use Illuminate\Support\Facades\DB;
 
 class StudentController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         // Get the active academic year (where is_active = 1)
         $currentAcademicYear = AcademicYear::where('is_active', 1)->first();
         
+        // Build query with search functionality
+        $query = User::where('role', 'student');
+        
+        // Apply search filter if provided
+        if ($request->has('search') && !empty($request->search)) {
+            $searchTerm = '%' . $request->search . '%';
+            $query->where(function ($q) use ($searchTerm) {
+                $q->whereRaw('LOWER(full_name) LIKE LOWER(?)', [$searchTerm])
+                  ->orWhereRaw('LOWER(email) LIKE LOWER(?)', [$searchTerm])
+                  ->orWhereRaw('LOWER(username) LIKE LOWER(?)', [$searchTerm])
+                  ->orWhereRaw('LOWER(school_id) LIKE LOWER(?)', [$searchTerm]);
+            });
+        }
+        
+        // Apply department filter
+        if ($request->has('department') && !empty($request->department)) {
+            $query->where('course', $request->department);
+        }
+        
         // Get all students with evaluation status
-       $students = User::where('role', 'student')
-    ->orderBy('full_name')
+       $students = $query->orderBy('full_name')
     ->paginate(15)
     ->through(function ($student) use ($currentAcademicYear) {
 
@@ -94,11 +112,33 @@ class StudentController extends Controller
                 
                 return $student;
             });
-        
-        // Get count of pending signup requests
+
+            // Apply status filter after evaluation status is calculated
+$statusFilterValue = $request->input('status', '');
+if (!empty($statusFilterValue)) {
+    $students = $students->filter(function ($student) use ($statusFilterValue) {
+        return $student->evaluation_status === $statusFilterValue;
+    })->values();
+    
+    $students = new \Illuminate\Pagination\Paginator(
+        $students,
+        15,
+        $request->input('page', 1),
+        [
+            'path' => $request->url(),
+            'query' => $request->except('page'),
+        ]
+    );
+}
+
+          // Get count of pending signup requests
         $pendingRequestsCount = RequestSignin::where('status', 'pending')->count();
-        
-        return view('pages.add-students', compact('students', 'pendingRequestsCount'));
+          // Get filter values for view
+         $searchTerm = $request->input('search', '');
+         $statusFilter = $request->input('status', '');
+         $departmentFilter = $request->input('department', '');
+
+        return view('pages.add-students', compact('students', 'pendingRequestsCount', 'searchTerm', 'statusFilter', 'departmentFilter'));
     }
 
     public function store(Request $request)

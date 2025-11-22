@@ -133,6 +133,7 @@ Route::middleware(['auth'])->group(function () {
     })->name('profile.test');
 
     // Student CRUD Routes
+    Route::get('/dashboard/students', [StudentController::class, 'index'])->name('students.index');
     Route::post('/dashboard/update-students', [StudentController::class, 'update'])->name('students.update');
     Route::post('/dashboard/delete-students', [StudentController::class, 'destroy'])->name('students.delete');
 

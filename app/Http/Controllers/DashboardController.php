@@ -23,13 +23,23 @@ class DashboardController extends Controller
     {
         $pendingRequestsCount = 0; // Always define to avoid undefined variable error
         // Get current page from URL parameter
-        $page = $request->get('page', 'dashboard');
+        $pageParam = $request->get('page', 'dashboard');
         $allowed_pages = [
             'dashboard', 'add-students', 'add-staff', 'subject-management', 'academicyear',
             'questionnaires', 'staff-ratings', 'department-ratings', 'overall-ratings', 'profile', 'staff-list',
             'evaluates', 'pending-requests', 'rejected-requests', 'login-monitor', // <-- Ensure this is included
             'regularbackup'
         ];
+
+        // Handle pagination parameter conflict
+        // If page parameter is numeric, it's pagination, so get the actual page from session
+        if (is_numeric($pageParam)) {
+            $page = session('dashboard_page', 'dashboard');
+        } else {
+            // Store the page for future pagination requests
+            $page = $pageParam;
+            session(['dashboard_page' => $page]);
+        }
 
         if (!in_array($page, $allowed_pages)) {
             $page = 'dashboard';
@@ -273,7 +283,8 @@ class DashboardController extends Controller
             // Get students with evaluation status - paginated (15 per page)
             $students = User::where('role', 'student')
                 ->orderBy('full_name')
-                ->paginate(15);
+                ->paginate(15)
+                ->appends(['page' => 'add-students']);
             
             // Get ALL evaluations for paginated students in ONE query
             $studentIds = $students->pluck('id')->toArray();

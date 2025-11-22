@@ -199,6 +199,71 @@
                     .modal-compact .form-control::placeholder {
                         font-size: 0.64rem;
                     }
+
+                    /* Custom Pagination Styles */
+                    .pagination-custom {
+                        flex-wrap: wrap;
+                        justify-content: center;
+                    }
+
+                    .page-btn {
+                        display: inline-flex;
+                        align-items: center;
+                        justify-content: center;
+                        min-width: 2rem;
+                        height: 2rem;
+                        padding: 0.25rem 0.5rem;
+                        margin: 0 0.125rem;
+                        font-size: 0.7rem;
+                        font-weight: 500;
+                        text-decoration: none;
+                        color: #495057;
+                        background-color: #fff;
+                        border: 1px solid #dee2e6;
+                        border-radius: 0.25rem;
+                        transition: all 0.15s ease-in-out;
+                        cursor: pointer;
+                    }
+
+                    .page-btn:hover:not(.disabled):not(.active) {
+                        color: #0056b3;
+                        background-color: #e9ecef;
+                        border-color: #adb5bd;
+                        text-decoration: none;
+                    }
+
+                    .page-btn.active {
+                        color: #fff;
+                        background-color: #007bff;
+                        border-color: #007bff;
+                        font-weight: 600;
+                    }
+
+                    .page-btn.disabled {
+                        color: #6c757d;
+                        background-color: #e9ecef;
+                        border-color: #dee2e6;
+                        cursor: not-allowed;
+                        opacity: 0.6;
+                    }
+
+                    .page-btn i {
+                        font-size: 0.65rem;
+                    }
+
+                    /* Responsive pagination */
+                    @media (max-width: 576px) {
+                        .pagination-custom {
+                            gap: 0.25rem;
+                        }
+
+                        .page-btn {
+                            min-width: 1.75rem;
+                            height: 1.75rem;
+                            font-size: 0.65rem;
+                            padding: 0.2rem 0.4rem;
+                        }
+                    }
                 </style>
                 <div class="alert alert-info">
                     <i class="fas fa-info-circle me-2"></i>
@@ -946,6 +1011,100 @@
   box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
 }
 
+/* Enhanced pagination styling - Full pagination with page numbers */
+.page-full-width .pagination {
+  margin-bottom: 0;
+  font-size: 0.85rem;
+}
+
+.page-full-width .pagination .page-link {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-radius: 0.375rem;
+  border: 1px solid #dee2e6;
+  color: #495057;
+  background-color: #fff;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin: 0 0.125rem;
+}
+
+.page-full-width .pagination .page-link:hover:not(.disabled) {
+  background-color: #f8f9fa;
+  border-color: #adb5bd;
+  color: #212529;
+  transform: translateY(-1px);
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  text-decoration: none;
+}
+
+.page-full-width .pagination .page-item.active .page-link {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+  color: #fff;
+  font-weight: 600;
+  box-shadow: 0 0.25rem 0.5rem rgba(13, 110, 253, 0.25);
+}
+
+.page-full-width .pagination .page-item.disabled .page-link {
+  background-color: #e9ecef;
+  border-color: #dee2e6;
+  color: #6c757d;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.page-full-width .pagination .page-link:focus {
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+  outline: none;
+}
+
+/* Pagination info text styling */
+.page-full-width .text-muted.small {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #6c757d !important;
+}
+
+/* Responsive pagination layout */
+@media (max-width: 768px) {
+  .page-full-width .d-flex.justify-content-between.align-items-center {
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: stretch !important;
+  }
+
+  .page-full-width .pagination {
+    justify-content: center;
+  }
+
+  .page-full-width .text-muted.small {
+    text-align: center;
+    order: 2;
+  }
+
+  .page-full-width nav[aria-label="Students pagination"] {
+    order: 1;
+  }
+}
+
+@media (max-width: 576px) {
+  .page-full-width .pagination .page-link {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.85rem;
+    margin: 0 0.0625rem;
+  }
+
+  .page-full-width .pagination {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+
 /* Fix for very small screens - stack buttons vertically if needed */
 @media (max-width: 480px) {
   .actions-column {
@@ -988,9 +1147,9 @@
         {{ $pendingCount }}
     </span>
 </a>
-<!--<a href="{{ route('dashboard', ['page' => 'login-monitor']) }}" class="btn btn-warning me-2 {{ ($newLoginAttemptsCount ?? 0) > 0 ? 'glow-active' : '' }}" id="loginMonitoringBtn" type="button" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-placement="top-end" data-bs-custom-class="popover-sm" data-bs-content="Monitor Login">
+<a href="{{ route('dashboard', ['page' => 'login-monitor']) }}" class="btn btn-warning me-2 {{ ($newLoginAttemptsCount ?? 0) > 0 ? 'glow-active' : '' }}" id="loginMonitoringBtn" type="button" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-placement="top-end" data-bs-custom-class="popover-sm" data-bs-content="Monitor Login">
     <i id="loginMonitorIcon" class="fas fa-user-shield"></i>
-</a>-->
+</a>
 <a href="{{ route('dashboard', ['page' => 'regularbackup']) }}" class="btn btn-warning me-2" id="regularBackupBtn" type="button" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-placement="top-end" data-bs-custom-class="popover-sm" data-bs-content="Regular Backup">
     <i class="fas fa-database"></i>
 </a>
@@ -1221,6 +1380,47 @@ document.addEventListener('DOMContentLoaded', function () {
                             </tbody>
                         </table>
                     </div>
+                    @if($students->hasPages())
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <div class="text-muted small">
+                                Showing {{ $students->firstItem() }}-{{ $students->lastItem() }} of {{ $students->total() }} students
+                            </div>
+                            <nav aria-label="Students pagination">
+                                <div class="pagination-custom d-flex align-items-center gap-1">
+                                    {{-- Previous Button --}}
+                                    @if($students->onFirstPage())
+                                        <span class="page-btn disabled">
+                                            <i class="fas fa-chevron-left"></i>
+                                        </span>
+                                    @else
+                                        <a href="{{ $students->previousPageUrl() }}" class="page-btn">
+                                            <i class="fas fa-chevron-left"></i>
+                                        </a>
+                                    @endif
+
+                                    {{-- Page Numbers --}}
+                                    @foreach($students->getUrlRange(1, $students->lastPage()) as $page => $url)
+                                        @if($page == $students->currentPage())
+                                            <span class="page-btn active">{{ $page }}</span>
+                                        @else
+                                            <a href="{{ $url }}" class="page-btn">{{ $page }}</a>
+                                        @endif
+                                    @endforeach
+
+                                    {{-- Next Button --}}
+                                    @if($students->hasMorePages())
+                                        <a href="{{ $students->nextPageUrl() }}" class="page-btn">
+                                            <i class="fas fa-chevron-right"></i>
+                                        </a>
+                                    @else
+                                        <span class="page-btn disabled">
+                                            <i class="fas fa-chevron-right"></i>
+                                        </span>
+                                    @endif
+                                </div>
+                            </nav>
+                        </div>
+                    @endif
                 @endif
             </div>
         </div>

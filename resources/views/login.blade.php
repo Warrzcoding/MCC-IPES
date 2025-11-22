@@ -1386,7 +1386,7 @@
 
         
 
-            @if (!$show_student_form && !$show_login_form)
+             @if (!$show_student_form && !$show_login_form)
 
                 <!-- Mobile Student Login Button (Visible only on mobile) -->
                 <button type="button" class="mobile-student-btn" onclick="startMobileStudentLogin()" style="{{ ($force_admin_form && $adminOtpOverlayEnabled) ? 'display: none;' : '' }}">
