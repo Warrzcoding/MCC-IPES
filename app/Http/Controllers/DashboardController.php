@@ -283,10 +283,8 @@ class DashboardController extends Controller
             // Build students query with search/filter functionality
             $studentsQuery = User::where('role', 'student');
 
-            // Handle search parameters
+            // Handle search parameter
             $search = $request->get('search');
-            $courseFilter = $request->get('course');
-            $yearLevelFilter = $request->get('year_level');
 
             if ($search) {
                 $studentsQuery->where(function($query) use ($search) {
@@ -297,23 +295,13 @@ class DashboardController extends Controller
                 });
             }
 
-            if ($courseFilter) {
-                $studentsQuery->where('course', $courseFilter);
-            }
-
-            if ($yearLevelFilter) {
-                $studentsQuery->where('year_level', $yearLevelFilter);
-            }
-
             // Get students with evaluation status - paginated (15 per page)
-            // Apply search/filter BEFORE pagination
+            // Apply search BEFORE pagination
             $students = $studentsQuery->orderBy('full_name')
                 ->paginate(15)
                 ->appends([
                     'page' => 'add-students',
-                    'search' => $search,
-                    'course' => $courseFilter,
-                    'year_level' => $yearLevelFilter
+                    'search' => $search
                 ]);
             
             // Get ALL evaluations for paginated students in ONE query
