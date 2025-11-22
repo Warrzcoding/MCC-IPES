@@ -1438,12 +1438,12 @@
                     </div>
                     <!-- Student Signup Link -->
                     <div class="signup-link">
-                       <!-- <p>Don't have an account?<a href="{{ route('pre_signup') }}">
-                            <i class="fas fa-user-plus"></i> Sign up here
-                        </a></p>-->
-                      <p>System is under testing mode , Please try signup again if you have not been approve! Thank you!<a href="{{ route('idcheck') }}">
+                        <p>ystem is under testing mode , Please try signup again if you have not been approve! Thank you!<a href="{{ route('pre_signup') }}">
                             <i class="fas fa-user-plus"></i> Sign up here
                         </a></p>
+                      <!--<p>System is under testing mode , Please try signup again if you have not been approve! Thank you!<a href="{{ route('idcheck') }}">
+                            <i class="fas fa-user-plus"></i> Sign up here
+                        </a></p>-->
                     </div>
                 </form>
                 
