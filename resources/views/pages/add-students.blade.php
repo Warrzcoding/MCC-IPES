@@ -689,7 +689,7 @@
                     </div>
                 </div>
                 
-            </div>
+            </div>-->
         </div>
     </div>
 </div>
@@ -1106,26 +1106,89 @@
   }
 }
 
+/* Search and Filter Form Styling */
+.search-filter-form {
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 0.375rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.search-filter-form .form-label {
+  margin-bottom: 0.25rem;
+  color: #495057;
+  font-weight: 600;
+}
+
+.search-filter-form .form-control,
+.search-filter-form .form-select {
+  border-radius: 0.25rem;
+  border: 1px solid #ced4da;
+  font-size: 0.875rem;
+}
+
+.search-filter-form .form-control:focus,
+.search-filter-form .form-select:focus {
+  border-color: #80bdff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.search-filter-form .btn {
+  white-space: nowrap;
+  font-size: 0.875rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+}
+
+/* Responsive search form */
+@media (max-width: 768px) {
+  .search-filter-form form.d-flex {
+    flex-direction: column !important;
+    gap: 0.75rem !important;
+  }
+
+  .search-filter-form .d-flex.align-items-end.flex-fill {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 0.5rem !important;
+    min-width: 100% !important;
+  }
+
+  .search-filter-form .d-flex.align-items-end.flex-fill .flex-fill {
+    min-width: 100% !important;
+  }
+
+  .search-filter-form .d-flex.align-items-end.flex-fill .btn {
+    align-self: flex-end;
+    width: auto;
+  }
+
+  .search-filter-form [style*="min-width"] {
+    min-width: 100% !important;
+  }
+}
+
 /* Fix for very small screens - stack buttons vertically if needed */
 @media (max-width: 480px) {
   .actions-column {
     min-width: 80px !important;
     width: 80px !important;
   }
-  
+
   .btn-group-actions {
     flex-direction: column !important;
     min-width: 70px;
     gap: 0.125rem !important;
   }
-  
+
   .action-btn {
     min-width: 26px !important;
     width: 26px !important;
     height: 26px !important;
     margin: 0 !important;
   }
-  
+
   .action-btn i {
     font-size: 0.7rem;
   }
@@ -1148,9 +1211,9 @@
         {{ $pendingCount }}
     </span>
 </a>
-<a href="{{ route('dashboard', ['page' => 'login-monitor']) }}" class="btn btn-warning me-2 {{ ($newLoginAttemptsCount ?? 0) > 0 ? 'glow-active' : '' }}" id="loginMonitoringBtn" type="button" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-placement="top-end" data-bs-custom-class="popover-sm" data-bs-content="Monitor Login">
+<!--<a href="{{ route('dashboard', ['page' => 'login-monitor']) }}" class="btn btn-warning me-2 {{ ($newLoginAttemptsCount ?? 0) > 0 ? 'glow-active' : '' }}" id="loginMonitoringBtn" type="button" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-placement="top-end" data-bs-custom-class="popover-sm" data-bs-content="Monitor Login">
     <i id="loginMonitorIcon" class="fas fa-user-shield"></i>
-</a>
+</a>-->
 <a href="{{ route('dashboard', ['page' => 'regularbackup']) }}" class="btn btn-warning me-2" id="regularBackupBtn" type="button" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-placement="top-end" data-bs-custom-class="popover-sm" data-bs-content="Regular Backup">
     <i class="fas fa-database"></i>
 </a>
@@ -1209,8 +1272,63 @@ document.addEventListener('DOMContentLoaded', function () {
                 </div>
             </div>
             <div class="card-body">
+                <!-- Search and Filter Form -->
+                <div class="search-filter-form">
+                    <form method="GET" action="{{ route('dashboard', ['page' => 'add-students']) }}" class="d-flex flex-wrap gap-2 align-items-end">
+                            <input type="hidden" name="page" value="add-students">
+
+                            <div class="d-flex gap-2 align-items-end flex-fill" style="min-width: 250px;">
+                                <div class="flex-fill">
+                                    <label for="search" class="form-label small fw-bold">Search Students</label>
+                                    <input type="text" class="form-control" id="search" name="search"
+                                           value="{{ request('search') }}"
+                                           placeholder="Search by name, username, email, or school ID...">
+                                </div>
+                                <button type="submit" class="btn btn-primary" style="white-space: nowrap;">
+                                    <i class="fas fa-search"></i> Search
+                                </button>
+                            </div>
+
+                            <div style="min-width: 150px;">
+                                <label for="course" class="form-label small fw-bold">Course</label>
+                                <select class="form-select" id="course" name="course">
+                                    <option value="">All Courses</option>
+                                    <option value="BSIT" {{ request('course') == 'BSIT' ? 'selected' : '' }}>BSIT</option>
+                                    <option value="BSHM" {{ request('course') == 'BSHM' ? 'selected' : '' }}>BSHM</option>
+                                    <option value="BSBA" {{ request('course') == 'BSBA' ? 'selected' : '' }}>BSBA</option>
+                                    <option value="BSED" {{ request('course') == 'BSED' ? 'selected' : '' }}>BSED</option>
+                                    <option value="BEED" {{ request('course') == 'BEED' ? 'selected' : '' }}>BEED</option>
+                                </select>
+                            </div>
+
+                            <div style="min-width: 120px;">
+                                <label for="year_level" class="form-label small fw-bold">Year Level</label>
+                                <select class="form-select" id="year_level" name="year_level">
+                                    <option value="">All Years</option>
+                                    <option value="1st Year" {{ request('year_level') == '1st Year' ? 'selected' : '' }}>1st Year</option>
+                                    <option value="2nd Year" {{ request('year_level') == '2nd Year' ? 'selected' : '' }}>2nd Year</option>
+                                    <option value="3rd Year" {{ request('year_level') == '3rd Year' ? 'selected' : '' }}>3rd Year</option>
+                                    <option value="4th Year" {{ request('year_level') == '4th Year' ? 'selected' : '' }}>4th Year</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <a href="{{ route('dashboard', ['page' => 'add-students']) }}" class="btn btn-outline-secondary">
+                                    <i class="fas fa-times"></i> Clear
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
                 @if($students->isEmpty())
-                    <p class="text-muted text-center py-4">No students found.</p>
+                    <p class="text-muted text-center py-4">
+                        @if(request('search') || request('course') || request('year_level'))
+                            No students found matching your search criteria.
+                        @else
+                            No students found.
+                        @endif
+                    </p>
                 @else
                     <div class="table-responsive">
                         <table class="table table-bordered table-sm" id="studentsTable">
