@@ -1436,15 +1436,19 @@
                             <i class="fas fa-arrow-left"></i>
                         </button>
                     </div>
+
+
                     <!-- Student Signup Link -->
                     <div class="signup-link">
-                        <p>System is under testing mode , Please try signup again if you have not been approve! Thank you!<a href="{{ route('pre_signup') }}">
+                        <p>Please report any issues accessing IPES Application! Thank you!!<a href="{{ route('pre_signup') }}">
                             <i class="fas fa-user-plus"></i> Sign up here
                         </a></p>
                       <!--<p>System is under testing mode , Please try signup again if you have not been approve! Thank you!<a href="{{ route('idcheck') }}">
                             <i class="fas fa-user-plus"></i> Sign up here
                         </a></p>-->
                     </div>
+
+                    
                 </form>
                 
                 <!-- Admin Login Form (Initially Hidden) -->
@@ -1601,9 +1605,9 @@
                         <a href="{{ route('clear.student.verification') }}" class="btn-back-icon" aria-label="Back">
                             <i class="fas fa-arrow-left"></i>
                         </a>
-                        <!--<a href="{{ route('password.request') }}" class="forgot-link">
+                        <a href="{{ route('password.request') }}" class="forgot-link">
                             Forgot Password?
-                        </a>-->
+                        </a>
                     </div>
                 </form>
 
@@ -2702,7 +2706,7 @@ window.adminOtpOverlayEnabled = @json($adminOtpOverlayEnabled);
         // Student Email Input Sanitization and Auto-complete
         const studentEmailInput = document.getElementById('email');
         if (studentEmailInput) {
-            studentEmailInput.setAttribute('maxlength', '40');
+            studentEmailInput.setAttribute('maxlength', '100');
             studentEmailInput.addEventListener('input', function(e) {
                 // Allow only letters, dot and hyphen in the local part and @ and dot for the domain
                 let value = this.value.replace(/[^A-Za-z@.\-]/g, '');
@@ -2723,8 +2727,8 @@ window.adminOtpOverlayEnabled = @json($adminOtpOverlayEnabled);
                 if (value.endsWith('@')) {
                     value += 'mcclawis.edu.ph';
                 }
-                // Limit to 40 chars
-                if (value.length > 40) value = value.substring(0, 40);
+                // Limit to 100 chars
+                if (value.length > 100) value = value.substring(0, 100);
                 this.value = value;
             });
         }
