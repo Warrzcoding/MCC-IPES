@@ -24,6 +24,23 @@ class RequestSigninController extends Controller
         return view('pages.pending-requests', compact('pendingRequests', 'rejectedRequests'));
     }
 
+    /**
+     * Generate a unique username by appending a numeric suffix.
+     * Example: 'jdoe' -> 'jdoe1', 'jdoe2', ...
+     */
+    private function generateUniqueUsername($base)
+    {
+        $candidate = $base;
+        $suffix = 1;
+        while (User::where('username', $candidate)->exists()) {
+            $candidate = $base . $suffix;
+            $suffix++;
+            // safety: avoid infinite loop
+            if ($suffix > 1000) break;
+        }
+        return $candidate;
+    }
+
     // Approve a request: move to users table, then delete from request_signin
     public function approve($id)
     {
@@ -41,8 +58,13 @@ class RequestSigninController extends Controller
         DB::beginTransaction();
         try {
             // Create user
+            $usernameToUse = $request->username;
+            if (User::where('username', $usernameToUse)->exists()) {
+                $usernameToUse = $this->generateUniqueUsername($usernameToUse);
+            }
+
             $user = User::create([
-                'username' => $request->username,
+                'username' => $usernameToUse,
                 'email' => $request->email,
                 'password' => $request->password, // Already hashed
                 'full_name' => $request->full_name,
@@ -93,10 +115,15 @@ class RequestSigninController extends Controller
                     $skippedCount++;
                     continue;
                 }
-                
+                // Ensure username uniqueness: if username exists, generate a unique variant
+                $usernameToUse = $req->username;
+                if (User::where('username', $usernameToUse)->exists()) {
+                    $usernameToUse = $this->generateUniqueUsername($usernameToUse);
+                }
+
                 // Create user based on request
                 User::create([
-                    'username' => $req->username,
+                    'username' => $usernameToUse,
                     'email' => $req->email,
                     'password' => $req->password, // Already hashed
                     'full_name' => $req->full_name,
