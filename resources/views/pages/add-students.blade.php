@@ -91,14 +91,11 @@
                         font-size: 0.6rem;
                         padding: 0.16rem 0.2rem;
                     }
+                    .page-full-width .badge,
+                    .page-full-width .status-container span,
                     .page-full-width .status-container .text-info,
                     .page-full-width .status-container .text-secondary {
                         font-size: 0.56rem;
-                        visibility: visible;
-                        opacity: 1;
-                    }
-                    .page-full-width .badge {
-                        font-size: 0.7rem;
                     }
                     .page-full-width .fs-5,
                     .page-full-width .fs-6,
@@ -409,9 +406,223 @@
                         }
                     }
                 </style>
-
-
-
+                <!-- Evaluation Statistics -->
+                <div class="dashboard-cards-row">
+                    <div class="dashboard-card-col">
+                        <div class="card bg-primary text-white glow-card" tabindex="0" style="--glow-rgb: 13,110,253;">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">{{ $students->where('evaluation_count', 0)->count() }}</h5>
+                                <p class="card-text">Never Evaluated</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dashboard-card-col">
+                        <div class="card bg-warning text-white glow-card" tabindex="0" style="--glow-rgb: 255,193,7;">
+                            <div class="card-body text-center">
+                                @php
+                                    $instructorInProgressCount = 0;
+                                    foreach($students as $student) {
+                                        // Get current academic year and active semester
+                                        $currentAcademicYear = \App\Models\AcademicYear::where('is_active', 1)->first();
+                                        $activeSemester = $currentAcademicYear ? (string) $currentAcademicYear->semester : null;
+                                        
+                                        // Get total available instructors for this student with semester filtering
+                                        $instructorNames = \App\Models\Subject::whereRaw('LOWER(TRIM(sub_department)) = ?', [strtolower(trim($student->course))])
+                                            ->whereRaw('LOWER(TRIM(sub_year)) = ?', [strtolower(trim($student->year_level))])
+                                            ->whereRaw('LOWER(TRIM(section)) = ?', [strtolower(trim($student->section))])
+                                            ->when($activeSemester, function ($q) use ($activeSemester) {
+                                                $sem = strtolower(trim((string) $activeSemester));
+                                                $aliases = in_array($sem, ['2','2nd','second','second semester','sem 2','semester 2'])
+                                                    ? ['2','2nd','second','second semester','sem 2','semester 2']
+                                                    : ['1','1st','first','first semester','sem 1','semester 1'];
+                                                $q->where(function ($qq) use ($aliases) {
+                                                    foreach ($aliases as $a) {
+                                                        $qq->orWhereRaw('LOWER(TRIM(semester)) = ?', [$a]);
+                                                    }
+                                                });
+                                            })
+                                            ->whereNotNull('assign_instructor')
+                                            ->where('assign_instructor', '!=', '')
+                                            ->distinct('assign_instructor')
+                                            ->pluck('assign_instructor');
+                                        
+                                        $totalInstructors = \App\Models\Staff::whereIn('full_name', $instructorNames)
+                                            ->where('staff_type', 'teaching')
+                                            ->count();
+                                        
+                                        // Get evaluated instructors count
+                                        $evaluations = \App\Models\Evaluation::where('user_id', $student->id)->get();
+                                        $distinctStaffIds = $evaluations->pluck('staff_id')->unique();
+                                        $evaluatedInstructors = \App\Models\Staff::whereIn('id', $distinctStaffIds)->where('staff_type', 'teaching')->count();
+                                        
+                                        // Check if instructor evaluation is in progress (has some but not all)
+                                        if ($totalInstructors > 0 && $evaluatedInstructors > 0 && $evaluatedInstructors < $totalInstructors) {
+                                            $instructorInProgressCount++;
+                                        }
+                                    }
+                                @endphp
+                                <h5 class="card-title">{{ $instructorInProgressCount }}</h5>
+                                <p class="card-text">Instructor In Progress</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dashboard-card-col">
+                        <div class="card text-white glow-card" tabindex="0" style="background-color: #90EE90; --glow-rgb: 144,238,144;">
+                            <div class="card-body text-center">
+                                @php
+                                    $instructorCompletedCount = 0;
+                                    foreach($students as $student) {
+                                        // Get current academic year and active semester
+                                        $currentAcademicYear = \App\Models\AcademicYear::where('is_active', 1)->first();
+                                        $activeSemester = $currentAcademicYear ? (string) $currentAcademicYear->semester : null;
+                                        
+                                        // Get total available instructors for this student with semester filtering
+                                        $instructorNames = \App\Models\Subject::whereRaw('LOWER(TRIM(sub_department)) = ?', [strtolower(trim($student->course))])
+                                            ->whereRaw('LOWER(TRIM(sub_year)) = ?', [strtolower(trim($student->year_level))])
+                                            ->whereRaw('LOWER(TRIM(section)) = ?', [strtolower(trim($student->section))])
+                                            ->when($activeSemester, function ($q) use ($activeSemester) {
+                                                $sem = strtolower(trim((string) $activeSemester));
+                                                $aliases = in_array($sem, ['2','2nd','second','second semester','sem 2','semester 2'])
+                                                    ? ['2','2nd','second','second semester','sem 2','semester 2']
+                                                    : ['1','1st','first','first semester','sem 1','semester 1'];
+                                                $q->where(function ($qq) use ($aliases) {
+                                                    foreach ($aliases as $a) {
+                                                        $qq->orWhereRaw('LOWER(TRIM(semester)) = ?', [$a]);
+                                                    }
+                                                });
+                                            })
+                                            ->whereNotNull('assign_instructor')
+                                            ->where('assign_instructor', '!=', '')
+                                            ->distinct('assign_instructor')
+                                            ->pluck('assign_instructor');
+                                        
+                                        $totalInstructors = \App\Models\Staff::whereIn('full_name', $instructorNames)
+                                            ->where('staff_type', 'teaching')
+                                            ->count();
+                                        
+                                        // Get evaluated instructors count
+                                        $evaluations = \App\Models\Evaluation::where('user_id', $student->id)->get();
+                                        $distinctStaffIds = $evaluations->pluck('staff_id')->unique();
+                                        $evaluatedInstructors = \App\Models\Staff::whereIn('id', $distinctStaffIds)->where('staff_type', 'teaching')->count();
+                                        
+                                        // Check if all instructors are evaluated
+                                        if ($totalInstructors > 0 && $evaluatedInstructors >= $totalInstructors) {
+                                            $instructorCompletedCount++;
+                                        }
+                                    }
+                                @endphp
+                                <h5 class="card-title">{{ $instructorCompletedCount }}</h5>
+                                <p class="card-text">Instructor Completed</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dashboard-card-col">
+                        <div class="card text-white glow-card" tabindex="0" style="background-color: #ff8c00; --glow-rgb: 255,140,0;">
+                            <div class="card-body text-center">
+                                @php
+                                    $nonTeachingInProgressCount = 0;
+                                    foreach($students as $student) {
+                                        // Get total non-teaching staff
+                                        $totalNonTeaching = \App\Models\Staff::where('staff_type', 'non-teaching')->count();
+                                        
+                                        // Get evaluated non-teaching staff count
+                                        $evaluations = \App\Models\Evaluation::where('user_id', $student->id)->get();
+                                        $distinctStaffIds = $evaluations->pluck('staff_id')->unique();
+                                        $evaluatedNonTeaching = \App\Models\Staff::whereIn('id', $distinctStaffIds)->where('staff_type', 'non-teaching')->count();
+                                        
+                                        // Check if non-teaching evaluation is in progress (has some but not all)
+                                        if ($totalNonTeaching > 0 && $evaluatedNonTeaching > 0 && $evaluatedNonTeaching < $totalNonTeaching) {
+                                            $nonTeachingInProgressCount++;
+                                        }
+                                    }
+                                @endphp
+                                <h5 class="card-title">{{ $nonTeachingInProgressCount }}</h5>
+                                <p class="card-text">Non-teaching In Progress</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dashboard-card-col">
+                        <div class="card bg-success text-white glow-card" tabindex="0" style="--glow-rgb: 25,135,84;">
+                            <div class="card-body text-center">
+                                @php
+                                    $nonTeachingCompletedCount = 0;
+                                    foreach($students as $student) {
+                                        // Get total non-teaching staff
+                                        $totalNonTeaching = \App\Models\Staff::where('staff_type', 'non-teaching')->count();
+                                        
+                                        // Get evaluated non-teaching staff count
+                                        $evaluations = \App\Models\Evaluation::where('user_id', $student->id)->get();
+                                        $distinctStaffIds = $evaluations->pluck('staff_id')->unique();
+                                        $evaluatedNonTeaching = \App\Models\Staff::whereIn('id', $distinctStaffIds)->where('staff_type', 'non-teaching')->count();
+                                        
+                                        // Check if all non-teaching staff are evaluated
+                                        if ($totalNonTeaching > 0 && $evaluatedNonTeaching >= $totalNonTeaching) {
+                                            $nonTeachingCompletedCount++;
+                                        }
+                                    }
+                                @endphp
+                                <h5 class="card-title">{{ $nonTeachingCompletedCount }}</h5>
+                                <p class="card-text">Non-Teaching Completed</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dashboard-card-col">
+                        <div class="card bg-info text-white glow-card" tabindex="0" style="--glow-rgb: 13,202,240;">
+                            <div class="card-body text-center">
+                                @php
+                                    $fullyCompletedCount = 0;
+                                    foreach($students as $student) {
+                                        // Get current academic year and active semester
+                                        $currentAcademicYear = \App\Models\AcademicYear::where('is_active', 1)->first();
+                                        $activeSemester = $currentAcademicYear ? (string) $currentAcademicYear->semester : null;
+                                        
+                                        // Get total available instructors for this student with semester filtering
+                                        $instructorNames = \App\Models\Subject::whereRaw('LOWER(TRIM(sub_department)) = ?', [strtolower(trim($student->course))])
+                                            ->whereRaw('LOWER(TRIM(sub_year)) = ?', [strtolower(trim($student->year_level))])
+                                            ->whereRaw('LOWER(TRIM(section)) = ?', [strtolower(trim($student->section))])
+                                            ->when($activeSemester, function ($q) use ($activeSemester) {
+                                                $sem = strtolower(trim((string) $activeSemester));
+                                                $aliases = in_array($sem, ['2','2nd','second','second semester','sem 2','semester 2'])
+                                                    ? ['2','2nd','second','second semester','sem 2','semester 2']
+                                                    : ['1','1st','first','first semester','sem 1','semester 1'];
+                                                $q->where(function ($qq) use ($aliases) {
+                                                    foreach ($aliases as $a) {
+                                                        $qq->orWhereRaw('LOWER(TRIM(semester)) = ?', [$a]);
+                                                    }
+                                                });
+                                            })
+                                            ->whereNotNull('assign_instructor')
+                                            ->where('assign_instructor', '!=', '')
+                                            ->distinct('assign_instructor')
+                                            ->pluck('assign_instructor');
+                                        
+                                        $totalInstructors = \App\Models\Staff::whereIn('full_name', $instructorNames)
+                                            ->where('staff_type', 'teaching')
+                                            ->count();
+                                        $totalNonTeaching = \App\Models\Staff::where('staff_type', 'non-teaching')->count();
+                                        
+                                        // Get evaluated staff counts
+                                        $evaluations = \App\Models\Evaluation::where('user_id', $student->id)->get();
+                                        $distinctStaffIds = $evaluations->pluck('staff_id')->unique();
+                                        $evaluatedInstructors = \App\Models\Staff::whereIn('id', $distinctStaffIds)->where('staff_type', 'teaching')->count();
+                                        $evaluatedNonTeaching = \App\Models\Staff::whereIn('id', $distinctStaffIds)->where('staff_type', 'non-teaching')->count();
+                                        
+                                        // Check if both instructors and non-teaching staff are fully evaluated
+                                        $instructorsComplete = ($totalInstructors > 0 && $evaluatedInstructors >= $totalInstructors);
+                                        $nonTeachingComplete = ($totalNonTeaching > 0 && $evaluatedNonTeaching >= $totalNonTeaching);
+                                        
+                                        if ($instructorsComplete && $nonTeachingComplete) {
+                                            $fullyCompletedCount++;
+                                        }
+                                    }
+                                @endphp
+                                <h5 class="card-title">{{ $fullyCompletedCount }}</h5>
+                                <p class="card-text">Fully Completed</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
             </div>
         </div>
     </div>
@@ -439,83 +650,26 @@
 }
 
 .evaluation-status-compact .status-container {
-  display: block !important;
-  width: 100% !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-  pointer-events: auto !important;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.25rem;
 }
 
 /* Allow evaluation status column to wrap */
 .evaluation-status-compact {
   white-space: normal !important;
-  visibility: visible !important;
-  opacity: 1 !important;
 }
 
-/* Ensure nested table elements are visible */
-.evaluation-status-compact table {
-  visibility: visible !important;
-  opacity: 1 !important;
-  pointer-events: auto !important;
-}
-
-.evaluation-status-compact table td {
-  visibility: visible !important;
-  opacity: 1 !important;
-  overflow: visible !important;
-  pointer-events: auto !important;
+/* Allow evaluation status column to wrap */
+.evaluation-status-compact {
+  white-space: normal !important;
 }
 
 .evaluation-status-compact .badge {
-  font-size: 0.7rem !important;
-  padding: 0.3em 0.2em !important;
-  line-height: 1.2 !important;
-  font-weight: 600 !important;
-  border-radius: 0.25rem !important;
-  display: block !important;
-  width: 100% !important;
-  min-width: 80px !important;
-  box-sizing: border-box !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-  pointer-events: auto !important;
-}
-
-/* Ensure Bootstrap badge colors are applied */
-.evaluation-status-compact .badge.bg-primary {
-  background-color: #0d6efd !important;
-  color: #fff !important;
-  display: block !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-  pointer-events: auto !important;
-}
-
-.evaluation-status-compact .badge.bg-warning {
-  background-color: #ffc107 !important;
-  color: #000 !important;
-  display: block !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-  pointer-events: auto !important;
-}
-
-.evaluation-status-compact .badge.bg-success {
-  background-color: #198754 !important;
-  color: #fff !important;
-  display: block !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-  pointer-events: auto !important;
-}
-
-/* Handle badges with inline styles */
-.evaluation-status-compact .badge[style*="background-color"] {
-  display: block !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-  pointer-events: auto !important;
+  font-size: 0.75rem;
+  padding: 0.25em 0.5em;
+  line-height: 1.2;
 }
 
 .evaluation-status-compact .status-counts {
@@ -718,18 +872,15 @@
   max-width: 80px;
 }
 
-#studentsTable th:nth-child(9), /* Evaluation Status */
-#studentsTable td:nth-child(9) {
-  min-width: 230px;
-  width: 230px;
-  max-width: 230px;
+#studentsTable th:nth-child(10), /* Evaluation Status */
+#studentsTable td:nth-child(10) {
+  min-width: 160px;
+  max-width: 200px;
   white-space: normal;
-  overflow: visible;
-  visibility: visible !important;
 }
 
-#studentsTable th:nth-child(10), /* Actions */
-#studentsTable td:nth-child(10) {
+#studentsTable th:nth-child(11), /* Actions */
+#studentsTable td:nth-child(11) {
   width: 120px;
   min-width: 120px;
   max-width: 120px;
@@ -837,9 +988,9 @@
         {{ $pendingCount }}
     </span>
 </a>
-<!--<a href="{{ route('dashboard', ['page' => 'login-monitor']) }}" class="btn btn-warning me-2 {{ ($newLoginAttemptsCount ?? 0) > 0 ? 'glow-active' : '' }}" id="loginMonitoringBtn" type="button" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-placement="top-end" data-bs-custom-class="popover-sm" data-bs-content="Monitor Login">
+<a href="{{ route('dashboard', ['page' => 'login-monitor']) }}" class="btn btn-warning me-2 {{ ($newLoginAttemptsCount ?? 0) > 0 ? 'glow-active' : '' }}" id="loginMonitoringBtn" type="button" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-placement="top-end" data-bs-custom-class="popover-sm" data-bs-content="Monitor Login">
     <i id="loginMonitorIcon" class="fas fa-user-shield"></i>
-</a>-->
+</a>
 <a href="{{ route('dashboard', ['page' => 'regularbackup']) }}" class="btn btn-warning me-2" id="regularBackupBtn" type="button" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-placement="top-end" data-bs-custom-class="popover-sm" data-bs-content="Regular Backup">
     <i class="fas fa-database"></i>
 </a>
@@ -902,7 +1053,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     <p class="text-muted text-center py-4">No students found.</p>
                 @else
                     <div class="table-responsive">
-                        <table class="table table-bordered table-sm table-striped align-middle" id="studentsTable">
+                        <table class="table table-bordered table-sm" id="studentsTable">
                             <thead>
                                 <tr>
                                     <th>Profile</th>
@@ -950,43 +1101,82 @@ document.addEventListener('DOMContentLoaded', function () {
                                         <td>{{ $student->section ?? 'N/A' }}</td>
                                         <td class="evaluation-status-compact">
                                             @php
-                                                $teachingCount = $student->evaluated_instructors ?? 0;
-                                                $totalTeachingStaff = $student->total_instructors ?? 0;
-                                                $nonTeachingCount = $student->evaluated_nonteaching ?? 0;
-                                                $totalNonTeachingStaff = $student->total_nonteaching ?? 0;
-                                                
+                                                // Calculate evaluation counts using same logic as evaluates.blade.php
+                                                $evaluations = \App\Models\Evaluation::where('user_id', $student->id)->get();
+                                                $distinctStaffIds = $evaluations->pluck('staff_id')->unique();
+                                                $teachingCount = \App\Models\Staff::whereIn('id', $distinctStaffIds)->where('staff_type', 'teaching')->count();
+                                                $nonTeachingCount = \App\Models\Staff::whereIn('id', $distinctStaffIds)->where('staff_type', 'non-teaching')->count();
+
+                                                // Get total available staff for this student
+                                                $currentAcademicYear = \App\Models\AcademicYear::where('is_active', 1)->first();
+                                                $totalTeachingStaff = 0;
+                                                $totalNonTeachingStaff = 0;
+
+                                                if ($currentAcademicYear) {
+                                                    // Get active semester for filtering
+                                                    $activeSemester = $currentAcademicYear ? (string) $currentAcademicYear->semester : null;
+
+                                                    // Get instructor names for student's specific course, year level, section, and active semester
+                                                    $instructorNames = \App\Models\Subject::whereRaw('LOWER(TRIM(sub_department)) = ?', [strtolower(trim($student->course))])
+                                                        ->whereRaw('LOWER(TRIM(sub_year)) = ?', [strtolower(trim($student->year_level))])
+                                                        ->whereRaw('LOWER(TRIM(section)) = ?', [strtolower(trim($student->section))])
+                                                        ->when($activeSemester, function ($q) use ($activeSemester) {
+                                                            $sem = strtolower(trim((string) $activeSemester));
+                                                            $aliases = in_array($sem, ['2','2nd','second','second semester','sem 2','semester 2'])
+                                                                ? ['2','2nd','second','second semester','sem 2','semester 2']
+                                                                : ['1','1st','first','first semester','sem 1','semester 1'];
+                                                            $q->where(function ($qq) use ($aliases) {
+                                                                foreach ($aliases as $a) {
+                                                                    $qq->orWhereRaw('LOWER(TRIM(semester)) = ?', [$a]);
+                                                                }
+                                                            });
+                                                        })
+                                                        ->whereNotNull('assign_instructor')
+                                                        ->where('assign_instructor', '!=', '')
+                                                        ->distinct('assign_instructor')
+                                                        ->pluck('assign_instructor');
+
+                                                    // Count actual teaching staff records that match these instructor names
+                                                    $totalTeachingStaff = \App\Models\Staff::whereIn('full_name', $instructorNames)
+                                                        ->where('staff_type', 'teaching')
+                                                        ->count();
+                                                    $totalNonTeachingStaff = \App\Models\Staff::where('staff_type', 'non-teaching')->count();
+                                                }
+
+                                                // Determine completion status for each category
                                                 $instructorsComplete = ($totalTeachingStaff > 0 && $teachingCount >= $totalTeachingStaff);
                                                 $nonTeachingComplete = ($totalNonTeachingStaff > 0 && $nonTeachingCount >= $totalNonTeachingStaff);
+                                                $fullyComplete = $instructorsComplete && $nonTeachingComplete;
                                             @endphp
                                             <div class="status-container">
                                                 <table style="width: 100%; border-collapse: collapse; margin: 0; table-layout: fixed;">
                                                     <tr>
                                                         <td style="width: 50%; padding: 0 1px 2px 0; text-align: center;">
                                                             @if($instructorsComplete)
-                                                                <span class="badge" style="background-color: #90EE90; color: #000;">Done</span>
+                                                                <span class="badge" style="background-color: #90EE90; color: #000; font-size: 0.7rem; padding: 0.3em 0.2em; width: 100%; display: block; min-width: 80px; box-sizing: border-box;">Done</span>
                                                             @elseif($teachingCount > 0)
-                                                                <span class="badge bg-warning">Progress</span>
+                                                                <span class="badge bg-warning" style="font-size: 0.7rem; padding: 0.3em 0.2em; width: 100%; display: block; min-width: 80px; box-sizing: border-box;">Progress</span>
                                                             @else
-                                                                <span class="badge bg-primary">Never</span>
+                                                                <span class="badge bg-primary" style="font-size: 0.7rem; padding: 0.3em 0.2em; width: 100%; display: block; min-width: 80px; box-sizing: border-box;">Never</span>
                                                             @endif
                                                         </td>
                                                         <td style="width: 50%; padding: 0 0 2px 1px; text-align: center;">
                                                             @if($nonTeachingComplete)
-                                                                <span class="badge bg-success">Done</span>
+                                                                <span class="badge bg-success" style="font-size: 0.7rem; padding: 0.3em 0.2em; width: 100%; display: block; min-width: 80px; box-sizing: border-box;">Done</span>
                                                             @elseif($nonTeachingCount > 0)
-                                                                <span class="badge" style="background-color: #ff8c00; color: #fff;">Progress</span>
+                                                                <span class="badge" style="background-color: #ff8c00; color: #fff; font-size: 0.7rem; padding: 0.3em 0.2em; width: 100%; display: block; min-width: 80px; box-sizing: border-box;">Progress</span>
                                                             @else
-                                                                <span class="badge bg-primary">Never</span>
+                                                                <span class="badge bg-primary" style="font-size: 0.7rem; padding: 0.3em 0.2em; width: 100%; display: block; min-width: 80px; box-sizing: border-box;">Never</span>
                                                             @endif
                                                         </td>
                                                     </tr>
                                                     <tr>
-                                                        <td style="padding: 0 1px 0 0; text-align: center; font-size: 0.65rem; white-space: normal; overflow: visible;">
+                                                        <td style="padding: 0 1px 0 0; text-align: center; font-size: 0.65rem; white-space: nowrap;">
                                                             <span class="text-info">
                                                                 <i class="fas fa-chalkboard-teacher"></i> {{ $teachingCount }}/{{ $totalTeachingStaff }} Instructors
                                                             </span>
                                                         </td>
-                                                        <td style="padding: 0 0 0 1px; text-align: center; font-size: 0.65rem; white-space: normal; overflow: visible;">
+                                                        <td style="padding: 0 0 0 1px; text-align: center; font-size: 0.65rem; white-space: nowrap;">
                                                             <span class="text-secondary">
                                                                 <i class="fas fa-users"></i> {{ $nonTeachingCount }}/{{ $totalNonTeachingStaff }} Non-teaching
                                                             </span>
@@ -1145,67 +1335,7 @@ document.addEventListener('DOMContentLoaded', function () {
 <!-- SweetAlert2 CDN -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<!-- jQuery (required for DataTables) -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-<!-- DataTables CSS -->
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
-
-<!-- DataTables JS -->
-<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
-
-<style>
-    .dataTables_wrapper {
-        margin-top: 1rem;
-    }
-    
-    .dataTables_paginate {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-top: 1rem;
-        padding-top: 1rem;
-        border-top: 1px solid #dee2e6;
-    }
-    
-    .dataTables_paginate .paginate_button {
-        padding: 0.5rem 0.75rem;
-        margin: 0 2px;
-        border: 1px solid #dee2e6;
-        border-radius: 0.375rem;
-        background-color: #fff;
-        color: #0d6efd;
-        cursor: pointer;
-        transition: all 0.3s ease;
-    }
-    
-    .dataTables_paginate .paginate_button:hover:not(.disabled) {
-        background-color: #0d6efd;
-        color: #fff;
-        border-color: #0d6efd;
-    }
-    
-    .dataTables_paginate .paginate_button.current {
-        background-color: #0d6efd;
-        color: #fff;
-        border-color: #0d6efd;
-        font-weight: 600;
-    }
-    
-    .dataTables_paginate .paginate_button.disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-    }
-    
-    .dataTables_info {
-        font-size: 0.875rem;
-        color: #6c757d;
-    }
-</style>
-
 <script>
-
 function deleteStudent(id, name) {
     Swal.fire({
         title: 'Are you sure?',
@@ -1220,7 +1350,7 @@ function deleteStudent(id, name) {
         if (result.isConfirmed) {
             document.getElementById('deleteStudentId').value = id;
             document.getElementById('studentName').textContent = name;
-
+            
             // Submit the delete form
             const deleteForm = document.getElementById('deleteStudentForm');
             if (deleteForm) {
@@ -1648,9 +1778,7 @@ function formatSchoolId(input) {
                 if (!searchFilter) {
                     found = true;
                 } else {
-                    for (let j = 0; j < cells.length; j++) {
-                        // Skip evaluation status column (index 8) and actions column (index 9)
-                        if (j === 8 || j === 9) continue;
+                    for (let j = 0; j < cells.length - 2; j++) { // -2 to exclude Actions column
                         if (cells[j] && cells[j].textContent.toUpperCase().indexOf(searchFilter) > -1) {
                             found = true;
                             break;
@@ -1660,21 +1788,15 @@ function formatSchoolId(input) {
 
                 // Check status filter (independent of search)
                 if (statusFilter) {
-                    const statusCell = cells[8]; // Evaluation Status column (0-indexed: 8th column)
+                    const statusCell = cells[8]; // Evaluation Status column (moved due to Section column)
                     if (statusCell) {
-                        // Get all badge elements in the status cell
-                        const badges = statusCell.querySelectorAll('.badge');
-                        const badgeTexts = Array.from(badges).map(badge => badge.textContent.trim().toLowerCase());
-
+                        const statusText = statusCell.textContent.trim().toLowerCase();
                         if (statusFilter === 'Done') {
-                            // Match if both badges show "Done"
-                            statusMatch = badgeTexts.length === 2 && badgeTexts.every(text => text === 'done');
+                            statusMatch = statusText.includes('done');
                         } else if (statusFilter === 'In Progress') {
-                            // Match if at least one badge shows "Progress" and no "Never"
-                            statusMatch = badgeTexts.includes('progress') && !badgeTexts.includes('never');
+                            statusMatch = statusText.includes('in progress');
                         } else if (statusFilter === 'Never Evaluated') {
-                            // Match if both badges show "Never"
-                            statusMatch = badgeTexts.length === 2 && badgeTexts.every(text => text === 'never');
+                            statusMatch = statusText.includes('never evaluated');
                         }
                     }
                 }
@@ -1772,6 +1894,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 @endif
+
 // Form submission handling with SweetAlert
 document.addEventListener('DOMContentLoaded', function() {
     // Handle edit form submission
@@ -1887,105 +2010,5 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     }
-});
-
-<!-- DataTables CSS -->
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOM loaded, checking for jQuery and table...');
-
-    // Wait for jQuery to be available
-    const checkJQuery = setInterval(function() {
-        if (typeof $ !== 'undefined' && $.fn) {
-            clearInterval(checkJQuery);
-            console.log('jQuery loaded, loading DataTables...');
-
-            // Load DataTables JS
-            const dataTablesScript = document.createElement('script');
-            dataTablesScript.src = 'https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js';
-            dataTablesScript.onload = function() {
-                console.log('DataTables core loaded, loading Bootstrap integration...');
-                const dataTablesBootstrapScript = document.createElement('script');
-                dataTablesBootstrapScript.src = 'https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js';
-                dataTablesBootstrapScript.onload = function() {
-                    console.log('DataTables Bootstrap loaded, initializing...');
-
-                    // Wait a bit more for DOM to be fully ready
-                    setTimeout(function() {
-                        const table = document.getElementById('studentsTable');
-                        console.log('Table element:', table);
-
-                        if (table && !$.fn.DataTable.isDataTable(table)) {
-                            console.log('Initializing DataTable on table with', table.rows.length, 'rows...');
-
-                            const dataTable = $('#studentsTable').DataTable({
-            pageLength: 15,
-            lengthChange: true,
-            lengthMenu: [[15, 20, 25, 50, -1], [15, 20, 25, 50, "All"]],
-            searching: true,
-            ordering: true,
-            info: true,
-            paging: true,
-            dom: '<"row"<"col-sm-6"l><"col-sm-6"f>>rt<"row"<"col-sm-6"i><"col-sm-6"p>>',
-            language: {
-                paginate: {
-                    previous: '<i class="fas fa-chevron-left"></i> Previous',
-                    next: 'Next <i class="fas fa-chevron-right"></i>',
-                    first: '<i class="fas fa-step-backward"></i>',
-                    last: '<i class="fas fa-step-forward"></i>'
-                },
-                info: 'Showing _START_ to _END_ of _TOTAL_ students',
-                infoEmpty: 'No students to display',
-                lengthMenu: 'Show _MENU_ students per page',
-                search: 'Search students:'
-            },
-            columnDefs: [
-                { orderable: false, targets: [0, 9] }
-            ],
-            order: [[1, 'asc']],
-            initComplete: function() {
-                console.log('DataTable initialization complete');
-                // Ensure search input is visible
-                const searchInput = $(this).closest('.dataTables_wrapper').find('.dataTables_filter input');
-                if (searchInput.length) {
-                    console.log('Search input found and should be visible');
-                } else {
-                    console.warn('Search input not found');
-                }
-            }
-                            });
-
-                            console.log('DataTable initialized successfully with', dataTable.rows().count(), 'total rows');
-
-                            // Test search functionality
-                            setTimeout(function() {
-                                console.log('Testing search functionality...');
-                                dataTable.search('test').draw();
-                                setTimeout(function() {
-                                    console.log('Search test complete, found', dataTable.rows({search: 'applied'}).count(), 'matching rows');
-                                    dataTable.search('').draw(); // Clear search
-                                }, 500);
-                            }, 1000);
-
-                        } else {
-                            console.log('DataTable already initialized or table not found');
-                        }
-                    }, 100); // Small delay to ensure DOM is ready
-                };
-                document.head.appendChild(dataTablesBootstrapScript);
-            };
-            document.head.appendChild(dataTablesScript);
-        } else {
-            console.log('jQuery not available yet, waiting...');
-        }
-    }, 100); // Check every 100ms for jQuery
-
-    // Timeout after 10 seconds
-    setTimeout(function() {
-        clearInterval(checkJQuery);
-        console.error('Timeout: jQuery not loaded within 10 seconds');
-    }, 10000);
 });
 </script> 
