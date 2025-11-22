@@ -1438,12 +1438,12 @@
                     </div>
                     <!-- Student Signup Link -->
                     <div class="signup-link">
-                        <p>Don't have an account?<a href="{{ route('pre_signup') }}">
-                            <i class="fas fa-user-plus"></i> Sign up here
-                        </a></p>
-                      <!--<p>Signing up is temporary close|will open after issue fix? <a href="{{ route('idcheck') }}">
+                       <!-- <p>Don't have an account?<a href="{{ route('pre_signup') }}">
                             <i class="fas fa-user-plus"></i> Sign up here
                         </a></p>-->
+                      <p>System is Temporary down?<!-- <a href="{{ route('idcheck') }}">
+                            <i class="fas fa-user-plus"></i> Sign up here
+                        </a>--></p>
                     </div>
                 </form>
                 
