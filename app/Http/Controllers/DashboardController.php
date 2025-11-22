@@ -269,22 +269,52 @@ class DashboardController extends Controller
         if ($page === 'add-students') {
             // Get the active academic year (where is_active = 1)
             $currentAcademicYear = AcademicYear::where('is_active', 1)->first();
-            
+
             // OPTIMIZATION: Get teaching and non-teaching staff counts ONCE (not in loop)
             $totalTeachingStaffCount = \App\Models\Staff::where('staff_type', 'teaching')->count();
             $totalNonTeachingStaffCount = \App\Models\Staff::where('staff_type', 'non-teaching')->count();
-            
+
             // OPTIMIZATION: Get question IDs ONCE (not in loop)
             $academicYearQuestions = [];
             if ($currentAcademicYear) {
                 $academicYearQuestions = \App\Models\Question::where('academic_year_id', $currentAcademicYear->id)->pluck('id')->toArray();
             }
-            
+
+            // Build students query with search/filter functionality
+            $studentsQuery = User::where('role', 'student');
+
+            // Handle search parameters
+            $search = $request->get('search');
+            $courseFilter = $request->get('course');
+            $yearLevelFilter = $request->get('year_level');
+
+            if ($search) {
+                $studentsQuery->where(function($query) use ($search) {
+                    $query->where('full_name', 'LIKE', '%' . $search . '%')
+                          ->orWhere('username', 'LIKE', '%' . $search . '%')
+                          ->orWhere('email', 'LIKE', '%' . $search . '%')
+                          ->orWhere('school_id', 'LIKE', '%' . $search . '%');
+                });
+            }
+
+            if ($courseFilter) {
+                $studentsQuery->where('course', $courseFilter);
+            }
+
+            if ($yearLevelFilter) {
+                $studentsQuery->where('year_level', $yearLevelFilter);
+            }
+
             // Get students with evaluation status - paginated (15 per page)
-            $students = User::where('role', 'student')
-                ->orderBy('full_name')
+            // Apply search/filter BEFORE pagination
+            $students = $studentsQuery->orderBy('full_name')
                 ->paginate(15)
-                ->appends(['page' => 'add-students']);
+                ->appends([
+                    'page' => 'add-students',
+                    'search' => $search,
+                    'course' => $courseFilter,
+                    'year_level' => $yearLevelFilter
+                ]);
             
             // Get ALL evaluations for paginated students in ONE query
             $studentIds = $students->pluck('id')->toArray();
