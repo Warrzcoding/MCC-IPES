@@ -622,6 +622,35 @@
     margin-left: auto;
     margin-right: auto;
 }
+
+/* Disable Non-Teaching Tab */
+#non-teaching-tab {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+#non-teaching-tab.nav-link {
+    background: linear-gradient(135deg, #cccccc 0%, #aaaaaa 100%);
+    color: #666666;
+}
+#non-teaching-tab.nav-link:hover {
+    color: #666666;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Disable Non-Teaching Select Dropdown */
+#non-teaching select[name="staff_id"] {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+#non-teaching select[name="staff_id"].enhanced-select {
+    background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+    border: 2px solid #e2e8f0;
+    color: #a0aec0;
+}
+.non-teaching-select-overlay {
+    cursor: not-allowed;
+}
 </style>
 <div class="row page-full-width evaluations-page justify-content-center">
     <div class="col-12 col-lg-10 col-xl-8">
@@ -784,13 +813,16 @@
                                         <input type="hidden" name="staff_type" value="non-teaching">
                                         <div class="mb-3">
                                             <label class="form-label fw-bold">Select Staff Member</label>
-                                            <select name="staff_id" class="form-select enhanced-select" required>
-                                                <option value="">Choose a staff member to evaluate...</option>
-                                                @foreach($nonTeachingStaff as $staff)
-                                                    @php $evaluated = in_array($staff->id, $evaluatedNonTeachingIds, true); @endphp
-                                                    <option value="{{ $staff->id }}" @if($evaluated) class="evaluated-option" disabled style="color:#b91c1c;background:#fee2e2;" @endif>{{ $staff->full_name }}@if($evaluated) (Evaluated)@endif</option>
-                                                @endforeach
-                                            </select>
+                                            <div class="non-teaching-select-wrapper" style="position: relative;">
+                                                <select name="staff_id" class="form-select enhanced-select" required disabled>
+                                                    <option value="">Choose a staff member to evaluate...</option>
+                                                    @foreach($nonTeachingStaff as $staff)
+                                                        @php $evaluated = in_array($staff->id, $evaluatedNonTeachingIds, true); @endphp
+                                                        <option value="{{ $staff->id }}" @if($evaluated) class="evaluated-option" disabled style="color:#b91c1c;background:#fee2e2;" @endif>{{ $staff->full_name }}@if($evaluated) (Evaluated)@endif</option>
+                                                    @endforeach
+                                                </select>
+                                                <div class="non-teaching-select-overlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; cursor: not-allowed;"></div>
+                                            </div>
                                         </div>
                                         <div id="nonTeachingQuestions">
                                             @foreach($nonTeachingQuestions->groupBy('title') as $title => $questionsGroup)
@@ -984,10 +1016,92 @@ document.addEventListener('DOMContentLoaded', function() {
         startBtn.addEventListener('click', function() {
             privacyReminder.classList.add('hide');
             evaluationTabsWrapper.style.display = 'block';
+
+            // Setup non-teaching tab disable after tabs are shown
+            setTimeout(function() {
+                const nonTeachingTab = document.getElementById('non-teaching-tab');
+                if (nonTeachingTab) {
+                    nonTeachingTab.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopImmediatePropagation();
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Unavailable',
+                            text: 'Non-Teaching evaluation is currently not available.',
+                            confirmButtonColor: '#667eea',
+                            confirmButtonText: 'OK',
+                            customClass: {
+                                popup: 'animated fadeInDown'
+                            }
+                        });
+                        return false;
+                    });
+                }
+
+                // Setup non-teaching select dropdown disable
+                const nonTeachingSelectOverlay = document.querySelector('.non-teaching-select-overlay');
+                if (nonTeachingSelectOverlay) {
+                    nonTeachingSelectOverlay.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Unavailable',
+                            text: 'Non-Teaching evaluation is currently not available.',
+                            confirmButtonColor: '#667eea',
+                            confirmButtonText: 'OK',
+                            customClass: {
+                                popup: 'animated fadeInDown'
+                            }
+                        });
+                    });
+                }
+            }, 100);
         });
     } else if (evaluationTabsWrapper) {
         // fallback: if privacy reminder not present, show tabs
         evaluationTabsWrapper.style.display = 'block';
+
+        // Setup non-teaching tab disable for fallback case
+        setTimeout(function() {
+            const nonTeachingTab = document.getElementById('non-teaching-tab');
+            if (nonTeachingTab) {
+                nonTeachingTab.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Unavailable',
+                        text: 'Non-Teaching evaluation is currently not available.',
+                        confirmButtonColor: '#667eea',
+                        confirmButtonText: 'OK',
+                        customClass: {
+                            popup: 'animated fadeInDown'
+                        }
+                    });
+                    return false;
+                });
+            }
+
+            // Setup non-teaching select dropdown disable for fallback case
+            const nonTeachingSelectOverlay = document.querySelector('.non-teaching-select-overlay');
+            if (nonTeachingSelectOverlay) {
+                nonTeachingSelectOverlay.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Unavailable',
+                        text: 'Non-Teaching evaluation is currently not available.',
+                        confirmButtonColor: '#667eea',
+                        confirmButtonText: 'OK',
+                        customClass: {
+                            popup: 'animated fadeInDown'
+                        }
+                    });
+                });
+            }
+        }, 100);
     }
     // Teaching tab
     const teachingStaffSelect = document.querySelector('select[name="staff_id"][form]:not([form="nonTeachingForm"])') || document.querySelector('#teaching select[name="staff_id"]');
@@ -1082,8 +1196,6 @@ document.addEventListener('DOMContentLoaded', function() {
         console.error('SweetAlert2 is not loaded!');
     } else {
         console.log('SweetAlert2 is loaded and ready');
-        
-
     }
     
     // Completion overlay functions - no close function needed as overlay should stay permanent
