@@ -33,13 +33,14 @@
                      Staff Members Managements
                 </h5>
             </div>
+            
            <!-- <div class="card-body">
-                <div class="alert alert-info">
+                  <div class="alert alert-info">
                     <i class="fas fa-info-circle me-2"></i>
                     <strong>Staff Management:</strong> This section allows administrators to add and manage teaching staff members.
-                </div>
-                
+                  </div>           
             </div>-->
+
         </div>
     </div>
 </div>

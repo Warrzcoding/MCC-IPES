@@ -32,8 +32,8 @@
                      Students Management
                 </h5>
             </div>
-            <div class="card-body">
-                <style>
+          <div class="card-body">
+               <!-- <style>
                     /* Maintain page width while compacting forms, tables, and modals */
                     .page-full-width .card-header h5 {
                         font-size: 0.95rem;
@@ -271,7 +271,7 @@
                     <strong>Student Management:</strong> This section allows administrators to add and manage student accounts.
                 </div>
                 
-                <style>
+               <<style>
                     /* Responsive dashboard cards with uniform height - ALWAYS SINGLE ROW */
                     .dashboard-cards-row {
                         display: flex;
@@ -471,9 +471,9 @@
                             padding: 0.375rem 0.5rem;
                         }
                     }
-                </style>
+                </style>-->
                 <!-- Evaluation Statistics -->
-                <div class="dashboard-cards-row">
+              <!--<div class="dashboard-cards-row">
                     <div class="dashboard-card-col">
                         <div class="card bg-primary text-white glow-card" tabindex="0" style="--glow-rgb: 13,110,253;">
                             <div class="card-body text-center">
@@ -687,8 +687,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
-                
+                </div> -->      
             </div>
         </div>
     </div>
