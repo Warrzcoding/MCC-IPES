@@ -15,7 +15,10 @@
                 <th>Section</th>
                 <th>Requested At</th>
                 <th>Rejected At</th>
-                <th>Actions</th>
+                <th class="text-center">
+                    Actions
+                    <input type="checkbox" id="select-all-rejected" class="ms-2" title="Select all" />
+                </th>
             </tr>
         </thead>
         <tbody>
@@ -39,12 +42,15 @@
                 <td>{{ $request->created_at->format('Y-m-d H:i') }}</td>
                 <td>{{ $request->updated_at ? $request->updated_at->format('Y-m-d H:i') : '-' }}</td>
                 <td class="text-center">
-                    <button type="button" class="btn btn-danger btn-sm delete-btn" 
-                            onclick="deleteRejectedRequest({{ $request->id }}, '{{ $request->full_name }}')"
-                            style="padding: 6px 12px; font-size: 12px;"
-                            title="Delete Request">
-                        <i class="fas fa-trash me-1"></i>Delete
-                    </button>
+                    <div class="d-flex gap-1 justify-content-center align-items-center">
+                        <input type="checkbox" class="me-2 row-checkbox-rejected" value="{{ $request->id }}" title="Select row" />
+                        <button type="button" class="btn btn-danger btn-sm delete-btn"
+                                onclick="deleteRejectedRequest({{ $request->id }}, '{{ $request->full_name }}')"
+                                style="padding: 6px 12px; font-size: 12px;"
+                                title="Delete Request">
+                            <i class="fas fa-trash me-1"></i>Delete
+                        </button>
+                    </div>
                 </td>
             </tr>
             @endforeach
@@ -95,6 +101,12 @@
             </ul>
         </nav>
     </div>
+
+    <!-- Hidden bulk delete form -->
+    <form id="bulk-delete-form" method="POST" action="{{ route('pending.requests.deleteMultiple') }}" style="display:none;">
+        @csrf
+        <div id="bulk-delete-ids-container"></div>
+    </form>
     @endif
 </div>
 
@@ -223,4 +235,17 @@ function deleteRejectedRequest(requestId, fullName) {
         }
     });
 }
+
+// Select all functionality for rejected requests
+document.addEventListener('DOMContentLoaded', function() {
+    const selectAllRejected = document.getElementById('select-all-rejected');
+    if (selectAllRejected) {
+        selectAllRejected.addEventListener('change', function() {
+            const checked = this.checked;
+            document.querySelectorAll('.row-checkbox-rejected').forEach(cb => {
+                cb.checked = checked;
+            });
+        });
+    }
+});
 </script> 

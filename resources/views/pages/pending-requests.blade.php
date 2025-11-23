@@ -101,7 +101,7 @@
     margin-left: 1rem !important;
 }
 
-#approve-selected {
+#approve-selected, #delete-selected {
     padding: 0.35rem 0.65rem !important;
     font-size: 0.65rem !important;
     border-radius: 8px !important;
@@ -176,7 +176,7 @@ small {
         font-size: 0.62rem;
     }
 
-    #approve-selected {
+    #approve-selected, #delete-selected {
         padding: 0.3rem 0.55rem !important;
         font-size: 0.6rem !important;
     }
@@ -201,7 +201,7 @@ small {
         font-size: 0.6rem;
     }
 
-    #approve-selected {
+    #approve-selected, #delete-selected {
         padding: 0.3rem 0.5rem !important;
         font-size: 0.58rem !important;
     }
@@ -264,7 +264,7 @@ small {
         font-size: 0.55rem;
     }
 
-    #approve-selected {
+    #approve-selected, #delete-selected {
         padding: 0.25rem 0.45rem !important;
         font-size: 0.53rem !important;
     }
@@ -552,13 +552,18 @@ small {
                                         <i class="fas fa-search me-2"></i>
                                         Search Rejected Requests
                                     </label>
-                                    <div class="search-input-group">
-                                        <i class="fas fa-search search-icon"></i>
-                                        <input type="text" id="rejectedSearch" class="form-control" placeholder="Search by name, username, email, or school ID...">
+                                    <div class="d-flex gap-2 align-items-center">
+                                        <div class="search-input-group flex-grow-1">
+                                            <i class="fas fa-search search-icon"></i>
+                                            <input type="text" id="rejectedSearch" class="form-control" placeholder="Search by name, username, email, or school ID...">
+                                        </div>
+                                        <button id="delete-selected" class="btn btn-danger" title="Delete selected rows">
+                                            <i class="fas fa-trash me-1"></i> Delete Selected
+                                        </button>
                                     </div>
                                     <small class="text-muted mt-1 d-block">
-                                        <i class="fas fa-info-circle me-1"></i>
-                                        Review rejected requests for potential reconsideration
+                                        <i class="fas fa-lightbulb me-1"></i>
+                                        Tip: Select rows and click "Delete Selected" to permanently delete multiple rejected requests
                                     </small>
                                 </div>
                                 <div class="col-md-4 text-end">
@@ -773,6 +778,57 @@ document.addEventListener('DOMContentLoaded', function() {
             if (e.target && e.target.id === 'select-all') {
                 const checked = e.target.checked;
                 document.querySelectorAll('#pendingRequestsTable .row-checkbox').forEach(cb => {
+                    cb.checked = checked;
+                });
+            }
+        });
+    }
+
+    // Bulk delete selected rejected requests
+    const deleteSelectedBtn = document.getElementById('delete-selected');
+    if (deleteSelectedBtn) {
+        deleteSelectedBtn.addEventListener('click', function() {
+            const checkboxes = document.querySelectorAll('#rejectedRequestsTable .row-checkbox-rejected:checked');
+            if (checkboxes.length === 0) {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'No selection',
+                    text: 'Please select at least one rejected request to delete.'
+                });
+                return;
+            }
+
+            Swal.fire({
+                title: 'Delete selected rejected requests?',
+                text: `You are about to permanently delete ${checkboxes.length} rejected request(s). This action cannot be undone.`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, delete',
+                cancelButtonText: 'Cancel',
+                reverseButtons: true
+            }).then((result) => {
+                if (!result.isConfirmed) return;
+                const form = document.getElementById('bulk-delete-form');
+                const container = document.getElementById('bulk-delete-ids-container');
+                container.innerHTML = '';
+                checkboxes.forEach(cb => {
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'ids[]';
+                    input.value = cb.value;
+                    container.appendChild(input);
+                });
+                form.submit();
+            });
+        });
+
+        // Master select-all toggle for rejected requests
+        document.addEventListener('change', function(e) {
+            if (e.target && e.target.id === 'select-all-rejected') {
+                const checked = e.target.checked;
+                document.querySelectorAll('#rejectedRequestsTable .row-checkbox-rejected').forEach(cb => {
                     cb.checked = checked;
                 });
             }

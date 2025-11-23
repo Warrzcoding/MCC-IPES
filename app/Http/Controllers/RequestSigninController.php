@@ -169,17 +169,64 @@ class RequestSigninController extends Controller
         return redirect()->back()->with('message', 'Request rejected.')->with('message_type', 'warning');
     }
 
+    // Delete multiple rejected requests permanently
+    public function deleteMultiple(Request $request)
+    {
+        $ids = $request->input('ids', []);
+        if (empty($ids) || !is_array($ids)) {
+            return redirect()->back()->with('message', 'No requests selected.')->with('message_type', 'info');
+        }
+
+        DB::beginTransaction();
+        try {
+            $requests = RequestSignin::whereIn('id', $ids)->get();
+            $deletedCount = 0;
+            $skippedCount = 0;
+
+            foreach ($requests as $req) {
+                // Only allow deletion of rejected requests
+                if ($req->status !== 'rejected') {
+                    $skippedCount++;
+                    continue;
+                }
+
+                // Delete the profile image if it exists
+                if ($req->profile_image) {
+                    $imagePath = public_path('uploads/students/' . $req->profile_image);
+                    if (file_exists($imagePath)) {
+                        unlink($imagePath);
+                    }
+                }
+
+                $req->delete();
+                $deletedCount++;
+            }
+
+            DB::commit();
+            $message = "$deletedCount rejected request(s) deleted";
+            if ($skippedCount > 0) {
+                $message .= ", $skippedCount skipped (not rejected status).";
+            } else {
+                $message .= "!";
+            }
+            return redirect()->back()->with('message', $message)->with('message_type', 'success');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('message', 'Error deleting selected requests: ' . $e->getMessage())->with('message_type', 'danger');
+        }
+    }
+
     // Delete a rejected request permanently
     public function delete($id)
     {
         $request = RequestSignin::findOrFail($id);
-        
+
         // Only allow deletion of rejected requests
         if ($request->status !== 'rejected') {
             return redirect()->back()
                 ->with('message', 'Only rejected requests can be deleted.')->with('message_type', 'danger');
         }
-        
+
         try {
             // Delete the profile image if it exists
             if ($request->profile_image) {
@@ -188,12 +235,12 @@ class RequestSigninController extends Controller
                     unlink($imagePath);
                 }
             }
-            
+
             $request->delete();
-            
+
             return redirect()->back()
                 ->with('message', 'Rejected request deleted successfully.')->with('message_type', 'success');
-                
+
         } catch (\Exception $e) {
             return redirect()->back()
                 ->with('message', 'Error deleting request: ' . $e->getMessage())->with('message_type', 'danger');

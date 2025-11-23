@@ -161,6 +161,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/dashboard/pending-requests/{id}/reject', [RequestSigninController::class, 'reject'])->name('pending.requests.reject');
     Route::post('/dashboard/pending-requests/{id}/delete', [RequestSigninController::class, 'delete'])->name('pending.requests.delete');
     Route::post('/dashboard/pending-requests/approve-multiple', [RequestSigninController::class, 'approveMultiple'])->name('pending.requests.approveMultiple');
+    Route::post('/dashboard/pending-requests/delete-multiple', [RequestSigninController::class, 'deleteMultiple'])->name('pending.requests.deleteMultiple');
 });
 
 
