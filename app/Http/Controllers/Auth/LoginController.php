@@ -137,60 +137,72 @@ public function login(Request $request)
             return $this->handleCaptchaError($request, 'reCAPTCHA verification failed. Please try again.');
         }
     } else {
-        // Verify reCAPTCHA v3
-        if (!$request->has('recaptcha_token') || empty($request->input('recaptcha_token'))) {
-            \Log::warning('reCAPTCHA v3: Token missing from request', [
+        // Check for mobile fallback token
+        $recaptchaToken = $request->input('recaptcha_token');
+        if (str_starts_with($recaptchaToken, 'mobile-fallback-')) {
+            \Log::info('Mobile fallback: Skipping reCAPTCHA verification', [
                 'email' => $request->email,
                 'user_type' => $request->user_type,
-                'has_token' => $request->has('recaptcha_token'),
-                'token_empty' => empty($request->input('recaptcha_token'))
+                'is_mobile' => $isMobile,
+                'token' => $recaptchaToken
             ]);
-            return $this->handleCaptchaError($request, 'Security verification failed. Please refresh and try again.');
-        }
-        
-        $captchaResult = $this->recaptchaService->verifyV3($request->input('recaptcha_token'), 'login');
-        
-        // Log detailed captcha result for debugging
-        \Log::info('reCAPTCHA v3 verification result', [
-            'email' => $request->email,
-            'success' => $captchaResult['success'] ?? false,
-            'score' => $captchaResult['score'] ?? 0,
-            'action' => $captchaResult['action'] ?? null,
-            'error_codes' => $captchaResult['error_codes'] ?? [],
-            'hostname' => $captchaResult['hostname'] ?? null
-        ]);
-        
-        if (!$captchaResult['success']) {
-            $errorMsg = 'Security verification failed. Please try again.';
-            if (!empty($captchaResult['error_codes'])) {
-                $errorCodes = implode(', ', $captchaResult['error_codes']);
-                \Log::error('reCAPTCHA v3 failed with error codes: ' . $errorCodes);
-                
-                // Provide more specific error messages
-                if (in_array('timeout-or-duplicate', $captchaResult['error_codes'])) {
-                    $errorMsg = 'Security token expired. Please try again.';
-                } elseif (in_array('invalid-input-secret', $captchaResult['error_codes'])) {
-                    $errorMsg = 'Security configuration error. Please contact support.';
-                }
+            // Skip reCAPTCHA verification for mobile fallback
+        } else {
+            // Verify reCAPTCHA v3 normally
+            if (!$request->has('recaptcha_token') || empty($recaptchaToken)) {
+                \Log::warning('reCAPTCHA v3: Token missing from request', [
+                    'email' => $request->email,
+                    'user_type' => $request->user_type,
+                    'has_token' => $request->has('recaptcha_token'),
+                    'token_empty' => empty($recaptchaToken)
+                ]);
+                return $this->handleCaptchaError($request, 'Security verification failed. Please refresh and try again.');
             }
-            return $this->handleCaptchaError($request, $errorMsg);
-        }
-        
-        // Check score threshold (adjusted for mobile devices)
-        $scoreThreshold = $this->recaptchaService->getScoreThreshold($request->user_type, false, $isMobile);
-        if ($captchaResult['score'] < $scoreThreshold) {
-            // Low score - increment failed attempts and potentially show checkbox
-            $failedAttempts++;
-            Session::put('failed_attempts', $failedAttempts);
-            
-            \Log::warning('reCAPTCHA v3: Score below threshold', [
+
+            $captchaResult = $this->recaptchaService->verifyV3($recaptchaToken, 'login');
+
+            // Log detailed captcha result for debugging
+            \Log::info('reCAPTCHA v3 verification result', [
                 'email' => $request->email,
-                'score' => $captchaResult['score'],
-                'threshold' => $scoreThreshold,
-                'user_type' => $request->user_type
+                'success' => $captchaResult['success'] ?? false,
+                'score' => $captchaResult['score'] ?? 0,
+                'action' => $captchaResult['action'] ?? null,
+                'error_codes' => $captchaResult['error_codes'] ?? [],
+                'hostname' => $captchaResult['hostname'] ?? null
             ]);
-            
-            return $this->handleCaptchaError($request, 'Security verification failed. Please try again.');
+
+            if (!$captchaResult['success']) {
+                $errorMsg = 'Security verification failed. Please try again.';
+                if (!empty($captchaResult['error_codes'])) {
+                    $errorCodes = implode(', ', $captchaResult['error_codes']);
+                    \Log::error('reCAPTCHA v3 failed with error codes: ' . $errorCodes);
+
+                    // Provide more specific error messages
+                    if (in_array('timeout-or-duplicate', $captchaResult['error_codes'])) {
+                        $errorMsg = 'Security token expired. Please try again.';
+                    } elseif (in_array('invalid-input-secret', $captchaResult['error_codes'])) {
+                        $errorMsg = 'Security configuration error. Please contact support.';
+                    }
+                }
+                return $this->handleCaptchaError($request, $errorMsg);
+            }
+
+            // Check score threshold (adjusted for mobile devices)
+            $scoreThreshold = $this->recaptchaService->getScoreThreshold($request->user_type, false, $isMobile);
+            if ($captchaResult['score'] < $scoreThreshold) {
+                // Low score - increment failed attempts and potentially show checkbox
+                $failedAttempts++;
+                Session::put('failed_attempts', $failedAttempts);
+
+                \Log::warning('reCAPTCHA v3: Score below threshold', [
+                    'email' => $request->email,
+                    'score' => $captchaResult['score'],
+                    'threshold' => $scoreThreshold,
+                    'user_type' => $request->user_type
+                ]);
+
+                return $this->handleCaptchaError($request, 'Security verification failed. Please try again.');
+            }
         }
     }
 

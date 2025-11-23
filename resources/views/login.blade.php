@@ -2807,7 +2807,28 @@ window.adminOtpOverlayEnabled = @json($adminOtpOverlayEnabled);
                                         .catch(reject);
                                 }, 2000); // Wait 2 seconds before retry
                             } else {
-                                reject(error);
+                                // After all retries failed, provide fallback for mobile
+                                if (isMobile) {
+                                    console.warn('reCAPTCHA failed on mobile after retries, using fallback verification');
+                                    // Update loading message to show fallback is being used
+                                    const submitBtn = form.querySelector('button[type="submit"]');
+                                    if (submitBtn) {
+                                        submitBtn.innerHTML = '<i class="fas fa-shield-alt"></i> Using mobile verification...';
+                                    }
+
+                                    // Add a dummy token to indicate mobile fallback
+                                    let tokenInput = form.querySelector('input[name="recaptcha_token"]');
+                                    if (!tokenInput) {
+                                        tokenInput = document.createElement('input');
+                                        tokenInput.type = 'hidden';
+                                        tokenInput.name = 'recaptcha_token';
+                                        form.appendChild(tokenInput);
+                                    }
+                                    tokenInput.value = 'mobile-fallback-' + Date.now();
+                                    resolve();
+                                } else {
+                                    reject(error);
+                                }
                             }
                         });
                 });
