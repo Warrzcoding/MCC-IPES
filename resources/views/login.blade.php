@@ -1440,7 +1440,7 @@
 
                     <!-- Student Signup Link -->
                     <div class="signup-link">
-                        <p>Signup now! Please note your login credentials, Forgot pasword is temporary unavailable!<a href="{{ route('pre_signup') }}">
+                        <p>Signup now! Please note your login credentials!<a href="{{ route('pre_signup') }}">
                             <i class="fas fa-user-plus"></i> Sign up here
                         </a></p>
                       <!--<p>System is under testing mode , Please try signup again if you have not been approve! Thank you!<a href="{{ route('idcheck') }}">
@@ -1571,8 +1571,8 @@
                             <input type="email" class="form-control" id="email" name="email"
                                 placeholder="your.email@mcclawis.edu.ph"
                                 value="{{ session('verified_student_email', '') }}" autocomplete="off"
-                                pattern="^[A-Za-z.\-]+@mcclawis\.([eE][dD][uU]|[eE][dD][iI])\.ph$"
-                                title="Local part may contain letters, dot (.) and hyphen (-); must end with @mcclawis.edu.ph or @mcclawis.edi.ph">
+                                pattern="^[A-Za-z0-9._\-]+@mcclawis\.([eE][dD][uU]|[eE][dD][iI])\.ph$"
+                                title="Local part may contain letters, numbers, dot (.), hyphen (-) and underscore (_); must end with @mcclawis.edu.ph or @mcclawis.edi.ph">
                         </div>
                     </div>
 
@@ -1613,7 +1613,7 @@
 
                 <!-- Student Signup Link -->
                 <div class="signup-link">
-                   <p>System is in Testing mode?<!-- <a href="{{ route('pre_signup', ['type' => 'student', 'school_id' => $student_data['school_id']]) }}">
+                   <p>Sorry, Forgot Password is unavailable right now!<!-- <a href="{{ route('pre_signup', ['type' => 'student', 'school_id' => $student_data['school_id']]) }}">
                         <i class="fas fa-user-plus"></i> Sign up here
                     </a>--></p>
                 </div>
@@ -2708,8 +2708,8 @@ window.adminOtpOverlayEnabled = @json($adminOtpOverlayEnabled);
         if (studentEmailInput) {
             studentEmailInput.setAttribute('maxlength', '100');
             studentEmailInput.addEventListener('input', function(e) {
-                // Allow only letters, dot and hyphen in the local part and @ and dot for the domain
-                let value = this.value.replace(/[^A-Za-z@.\-]/g, '');
+                // Allow only letters, numbers, dot, hyphen and underscore in the local part and @ and dot for the domain
+                let value = this.value.replace(/[^A-Za-z0-9@._\-]/g, '');
                 // Only allow one @
                 const atCount = (value.match(/@/g) || []).length;
                 if (atCount > 1) value = value.replace(/@/g, (m, i) => i === value.indexOf('@') ? '@' : '');
@@ -2719,7 +2719,7 @@ window.adminOtpOverlayEnabled = @json($adminOtpOverlayEnabled);
                     if (parts[1].includes('.')) {
                         parts[1] = parts[1].replace(/[^A-Za-z.]/g, '');
                     } else {
-                        parts[1] = parts[1].replace(/[^A-Za-z]/g, '');
+                        parts[1] = parts[1].replace(/[^A-Za-z0-9._\-]/g, '');
                     }
                     value = parts.join('@');
                 }
