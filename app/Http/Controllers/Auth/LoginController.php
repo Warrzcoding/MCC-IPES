@@ -115,6 +115,10 @@ public function login(Request $request)
     // Emit an auth.failed-like record as early as possible if email not found
     // Note: The main failed logging occurs later; this is just an early hook if needed.
 
+    // Detect mobile device
+    $userAgent = $request->userAgent();
+    $isMobile = $this->isMobileDevice($userAgent);
+
     // reCAPTCHA verification
     $failedAttempts = Session::get('failed_attempts', 0);
     $captchaType = $this->recaptchaService->determineCaptchaType($failedAttempts, $request->user_type);
@@ -172,8 +176,8 @@ public function login(Request $request)
             return $this->handleCaptchaError($request, $errorMsg);
         }
         
-        // Check score threshold
-        $scoreThreshold = $this->recaptchaService->getScoreThreshold($request->user_type);
+        // Check score threshold (adjusted for mobile devices)
+        $scoreThreshold = $this->recaptchaService->getScoreThreshold($request->user_type, false, $isMobile);
         if ($captchaResult['score'] < $scoreThreshold) {
             // Low score - increment failed attempts and potentially show checkbox
             $failedAttempts++;
@@ -842,5 +846,24 @@ public function login(Request $request)
                 'exception' => $e
             ]);
         }
+    }
+
+    /**
+     * Detect if the request is from a mobile device
+     */
+    private function isMobileDevice($userAgent)
+    {
+        $mobileKeywords = [
+            'Android', 'webOS', 'iPhone', 'iPad', 'iPod', 'BlackBerry',
+            'IEMobile', 'Opera Mini', 'Mobile', 'Phone'
+        ];
+
+        foreach ($mobileKeywords as $keyword) {
+            if (stripos($userAgent, $keyword) !== false) {
+                return true;
+            }
+        }
+
+        return false;
     }
 } 
