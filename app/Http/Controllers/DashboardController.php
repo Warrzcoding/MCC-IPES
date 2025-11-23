@@ -699,7 +699,6 @@ class DashboardController extends Controller
 
     public function updateProfile(Request $request)
     {
-        \Log::info('Profile update method called', ['user_id' => Auth::id(), 'request_method' => $request->method(), 'request_url' => $request->url(), 'is_ajax' => $request->ajax(), 'expects_json' => $request->expectsJson()]);
         $user = Auth::user();
         
         $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
@@ -716,9 +715,7 @@ class DashboardController extends Controller
         ]);
         
         if ($validator->fails()) {
-            if ($request->ajax() || $request->expectsJson()) {
-                return response()->json(['success' => false, 'message' => 'Validation failed. Please check your input.', 'errors' => $validator->errors()]);
-            }
+            // For web requests, always redirect with session data
             return redirect()->back()
                 ->withErrors($validator)
                 ->withInput()
@@ -780,17 +777,13 @@ class DashboardController extends Controller
             
             $user->save();
 
-            if ($request->ajax() || $request->expectsJson()) {
-                return response()->json(['success' => true, 'message' => 'Profile updated successfully!']);
-            }
+            // For web requests, always redirect with session data for sweet alert
             return redirect()->back()
                 ->with('message', 'Profile updated successfully!')
                 ->with('message_type', 'success');
 
         } catch (\Exception $e) {
-            if ($request->ajax() || $request->expectsJson()) {
-                return response()->json(['success' => false, 'message' => 'Error updating profile. Please try again.']);
-            }
+            // For web requests, always redirect with session data
             return redirect()->back()
                 ->withInput()
                 ->with('message', 'Error updating profile. Please try again.')
