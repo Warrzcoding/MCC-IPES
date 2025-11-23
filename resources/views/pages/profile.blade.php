@@ -24,21 +24,29 @@
                     icon = 'info';
                     title = 'Info';
             }
-            Swal.fire({
-                icon: icon,
-                title: title,
-                text: @json(session('message')),
-                confirmButtonColor: '#667eea',
-                customClass: {
-                    popup: 'success-alert-popup'
+
+            // Use toast style alert that auto-redirects
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
                 },
-                didOpen: function() {
-                    const popup = Swal.getPopup();
-                    if (popup) {
-                        popup.style.minWidth = window.innerWidth <= 768 ? '280px' : '350px';
-                        popup.style.minHeight = window.innerWidth <= 768 ? '200px' : '220px';
-                    }
+                willClose: () => {
+                    // Auto redirect after toast closes
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 500);
                 }
+            });
+
+            Toast.fire({
+                icon: icon,
+                title: @json(session('message'))
             });
         });
     </script>
