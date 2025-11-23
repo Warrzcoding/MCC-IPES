@@ -74,7 +74,15 @@ class User extends Authenticatable
     // Update last active time
     public function updateLastActive()
     {
-        $this->update(['last_active_at' => now()]);
+        try {
+            $this->update(['last_active_at' => now()]);
+        } catch (\Exception $e) {
+            // Log the error but don't throw it
+            \Log::error('Failed to update last_active_at', [
+                'user_id' => $this->id,
+                'error' => $e->getMessage()
+            ]);
+        }
     }
 
     /**

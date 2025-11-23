@@ -25,28 +25,23 @@
                     title = 'Info';
             }
 
-            // Use toast style alert that auto-redirects
-            const Toast = Swal.mixin({
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 3000,
-                timerProgressBar: true,
-                didOpen: (toast) => {
-                    toast.addEventListener('mouseenter', Swal.stopTimer)
-                    toast.addEventListener('mouseleave', Swal.resumeTimer)
-                },
-                willClose: () => {
-                    // Auto redirect after toast closes
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 500);
-                }
-            });
-
-            Toast.fire({
+            // Use modal popup alert consistent with other alerts on the page
+            Swal.fire({
                 icon: icon,
-                title: @json(session('message'))
+                title: title,
+                text: @json(session('message')),
+                confirmButtonColor: '#667eea',
+                confirmButtonText: 'OK',
+                customClass: {
+                    popup: 'success-alert-popup'
+                },
+                didOpen: function() {
+                    const popup = Swal.getPopup();
+                    if (popup) {
+                        popup.style.minWidth = window.innerWidth <= 768 ? '280px' : '350px';
+                        popup.style.minHeight = window.innerWidth <= 768 ? '200px' : '220px';
+                    }
+                }
             });
         });
     </script>
@@ -88,6 +83,41 @@
     .compact-scale .table th, .compact-scale .table td { padding: 0.4rem 0.5rem; font-size: 0.86rem; }
     .compact-scale .btn-sm { padding: 0.22rem 0.45rem; font-size: 0.78rem; }
     .compact-scale .card.border-0.shadow-sm { box-shadow: 0 8px 22px rgba(13,20,30,0.06); border-left: 4px solid rgba(102,126,234,0.10); }
+
+    /* SweetAlert popup styling to match page modals */
+    .success-alert-popup {
+        background: rgba(255, 255, 255, 0.95) !important;
+        backdrop-filter: blur(10px) !important;
+        border-radius: 12px !important;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1) !important;
+        border: 1px solid rgba(102, 126, 234, 0.1) !important;
+    }
+
+    .success-alert-popup .swal2-title {
+        color: #333 !important;
+        font-weight: 600 !important;
+        font-size: 1.2rem !important;
+    }
+
+    .success-alert-popup .swal2-html-container {
+        color: #666 !important;
+        font-size: 0.95rem !important;
+    }
+
+    .success-alert-popup .swal2-confirm {
+        background-color: #667eea !important;
+        border-color: #667eea !important;
+        border-radius: 6px !important;
+        font-weight: 500 !important;
+        padding: 0.5rem 1.5rem !important;
+        transition: all 0.3s ease !important;
+    }
+
+    .success-alert-popup .swal2-confirm:hover {
+        background-color: #5a67d8 !important;
+        transform: translateY(-1px) !important;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3) !important;
+    }
 
     /* Admin table specific tweaks */
     .compact-scale #adminsTable .table-avatar {

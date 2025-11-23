@@ -21,8 +21,16 @@ class TrackUserActivity
 
         // Update last active time for authenticated users
         if (Auth::check()) {
-            $user = Auth::user();
-            $user->updateLastActive();
+            try {
+                $user = Auth::user();
+                $user->updateLastActive();
+            } catch (\Exception $e) {
+                // Log the error but don't fail the request
+                \Log::error('Failed to update last active time', [
+                    'user_id' => Auth::id(),
+                    'error' => $e->getMessage()
+                ]);
+            }
         }
 
         return $response;

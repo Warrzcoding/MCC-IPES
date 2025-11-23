@@ -715,7 +715,7 @@ class DashboardController extends Controller
         ]);
         
         if ($validator->fails()) {
-            // For web requests, always redirect with session data
+            // Return redirect with session data for SweetAlert modal
             return redirect()->back()
                 ->withErrors($validator)
                 ->withInput()
@@ -777,13 +777,18 @@ class DashboardController extends Controller
             
             $user->save();
 
-            // For web requests, always redirect with session data for sweet alert
+            // Return redirect with session data for SweetAlert modal
             return redirect()->back()
                 ->with('message', 'Profile updated successfully!')
                 ->with('message_type', 'success');
 
         } catch (\Exception $e) {
-            // For web requests, always redirect with session data
+            \Log::error('Profile update error', [
+                'user_id' => Auth::id(),
+                'error' => $e->getMessage()
+            ]);
+
+            // Return redirect with session data for SweetAlert modal
             return redirect()->back()
                 ->withInput()
                 ->with('message', 'Error updating profile. Please try again.')
