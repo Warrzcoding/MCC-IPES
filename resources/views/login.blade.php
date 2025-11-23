@@ -1440,9 +1440,9 @@
 
                     <!-- Student Signup Link -->
                     <div class="signup-link">
-                        <p>Please report any issues accessing IPES Application! Thank you!!<!--<a href="{{ route('pre_signup') }}">
+                        <p>Signup now! Please note your login credentials, Forgot pasword is temporary unavailable!!<a href="{{ route('pre_signup') }}">
                             <i class="fas fa-user-plus"></i> Sign up here
-                        </a>--></p>
+                        </a></p>
                       <!--<p>System is under testing mode , Please try signup again if you have not been approve! Thank you!<a href="{{ route('idcheck') }}">
                             <i class="fas fa-user-plus"></i> Sign up here
                         </a></p>-->
