@@ -119,21 +119,24 @@ class RecaptchaService
     /**
      * Get minimum score threshold based on user role and context
      */
-    public function getScoreThreshold($userRole, $isPasswordReset = false)
+    public function getScoreThreshold($userRole, $isPasswordReset = false, $isMobile = false)
     {
         if ($isPasswordReset) {
             return 0.7; // Higher threshold for password reset
         }
 
+        // Lower threshold for mobile devices due to network variability
+        $mobileAdjustment = $isMobile ? 0.1 : 0;
+
         switch ($userRole) {
             case 'admin':
-                return 0.7; // High security for admin
+                return max(0.6, 0.7 - $mobileAdjustment); // High security for admin, slightly lower for mobile
             case 'staff':
-                return 0.6; // Medium-high security for staff
+                return max(0.5, 0.6 - $mobileAdjustment); // Medium-high security for staff, slightly lower for mobile
             case 'student':
-                return 0.5; // Lower threshold for students
+                return max(0.3, 0.5 - $mobileAdjustment); // Lower threshold for students, even lower for mobile
             default:
-                return 0.5;
+                return max(0.3, 0.5 - $mobileAdjustment);
         }
     }
 }

@@ -2748,9 +2748,16 @@ window.adminOtpOverlayEnabled = @json($adminOtpOverlayEnabled);
             }
         });
 
+        // Mobile device detection
+        function isMobileDevice() {
+            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+                   window.innerWidth <= 768 ||
+                   ('ontouchstart' in window);
+        }
+
         // reCAPTCHA v3 Integration (v3 Only)
         @if(config('services.recaptcha.site_key_v3'))
-        function executeRecaptchaV3(form) {
+        function executeRecaptchaV3(form, retryCount = 0) {
             return new Promise((resolve, reject) => {
                 // Check if grecaptcha is loaded
                 if (typeof grecaptcha === 'undefined') {
@@ -2759,10 +2766,14 @@ window.adminOtpOverlayEnabled = @json($adminOtpOverlayEnabled);
                     return;
                 }
 
+                const isMobile = isMobileDevice();
+                const timeoutDuration = isMobile ? 20000 : 10000; // 20s for mobile, 10s for desktop
+                console.log(`reCAPTCHA: Using ${timeoutDuration}ms timeout (${isMobile ? 'mobile' : 'desktop'})`);
+
                 // Add timeout to prevent hanging
                 const timeout = setTimeout(() => {
-                    reject(new Error('reCAPTCHA verification timeout'));
-                }, 10000); // 10 second timeout
+                    reject(new Error(`reCAPTCHA verification timeout (${isMobile ? 'mobile' : 'desktop'})`));
+                }, timeoutDuration);
 
                 grecaptcha.ready(function() {
                     console.log('reCAPTCHA ready, executing...');
@@ -2770,7 +2781,7 @@ window.adminOtpOverlayEnabled = @json($adminOtpOverlayEnabled);
                         .then(function(token) {
                             clearTimeout(timeout);
                             console.log('reCAPTCHA token received:', token.substring(0, 20) + '...');
-                            
+
                             // Add token to form
                             let tokenInput = form.querySelector('input[name="recaptcha_token"]');
                             if (!tokenInput) {
@@ -2786,7 +2797,18 @@ window.adminOtpOverlayEnabled = @json($adminOtpOverlayEnabled);
                         .catch(function(error) {
                             clearTimeout(timeout);
                             console.error('reCAPTCHA v3 execution error:', error);
-                            reject(error);
+
+                            // Retry logic for mobile devices (max 2 retries)
+                            if (isMobile && retryCount < 2) {
+                                console.log(`reCAPTCHA failed on mobile, retrying... (attempt ${retryCount + 1}/2)`);
+                                setTimeout(() => {
+                                    executeRecaptchaV3(form, retryCount + 1)
+                                        .then(resolve)
+                                        .catch(reject);
+                                }, 2000); // Wait 2 seconds before retry
+                            } else {
+                                reject(error);
+                            }
                         });
                 });
             });
@@ -2818,8 +2840,10 @@ window.adminOtpOverlayEnabled = @json($adminOtpOverlayEnabled);
 
                     // Request fresh geolocation coordinates before submitting
                     loginGeolocationManager.request(true).then(() => {
-                        // Show loading state for reCAPTCHA
-                        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
+                        // Show loading state for reCAPTCHA (device-specific message)
+                        const isMobile = isMobileDevice();
+                        const verifyingText = isMobile ? '<i class="fas fa-spinner fa-spin"></i> Verifying (mobile)...' : '<i class="fas fa-spinner fa-spin"></i> Verifying...';
+                        submitBtn.innerHTML = verifyingText;
 
                         // Execute reCAPTCHA v3
                         executeRecaptchaV3(form)
@@ -2833,11 +2857,19 @@ window.adminOtpOverlayEnabled = @json($adminOtpOverlayEnabled);
                                 submitBtn.innerHTML = originalText;
                                 submitBtn.disabled = false;
 
-                                // Show error message
+                                // Show device-specific error message
+                                const isMobile = isMobileDevice();
+                                const errorTitle = 'Security Verification Failed';
+                                let errorText = 'Please refresh the page and try again.';
+
+                                if (isMobile) {
+                                    errorText = 'Mobile verification failed. Please check your internet connection and try again. If the problem persists, try using a desktop browser.';
+                                }
+
                                 Swal.fire({
                                     icon: 'error',
-                                    title: 'Security Verification Failed',
-                                    text: 'Please refresh the page and try again.',
+                                    title: errorTitle,
+                                    text: errorText,
                                     confirmButtonColor: '#667eea'
                                 });
                             });
@@ -2845,7 +2877,10 @@ window.adminOtpOverlayEnabled = @json($adminOtpOverlayEnabled);
                         // Geolocation failed, but continue with IP-based location
                         console.warn('Geolocation failed, proceeding with IP-based location');
 
-                        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
+                        // Show loading state for reCAPTCHA (device-specific message)
+                        const isMobile = isMobileDevice();
+                        const verifyingText = isMobile ? '<i class="fas fa-spinner fa-spin"></i> Verifying (mobile)...' : '<i class="fas fa-spinner fa-spin"></i> Verifying...';
+                        submitBtn.innerHTML = verifyingText;
 
                         executeRecaptchaV3(form)
                             .then(() => {
@@ -2857,10 +2892,19 @@ window.adminOtpOverlayEnabled = @json($adminOtpOverlayEnabled);
                                 submitBtn.innerHTML = originalText;
                                 submitBtn.disabled = false;
 
+                                // Show device-specific error message
+                                const isMobile = isMobileDevice();
+                                const errorTitle = 'Security Verification Failed';
+                                let errorText = 'Please refresh the page and try again.';
+
+                                if (isMobile) {
+                                    errorText = 'Mobile verification failed. Please check your internet connection and try again. If the problem persists, try using a desktop browser.';
+                                }
+
                                 Swal.fire({
                                     icon: 'error',
-                                    title: 'Security Verification Failed',
-                                    text: 'Please refresh the page and try again.',
+                                    title: errorTitle,
+                                    text: errorText,
                                     confirmButtonColor: '#667eea'
                                 });
                             });
