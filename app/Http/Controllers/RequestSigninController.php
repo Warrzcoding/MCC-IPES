@@ -103,7 +103,7 @@ class RequestSigninController extends Controller
         try {
             $requests = RequestSignin::whereIn('id', $ids)->get();
             $approvedCount = 0;
-            $skippedCount = 0;
+            $autoRejectedCount = 0;
 
             foreach ($requests as $req) {
                 // Check for duplicate email and school_id
@@ -112,7 +112,10 @@ class RequestSigninController extends Controller
                                     ->first();
 
                 if ($existingUser) {
-                    $skippedCount++;
+                    // Auto-reject duplicate requests
+                    $req->status = 'rejected';
+                    $req->save();
+                    $autoRejectedCount++;
                     continue;
                 }
                 // Ensure username uniqueness: if username exists, generate a unique variant
@@ -148,8 +151,8 @@ class RequestSigninController extends Controller
 
             DB::commit();
             $message = "$approvedCount request(s) approved";
-            if ($skippedCount > 0) {
-                $message .= ", $skippedCount skipped (duplicate email/school_id).";
+            if ($autoRejectedCount > 0) {
+                $message .= ", $autoRejectedCount auto-rejected (duplicate email/school_id).";
             } else {
                 $message .= "!";
             }
