@@ -570,7 +570,7 @@ if (Auth::user()->isAdmin()) {
         <div class="col-12 mb-4">
             <div class="row justify-content-center">
                 <div class="col-6 col-sm-6 col-md-4 mb-3" style="display: flex; justify-content: center; align-items: center;">
-                    <div class="circular-card shadow student-card" style="width: 120px; height: 120px; border-radius: 50%; background: linear-gradient(135deg, #ff7f2f 0%, #ffcf3e 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; text-align: center; position: relative; overflow: hidden;" 
+                    <div class="circular-card shadow student-card" style="width: 120px; height: 120px; border-radius: 50%; background: linear-gradient(135deg, #ee94e9ff 0%, #630e55ff 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; text-align: center; position: relative; overflow: hidden;" 
                          title="Department Instructors: {{ $evaluatedDepartmentInstructors }} out of {{ $stats['department_instructors'] }} evaluated ({{ round($departmentInstructorCompletion) }}% complete)">
                         <!-- Completion Status Indicator -->
                         @if($evaluatedDepartmentInstructors >= $stats['department_instructors'] && $stats['department_instructors'] > 0)
@@ -653,7 +653,7 @@ if (Auth::user()->isAdmin()) {
                                 <!-- Department Instructors Status -->
                                 <div class="col-6">
                                     <div class="d-flex align-items-center justify-content-center mb-2">
-                                        <div style="width: 24px; height: 24px; background: linear-gradient(135deg, #ff7f2f 0%, #ffcf3e 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 10px;">
+                                        <div style="width: 24px; height: 24px; background: linear-gradient(135deg, #72ad24ff 0%, #ffcf3e 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 10px;">
                                             <i class="fas fa-chalkboard-teacher" style="font-size: 0.7rem; color: white;"></i>
                                         </div>
                                         <div class="text-left">
