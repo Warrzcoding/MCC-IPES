@@ -657,7 +657,7 @@ if (Auth::user()->isAdmin()) {
                                             <i class="fas fa-chalkboard-teacher" style="font-size: 0.7rem; color: white;"></i>
                                         </div>
                                         <div class="text-left">
-                                            <div class="font-weight-bold text-dark" style="font-size: 0.9rem;">Department Instructors</div>
+                                            <div class="font-weight-bold text-dark" style="font-size: 0.9rem;">Instructors</div>
                                             <div class="text-muted" style="font-size: 0.75rem;">
                                                 @if($evaluatedDepartmentInstructors >= $stats['department_instructors'] && $stats['department_instructors'] > 0)
                                                     <span class="text-success"><i class="fas fa-check-circle"></i> Completed</span>
@@ -678,7 +678,7 @@ if (Auth::user()->isAdmin()) {
                                             <i class="fas fa-users" style="font-size: 0.7rem; color: white;"></i>
                                         </div>
                                         <div class="text-left">
-                                            <div class="font-weight-bold text-dark" style="font-size: 0.9rem;">Non-Teaching Staff</div>
+                                            <div class="font-weight-bold text-dark" style="font-size: 0.9rem;">Non-Teaching</div>
                                             <div class="text-muted" style="font-size: 0.75rem;">
                                                 @if($evaluatedNonTeachingStaff >= $stats['non_teaching_staff'] && $stats['non_teaching_staff'] > 0)
                                                     <span class="text-success"><i class="fas fa-check-circle"></i> Completed</span>
