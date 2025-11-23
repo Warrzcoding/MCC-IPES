@@ -33,7 +33,7 @@
                 </h5>
             </div>
           <div class="card-body">
-               <!-- <style>
+                <style>
                     /* Maintain page width while compacting forms, tables, and modals */
                     .page-full-width .card-header h5 {
                         font-size: 0.95rem;
@@ -471,7 +471,7 @@
                             padding: 0.375rem 0.5rem;
                         }
                     }
-                </style>-->
+                </style>
                 <!-- Evaluation Statistics -->
               <!--<div class="dashboard-cards-row">
                     <div class="dashboard-card-col">
