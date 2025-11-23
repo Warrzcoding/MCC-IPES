@@ -33,7 +33,7 @@
                 </h5>
             </div>
           <div class="card-body">
-                <style>
+               <style>
                     /* Maintain page width while compacting forms, tables, and modals */
                     .page-full-width .card-header h5 {
                         font-size: 0.95rem;
@@ -271,7 +271,7 @@
                     <strong>Student Management:</strong> This section allows administrators to add and manage student accounts.
                 </div>
                 
-               <<style>
+               <style>
                     /* Responsive dashboard cards with uniform height - ALWAYS SINGLE ROW */
                     .dashboard-cards-row {
                         display: flex;
