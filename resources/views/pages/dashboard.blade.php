@@ -594,7 +594,7 @@ if (Auth::user()->isAdmin()) {
                             <i class="fas fa-chalkboard-teacher fa-2x" style="opacity: 0.9;"></i>
                         </div>
                         <div class="circular-content">
-                            <div class="text-xs font-weight-bold text-uppercase mb-1" style="font-size: 0.6rem; opacity: 0.9;">Department Instructors</div>
+                            <div class="text-xs font-weight-bold text-uppercase mb-1" style="font-size: 0.6rem; opacity: 0.9;">Subject Instructors</div>
                             <div class="h5 mb-0 font-weight-bold">
                                 {{ $evaluatedDepartmentInstructors }}/{{ $stats['department_instructors'] }}
                             </div>
@@ -629,7 +629,7 @@ if (Auth::user()->isAdmin()) {
                             <i class="fas fa-users fa-2x" style="opacity: 0.9;"></i>
                         </div>
                         <div class="circular-content">
-                            <div class="text-xs font-weight-bold text-uppercase mb-1" style="font-size: 0.6rem; opacity: 0.9;">Non-teaching Staff</div>
+                            <div class="text-xs font-weight-bold text-uppercase mb-1" style="font-size: 0.6rem; opacity: 0.9;">Non-teaching</div>
                             <div class="h5 mb-0 font-weight-bold">
                                 {{ $evaluatedNonTeachingStaff }}/{{ $stats['non_teaching_staff'] }}
                             </div>
