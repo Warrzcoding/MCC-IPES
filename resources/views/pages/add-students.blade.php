@@ -2056,7 +2056,7 @@ function formatSchoolId(input) {
         searchInput.style.height = '40px'; // Match button height
 
         // Create refresh button
-        const refreshButton = document.createElement('button');
+       /* const refreshButton = document.createElement('button');
         refreshButton.type = 'button';
         refreshButton.className = 'btn btn-primary ms-2 shadow-sm d-flex align-items-center gap-2 rounded-pill refresh-btn-enhanced';
         refreshButton.style.height = '40px';
@@ -2065,7 +2065,7 @@ function formatSchoolId(input) {
         refreshButton.innerHTML = '<i class="fas fa-sync-alt fa-spin-on-hover"></i> <span>Refresh</span>';
         refreshButton.onclick = function() {
             location.reload();
-        };
+        };*/
 
         const table = document.getElementById('studentsTable');
         if (table) {
