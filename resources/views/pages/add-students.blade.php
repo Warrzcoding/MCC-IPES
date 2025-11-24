@@ -1243,7 +1243,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 </script>
-                    <select class="form-select me-2" id="statusFilter" style="width: auto;">
+                  <!--  <select class="form-select me-2" id="statusFilter" style="width: auto;">
                         <option value="">All Status</option>
                         <option value="Never Evaluated">Never Evaluated</option>
                         <option value="In Progress">In Progress</option>
@@ -1256,7 +1256,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         <option value="BSBA">BSBA </option>
                         <option value="BSED">BSED </option>
                         <option value="BEED">BEED </option>
-                    </select>
+                    </select>-->
                 </div>
             </div>
             <div class="card-body">
@@ -1272,12 +1272,12 @@ document.addEventListener('DOMContentLoaded', function () {
                                    placeholder="Search by name, username, email, or school ID...">
                         </div>
 
-                        <button type="submit" class="btn btn-primary" style="white-space: nowrap;">
+                        <button type="submit" class="btn btn-primary" style="white-space: nowrap; height: 32px;">
                             <i class="fas fa-search"></i> Search
                         </button>
 
-                        <a href="{{ route('dashboard', ['page' => 'add-students']) }}" class="btn btn-outline-secondary">
-                            <i class="fas fa-times"></i> Clear
+                        <a href="{{ route('dashboard', ['page' => 'add-students']) }}" class="btn btn-outline-secondary" style="height: 32px; font-size: 0.75rem; display: flex; align-items: center; justify-content: center;">
+                            Clear
                         </a>
                     </form>
                 </div>
