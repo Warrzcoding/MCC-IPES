@@ -185,6 +185,45 @@
             margin-top: 0.48rem !important;
         }
 
+        /* reCAPTCHA v3 Badge - Collapsed by default, expands on hover/focus */
+        .grecaptcha-badge {
+            position: fixed !important;
+            top: 10px !important;
+            right: 10px !important;
+            z-index: 9999 !important;
+            width: 70px !important;
+            overflow: hidden !important;
+            transition: width 0.3s ease !important;
+            transform: scale(0.85);
+            transform-origin: 100% 0;
+        }
+
+        .grecaptcha-badge:hover,
+        .grecaptcha-badge:focus-within {
+            width: 256px !important;
+        }
+
+        /* Desktop alignment fixes */
+        @media (min-width: 768px) {
+            .form-control, .form-select {
+                width: 100%;
+                max-width: 100%;
+            }
+
+            .row .col-md-6 {
+                padding-left: 0.75rem;
+                padding-right: 0.75rem;
+            }
+
+            .row .col-md-6:first-child {
+                padding-left: 0;
+            }
+
+            .row .col-md-6:last-child {
+                padding-right: 0;
+            }
+        }
+
         @media (max-width: 576px) {
             .signup-container {
                 padding: 0.96rem;
@@ -213,41 +252,41 @@
                 font-size: 0.8rem;
                 margin: 0 auto 0.24rem;
             }
-            
+
             .form-label {
                 font-size: 0.7rem;
                 margin-bottom: 0.24rem;
             }
-            
+
             .form-control, .form-select {
                 height: 28px;
                 padding: 0.4rem;
                 font-size: 0.68rem;
             }
-            
+
             .btn-primary {
                 height: 28px;
                 padding: 0.4rem;
                 font-size: 0.72rem;
             }
-            
+
             .image-preview {
                 width: 45px;
                 height: 45px;
             }
-            
+
             .image-upload-section {
                 margin-bottom: 0.8rem;
                 padding: 0.4rem;
                 font-size: 0.6rem;
             }
-            
+
             .signup-link {
                 margin-top: 0.48rem;
                 padding-top: 0.48rem;
                 font-size: 0.65rem;
             }
-            
+
             .mb-2 {
                 margin-bottom: 0.4rem !important;
             }
@@ -331,7 +370,7 @@
                 <i class="fas fa-user-plus"></i>
             </div>
             <h2>Sign Up</h2>
-            <p>Create your account</p>
+            <p>Create your account for MCCIPES application</p>
         </div>
 
         <form method="POST" action="{{ route('signup.submit') }}" enctype="multipart/form-data" id="signupForm">
@@ -384,7 +423,7 @@
                     <i class="fas fa-envelope"></i> {{ isset($verified_email) && $verified_email ? 'MS Account' : 'Email' }} *
                 </label>
                 <input type="email" class="form-control @error('email') is-invalid @enderror"
-                       id="email" name="email"
+                       id="email" name="email" readonly="true"
                        value="{{ isset($verified_email) && $verified_email ? $verified_email : old('email') }}"
                        required placeholder="Enter email address"
                        @if(isset($verified_email) && $verified_email) readonly @endif>
