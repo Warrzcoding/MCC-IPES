@@ -1440,7 +1440,7 @@
 
                     <!-- Student Signup Link -->
                     <div class="signup-link">
-                        <p>Signup now! Please note your login credentials!<a href="{{ route('pre_signup') }}">
+                        <p>Don't have an account?<a href="{{ route('pre_signup') }}">
                             <i class="fas fa-user-plus"></i> Sign up here
                         </a></p>
                       <!--<p>System is under testing mode , Please try signup again if you have not been approve! Thank you!<a href="{{ route('idcheck') }}">
