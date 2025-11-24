@@ -342,6 +342,55 @@
                 transform: translateZ(-220px) translateY(-30px) translateX(-20px) rotateX(35deg) rotateY(200deg) rotateZ(270deg);
             }
         }
+
+        /* Password toggle eye icon styles */
+        .password-container {
+            position: relative;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            padding: 5px;
+            font-size: 0.8rem;
+            z-index: 10;
+        }
+
+        .password-toggle:hover {
+            color: #667eea;
+        }
+
+        .password-toggle:focus {
+            outline: none;
+            color: #667eea;
+        }
+
+        /* Password match indicator styles */
+        .password-match-indicator {
+            font-size: 0.7rem;
+            margin-top: 0.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .password-match-indicator.match {
+            color: #28a745;
+        }
+
+        .password-match-indicator.no-match {
+            color: #dc3545;
+        }
+
+        .password-match-indicator.hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -503,9 +552,14 @@
                     <label for="password" class="form-label">
                         <i class="fas fa-lock"></i> Password *
                     </label>
-                    <input type="password" class="form-control @error('password') is-invalid @enderror"
-                           id="password" name="password" required maxlength="25"
-                           placeholder="Enter password">
+                    <div class="password-container">
+                        <input type="password" class="form-control @error('password') is-invalid @enderror"
+                               id="password" name="password" required maxlength="25"
+                               placeholder="Enter password">
+                        <button type="button" class="password-toggle" id="passwordToggle" aria-label="Toggle password visibility">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
                     <div class="password-strength">
                         <div class="password-strength-bar">
                             <div class="password-strength-fill" id="passwordStrengthFill"></div>
@@ -521,9 +575,18 @@
                     <label for="password_confirmation" class="form-label">
                         <i class="fas fa-lock"></i> Confirm Password *
                     </label>
-                    <input type="password" class="form-control"
-                           id="password_confirmation" name="password_confirmation" required
-                           placeholder="Confirm password">
+                    <div class="password-container">
+                        <input type="password" class="form-control"
+                               id="password_confirmation" name="password_confirmation" required
+                               placeholder="Confirm password">
+                        <button type="button" class="password-toggle" id="confirmPasswordToggle" aria-label="Toggle confirm password visibility">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <div class="password-match-indicator hidden" id="passwordMatchIndicator">
+                        <i class="fas fa-check-circle"></i>
+                        <span id="passwordMatchText">Passwords match</span>
+                    </div>
                 </div>
             </div>
 
@@ -670,8 +733,64 @@
                 });
             }
 
-            // Password strength checker
+            // Password toggle functionality
+            const passwordToggle = document.getElementById('passwordToggle');
+            const confirmPasswordToggle = document.getElementById('confirmPasswordToggle');
             const passwordInput = document.getElementById('password');
+            const confirmPasswordInput = document.getElementById('password_confirmation');
+
+            function togglePasswordVisibility(input, toggleBtn) {
+                const isPassword = input.type === 'password';
+                input.type = isPassword ? 'text' : 'password';
+
+                const icon = toggleBtn.querySelector('i');
+                icon.className = isPassword ? 'fas fa-eye-slash' : 'fas fa-eye';
+            }
+
+            if (passwordToggle) {
+                passwordToggle.addEventListener('click', function() {
+                    togglePasswordVisibility(passwordInput, passwordToggle);
+                });
+            }
+
+            if (confirmPasswordToggle) {
+                confirmPasswordToggle.addEventListener('click', function() {
+                    togglePasswordVisibility(confirmPasswordInput, confirmPasswordToggle);
+                });
+            }
+
+            // Password match indicator functionality
+            const passwordMatchIndicator = document.getElementById('passwordMatchIndicator');
+            const passwordMatchText = document.getElementById('passwordMatchText');
+
+            function checkPasswordMatch() {
+                const password = passwordInput.value;
+                const confirmPassword = confirmPasswordInput.value;
+
+                if (confirmPassword.length === 0) {
+                    // Hide indicator if confirm password is empty
+                    passwordMatchIndicator.className = 'password-match-indicator hidden';
+                    return;
+                }
+
+                if (password === confirmPassword) {
+                    passwordMatchIndicator.className = 'password-match-indicator match';
+                    passwordMatchText.textContent = 'Passwords match';
+                    const icon = passwordMatchIndicator.querySelector('i');
+                    icon.className = 'fas fa-check-circle';
+                } else {
+                    passwordMatchIndicator.className = 'password-match-indicator no-match';
+                    passwordMatchText.textContent = 'Passwords do not match';
+                    const icon = passwordMatchIndicator.querySelector('i');
+                    icon.className = 'fas fa-times-circle';
+                }
+            }
+
+            // Add event listeners to both password fields
+            passwordInput.addEventListener('input', checkPasswordMatch);
+            confirmPasswordInput.addEventListener('input', checkPasswordMatch);
+
+            // Password strength checker
             const passwordStrengthFill = document.getElementById('passwordStrengthFill');
             const passwordStrengthText = document.getElementById('passwordStrengthText');
 
