@@ -3162,78 +3162,83 @@ window.adminOtpOverlayEnabled = @json($adminOtpOverlayEnabled);
         });
 
         // Floating Manual Icon Draggable and Overlay
-        document.addEventListener('DOMContentLoaded', function() {
-            const icon = document.getElementById('floatingManualIcon');
-            const overlay = document.getElementById('manualOverlay');
-            const closeBtn = document.getElementById('manualClose');
-            let isDragging = false;
-            let hasDragged = false;
-            let startX, startY, initialX, initialY;
+        const icon = document.getElementById('floatingManualIcon');
+        const overlay = document.getElementById('manualOverlay');
+        const closeBtn = document.getElementById('manualClose');
+        let isDragging = false;
+        let hasDragged = false;
+        let startX, startY, initialX, initialY;
 
-            // Make draggable
-            icon.addEventListener('mousedown', startDrag);
-            icon.addEventListener('touchstart', startDrag, { passive: false });
-            document.addEventListener('mousemove', drag);
-            document.addEventListener('touchmove', drag, { passive: false });
-            document.addEventListener('mouseup', endDrag);
-            document.addEventListener('touchend', endDrag);
+        // Make draggable
+        icon.addEventListener('mousedown', startDrag);
+        icon.addEventListener('touchstart', startDrag, { passive: false });
+        document.addEventListener('mousemove', drag);
+        document.addEventListener('touchmove', drag, { passive: false });
+        document.addEventListener('mouseup', endDrag);
+        document.addEventListener('touchend', endDrag);
 
-            function startDrag(e) {
-                isDragging = true;
-                hasDragged = false;
-                if (e.type === 'touchstart') {
-                    startX = e.touches[0].clientX;
-                    startY = e.touches[0].clientY;
-                } else {
-                    startX = e.clientX;
-                    startY = e.clientY;
-                }
-                initialX = icon.offsetLeft;
-                initialY = icon.offsetTop;
-                icon.style.cursor = 'grabbing';
-                e.preventDefault();
+        function startDrag(e) {
+            isDragging = true;
+            hasDragged = false;
+            if (e.type === 'touchstart') {
+                startX = e.touches[0].clientX;
+                startY = e.touches[0].clientY;
+            } else {
+                startX = e.clientX;
+                startY = e.clientY;
             }
+            initialX = icon.offsetLeft;
+            initialY = icon.offsetTop;
+            icon.style.cursor = 'grabbing';
+            e.preventDefault();
+        }
 
-            function drag(e) {
-                if (!isDragging) return;
+        function drag(e) {
+            if (!isDragging) return;
+            let currentX, currentY;
+            if (e.type === 'touchmove') {
+                currentX = e.touches[0].clientX;
+                currentY = e.touches[0].clientY;
+            } else {
+                currentX = e.clientX;
+                currentY = e.clientY;
+            }
+            const dx = currentX - startX;
+            const dy = currentY - startY;
+            if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
                 hasDragged = true;
-                let currentX, currentY;
-                if (e.type === 'touchmove') {
-                    currentX = e.touches[0].clientX;
-                    currentY = e.touches[0].clientY;
-                } else {
-                    currentX = e.clientX;
-                    currentY = e.clientY;
-                }
-                const dx = currentX - startX;
-                const dy = currentY - startY;
-                const newX = initialX + dx;
-                const newY = initialY + dy;
-                // Keep within bounds
-                const maxX = window.innerWidth - icon.offsetWidth;
-                const maxY = window.innerHeight - icon.offsetHeight;
-                icon.style.left = Math.max(0, Math.min(newX, maxX)) + 'px';
-                icon.style.top = Math.max(0, Math.min(newY, maxY)) + 'px';
-                icon.style.bottom = 'auto';
-                icon.style.right = 'auto';
-                e.preventDefault();
             }
+            const newX = initialX + dx;
+            const newY = initialY + dy;
+            // Keep within bounds
+            const maxX = window.innerWidth - icon.offsetWidth;
+            const maxY = window.innerHeight - icon.offsetHeight;
+            icon.style.left = Math.max(0, Math.min(newX, maxX)) + 'px';
+            icon.style.top = Math.max(0, Math.min(newY, maxY)) + 'px';
+            icon.style.bottom = 'auto';
+            icon.style.right = 'auto';
+            e.preventDefault();
+        }
 
-            function endDrag() {
-                isDragging = false;
-                icon.style.cursor = 'pointer';
-                if (!hasDragged) {
-                    overlay.classList.add('active');
-                }
+        function endDrag() {
+            isDragging = false;
+            icon.style.cursor = 'pointer';
+            if (!hasDragged) {
+                overlay.classList.add('active');
             }
-            closeBtn.addEventListener('click', function() {
+        }
+        closeBtn.addEventListener('click', function() {
+            overlay.classList.remove('active');
+        });
+        overlay.addEventListener('click', function(e) {
+            if (e.target === overlay) {
                 overlay.classList.remove('active');
-            });
-            overlay.addEventListener('click', function(e) {
-                if (e.target === overlay) {
-                    overlay.classList.remove('active');
-                }
-            });
+            }
+        });
+        overlay.addEventListener('touchend', function(e) {
+            if (e.target === overlay) {
+                overlay.classList.remove('active');
+            }
         });
 
     </script>
