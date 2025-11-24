@@ -452,13 +452,13 @@ small {
 }
 </style>
 
-@if(session('message'))
+<!--@if(session('message'))
     <div class="alert alert-{{ session('message_type', 'info') }} alert-dismissible fade show" role="alert" style="border-radius: 12px; border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
         <i class="fas fa-info-circle me-2"></i>
         {{ session('message') }}
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
-@endif
+@endif-->
 
 
 
