@@ -1587,6 +1587,12 @@
                             <input type="password" class="form-control" id="password" name="password"
                                    placeholder="Enter your mccipes password" value="" autocomplete="new-password">
                         </div>
+                        <div class="d-flex align-items-center justify-content-end mt-2">
+                            <label class="form-check-label me-2 small" for="showPassword" style="font-size: 0.875rem;">
+                                Show password
+                            </label>
+                            <input class="form-check-input" type="checkbox" id="showPassword" style="transform: scale(0.8);">
+                        </div>
                     </div>
 
                     <!-- reCAPTCHA for Student -->
@@ -3090,6 +3096,16 @@ window.adminOtpOverlayEnabled = @json($adminOtpOverlayEnabled);
                         }
                     });
                 }, 800);
+            }
+        });
+
+        // Password visibility toggle
+        document.getElementById('showPassword').addEventListener('change', function() {
+            const passwordInput = document.getElementById('password');
+            if (this.checked) {
+                passwordInput.type = 'text';
+            } else {
+                passwordInput.type = 'password';
             }
         });
 
