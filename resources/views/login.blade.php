@@ -1619,7 +1619,7 @@
 
                 <!-- Student Signup Link -->
                 <div class="signup-link">
-                   <p>Sorry, Forgot Password is unavailable right now!<!-- <a href="{{ route('pre_signup', ['type' => 'student', 'school_id' => $student_data['school_id']]) }}">
+                   <p>Sorry!!Forgot Password is unavailable right now!<!-- <a href="{{ route('pre_signup', ['type' => 'student', 'school_id' => $student_data['school_id']]) }}">
                         <i class="fas fa-user-plus"></i> Sign up here
                     </a>--></p>
                 </div>
