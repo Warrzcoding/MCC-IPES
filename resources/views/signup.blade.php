@@ -555,7 +555,7 @@
                     <div class="password-container">
                         <input type="password" class="form-control @error('password') is-invalid @enderror"
                                id="password" name="password" required maxlength="25"
-                               placeholder="Enter password">
+                               placeholder="Create ipes password">
                         <button type="button" class="password-toggle" id="passwordToggle" aria-label="Toggle password visibility">
                             <i class="fas fa-eye"></i>
                         </button>
