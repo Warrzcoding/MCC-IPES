@@ -1187,9 +1187,9 @@
                     <i class="fas fa-user-graduate me-2"></i>
                      Students Management
                 </h5>
-                              <div class="d-flex align-items-center gap-2">
+                <div class="d-flex align-items-center gap-2">
                   @php
-    $pendingCount = isset($pendingRequestsCount) ? $pendingRequestsCount : 0;
+        $pendingCount = isset($pendingRequestsCount) ? $pendingRequestsCount : 0;
 @endphp
 <a href="{{ route('dashboard', ['page' => 'pending-requests']) }}" class="btn btn-warning position-relative me-2" id="requestNotificationBtn" type="button" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-placement="top-end" data-bs-custom-class="popover-sm" data-bs-content="Pending Request">
     <i class="fas fa-bell {{ $pendingCount > 0 ? 'shake-animate' : '' }}"></i>
@@ -1541,9 +1541,6 @@ document.addEventListener('DOMContentLoaded', function () {
         </div>
     </div>
 </div>
-
-
-
 <!-- Edit Student Modal -->
 <div class="modal fade" id="editModal" tabindex="-1">
     <div class="modal-dialog modal-compact">
@@ -1716,8 +1713,18 @@ function loadStudentData(id, username, email, fullName, schoolId, course, yearLe
     document.getElementById('editYearLevel').value = yearLevel;
     
     // Populate sections based on course and year level, and select the current section
+       // Populate sections based on course and year level, and select the current section
     const currentSection = section || '';
     populateEditSections(currentSection);
+
+    // Re-attach event listeners when modal opens
+    const editCourse = document.getElementById('editCourse');
+    const editYearLevel = document.getElementById('editYearLevel');
+    if (editCourse) editCourse.onchange = function() { populateEditSections(''); };
+    if (editYearLevel) editYearLevel.onchange = function() { populateEditSections(''); };
+
+    // Set image preview - fix for image display
+
 
     // Set image preview - fix for image display
     const imagePreview = document.getElementById('editImagePreview');
@@ -2167,12 +2174,12 @@ function formatSchoolId(input) {
     
     if (editCourseSelect) {
         editCourseSelect.addEventListener('change', function() {
-            populateEditSections(); // Reset section when course changes
+            populateEditSections('');
         });
     }
     if (editYearLevelSelect) {
         editYearLevelSelect.addEventListener('change', function() {
-            populateEditSections(); // Reset section when year level changes
+            populateEditSections('');
         });
     }
 });
