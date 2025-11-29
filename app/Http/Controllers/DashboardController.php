@@ -220,7 +220,8 @@ class DashboardController extends Controller
         $backupLogs = null;
         
         if ($page === 'add-staff') {
-            $staff = Staff::orderBy('full_name')->get();
+            $staff = Staff::orderBy('full_name')->paginate(15);
+           /* $staff = Staff::orderBy('full_name')->get();*/
         }
         
         if ($page === 'add-students') {

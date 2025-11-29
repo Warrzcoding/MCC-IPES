@@ -368,6 +368,73 @@
                     #staffTable td:nth-child(9) {
                         white-space: normal;
                     }
+                                        /* Custom Pagination Styles */
+                    .pagination-custom {
+                        flex-wrap: wrap;
+                        justify-content: center;
+                    }
+
+                    .page-btn {
+                        display: inline-flex;
+                        align-items: center;
+                        justify-content: center;
+                        min-width: 2rem;
+                        height: 2rem;
+                        padding: 0.25rem 0.5rem;
+                        margin: 0 0.125rem;
+                        font-size: 0.7rem;
+                        font-weight: 500;
+                        text-decoration: none;
+                        color: #495057;
+                        background-color: #fff;
+                        border: 1px solid #dee2e6;
+                        border-radius: 0.25rem;
+                        transition: all 0.15s ease-in-out;
+                        cursor: pointer;
+                    }
+
+                    .page-btn:hover:not(.disabled):not(.active) {
+                        color: #0056b3;
+                        background-color: #e9ecef;
+                        border-color: #adb5bd;
+                        text-decoration: none;
+                    }
+
+                    .page-btn.active {
+                        color: #fff;
+                        background-color: #007bff;
+                        border-color: #007bff;
+                        font-weight: 600;
+                    }
+
+                    .page-btn.disabled {
+                        color: #6c757d;
+                        background-color: #e9ecef;
+                        border-color: #dee2e6;
+                        cursor: not-allowed;
+                        opacity: 0.6;
+                        pointer-events: none;
+                    }
+
+                    .page-btn i {
+                        font-size: 0.65rem;
+                    }
+
+                    /* Responsive pagination */
+                    @media (max-width: 576px) {
+                        .pagination-custom {
+                            gap: 0.25rem;
+                        }
+
+                        .page-btn {
+                            min-width: 1.75rem;
+                            height: 1.75rem;
+                            font-size: 0.65rem;
+                            padding: 0.2rem 0.4rem;
+                        }
+                    }
+                       /* End Responsive pagination */
+
                 </style>
                 
                 @if($staff->isEmpty())
@@ -452,6 +519,84 @@
                             </tbody>
                         </table>
                     </div>
+                    <!--pagination page-->
+                      @if(method_exists($staff, 'hasPages') && $staff->hasPages())
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <div class="text-muted small">
+                                Showing {{ $staff->firstItem() }}-{{ $staff->lastItem() }} of {{ $staff->total() }} staff members
+                            </div>
+                            <nav aria-label="Staff pagination">
+                                <div class="pagination-custom d-flex align-items-center gap-1">
+                                    {{-- Previous Button --}}
+                                    @if($staff->onFirstPage())
+                                        <span class="page-btn disabled">
+                                            <i class="fas fa-chevron-left"></i>
+                                        </span>
+                                    @else
+                                        <a href="{{ $staff->previousPageUrl() }}" class="page-btn">
+                                            <i class="fas fa-chevron-left"></i>
+                                        </a>
+                                    @endif
+
+                                    {{-- Page Numbers --}}
+                                    @php
+                                        $currentPage = $staff->currentPage();
+                                        $lastPage = $staff->lastPage();
+                                        $showPages = 8;
+                                        $halfShow = floor($showPages / 2);
+
+                                        $startPage = max(1, $currentPage - $halfShow);
+                                        $endPage = min($lastPage, $currentPage + $halfShow);
+
+                                        if ($endPage - $startPage + 1 < $showPages) {
+                                            if ($startPage == 1) {
+                                                $endPage = min($lastPage, $startPage + $showPages - 1);
+                                            } elseif ($endPage == $lastPage) {
+                                                $startPage = max(1, $endPage - $showPages + 1);
+                                            }
+                                        }
+                                    @endphp
+
+                                    {{-- Show first page if not in range --}}
+                                    @if($startPage > 1)
+                                        <a href="{{ $staff->url(1) }}" class="page-btn">1</a>
+                                        @if($startPage > 2)
+                                            <span class="page-btn disabled">...</span>
+                                        @endif
+                                    @endif
+
+                                    {{-- Show page range --}}
+                                    @for($page = $startPage; $page <= $endPage; $page++)
+                                        @if($page == $currentPage)
+                                            <span class="page-btn active">{{ $page }}</span>
+                                        @else
+                                            <a href="{{ $staff->url($page) }}" class="page-btn">{{ $page }}</a>
+                                        @endif
+                                    @endfor
+
+                                    {{-- Show last page if not in range --}}
+                                    @if($endPage < $lastPage)
+                                        @if($endPage < $lastPage - 1)
+                                            <span class="page-btn disabled">...</span>
+                                        @endif
+                                        <a href="{{ $staff->url($lastPage) }}" class="page-btn">{{ $lastPage }}</a>
+                                    @endif
+
+                                    {{-- Next Button --}}
+                                    @if($staff->hasMorePages())
+                                        <a href="{{ $staff->nextPageUrl() }}" class="page-btn">
+                                            <i class="fas fa-chevron-right"></i>
+                                        </a>
+                                    @else
+                                        <span class="page-btn disabled">
+                                            <i class="fas fa-chevron-right"></i>
+                                        </span>
+                                    @endif
+                                </div>
+                            </nav>
+                        </div>
+                    @endif
+                 <!--end of pagination page-->
                 @endif
             </div>
         </div>
