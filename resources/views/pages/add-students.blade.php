@@ -23,16 +23,11 @@
     </script>
 @endif
 
-<div class="row page-full-width">
-    <div class="col-12">
-        <div class="card border-0 shadow-sm">
-            <div class="card-header bg-transparent border-0">
-              <h5 class="mb-0">
-                    <i class="fas fa-user-graduate me-2"></i>
-                     Students Management
-                </h5>
-            </div>
-          <div class="card-body">
+<!--<div class="row page-full-width">-->
+   <!-- <div class="col-12">-->
+       <!-- <div class="card border-0 shadow-sm">-->
+           
+          <!--<div class="card-body">-->
                <style>
                     /* Maintain page width while compacting forms, tables, and modals */
                     .page-full-width .card-header h5 {
@@ -266,10 +261,10 @@
                         }
                     }
                 </style>
-                <div class="alert alert-info">
+               <!-- <div class="alert alert-info">
                     <i class="fas fa-info-circle me-2"></i>
                     <strong>Student Management:</strong> This section allows administrators to add and manage student accounts.
-                </div>
+                </div>-->
                 
                <style>
                     /* Responsive dashboard cards with uniform height - ALWAYS SINGLE ROW */
@@ -688,10 +683,10 @@
                         </div>
                     </div>
                 </div> -->      
-            </div>
-        </div>
-    </div>
-</div>
+          <!--  </div>-->
+      <!--  </div>-->
+  <!--  </div>-->
+     <!--/div>-->
 
 <style>
 @keyframes shake {
@@ -1188,7 +1183,10 @@
     <div class="col-12">
         <div class="card shadow mb-4">
             <div class="card-header py-3 d-flex justify-content-between align-items-center">
-                <h6 class="m-0 font-weight-bold text-primary">Students List</h6>
+              <h5 class="mb-0">
+                    <i class="fas fa-user-graduate me-2"></i>
+                     Students Management
+                </h5>
                               <div class="d-flex align-items-center gap-2">
                   @php
     $pendingCount = isset($pendingRequestsCount) ? $pendingRequestsCount : 0;
@@ -1266,7 +1264,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         <input type="hidden" name="page" value="add-students">
 
                         <div class="flex-fill">
-                            <label for="search" class="form-label small fw-bold">Search Students</label>
+                           
                             <input type="text" class="form-control" id="search" name="search"
                                    value="{{ request('search') }}"
                                    placeholder="Search by name, username, email, or school ID...">

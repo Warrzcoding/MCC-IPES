@@ -25,23 +25,13 @@
 @endif
 
 <div class="row page-full-width">
-    <div class="col-12">
-        <div class="card border-0 shadow-sm">
-            <div class="card-header bg-transparent border-0">
-              <h5 class="mb-0">
-                    <i class="fas fa-chalkboard-teacher me-2"></i>
-                     Staff Members Managements
-                </h5>
-            </div>
-            
+    <div class="col-12">  
            <!-- <div class="card-body">
                   <div class="alert alert-info">
                     <i class="fas fa-info-circle me-2"></i>
                     <strong>Staff Management:</strong> This section allows administrators to add and manage teaching staff members.
                   </div>           
-            </div>-->
-
-        </div>
+            </div>-->  
     </div>
 </div>
 
@@ -50,13 +40,17 @@
     <div class="col-12">
         <div class="card shadow mb-4">
             <div class="card-header py-3 d-flex justify-content-between align-items-center">
-                <h6 class="m-0 font-weight-bold text-primary">Staff List</h6>
+               <h5 class="mb-0">
+                    <i class="fas fa-chalkboard-teacher me-2"></i>
+                     Staff Members Managements
+                </h5>
                 <div>
                     <button class="btn btn-primary btn-compact-action" data-bs-toggle="modal" data-bs-target="#addModal">
                         <i class="fas fa-plus"></i> Add Staff
                     </button>
                 </div>
             </div>
+         
             <div class="card-body">
                 <style>
                     /* Responsive table styles for zoom compatibility */
@@ -440,6 +434,30 @@
                 @if($staff->isEmpty())
                     <p class="text-muted text-center py-4">No staff found.</p>
                 @else
+
+                  <!--Start of golbal serach-->
+            <div class="card-header py-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <h6 class="m-0 font-weight-bold text-primary">Staff List</h6>
+                <div class="d-flex gap-2 flex-wrap align-items-center">
+                    <form method="GET" action="{{ route('dashboard') }}" class="d-flex gap-2" style="flex-wrap: wrap; align-items: center;">
+                        <input type="hidden" name="page" value="add-staff">
+                        <div class="position-relative" style="min-width: 200px;">
+                            <i class="fas fa-search position-absolute" style="left: 0.7rem; top: 50%; transform: translateY(-50%); color: #999; font-size: 0.75rem;"></i>
+                            <input type="text" name="search_staff" class="form-control" placeholder="Search by name, ID, email..." 
+                                   value="{{ request('search_staff') }}" style="padding-left: 2rem; font-size: 0.75rem; padding: 0.4rem 0.6rem 0.4rem 2rem;">
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-compact-action">
+                            <i class="fas fa-search"></i> Search
+                        </button>
+                        @if(request('search_staff'))
+                            <a href="{{ route('dashboard', ['page' => 'add-staff']) }}" class="btn btn-secondary btn-compact-action">
+                                <i class="fas fa-times"></i> Clear
+                            </a>
+                        @endif
+                    </form>
+                </div>
+            </div>
+           <!--end of golbal serach-->
                     <div class="table-responsive">
                         <table class="table table-bordered table-sm" id="staffTable">
                             <thead>
@@ -1003,7 +1021,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const searchFilterWrapper = document.createElement('div');
     searchFilterWrapper.className = 'd-flex flex-wrap align-items-center gap-2 mb-2';
     // --- Search box with icon ---
-    const searchBox = document.createElement('div');
+   /* const searchBox = document.createElement('div');
     searchBox.className = 'search-box mb-0';
     searchBox.style.flex = '1 1 220px';
     searchBox.style.minWidth = '200px';
@@ -1108,7 +1126,7 @@ document.addEventListener('DOMContentLoaded', function() {
         searchInput.addEventListener('keyup', filterRows);
         staffTypeSelect.addEventListener('change', filterRows);
     }
-});
+});*/
 
 // Form submission handling with SweetAlert
 document.addEventListener('DOMContentLoaded', function() {

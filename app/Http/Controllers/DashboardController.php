@@ -220,8 +220,20 @@ class DashboardController extends Controller
         $backupLogs = null;
         
         if ($page === 'add-staff') {
-            $staff = Staff::orderBy('full_name')->paginate(15);
-           /* $staff = Staff::orderBy('full_name')->get();*/
+
+            $searchQuery = $request->input('search_staff', '');
+               $staffQuery = Staff::query();
+             if ($searchQuery) {
+                          $staffQuery = $staffQuery->where(function($q) use ($searchQuery) {
+                          $q->where('full_name', 'like', "%{$searchQuery}%")
+                          ->orWhere('staff_id', 'like', "%{$searchQuery}%")
+                          ->orWhere('email', 'like', "%{$searchQuery}%")
+                          ->orWhere('department', 'like', "%{$searchQuery}%");
+                     });
+                }
+             $staff = $staffQuery->orderBy('full_name')->paginate(15)->appends($request->all());
+             /* $staff = Staff::orderBy('full_name')->paginate(15);*/
+              /* $staff = Staff::orderBy('full_name')->get();*/
         }
         
         if ($page === 'add-students') {
