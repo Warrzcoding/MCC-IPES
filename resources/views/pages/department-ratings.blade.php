@@ -1155,26 +1155,22 @@ function getAdjectivalRating($rating) {
         });
 
         let html = `
-            <div style="padding: 32px; font-family: 'Times New Roman', serif; font-size: 12pt; max-width: 800px; margin: 0 auto;">
-                <div style="text-align: center; margin-bottom: 0.5em; padding-bottom: 0.5em;">
-                    <div style='display:flex;align-items:center;justify-content:center;margin-bottom:1em;'>
-                        <img src='/images/mccicin.jpg' alt='Left Logo' style='width:70px;height:70px;margin-right:1.5em;' onerror='this.style.display="none"'>
-                        <div style='text-align:center;'>
-                            <h2 style='margin:0;font-size:11pt;line-height:1.3;font-family:"Times New Roman", serif;'>Republic of the Philippines<br>
-                            Region VII, Central Visayas<br>
-                            Commission on Higher Education<br>
-                            <strong>Madridejos Community College</strong><br>
-                            Crossing Bunakan, Madridejos, Cebu<br>
-                            <br>
-                            <strong>Center For Guidance Services</strong><br>
-                            <strong style='font-size:11pt;'>MCC Instructor's Performance Evaluation Results</strong><br>
-                            S.Y 2024-2025 - Semester 1</h2>
+            <div style="padding:8px;font-family:'Times New Roman', serif; font-size:9pt; max-width: 900px; margin: 0 auto; line-height: 1.15;">
+                <div class='header-section' style='text-align:center;margin-bottom:1.5em;padding-bottom:0.5em;'>
+                    <div style='display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:0.15em;'>
+                        <img src='/images/cgs.jpg' alt='Left Logo' style='width:60px;height:60px;flex-shrink:0;margin-right:5px;' onerror='this.style.display="none"'>
+                        <div style='text-align:center; flex:0 0 auto;'>   
+                            <strong style='font-size:9pt;'>MADRIDEJOS COMMUNITY COLLEGE</strong><br>                                   
+                            <strong style='font-size:8pt;'>Center For Guidance Services</strong><br>
+                            <span style='font-size:7.5pt;'>Crossing Bunakan, Madridejos, Cebu</span><br>
+                            <strong style='font-size:8.5pt;'>MCC Department's Performance Evaluation Results</strong><br>
+                            <span style='font-size:7.5pt;'>S.Y 2024-2025 - Semester 1</span>
                         </div>
-                        <img src='/images/madlogo.png' alt='Right Logo' style='width:70px;height:70px;margin-left:1.5em;' onerror='this.style.display="none"'>
+                        <img src='/images/logo.png' alt='Right Logo' style='width:70px;height:57px;flex-shrink:0;margin-left:5px;' onerror='this.style.display="none"'>
                     </div>
                 </div>
                 
-                <div style="text-align: left; margin-bottom: 1.5em; font-size: 10pt; line-height: 1.4;">
+                <div style="text-align: left; margin-bottom: 0.8em; font-size: 7.5pt; line-height: 1.2;">
                     ${(() => {
                         let recipientName = '';
                         let programHead = '';
@@ -1194,31 +1190,31 @@ function getAdjectivalRating($rating) {
                         }
                         
                         return `
-                            <p style="margin-bottom: 0.3em;">To: <strong>${recipientName}</strong></p>
-                            <p style="margin-bottom: 1em; margin-left: 2em;">${programHead}</p>
+                            <p style="margin-bottom: 0.15em;">To: <strong>${recipientName}</strong></p>
+                            <p style="margin-bottom: 0.3em; margin-left: 1em;">${programHead}</p>
                             
-                            <p style="margin-bottom: 1em;">From: Center for Guidance Services</p>
+                            <p style="margin-bottom: 0.3em;">From: Center for Guidance Services</p>
                             
-                            <p style="margin-bottom: 1em;">Subject: Endorsement of Performance Evaluations of ${departmentTitle} Instructors</p>
+                            <p style="margin-bottom: 0.3em;">Subject: Endorsement of Performance Evaluations of ${departmentTitle} Instructors</p>
                             
                             <p style="margin-bottom: 1em;">Greetings of Peace!</p>
                             
-                            <p style="margin-bottom: 2em;">I am writing to formally endorse the Results of Performance Evaluation of ${departmentTitle} for academic Year S.Y 2024-2025 - Semester 1.</p>
+                            <p style="margin-bottom: 0.4em;">I am writing to formally endorse the Results of Performance Evaluation of ${departmentTitle} for academic Year S.Y 2024-2025 - Semester 1.</p>
                             
-                            <p style="margin-bottom: 2em;">Please be advised that the following instructors have been evaluated by all MCC Students.</p>
+                            <p style="margin-bottom: 0.4em;">Please be advised that the following instructors have been evaluated by all MCC Students.</p>
                             
-                            <p style="margin-bottom: 1.5em;">Enclosed with this letter, you will find a detailed report highlighting the evaluation results for instructor.</p>
+                            <p style="margin-bottom: 0.6em;">Enclosed with this letter, you will find a detailed report highlighting the evaluation results for instructor.</p>
                         `;
                     })()}
                 </div>
                 
-                <div style="margin-bottom: 2em;">
-                    <table style="width: 100%; border-collapse: collapse; margin-top: 1em;">
+                <div style="margin-bottom: 0.8em;">
+                    <table style="width: 100%; border-collapse: collapse; margin-top: 0.4em;">
                         <thead>
                             <tr style="background-color: #f8f9fa;">
-                                <th style="border: 1px solid #ddd; padding: 12px; text-align: left; font-weight: bold;">NAME OF INSTRUCTOR</th>
-                                <th style="border: 1px solid #ddd; padding: 12px; text-align: center; font-weight: bold;">AVERAGE SCORE</th>
-                                <th style="border: 1px solid #ddd; padding: 12px; text-align: center; font-weight: bold;">ADJECTIVAL DESCRIPTIVE</th>
+                                <th style="border: 1px solid #ddd; padding: 4px 6px; text-align: left; font-weight: bold; font-size: 7.5pt;">NAME OF INSTRUCTOR</th>
+                                <th style="border: 1px solid #ddd; padding: 4px 6px; text-align: center; font-weight: bold; font-size: 7.5pt;">AVERAGE SCORE</th>
+                                <th style="border: 1px solid #ddd; padding: 4px 6px; text-align: center; font-weight: bold; font-size: 7.5pt;">ADJECTIVAL DESCRIPTIVE</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -1229,9 +1225,9 @@ function getAdjectivalRating($rating) {
             const adjective = adjectivalFromLegend(staff.rating);
             html += `
                 <tr style="background-color: ${rowColor};">
-                    <td style="border: 1px solid #ddd; padding: 12px; text-align: left;">${staff.name}</td>
-                    <td style="border: 1px solid #ddd; padding: 12px; text-align: center; font-weight: bold; color: #007bff;">${staff.rating.toFixed(2)}/5</td>
-                    <td style="border: 1px solid #ddd; padding: 12px; text-align: center; font-weight: bold; color: #28a745;">${adjective}</td>
+                    <td style="border: 1px solid #ddd; padding: 4px 6px; text-align: left; font-size: 7pt;">${staff.name}</td>
+                    <td style="border: 1px solid #ddd; padding: 4px 6px; text-align: center; font-weight: bold; color: #007bff; font-size: 7pt;">${staff.rating.toFixed(2)}</td>
+                    <td style="border: 1px solid #ddd; padding: 4px 6px; text-align: center; font-weight: bold; color: #28a745; font-size: 7pt;">${adjective}</td>
                 </tr>
             `;
         });
