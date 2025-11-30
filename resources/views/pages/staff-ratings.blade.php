@@ -12,12 +12,10 @@ function getRatingStatus($rating) {
 
 // Function to get adjectival descriptive rating
 function getAdjectivalRating($rating) {
-    if ($rating >= 4.5) return 'Outstanding';
-    if ($rating >= 4.0) return 'Very Satisfactory';
-    if ($rating >= 3.5) return 'Satisfactory';
-    if ($rating >= 3.0) return 'Fair';
-    if ($rating >= 2.5) return 'Poor';
-    if ($rating >= 2.0) return 'Very Poor';
+    if ($rating >= 4.51) return 'Outstanding';
+    if ($rating >= 3.51) return 'Very Satisfactory';
+    if ($rating >= 2.52) return 'Satisfactory';
+    if ($rating >= 1.51) return 'Unsatisfactory';
     return 'Unsatisfactory';
 }
 @endphp
@@ -1248,35 +1246,34 @@ function getAdjectivalRating($rating) {
                                 .questions-table { page-break-before: avoid !important; }
                             }
                         </style>
-                        <div style="padding:15px;font-family:'Times New Roman', serif; font-size:12pt; max-width: 900px; margin: 0 auto;">
-                            <div class='header-section' style='text-align:center;margin-bottom:0.5em;padding-bottom:0;'>
-                                <div style='display:flex;align-items:center;justify-content:center;margin-bottom:0.3em;'>
-                                    <img src='/images/mccicin.jpg' alt='Left Logo' style='width:50px;height:50px;margin-right:0.8em;' onerror='this.style.display="none"'>
-                                    <div style='text-align:center;'>
-                                        <h2 style='margin:0;font-size:10pt;line-height:1.1;font-family:"Times New Roman", serif;'>Republic of the Philippines<br>
-                                        <strong>Madridejos Community College</strong><br>
-                                        Crossing Bunakan, Madridejos, Cebu<br>
-                                        <strong>Center For Guidance Services</strong><br>
-                                        <strong style='font-size:10pt;'>MCC Instructor's Performance Evaluation Results</strong><br>
-                                        S.Y 2024-2025 - Semester 1</h2>
+                        <div style="padding:8px;font-family:'Times New Roman', serif; font-size:9pt; max-width: 900px; margin: 0 auto; line-height: 1.15;">
+                            <div class='header-section' style='text-align:center;margin-bottom:0.2em;padding-bottom:0;'>
+                                <div style='display:flex;align-items:center;justify-content:center;margin-bottom:0.15em;'>
+                                    <img src='/images/cgs.jpg' alt='Left Logo' style='width:30px;height:30px;margin-right:0.4em;' onerror='this.style.display="none"'>
+                                    <div style='text-align:center;'>   
+                                        <strong style='font-size:8pt;'>MADRIDEJOS COMMUNITY COLLEGE</strong><br>                                   
+                                        <strong style='font-size:7.5pt;'>Center For Guidance Services</strong><br>
+                                        <span style='font-size:7pt;'>Crossing Bunakan, Madridejos, Cebu</span><br>
+                                        <strong style='font-size:8pt;'>MCC Instructor's Performance Evaluation Results</strong><br>
+                                        <span style='font-size:7pt;'>S.Y 2024-2025 - Semester 1</span>
                                     </div>
-                                    <img src='/images/madlogo.png' alt='Right Logo' style='width:50px;height:50px;margin-left:0.8em;' onerror='this.style.display="none"'>
+                                    <img src='/images/logo.png' alt='Right Logo' style='width:30px;height:30px;margin-left:0.4em;' onerror='this.style.display="none"'>
                                 </div>
                             </div>
                             
                             <!-- Instructor Information Line -->
-                            <div class='instructor-info' style='margin-bottom:0.5em;font-size:11pt;display:flex;justify-content:space-between;align-items:center;'>
-                                <div style='text-align:left;'><strong>Name of Instructor:</strong> ${staff.full_name}</div>
-                                <div style='text-align:right;'><strong>Department:</strong> ${staff.department}</div>
+                            <div class='instructor-info' style='margin-bottom:0.3em;font-size:8.5pt;display:flex;justify-content:space-between;align-items:center;'>
+                                <div style='text-align:left;'><strong>Name:</strong> ${staff.full_name}</div>
+                                <div style='text-align:right;'><strong>Dept:</strong> ${staff.department}</div>
                             </div>
 
                             <!-- Questions and Ratings Table -->
-                            <table class='questions-table' style='width:100%;border-collapse:collapse;margin-bottom:1em;border:1px solid #333;'>
+                            <table class='questions-table' style='width:100%;border-collapse:collapse;margin-bottom:0.4em;border:1px solid #333; font-size:8pt;'>
                                 <tbody>
                                     <!-- Header Row (as regular tbody row to prevent repetition) -->
-                                    <tr style='background:#f8f9fa;page-break-inside:avoid;page-break-after:avoid;'>
-                                        <td style='border:1px solid #333;padding:12px;text-align:left;font-weight:bold;width:70%;'>Questionnaires</td>
-                                        <td style='border:1px solid #333;padding:12px;text-align:center;font-weight:bold;width:30%;'>Rating</td>
+                                    <tr style='background:#f8f9fa;page-break-inside:avoid;page-break-after:avoid; height:16px;'>
+                                        <td style='border:1px solid #333;padding:2px 3px;text-align:left;font-weight:bold;width:70%; overflow:hidden; white-space:nowrap;'>Questionnaires</td>
+                                        <td style='border:1px solid #333;padding:2px 3px;text-align:center;font-weight:bold;width:30%; height:16px;'>Rating</td>
                                     </tr>
                     `;
 
@@ -1298,8 +1295,8 @@ function getAdjectivalRating($rating) {
                             
                             // Add category header row
                             html += `
-                                <tr>
-                                    <td colspan="2" style='border:1px solid #333;padding:8px;background:#e3f2fd;font-weight:bold;color:#007bff;'>
+                                <tr style='height:14px;'>
+                                    <td colspan="2" style='border:1px solid #333;padding:2px 3px;background:#e3f2fd;font-weight:bold;color:#007bff; font-size:7.5pt;'>
                                         ${categoryName}
                                     </td>
                                 </tr>
@@ -1310,9 +1307,9 @@ function getAdjectivalRating($rating) {
                                 const rating = parseFloat(eval.average_rating || 0);
                                 
                                 html += `
-                                    <tr>
-                                        <td style='border:1px solid #333;padding:12px;text-align:left;vertical-align:top;'>${eval.question_text}</td>
-                                        <td style='border:1px solid #333;padding:12px;text-align:center;font-weight:bold;'>${rating.toFixed(2)}</td>
+                                    <tr style='height:18px;'>
+                                        <td style='border:1px solid #333;padding:2px 3px;text-align:left;vertical-align:middle; word-wrap:break-word; font-size:8pt;'>${eval.question_text}</td>
+                                        <td style='border:1px solid #333;padding:2px 3px;text-align:center;font-weight:bold; height:18px; font-size:8pt;'>${rating.toFixed(2)}</td>
                                     </tr>
                                 `;
                             });
@@ -1332,16 +1329,16 @@ function getAdjectivalRating($rating) {
                                 </tbody>
                             </table>
                             
-                            <!-- Summary Evaluation Table -->
-                            <div style='margin-top:2em;margin-bottom:2em;'>
-                                <h3 style='font-size:14pt;font-weight:bold;margin-bottom:1em;color:#333;border-bottom:2px solid #007bff;padding-bottom:0.5em;'>Summary Evaluation</h3>
-                                <table style='width:100%;border-collapse:collapse;border:1px solid #333;'>
+                            <!-- Summary Evaluation Table - Start on New Page -->
+                            <div style='page-break-before:always; margin-top:2em; padding-left:3em; margin-bottom:0.5em;'>
+                                <h3 style='font-size:9pt;font-weight:bold;margin-bottom:0.4em;margin-top:0;color:#333;border-bottom:1px solid #007bff;padding-bottom:0.2em;'>Summary Evaluation</h3>
+                                <table style='width:95%;border-collapse:collapse;border:1px solid #333; font-size:7.5pt;'>
                                     <thead>
-                                        <tr style='background:#f8f9fa;'>
-                                            <th style='border:1px solid #333;padding:8px;text-align:left;font-weight:bold;width:25%;'>Criteria</th>
-                                            <th style='border:1px solid #333;padding:8px;text-align:center;font-weight:bold;width:12%;'>Scores</th>
-                                            <th style='border:1px solid #333;padding:8px;text-align:center;font-weight:bold;width:18%;'>Verbal Interpretation</th>
-                                            <th style='border:1px solid #333;padding:8px;text-align:center;font-weight:bold;width:45%;'>Descriptive Explanation</th>
+                                        <tr style='background:#f8f9fa; height:16px;'>
+                                            <th style='border:1px solid #333;padding:2px 3px;text-align:left;font-weight:bold;width:25%;'>Criteria</th>
+                                            <th style='border:1px solid #333;padding:2px 3px;text-align:center;font-weight:bold;width:12%;'>Scores</th>
+                                            <th style='border:1px solid #333;padding:2px 3px;text-align:center;font-weight:bold;width:18%;'>Verbal Interpretation</th>
+                                            <th style='border:1px solid #333;padding:2px 3px;text-align:center;font-weight:bold;width:45%;'>Descriptive Explanation</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -1380,11 +1377,11 @@ function getAdjectivalRating($rating) {
                             totalCount++;
                             
                             html += `
-                                <tr>
-                                    <td style='border:1px solid #333;padding:8px;text-align:left;vertical-align:middle;'>${categoryName}</td>
-                                    <td style='border:1px solid #333;padding:8px;text-align:center;font-weight:bold;vertical-align:middle;'>${average.toFixed(2)}</td>
-                                    <td style='border:1px solid #333;padding:8px;text-align:center;font-weight:bold;vertical-align:middle;'>${verbalInterpretation}</td>
-                                    <td style='border:1px solid #333;padding:8px;text-align:left;font-style:italic;vertical-align:middle;line-height:1.3;'>${descriptiveExplanation}</td>
+                                <tr style='height:16px;'>
+                                    <td style='border:1px solid #333;padding:2px 3px;text-align:left;vertical-align:middle;'>${categoryName}</td>
+                                    <td style='border:1px solid #333;padding:2px 3px;text-align:center;font-weight:bold;vertical-align:middle;'>${average.toFixed(2)}</td>
+                                    <td style='border:1px solid #333;padding:2px 3px;text-align:center;font-weight:bold;vertical-align:middle;'>${verbalInterpretation}</td>
+                                    <td style='border:1px solid #333;padding:2px 3px;text-align:left;font-style:italic;vertical-align:middle;line-height:1.2;'>${descriptiveExplanation}</td>
                                 </tr>
                             `;
                         });
@@ -1396,11 +1393,11 @@ function getAdjectivalRating($rating) {
                             const overallDescriptiveExplanation = getDescriptiveExplanation(overallVerbalInterpretation);
                             
                             html += `
-                                <tr style='background:#f0f8ff;'>
-                                    <td style='border:1px solid #333;padding:8px;text-align:left;vertical-align:middle;font-weight:bold;'>Total</td>
-                                    <td style='border:1px solid #333;padding:8px;text-align:center;font-weight:bold;vertical-align:middle;'>${overallAverage.toFixed(2)}</td>
-                                    <td style='border:1px solid #333;padding:8px;text-align:center;font-weight:bold;vertical-align:middle;'>${overallVerbalInterpretation}</td>
-                                    <td style='border:1px solid #333;padding:8px;text-align:left;font-weight:bold;vertical-align:middle;line-height:1.3;'>${overallDescriptiveExplanation}</td>
+                                <tr style='background:#f0f8ff; height:16px;'>
+                                    <td style='border:1px solid #333;padding:2px 3px;text-align:left;vertical-align:middle;font-weight:bold;'>Total</td>
+                                    <td style='border:1px solid #333;padding:2px 3px;text-align:center;font-weight:bold;vertical-align:middle;'>${overallAverage.toFixed(2)}</td>
+                                    <td style='border:1px solid #333;padding:2px 3px;text-align:center;font-weight:bold;vertical-align:middle;'>${overallVerbalInterpretation}</td>
+                                    <td style='border:1px solid #333;padding:2px 3px;text-align:left;font-weight:bold;vertical-align:middle;line-height:1.2;'>${overallDescriptiveExplanation}</td>
                                 </tr>
                             `;
                         }
@@ -1420,14 +1417,14 @@ function getAdjectivalRating($rating) {
                             </div>
                             
                             <!-- Signature Section -->
-                            <div style='margin-top:2em;margin-bottom:2em;text-align:left;'>
-                                <div style='margin-bottom:2em;'>
+                            <div style='margin-top:0.6em;margin-bottom:0em;text-align:left; font-size:7.5pt; line-height:1.3; padding-left:3em;'>
+                                <div style='margin-bottom:0.8em;'>
                                     Prepared by: _____________
                                 </div>
-                                <div style='margin-bottom:0.5em;'>
+                                <div style='margin-bottom:0.2em;'>
                                     Reviewed and Noted by:
                                  </div>
-                                <div style='margin-bottom:0.5em;'>
+                                <div style='margin-bottom:0.1em;'>
                                     <strong style='text-decoration:underline;'>DR. LIZA D. GARCIA</strong>
                                 </div>
                                 <div>
@@ -1497,12 +1494,10 @@ function getAdjectivalRating($rating) {
 
     // Function to get adjectival descriptive rating (JavaScript version)
     function getAdjectivalRating(rating) {
-        if (rating >= 4.5) return 'Outstanding';
-        if (rating >= 4.0) return 'Very Satisfactory';
-        if (rating >= 3.5) return 'Satisfactory';
-        if (rating >= 3.0) return 'Fair';
-        if (rating >= 2.5) return 'Poor';
-        if (rating >= 2.0) return 'Very Poor';
+        if (rating >= 4.51) return 'Outstanding';
+        if (rating >= 3.51) return 'Very Satisfactory';
+        if (rating >= 2.52) return 'Satisfactory';
+        if (rating >= 1.51) return 'Unsatisfactory';
         return 'Unsatisfactory';
     }
 
@@ -1515,14 +1510,8 @@ function getAdjectivalRating($rating) {
                 return "Performance consistently exceeds expectations<br>and demonstrates high competency.";
             case 'Satisfactory':
                 return "Performance meets expectations and shows<br>adequate competency in this area.";
-            case 'Fair':
-                return "Performance is acceptable but shows<br>room for improvement and development.";
-            case 'Poor':
-                return "Performance falls below expectations<br>and requires significant improvement.";
-            case 'Very Poor':
-                return "Performance is considerably below standards<br>and needs immediate attention.";
             case 'Unsatisfactory':
-                return "Performance does not meet minimum requirements<br>and requires comprehensive improvement.";
+                return "Performance does not meet the required standards<br>and needs improvement.";
             default:
                 return "No evaluation data available<br>for this criteria.";
         }

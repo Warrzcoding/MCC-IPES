@@ -12,12 +12,10 @@ function getRatingStatus($rating) {
 
 // Function to get adjectival descriptive rating
 function getAdjectivalRating($rating) {
-    if ($rating >= 4.5) return 'Outstanding';
-    if ($rating >= 4.0) return 'Very Satisfactory';
-    if ($rating >= 3.5) return 'Satisfactory';
-    if ($rating >= 3.0) return 'Fair';
-    if ($rating >= 2.5) return 'Poor';
-    if ($rating >= 2.0) return 'Very Poor';
+    if ($rating >= 4.51) return 'Outstanding';
+    if ($rating >= 3.51) return 'Very Satisfactory';
+    if ($rating >= 2.52) return 'Satisfactory';
+    if ($rating >= 1.51) return 'Unsatisfactory';
     return 'Unsatisfactory';
 }
 @endphp
@@ -1284,12 +1282,10 @@ function getAdjectivalRating($rating) {
     }
 
     function adjectivalFromLegend(rating) {
-        if (rating >= 4.5) return 'Outstanding';
-        if (rating >= 4.0) return 'Very Satisfactory';
-        if (rating >= 3.5) return 'Satisfactory';
-        if (rating >= 3.0) return 'Fair';
-        if (rating >= 2.5) return 'Poor';
-        if (rating >= 2.0) return 'Very Poor';
+         if (rating >= 4.51) return 'Outstanding';
+        if (rating >= 3.51) return 'Very Satisfactory';
+        if (rating >= 2.52) return 'Satisfactory';
+        if (rating >= 1.51) return 'Unsatisfactory';
         return 'Unsatisfactory';
     }
 
