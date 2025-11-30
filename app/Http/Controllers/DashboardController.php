@@ -552,6 +552,9 @@ class DashboardController extends Controller
         }
 
         if ($page === 'staff-ratings' || $page === 'department-ratings') {
+            // Get the active academic year (where is_active = 1)
+            $currentAcademicYear = AcademicYear::where('is_active', 1)->first();
+            
             // Fetch ALL staff members WITH evaluations (both teaching and non-teaching)
             // Use INNER JOIN to exclude staff without evaluations
             $staffRatings = \App\Models\Staff::select(
@@ -584,6 +587,7 @@ class DashboardController extends Controller
                 'admins',
                 'staffRatings',
                 'years',
+                'currentAcademicYear',
                 // Analytics variables
                 'studentsPerCourse',
                 'evaluatedStudentsPerCourse',
