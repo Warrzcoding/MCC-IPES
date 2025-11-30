@@ -1281,17 +1281,19 @@ function getAdjectivalRating($rating) {
                     `;
 
                     if (evaluations && evaluations.length > 0) {
-                        // Group evaluations by category
+                        // Group evaluations by category while preserving order
                         const categories = {};
+                        const categoryOrder = [];
                         evaluations.forEach(eval => {
                             if (!categories[eval.category]) {
                                 categories[eval.category] = [];
+                                categoryOrder.push(eval.category);
                             }
                             categories[eval.category].push(eval);
                         });
 
-                        // Display each category with its questions
-                        Object.keys(categories).forEach(categoryName => {
+                        // Display each category with its questions in the order they were encountered
+                        categoryOrder.forEach(categoryName => {
                             const categoryEvals = categories[categoryName];
                             
                             // Add category header row

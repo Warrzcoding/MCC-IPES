@@ -338,8 +338,7 @@ class StaffController extends Controller
             // Get all questions for this staff_type with their evaluations
             $questions = DB::table('questions')
                 ->where('staff_type', $staff->staff_type)
-                ->orderBy('title')
-                ->orderBy('description')
+                ->orderBy('id')
                 ->get();
 
             // For each question, calculate the average response_score for this staff from evaluations
