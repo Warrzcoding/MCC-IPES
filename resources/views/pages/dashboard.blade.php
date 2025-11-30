@@ -568,7 +568,7 @@ if (Auth::user()->isAdmin()) {
     @else
         <!-- Student Dashboard -->
         <div class="col-12 mb-4">
-            <div class="row justify-content-center">
+            <div class="row justify-content-center" style="margin-left: -3px;">
                 <div class="col-6 col-sm-6 col-md-4 mb-3" style="display: flex; justify-content: center; align-items: center;">
                     <div class="circular-card shadow student-card" style="width: 120px; height: 120px; border-radius: 50%; background: linear-gradient(135deg, #ee94e9ff 0%, #630e55ff 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; text-align: center; position: relative; overflow: hidden;" 
                          title="Department Instructors: {{ $evaluatedDepartmentInstructors }} out of {{ $stats['department_instructors'] }} evaluated ({{ round($departmentInstructorCompletion) }}% complete)">
@@ -642,7 +642,7 @@ if (Auth::user()->isAdmin()) {
             </div>
             
             <!-- Evaluation Status Summary -->
-            <div class="row justify-content-center mt-3">
+            <div class="row justify-content-center mt-3" style="margin-left: -3px;">
                 <div class="col-12 col-md-8" style="display: flex; justify-content: center;">
                     <div class="card border-0 shadow-sm" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 15px;">
                         <div class="card-body p-3">
