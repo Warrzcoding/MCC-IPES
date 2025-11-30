@@ -1248,16 +1248,16 @@ function getAdjectivalRating($rating) {
                         </style>
                         <div style="padding:8px;font-family:'Times New Roman', serif; font-size:9pt; max-width: 900px; margin: 0 auto; line-height: 1.15;">
                             <div class='header-section' style='text-align:center;margin-bottom:0.2em;padding-bottom:0;'>
-                                <div style='display:flex;align-items:center;justify-content:center;margin-bottom:0.15em;'>
-                                    <img src='/images/cgs.jpg' alt='Left Logo' style='width:30px;height:30px;margin-right:0.4em;' onerror='this.style.display="none"'>
-                                    <div style='text-align:center;'>   
-                                        <strong style='font-size:8pt;'>MADRIDEJOS COMMUNITY COLLEGE</strong><br>                                   
-                                        <strong style='font-size:7.5pt;'>Center For Guidance Services</strong><br>
-                                        <span style='font-size:7pt;'>Crossing Bunakan, Madridejos, Cebu</span><br>
-                                        <strong style='font-size:8pt;'>MCC Instructor's Performance Evaluation Results</strong><br>
-                                        <span style='font-size:7pt;'>S.Y 2024-2025 - Semester 1</span>
+                                <div style='display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:0.15em;'>
+                                    <img src='/images/cgs.jpg' alt='Left Logo' style='width:60px;height:60px;flex-shrink:0;margin-right:5px;' onerror='this.style.display="none"'>
+                                    <div style='text-align:center; flex:0 0 auto;'>   
+                                        <strong style='font-size:9pt;'>MADRIDEJOS COMMUNITY COLLEGE</strong><br>                                   
+                                        <strong style='font-size:8pt;'>Center For Guidance Services</strong><br>
+                                        <span style='font-size:7.5pt;'>Crossing Bunakan, Madridejos, Cebu</span><br>
+                                        <strong style='font-size:8.5pt;'>MCC Instructor's Performance Evaluation Results</strong><br>
+                                        <span style='font-size:7.5pt;'>S.Y 2024-2025 - Semester 1</span>
                                     </div>
-                                    <img src='/images/logo.png' alt='Right Logo' style='width:30px;height:30px;margin-left:0.4em;' onerror='this.style.display="none"'>
+                                    <img src='/images/logo.png' alt='Right Logo' style='width:70px;height:57px;flex-shrink:0;margin-left:5px;' onerror='this.style.display="none"'>
                                 </div>
                             </div>
                             
