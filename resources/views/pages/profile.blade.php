@@ -261,7 +261,7 @@
             <div class="card-header bg-transparent border-0">
                 <h5 class="mb-0">
                     <i class="fas fa-user-edit me-2"></i>
-                    Profile Informationcccc
+                    Profile Information
                 </h5>
             </div>
             <div class="card-body">
@@ -358,11 +358,10 @@
                         <select class="form-select @error('course') is-invalid @enderror" name="course" required>
                             <option value="">Select Position/Department</option>
                             <option value="IT Department" {{ old('course', Auth::user()->course) === 'IT Department' ? 'selected' : '' }}>IT Department</option>
-                            <option value="Computer Science Department" {{ old('course', Auth::user()->course) === 'Computer Science Department' ? 'selected' : '' }}>Computer Science Department</option>
-                            <option value="Civil Engineering Department" {{ old('course', Auth::user()->course) === 'Civil Engineering Department' ? 'selected' : '' }}>Civil Engineering Department</option>
-                            <option value="Electrical Engineering Department" {{ old('course', Auth::user()->course) === 'Electrical Engineering Department' ? 'selected' : '' }}>Electrical Engineering Department</option>
-                            <option value="Mechanical Engineering Department" {{ old('course', Auth::user()->course) === 'Mechanical Engineering Department' ? 'selected' : '' }}>Mechanical Engineering Department</option>
-                            <option value="Administration" {{ old('course', Auth::user()->course) === 'Administration' ? 'selected' : '' }}>Administration</option>
+                            <option value="Center For Guidance Services" {{ old('course', Auth::user()->course) === 'Center For Guidance Services' ? 'selected' : '' }}>Center For Guidance Services</option>
+                            <option value="CGS Staff" {{ old('course', Auth::user()->course) === 'CGS Staff' ? 'selected' : '' }}>CGS Staff</option>
+                            <option value="Librarian" {{ old('course', Auth::user()->course) === 'Librarian' ? 'selected' : '' }}>Librarian</option>
+                            <option value="Administrator" {{ old('course', Auth::user()->course) === 'Administrator' ? 'selected' : '' }}>Administrator</option>
                             <option value="Student Affairs" {{ old('course', Auth::user()->course) === 'Student Affairs' ? 'selected' : '' }}>Student Affairs</option>
                             <option value="Academic Affairs" {{ old('course', Auth::user()->course) === 'Academic Affairs' ? 'selected' : '' }}>Academic Affairs</option>
                         </select>
@@ -723,7 +722,7 @@
                             <select class="form-select @error('admin_course') is-invalid @enderror" name="admin_course" required>
                                 <option value="">Select Position/Department</option>
                                 <option value="IT Department" {{ old('admin_course') === 'IT Department' ? 'selected' : '' }}>IT Department</option>
-                                <option value="Computer Science Department" {{ old('admin_course') === 'Computer Science Department' ? 'selected' : '' }}>Computer Science Department</option>
+                                <option value="Center For Guidance Services" {{ old('admin_course') === 'Center For Guidance Services' ? 'selected' : '' }}>Center For Guidance Services</option>
                                 <option value="Civil Engineering Department" {{ old('admin_course') === 'Civil Engineering Department' ? 'selected' : '' }}>Civil Engineering Department</option>
                                 <option value="Electrical Engineering Department" {{ old('admin_course') === 'Electrical Engineering Department' ? 'selected' : '' }}>Electrical Engineering Department</option>
                                 <option value="Mechanical Engineering Department" {{ old('admin_course') === 'Mechanical Engineering Department' ? 'selected' : '' }}>Mechanical Engineering Department</option>
@@ -828,11 +827,10 @@
                             <select class="form-select" id="editAdminCourse" name="admin_course" required>
                                 <option value="">Select Position/Department</option>
                                 <option value="IT Department">IT Department</option>
-                                <option value="Computer Science Department">Computer Science Department</option>
-                                <option value="Civil Engineering Department">Civil Engineering Department</option>
-                                <option value="Electrical Engineering Department">Electrical Engineering Department</option>
-                                <option value="Mechanical Engineering Department">Mechanical Engineering Department</option>
-                                <option value="Administration">Administration</option>
+                                <option value="Center For Guidance Services">Center For Guidance Services</option>
+                                <option value="CGS Staff">CGS Staff</option>
+                                <option value="Librarian">Librarian</option>
+                                <option value="Administrator">Administrator</option>
                                 <option value="Student Affairs">Student Affairs</option>
                                 <option value="Academic Affairs">Academic Affairs</option>
                             </select>
