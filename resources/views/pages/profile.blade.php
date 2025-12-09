@@ -265,7 +265,7 @@
                 </h5>
             </div>
             <div class="card-body">
-                <form action="{{ url('/dashboard/update-profile') }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ url('/dashboard/update-profile') }}" method="POST" enctype="multipart/form-data" id="profileUpdateForm">
                     @csrf
                     <div class="row">
                         <div class="col-md-6 mb-3">
@@ -514,7 +514,77 @@
             confirmPw.addEventListener('input', updateMatch);
         }
 
-        // Handle profile form submission
+        const profileForm = document.getElementById('profileUpdateForm');
+        if (profileForm) {
+            profileForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                try {
+                    const formData = new FormData(this);
+                    const response = await fetch(this.action, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    });
+
+                    const contentType = response.headers.get('content-type');
+                    
+                    if (contentType && contentType.includes('application/json')) {
+                        const data = await response.json();
+                        if (data.error) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Unauthorized',
+                                text: data.error || 'You are not authorized to update this profile.',
+                                confirmButtonColor: '#667eea',
+                                confirmButtonText: 'OK'
+                            });
+                        } else if (data.message) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success',
+                                text: data.message,
+                                confirmButtonColor: '#667eea',
+                                confirmButtonText: 'OK'
+                            }).then(() => {
+                                window.location.reload();
+                            });
+                        }
+                    } else {
+                        if (response.ok || response.status === 302 || response.status === 301) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success',
+                                text: 'Profile updated successfully!',
+                                confirmButtonColor: '#667eea',
+                                confirmButtonText: 'OK'
+                            }).then(() => {
+                                window.location.href = response.url || window.location.href;
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'An error occurred while updating your profile.',
+                                confirmButtonColor: '#667eea',
+                                confirmButtonText: 'OK'
+                            });
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'An error occurred while updating your profile.',
+                        confirmButtonColor: '#667eea',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            });
+        }
 
     })();
 </script>
