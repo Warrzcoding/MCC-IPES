@@ -1018,7 +1018,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     // --- UI: Flex container for search and filter ---
-    const searchFilterWrapper = document.createElement('div');
+  /* const searchFilterWrapper = document.createElement('div');
     searchFilterWrapper.className = 'd-flex flex-wrap align-items-center gap-2 mb-2';
     // --- Search box with icon ---
     const searchBox = document.createElement('div');
@@ -1039,7 +1039,7 @@ document.addEventListener('DOMContentLoaded', function() {
     searchInput.type = 'text';
     searchInput.id = 'searchInput';
     searchInput.className = 'form-control';
-   /* searchInput.placeholder = 'Search staff by name, department, or email...';*/
+   searchInput.placeholder = 'Search staff by name, department, or email...';
     searchInput.style.fontSize = '0.66rem';
     searchInput.style.paddingLeft = '34px';
     searchInput.style.paddingTop = '0.28rem';
@@ -1070,13 +1070,13 @@ document.addEventListener('DOMContentLoaded', function() {
       <option value="">All Staff Types</option>
       <option value="Teaching">Teaching</option>
       <option value="Non-teaching">Non-Teaching</option>
-    `;
-    filterDiv.appendChild(staffTypeSelect);
+    `;*/
+   /* filterDiv.appendChild(staffTypeSelect);
     // --- Assemble UI ---
     searchFilterWrapper.appendChild(searchBox);
     searchFilterWrapper.appendChild(filterDiv);
     // --- Refresh button ---
-   /* const refreshButton = document.createElement('button');
+    const refreshButton = document.createElement('button');
     refreshButton.type = 'button';
     refreshButton.className = 'btn btn-primary ms-2 shadow-sm d-flex align-items-center gap-2 rounded-pill refresh-btn-enhanced';
     refreshButton.style.height = '28px';
