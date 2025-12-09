@@ -1021,7 +1021,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const searchFilterWrapper = document.createElement('div');
     searchFilterWrapper.className = 'd-flex flex-wrap align-items-center gap-2 mb-2';
     // --- Search box with icon ---
-   /* const searchBox = document.createElement('div');
+    const searchBox = document.createElement('div');
     searchBox.className = 'search-box mb-0';
     searchBox.style.flex = '1 1 220px';
     searchBox.style.minWidth = '200px';
@@ -1039,7 +1039,7 @@ document.addEventListener('DOMContentLoaded', function() {
     searchInput.type = 'text';
     searchInput.id = 'searchInput';
     searchInput.className = 'form-control';
-    searchInput.placeholder = 'Search staff by name, department, or email...';
+   /* searchInput.placeholder = 'Search staff by name, department, or email...';*/
     searchInput.style.fontSize = '0.66rem';
     searchInput.style.paddingLeft = '34px';
     searchInput.style.paddingTop = '0.28rem';
@@ -1076,7 +1076,7 @@ document.addEventListener('DOMContentLoaded', function() {
     searchFilterWrapper.appendChild(searchBox);
     searchFilterWrapper.appendChild(filterDiv);
     // --- Refresh button ---
-    const refreshButton = document.createElement('button');
+   /* const refreshButton = document.createElement('button');
     refreshButton.type = 'button';
     refreshButton.className = 'btn btn-primary ms-2 shadow-sm d-flex align-items-center gap-2 rounded-pill refresh-btn-enhanced';
     refreshButton.style.height = '28px';
@@ -1086,7 +1086,7 @@ document.addEventListener('DOMContentLoaded', function() {
     refreshButton.innerHTML = '<i class="fas fa-sync-alt fa-spin-on-hover" style="font-size:0.62rem;"></i> <span style="font-size:0.65rem;">Refresh</span>';
     refreshButton.onclick = function() {
         location.reload();
-    };
+    };*/
     searchFilterWrapper.appendChild(refreshButton);
     // --- Insert UI ---
     const table = document.getElementById('staffTable');
@@ -1126,7 +1126,7 @@ document.addEventListener('DOMContentLoaded', function() {
         searchInput.addEventListener('keyup', filterRows);
         staffTypeSelect.addEventListener('change', filterRows);
     }
-});*/
+});
 
 // Form submission handling with SweetAlert
 document.addEventListener('DOMContentLoaded', function() {
