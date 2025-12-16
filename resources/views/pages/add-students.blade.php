@@ -1260,7 +1260,7 @@ document.addEventListener('DOMContentLoaded', function () {
             <div class="card-body">
                 <!-- Search Form -->
                 <div class="search-filter-form">
-                    <form method="GET" action="{{ route('dashboard', ['page' => 'add-students']) }}" class="d-flex gap-2 align-items-end">
+                    <form method="GET" action="{{ route('dashboard', ['page' => 'add-students']) }}" class="d-flex gap-2 align-items-end" id="studentSearchForm">
                         <input type="hidden" name="page" value="add-students">
 
                         <div class="flex-fill">
@@ -1270,16 +1270,17 @@ document.addEventListener('DOMContentLoaded', function () {
                                    placeholder="Search by name, username, email, or school ID...">
                         </div>
 
-                        <button type="submit" class="btn btn-primary" style="white-space: nowrap; height: 32px;">
+                        <button type="submit" class="btn btn-primary" style="white-space: nowrap; height: 32px; display: none;" id="searchBtn">
                             <i class="fas fa-search"></i> Search
                         </button>
 
-                        <a href="{{ route('dashboard', ['page' => 'add-students']) }}" class="btn btn-outline-secondary" style="height: 32px; font-size: 0.75rem; display: flex; align-items: center; justify-content: center;">
+                        <a href="javascript:void(0);" class="btn btn-outline-secondary" style="height: 32px; font-size: 0.75rem; display: flex; align-items: center; justify-content: center;" id="clearBtn">
                             Clear
                         </a>
                     </form>
                 </div>
 
+                <div id="studentsContent">
                 @if($students->isEmpty())
                     <p class="text-muted text-center py-4">
                         @if(request('search'))
@@ -1537,6 +1538,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         </div>
                     @endif
                 @endif
+                </div>
             </div>
         </div>
     </div>
@@ -2331,6 +2333,65 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             });
         });
+    }
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('search');
+    const clearBtn = document.getElementById('clearBtn');
+    const searchForm = document.getElementById('studentSearchForm');
+    let searchTimeout;
+
+    function performSearch(searchTerm) {
+        const url = new URL(searchForm.action);
+        url.searchParams.set('search', searchTerm);
+        url.searchParams.set('page', 'add-students');
+        
+        console.log('Fetching:', url.toString());
+        
+        fetch(url.toString(), {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.text())
+        .then(html => {
+            console.log('Response received, length:', html.length);
+            const parser = new DOMParser();
+            const newDoc = parser.parseFromString(html, 'text/html');
+            const newContent = newDoc.getElementById('studentsContent');
+            const oldContent = document.getElementById('studentsContent');
+            
+            console.log('New content found:', !!newContent, 'Old content found:', !!oldContent);
+            
+            if (newContent && oldContent) {
+                oldContent.parentNode.replaceChild(newContent, oldContent);
+                console.log('Content replaced successfully');
+            }
+        })
+        .catch(error => console.error('Search error:', error));
+    }
+
+    if (searchInput && searchForm) {
+        searchInput.addEventListener('keyup', function() {
+            console.log('Keyup event fired, value:', this.value);
+            clearTimeout(searchTimeout);
+            const searchTerm = this.value.trim();
+            
+            searchTimeout = setTimeout(() => {
+                performSearch(searchTerm);
+            }, 100);
+        });
+
+        clearBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            searchInput.value = '';
+            clearTimeout(searchTimeout);
+            performSearch('');
+        });
+    } else {
+        console.error('searchInput or searchForm not found');
     }
 });
 </script> 
