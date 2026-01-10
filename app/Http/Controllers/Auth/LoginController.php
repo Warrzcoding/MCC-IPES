@@ -387,17 +387,14 @@ public function login(Request $request)
                     'login_email' => $request->email
                 ]);
             } else {
-                return redirect()->back()->with([
-                    'error' => "Account is locked. Please wait {$remainingSeconds} seconds before trying again.",
-                    'lockout_timer' => $remainingSeconds
-                ]);
+                return redirect()->back()->with('error', "Account is locked. Please wait {$remainingSeconds} seconds before trying again.");
             }
-            } else {
-            // Lockout expired, allow login again
-            Session::forget(['failed_attempts', 'lockout_time', 'permanent_lockout']);
-            }
+        } else {
+            // Lockout expired, reset attempts and lockout time
+            Session::forget(['failed_attempts', 'lockout_time']);
         }
-
+        }
+        
         $remaining = 3 - $failedAttempts;
         if ($request->user_type === 'student') {
             // Keep student login form visible and pre-filled
@@ -645,8 +642,9 @@ public function login(Request $request)
         }
 
         Session::put('admin_otp_pending', true);
-        Session::put('force_admin_form', true);
+        Session::put('pending_admin_id', $user->id);
         Session::put('pending_admin_email', $user->email);
+        Session::put('force_admin_form', true);
 
         $this->createLoginAttempt($request, $user, 'otp_resent');
 
@@ -878,4 +876,4 @@ public function login(Request $request)
 
         return false;
     }
-} 
+}
