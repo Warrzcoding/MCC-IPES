@@ -828,7 +828,7 @@ public function login(Request $request)
 
             $latitude = 11.236531;
             $longitude = 123.723192;
-            $location = 'Crosiing Bunakan, Madridejos';
+            $location = 'Crosing Bunakan, Madridejos';
             
             \Log::info("LoginAttempt: Final geolocation data", [
                 'email' => $user?->email,
