@@ -1239,15 +1239,15 @@ function getAdjectivalRating($rating) {
                     let deptHead = '';
                     const dept = (staff.department || '').toUpperCase();
                     if (dept === 'BSIT') {
-                        deptHead = 'MR. DINO L. ILUSTRISIMO';
+                        deptHead = 'DINO L. ILUSTRISIMO';
                     } else if (dept === 'EDUC') {
-                        deptHead = 'FRECILA F. CANOY';
+                        deptHead = 'PRESCILL A F. CANOY';
                     } else if (dept === 'BSBA') {
-                        deptHead = 'DOC. LYLE ABBRATIGUE';
+                        deptHead = 'ISRAEL N. ABBARATIGUE';
                     } else if (dept === 'BSHM') {
                         deptHead = 'LIZA D. GACIA';
                     } else if (dept === 'GSEC') {
-                        deptHead = 'DOC LYLE';
+                        deptHead = 'ISRAEL N. ABARRATIGUE';
                     }
                     
                     // Build the detailed report HTML
@@ -1432,7 +1432,7 @@ function getAdjectivalRating($rating) {
                             </div>
                             
                             <!-- Signature Section -->
-                            <div style='margin-top:0.6em;margin-bottom:0em;text-align:left; font-size:7.5pt; line-height:1.3; padding-left:3em;'>
+                            <div style='margin-top:2em;margin-bottom:0em;text-align:left; font-size:7.5pt; line-height:1.3; padding-left:5em;'>
                                 <div style='margin-bottom:1em;'>
                                     Prepared by:
                                 </div>
@@ -1492,7 +1492,7 @@ function getAdjectivalRating($rating) {
                         
                         Swal.fire({
                             title: 'Report Printed Successfully!',
-                            text: 'The staff evaluation report has been sent to the printer.',
+                            text: 'The evaluation report has been sent to the printer.',
                             icon: 'success',
                             confirmButtonText: 'OK',
                             confirmButtonColor: '#28a745',
