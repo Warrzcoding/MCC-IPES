@@ -1235,6 +1235,21 @@ function getAdjectivalRating($rating) {
                     const staff = data.staff;
                     const evaluations = data.evaluations;
                     
+                    // Determine Department Head
+                    let deptHead = '';
+                    const dept = (staff.department || '').toUpperCase();
+                    if (dept === 'BSIT') {
+                        deptHead = 'MR. DINO L. ILUSTRISIMO';
+                    } else if (dept === 'EDUC') {
+                        deptHead = 'FRECILA F. CANOY';
+                    } else if (dept === 'BSBA') {
+                        deptHead = 'DOC. LYLE ABBRATIGUE';
+                    } else if (dept === 'BSHM') {
+                        deptHead = 'LIZA D. GACIA';
+                    } else if (dept === 'GSEC') {
+                        deptHead = 'DOC LYLE';
+                    }
+                    
                     // Build the detailed report HTML
                     let html = `
                         <style>
@@ -1418,17 +1433,39 @@ function getAdjectivalRating($rating) {
                             
                             <!-- Signature Section -->
                             <div style='margin-top:0.6em;margin-bottom:0em;text-align:left; font-size:7.5pt; line-height:1.3; padding-left:3em;'>
-                                <div style='margin-bottom:0.8em;'>
-                                    Prepared by: _____________
-                                </div>
-                                <div style='margin-bottom:0.2em;'>
-                                    Reviewed and Noted by:
-                                 </div>
                                 <div style='margin-bottom:0.1em;'>
-                                    <strong style='text-decoration:underline;'>DR. LIZA D. GARCIA</strong>
+                                    Prepared by:
                                 </div>
-                                <div>
-                                    Guidance Counselor
+                                <div style='margin-bottom:0.1em;'>
+                                    <strong style='text-decoration:underline;'>DHINA B. DALISAY</strong>
+                                </div>
+                                <div style='margin-bottom:0.8em;'>
+                                    Guidance Advocate
+                                </div>
+
+                                <div style='display:flex; justify-content:space-between; align-items:flex-start;'>
+                                    <div style='text-align:left;'>
+                                        <div style='margin-bottom:0.2em;'>
+                                            Reviewed and Noted by:
+                                        </div>
+                                        <div style='margin-bottom:0.1em;'>
+                                            <strong style='text-decoration:underline;'>DR. LIZA D. GARCIA</strong>
+                                        </div>
+                                        <div>
+                                            Guidance Counselor
+                                        </div>
+                                    </div>
+                                    <div style='text-align:left; margin-right:8em;'>
+                                        <div style='margin-bottom:0.2em;'>
+                                            Received by: _____________
+                                        </div>
+                                        <div style='margin-bottom:0.1em;'>
+                                            <strong style='text-decoration:underline;'>${deptHead}</strong>
+                                        </div>
+                                        <div>
+                                            Head of Department
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
