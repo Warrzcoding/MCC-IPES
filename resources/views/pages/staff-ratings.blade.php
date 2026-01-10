@@ -1167,7 +1167,7 @@ function getAdjectivalRating($rating) {
     function showPrintConfirmModal(staffId) {
         Swal.fire({
             title: 'Confirm Print',
-            text: 'Are you sure you want to print the report for this instructor,
+            text: 'Are you sure you want to print the report for this instructor?',
             icon: 'question',
             showCancelButton: true,
             confirmButtonColor: '#28a745',
@@ -1432,7 +1432,7 @@ function getAdjectivalRating($rating) {
                             </div>
                             
                             <!-- Signature Section -->
-                            <div style='margin-top:2em;margin-bottom:0em;text-align:left; font-size:7.5pt; line-height:1.3; padding-left:2em;'>
+                            <div style='margin-top:2em;margin-bottom:0em;text-align:left; font-size:10pt; line-height:1.3; padding-left:3em;'>
                                 <div style='margin-bottom:1em;'>
                                     Prepared by:
                                 </div>
