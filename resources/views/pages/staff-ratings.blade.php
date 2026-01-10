@@ -1346,7 +1346,7 @@ function getAdjectivalRating($rating) {
                             
                             <!-- Summary Evaluation Table - Start on New Page -->
                             <div style='page-break-before:always; margin-top:2em; padding-left:3em; margin-bottom:0.5em;'>
-                                <h3 style='font-size:9pt;font-weight:bold;margin-bottom:0.4em;margin-top:0;color:#333;border-bottom:1px solid #ff8400;padding-bottom:0.2em;'>Summary Evaluation</h3>
+                                <h3 style='font-size:9pt;font-weight:bold;margin-bottom:0.4em;margin-top:0;color:#333;border-bottom:1px solid #ffffff;padding-bottom:0.2em;'>Summary Evaluation</h3>
                                 <table style='width:95%;border-collapse:collapse;border:1px solid #333; font-size:7.5pt;'>
                                     <thead>
                                         <tr style='background:#f8f9fa; height:16px;'>
@@ -1449,7 +1449,7 @@ function getAdjectivalRating($rating) {
                                             Reviewed and Noted by:
                                         </div>
                                         <div style='margin-bottom:0.1em;'>
-                                            <strong style='text-decoration:underline;'>DR. LIZA D. GARCIA</strong>
+                                            <strong>DR. LIZA D. GARCIA</strong>
                                         </div>
                                         <div>
                                             Guidance Counselor
@@ -1460,10 +1460,7 @@ function getAdjectivalRating($rating) {
                                             Received by: _____________
                                         </div>
                                         <div style='margin-bottom:0.1em;'>
-                                            <strong style='text-decoration:underline;'>${deptHead}</strong>
-                                        </div>
-                                        <div>
-                                            Head of Department
+                                            <strong>${deptHead}</strong>
                                         </div>
                                     </div>
                                 </div>
