@@ -1278,7 +1278,7 @@ function getAdjectivalRating($rating) {
                             
                             <!-- Instructor Information Line -->
                             <div class='instructor-info' style='margin-bottom:0.3em;font-size:9pt;display:flex;justify-content:space-between;align-items:center;'>
-                                <di style='text-align:left;'><strong>Name:</strong> ${staff.full_name}</di
+                                <di style='text-align:left;'><strong>Name:</strong> ${staff.full_name}</di>
                                 <div style='text-align:right;'><strong>Dept:</strong> ${staff.department}</div>
                             </div>
 
@@ -1347,7 +1347,7 @@ function getAdjectivalRating($rating) {
                             <!-- Summary Evaluation Table - Start on New Page -->
                             <div style='page-break-before:always; margin-top:2em; padding-left:3em; margin-bottom:0.5em;'>
                                 <h3 style='font-size:10pt;font-weight:bold;margin-bottom:0.4em;margin-top:0;color:#333;border-bottom:1px solid #ffffff;padding-bottom:0.2em;'>Summary Evaluation</h3>
-                                <table style='width:95%;border-collapse:collapse;border:1px solid #333; font-size:9pt;'>
+                                <table style='width:95%;border-collapse:collapse;border:1px solid #333; font-size:8.5pt;'>
                                     <thead>
                                         <tr style='background:#f8f9fa; height:16px;'>
                                             <th style='border:1px solid #333;padding:2px 3px;text-align:left;font-weight:bold;width:25%;'>Criteria</th>
