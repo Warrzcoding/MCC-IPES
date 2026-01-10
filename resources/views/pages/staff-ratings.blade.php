@@ -1277,13 +1277,13 @@ function getAdjectivalRating($rating) {
                             </div>
                             
                             <!-- Instructor Information Line -->
-                            <div class='instructor-info' style='margin-bottom:0.3em;font-size:8.5pt;display:flex;justify-content:space-between;align-items:center;'>
-                                <div style='text-align:left;'><strong>Name:</strong> ${staff.full_name}</div>
+                            <div class='instructor-info' style='margin-bottom:0.3em;font-size:9pt;display:flex;justify-content:space-between;align-items:center;'>
+                                <di style='text-align:left;'><strong>Name:</strong> ${staff.full_name}</di
                                 <div style='text-align:right;'><strong>Dept:</strong> ${staff.department}</div>
                             </div>
 
                             <!-- Questions and Ratings Table -->
-                            <table class='questions-table' style='width:100%;border-collapse:collapse;margin-bottom:0.4em;border:1px solid #333; font-size:8pt;'>
+                            <table class='questions-table' style='width:100%;border-collapse:collapse;margin-bottom:0.4em;border:1px solid #333; font-size:8.5pt;'>
                                 <tbody>
                                     <!-- Header Row (as regular tbody row to prevent repetition) -->
                                     <tr style='background:#f8f9fa;page-break-inside:avoid;page-break-after:avoid; height:16px;'>
@@ -1346,8 +1346,8 @@ function getAdjectivalRating($rating) {
                             
                             <!-- Summary Evaluation Table - Start on New Page -->
                             <div style='page-break-before:always; margin-top:2em; padding-left:3em; margin-bottom:0.5em;'>
-                                <h3 style='font-size:9pt;font-weight:bold;margin-bottom:0.4em;margin-top:0;color:#333;border-bottom:1px solid #ffffff;padding-bottom:0.2em;'>Summary Evaluation</h3>
-                                <table style='width:95%;border-collapse:collapse;border:1px solid #333; font-size:7.5pt;'>
+                                <h3 style='font-size:10pt;font-weight:bold;margin-bottom:0.4em;margin-top:0;color:#333;border-bottom:1px solid #ffffff;padding-bottom:0.2em;'>Summary Evaluation</h3>
+                                <table style='width:95%;border-collapse:collapse;border:1px solid #333; font-size:9pt;'>
                                     <thead>
                                         <tr style='background:#f8f9fa; height:16px;'>
                                             <th style='border:1px solid #333;padding:2px 3px;text-align:left;font-weight:bold;width:25%;'>Criteria</th>
