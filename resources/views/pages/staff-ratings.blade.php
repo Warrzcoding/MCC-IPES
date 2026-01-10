@@ -1433,19 +1433,19 @@ function getAdjectivalRating($rating) {
                             
                             <!-- Signature Section -->
                             <div style='margin-top:0.6em;margin-bottom:0em;text-align:left; font-size:7.5pt; line-height:1.3; padding-left:3em;'>
-                                <div style='margin-bottom:4em;'>
+                                <div style='margin-bottom:1em;'>
                                     Prepared by:
                                 </div>
                                 <div style='margin-bottom:0.1em;'>
                                     <strong>DHINA B. DALISAY</strong>
                                 </div>
-                                <div style='margin-bottom:0.8em;'>
+                                <div style='margin-bottom:2em;'>
                                     Guidance Advocate
                                 </div>
 
                                 <div style='display:flex; justify-content:space-between; align-items:flex-start;'>
                                     <div style='text-align:left;'>
-                                        <div style='margin-bottom:0.2em;'>
+                                        <div style='margin-bottom:1em;'>
                                             Reviewed and Noted by:
                                         </div>
                                         <div style='margin-bottom:0.1em;'>
