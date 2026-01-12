@@ -1261,7 +1261,7 @@ function getAdjectivalRating($rating) {
                                 .questions-table { page-break-before: avoid !important; }
                             }
                         </style>
-                        <div style="padding:8px;font-family:'Arial', serif; font-size:9pt; max-width: 900px; margin: 0 auto; line-height: 1.15;">
+                        <div style="padding:8px;font-family:'Arial', sans-serif; font-size:9pt; max-width: 900px; margin: 0 auto; line-height: 1.15;">
                             <div class='header-section' style='text-align:center;margin-bottom:0.2em;padding-bottom:0;'>
                                 <div style='display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:2.15em;'>
                                     <img src='/images/cgs.jpg' alt='Left Logo' style='width:60px;height:60px;flex-shrink:0;margin-right:5px;' onerror='this.style.display="none"'>
