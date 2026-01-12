@@ -1460,7 +1460,7 @@ function getAdjectivalRating($rating) {
                                             Received by: _____________
                                         </div>
                                         <div style='margin-bottom:0.1em;'>
-                                            <strong>${deptHead}</strong>
+                                            <span><strong>${deptHead}</strong></span>
                                         </div>
                                     </div>
                                 </div>
