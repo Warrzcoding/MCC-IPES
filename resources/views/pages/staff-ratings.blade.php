@@ -1261,7 +1261,7 @@ function getAdjectivalRating($rating) {
                                 .questions-table { page-break-before: avoid !important; }
                             }
                         </style>
-                        <div style="padding:8px;font-family:'Calibri', serif; font-size:9pt; max-width: 900px; margin: 0 auto; line-height: 1.15;">
+                        <div style="padding:8px;font-family:'Arial Black', serif; font-size:9pt; max-width: 900px; margin: 0 auto; line-height: 1.15;">
                             <div class='header-section' style='text-align:center;margin-bottom:0.2em;padding-bottom:0;'>
                                 <div style='display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:2.15em;'>
                                     <img src='/images/cgs.jpg' alt='Left Logo' style='width:60px;height:60px;flex-shrink:0;margin-right:5px;' onerror='this.style.display="none"'>
@@ -1270,8 +1270,8 @@ function getAdjectivalRating($rating) {
                                         <strong style='font-size:9pt;'>Center For Guidance Services</strong><br>
                                         <span style='font-size:8.5pt;'>Crossing Bunakan, Madridejos, Cebu</span><br>
                                         <span style='font-size:7.5pt; color: blue; text-decoration: none;'>
-                                         <i class='fas fa-envelope'></i> mcc.cgsofficial@gmail.com
-                                        <i class='fab fa-facebook'></i> fb.com/MCCCenterforGuidanceServices<br>       
+                                         <i class='fas fa-envelope'></i> mcc.cgsofficial@gmail.com<br>  
+                                        <i class='fab fa-facebook'></i> fb.com/MCCCenterforGuidanceServices     
                                         </span><br>
                                          <strong style='font-size:9.5pt;'>MCC Instructor's Performance Evaluation Results</strong><br>
                                        <span style='font-size:8.5pt;'>S.Y {{ $currentAcademicYear?->year }} - Semester {{ $currentAcademicYear?->semester }}</span>
