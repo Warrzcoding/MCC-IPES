@@ -1272,7 +1272,7 @@ function getAdjectivalRating($rating) {
                                          <strong style='font-size:9.5pt;'>MCC Instructor's Performance Evaluation Results</strong><br>
                                        <span style='font-size:8.5pt;'>S.Y {{ $currentAcademicYear?->year }} - Semester {{ $currentAcademicYear?->semester }}</span>
                                     </div>
-                                    <img src='/images/logo.png' alt='Right Logo' style='width:70px;height:70px;flex-shrink:0;margin-left:5px;' onerror='this.style.display="none"'>
+                                    <img src='/images/logo.png' alt='Right Logo' style='width:80px;height:80px;flex-shrink:0;margin-left:5px;' onerror='this.style.display="none"'>
                                 </div>
                             </div>
                             
