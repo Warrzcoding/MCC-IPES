@@ -1239,13 +1239,13 @@ function getAdjectivalRating($rating) {
                     let deptHead = '';
                     const dept = (staff.department || '').toUpperCase();
                     if (dept === 'BSIT') {
-                        deptHead = 'DINO L. ILUSTRISIMO';
+                        deptHead = 'DR. DINO L. ILUSTRISIMO';
                     } else if (dept === 'EDUC') {
-                        deptHead = 'PRESCILL A F. CANOY';
+                        deptHead = 'DR. PRESCILLA F. CANOY';
                     } else if (dept === 'BSBA') {
-                        deptHead = 'ISRAEL N. ABBARATIGUE';
+                        deptHead = 'DR. ISRAEL N. ABBARATIGUE';
                     } else if (dept === 'BSHM') {
-                        deptHead = 'LIZA D. GACIA';
+                        deptHead = 'CHRISTY FORSUELO';
                     } else if (dept === 'GSEC') {
                         deptHead = 'ISRAEL N. ABARRATIGUE';
                     }
@@ -1455,7 +1455,7 @@ function getAdjectivalRating($rating) {
                                             Guidance Counselor
                                         </div>
                                     </div>
-                                    <div style='text-align:left; margin-right:8em;'>
+                                    <div style='text-align:left; margin-right:4em;'>
                                         <div style='margin-bottom:0.2em;'>
                                             Received by: _____________
                                         </div>
