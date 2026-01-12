@@ -1269,6 +1269,10 @@ function getAdjectivalRating($rating) {
                                         <strong style='font-size:10pt;'>MADRIDEJOS COMMUNITY COLLEGE</strong><br>                                   
                                         <strong style='font-size:9pt;'>Center For Guidance Services</strong><br>
                                         <span style='font-size:8.5pt;'>Crossing Bunakan, Madridejos, Cebu</span><br>
+                                        <span style='font-size:7.5pt; color: blue; text-decoration: underline;'>
+                                            <i class='fab fa-facebook'></i> fb.com/MCCCenterforGuidanceServices<br>
+                                            <i class='fas fa-envelope'></i> mcc.cgsofficial@gmsil.com
+                                        </span><br>
                                          <strong style='font-size:9.5pt;'>MCC Instructor's Performance Evaluation Results</strong><br>
                                        <span style='font-size:8.5pt;'>S.Y {{ $currentAcademicYear?->year }} - Semester {{ $currentAcademicYear?->semester }}</span>
                                     </div>
