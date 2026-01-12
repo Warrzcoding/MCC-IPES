@@ -930,7 +930,7 @@ function getAdjectivalRating($rating) {
         <div class="modal-content action-modal-content">
             <div class="modal-header table-header text-white">
                 <h5 class="modal-title" id="staffProfileModalLabel">
-                    <i class="fas fa-user-circle me-2"></i>Staff Profile & Ratings
+                    <i class="fas fa-user-circle me-2"></i>Instructors Profile & Ratings
                 </h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
@@ -1266,11 +1266,11 @@ function getAdjectivalRating($rating) {
                                 <div style='display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:0.15em;'>
                                     <img src='/images/cgs.jpg' alt='Left Logo' style='width:60px;height:60px;flex-shrink:0;margin-right:5px;' onerror='this.style.display="none"'>
                                     <div style='text-align:center; flex:0 0 auto;'>   
-                                        <strong style='font-size:9pt;'>MADRIDEJOS COMMUNITY COLLEGE</strong><br>                                   
-                                        <strong style='font-size:8pt;'>Center For Guidance Services</strong><br>
-                                        <span style='font-size:7.5pt;'>Crossing Bunakan, Madridejos, Cebu</span><br>
-                                         <strong style='font-size:8.5pt;'>MCC Instructor's Performance Evaluation Results</strong><br>
-                                       <span style='font-size:7.5pt;'>S.Y {{ $currentAcademicYear?->year }} - Semester {{ $currentAcademicYear?->semester }}</span>
+                                        <strong style='font-size:10pt;'>MADRIDEJOS COMMUNITY COLLEGE</strong><br>                                   
+                                        <strong style='font-size:9pt;'>Center For Guidance Services</strong><br>
+                                        <span style='font-size:8.5pt;'>Crossing Bunakan, Madridejos, Cebu</span><br>
+                                         <strong style='font-size:9.5pt;'>MCC Instructor's Performance Evaluation Results</strong><br>
+                                       <span style='font-size:8.5pt;'>S.Y {{ $currentAcademicYear?->year }} - Semester {{ $currentAcademicYear?->semester }}</span>
                                     </div>
                                     <img src='/images/logo.png' alt='Right Logo' style='width:70px;height:57px;flex-shrink:0;margin-left:5px;' onerror='this.style.display="none"'>
                                 </div>
