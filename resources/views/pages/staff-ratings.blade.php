@@ -1246,8 +1246,8 @@ function getAdjectivalRating($rating) {
                         deptHead = 'DR. ISRAEL N. ABBARATIGUE';
                     } else if (dept === 'BSHM') {
                         deptHead = 'CHRISTY FORSUELO';
-                    } else if (dept === 'GSEC') {
-                        deptHead = 'ISRAEL N. ABARRATIGUE';
+                    } else if (dept === 'GEC') {
+                        deptHead = 'DR. ISRAEL N. ABARRATIGUE';
                     }
                     
                     // Build the detailed report HTML
