@@ -1681,7 +1681,7 @@ function viewStudentData(fullName, username, email, schoolId, course, yearLevel,
         html: `
             <div class="text-center mb-3">
                 <img src="${imageUrl}" alt="Student Avatar" 
-                     style="width: 180px; height: 180px; border-radius: 50%; object-fit: cover; border: 4px solid #dee2e6; background-color: #f8f9fa; box-shadow: 0 4px 10px rgba(0,0,0,0.15);"
+                     style="width: 250px; height: 250px; border-radius: 50%; object-fit: cover; border: 4px solid #dee2e6; background-color: #f8f9fa; box-shadow: 0 4px 10px rgba(0,0,0,0.15);"
                      onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=667eea&color=fff&size=180'">
                 <h5 class="mt-3 mb-1" style="font-weight: 700;">${fullName}</h5>
             </div>
