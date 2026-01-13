@@ -1681,11 +1681,11 @@ function viewStudentData(fullName, username, email, schoolId, course, yearLevel,
         html: `
             <div class="text-center mb-3">
                 <img src="${imageUrl}" alt="Student Avatar" 
-                     style="width: 140px; height: 140px; border-radius: 50%; object-fit: cover; border: 4px solid #dee2e6; background-color: #f8f9fa; box-shadow: 0 4px 6px rgba(0,0,0,0.1);"
-                     onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=667eea&color=fff&size=140'">
-                <h4 class="mt-3 mb-1" style="font-weight: 600;">${fullName}</h4>
+                     style="width: 180px; height: 180px; border-radius: 50%; object-fit: cover; border: 4px solid #dee2e6; background-color: #f8f9fa; box-shadow: 0 4px 10px rgba(0,0,0,0.15);"
+                     onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=667eea&color=fff&size=180'">
+                <h5 class="mt-3 mb-1" style="font-weight: 700;">${fullName}</h5>
             </div>
-            <div class="text-start" style="font-size: 0.85rem; line-height: 1.4;">
+            <div class="text-start" style="font-size: 0.75rem; line-height: 1.3; color: #444;">
                 <p class="mb-1"><strong>Username:</strong> ${username}</p>
                 <p class="mb-1"><strong>MS Email Account:</strong> ${email}</p>
                 <p class="mb-1"><strong>School ID:</strong> ${schoolId}</p>
