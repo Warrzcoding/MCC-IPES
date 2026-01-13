@@ -25,13 +25,13 @@
             margin-bottom: 40px;
         }
         .header .logo-wrapper {
-            width: 100px;
-            height: 100px;
+            width: 102px;
+            height: 120px;
             margin: 0 auto 25px;
             border-radius: 50%;
             background-color: #000000;
-            border: 5px solid #232528;
-            box-shadow: 0 10px 25px rgba(63, 67, 73, 0.2);
+            border: 5px solid #9621da;
+            box-shadow: 0 10px 25px rgba(193, 29, 171, 0.96);
             display: table;
         }
         .header .logo-cell {
