@@ -1296,4 +1296,4 @@ function getAdjectivalRating($rating) {
 
 
 
-</script> 
+</script> 1168-
