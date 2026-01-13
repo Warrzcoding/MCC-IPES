@@ -899,7 +899,7 @@
 }
 
 /* Email truncation for better display */
-.email-truncate {
+.text-truncate {
   display: inline-block;
   max-width: 150px;
   overflow: hidden;
@@ -1330,8 +1330,9 @@ document.addEventListener('DOMContentLoaded', function () {
                                                  onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode($student->full_name) }}&background=667eea&color=fff&size=50'">
                                         </td>
                                         <td>{{ $student->full_name }}</td>
-                                        <td>{{ $student->username }}</td>
-                                        <td><span class="email-truncate" title="{{ $student->email }}">{{ $student->email }}</span></td>
+                                       <!-- <td>{{ $student->username }}</td>-->
+                                        <td><span class="text-truncate" title="{{ $student->username }}">{{ $student->username }}</span></td>
+                                        <td><span class="text-truncate" title="{{ $student->email }}">{{ $student->email }}</span></td>
                                         <td>{{ $student->school_id }}</td>
                                         <td>{{ $student->course }}</td>
                                         <td>{{ $student->year_level ?? 'N/A' }}</td>
