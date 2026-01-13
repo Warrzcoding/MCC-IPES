@@ -317,6 +317,14 @@ function getAdjectivalRating($rating) {
         box-shadow: 0 8px 32px rgba(102, 126, 234, 0.15);
         backdrop-filter: blur(10px);
         border: 1px solid rgba(255, 255, 255, 0.1);
+        flex-wrap: nowrap !important;
+        overflow-x: auto;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+    
+    #departmentTabs::-webkit-scrollbar {
+        display: none;
     }
     
     #departmentTabs .nav-link {
@@ -495,14 +503,31 @@ function getAdjectivalRating($rating) {
 
                     <!-- Teaching Staff Section -->
                     <div class="mb-4">
-                        <div class="d-flex flex-wrap align-items-center gap-3 mb-3">
-                            <div class="search-box mb-0" style="flex:1 1 250px; min-width:220px;">
+                        @php
+                            $hasEvaluations = false;
+                            foreach ($staffRatings as $staff) {
+                                if ($staff->total_evaluations > 0) {
+                                    $hasEvaluations = true;
+                                    break;
+                                }
+                            }
+                        @endphp
+                        <div class="d-flex flex-column flex-md-row align-items-stretch align-items-md-center gap-2 gap-md-3 mb-3">
+                            <div class="search-box mb-0 flex-grow-1" style="min-width:220px;">
+                                <i class="fas fa-search search-icon"></i>
                                 <input type="text" id="searchInput" onkeyup="searchStaff()" 
                                        placeholder="Search teaching staff by name, department, or email..." 
-                                       class="form-control">
+                                       class="form-control" style="height: 38px;">
                             </div>
-                            <button type="button" class="btn btn-primary ms-2 shadow-sm d-flex align-items-center gap-2 rounded-pill refresh-btn-enhanced"
-                                    style="height:30px;font-weight:600;font-size:0.82rem;" onclick="location.reload();">
+                            
+                            @if($hasEvaluations)
+                            <button id="generateReportsBtn" class="btn btn-success fw-bold rounded-pill generate-reports-btn d-flex align-items-center justify-content-center gap-2 px-3" style="height: 38px; font-size:0.82rem; white-space: nowrap;">
+                                <i class="fas fa-file-alt"></i> <span>Generate Reports</span>
+                            </button>
+                            @endif
+
+                            <button type="button" class="btn btn-primary shadow-sm d-flex align-items-center justify-content-center gap-2 rounded-pill refresh-btn-enhanced px-3"
+                                    style="height: 38px; font-weight:600; font-size:0.82rem; white-space: nowrap;" onclick="location.reload();">
                                 <i class="fas fa-sync-alt"></i> <span>Refresh</span>
                             </button>
                         </div>
@@ -612,22 +637,7 @@ function getAdjectivalRating($rating) {
                     </div>
                         </div>
                     </div>
-                <div class="mt-3 text-end">
-                    @php
-                        $hasEvaluations = false;
-                        foreach ($staffRatings as $staff) {
-                            if ($staff->total_evaluations > 0) {
-                                $hasEvaluations = true;
-                                break;
-                            }
-                        }
-                    @endphp
-                    @if($hasEvaluations)
-                    <button id="generateReportsBtn" class="btn btn-success fw-bold rounded-pill generate-reports-btn">
-                        <i class="fas fa-file-alt me-2"></i>Generate Reports
-                    </button>
-                    @endif
-                </div>
+
 
                 <!-- Success Alert -->
                 <div id="successAlert" class="alert alert-success alert-dismissible fade show d-none" role="alert" style="position: fixed; top: 30px; right: 30px; z-index: 1055; min-width: 300px;">
