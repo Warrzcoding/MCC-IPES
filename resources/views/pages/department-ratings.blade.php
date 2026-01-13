@@ -1166,17 +1166,21 @@ function getAdjectivalRating($rating) {
 
         let html = `
             <div style="padding:8px;font-family:'Times New Roman', serif; font-size:9pt; max-width: 900px; margin: 0 auto; line-height: 1.15;">
-                <div class='header-section' style='text-align:center;margin-bottom:1.5em;padding-bottom:0.5em;'>
-                    <div style='display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:0.15em;'>
+                <div class='header-section' style='text-align:center;margin-bottom:0.2em;padding-bottom:0;'>
+                    <div style='display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:2.15em;'>
                         <img src='/images/cgs.jpg' alt='Left Logo' style='width:60px;height:60px;flex-shrink:0;margin-right:5px;' onerror='this.style.display="none"'>
                         <div style='text-align:center; flex:0 0 auto;'>   
-                            <strong style='font-size:9pt;'>MADRIDEJOS COMMUNITY COLLEGE</strong><br>                                   
-                            <strong style='font-size:8pt;'>Center For Guidance Services</strong><br>
-                            <span style='font-size:7.5pt;'>Crossing Bunakan, Madridejos, Cebu</span><br>
-                            <strong style='font-size:8.5pt;'>MCC Department's Performance Evaluation Results</strong><br>
-                            <span style='font-size:7.5pt;'>S.Y {{ $currentAcademicYear?->year }} - Semester {{ $currentAcademicYear?->semester }}</span>
+                            <strong style='font-size:10pt;'>MADRIDEJOS COMMUNITY COLLEGE</strong><br>                                   
+                            <strong style='font-size:9pt;'>Center For Guidance Services</strong><br>
+                            <span style='font-size:8.5pt;'>Crossing Bunakan, Madridejos, Cebu</span><br>
+                            <span style='font-size:7.5pt; color: blue; text-decoration: none;'>
+                             <i class='fas fa-envelope'></i> mcc.cgsofficial@gmail.com<br>
+                             <i class='fab fa-facebook'></i> fb.com/MCCCenterforGuidanceService 
+                            </span><br>
+                             <strong style='font-size:9.5pt;'>MCC Department's Performance Evaluation Results</strong><br>
+                           <span style='font-size:8.5pt;'>S.Y {{ $currentAcademicYear?->year }} - Semester {{ $currentAcademicYear?->semester }}</span>
                         </div>
-                        <img src='/images/logo.png' alt='Right Logo' style='width:70px;height:57px;flex-shrink:0;margin-left:5px;' onerror='this.style.display="none"'>
+                        <img src='/images/logo.png' alt='Right Logo' style='width:80px;height:80px;flex-shrink:0;margin-left:5px;' onerror='this.style.display="none"'>
                     </div>
                 </div>
                 
