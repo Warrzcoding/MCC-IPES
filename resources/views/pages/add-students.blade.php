@@ -1260,7 +1260,7 @@ document.addEventListener('DOMContentLoaded', function () {
             <div class="card-body">
                 <!-- Search Form -->
                 <div class="search-filter-form">
-                    <form method="GET" action="{{ route('dashboard', ['page' => 'add-students']) }}" class="d-flex gap-2 align-items-end">
+                    <form method="GET" action="{{ route('dashboard', ['page' => 'add-students']) }}" class="d-flex gap-2 align-items-end" id="studentSearchForm">
                         <input type="hidden" name="page" value="add-students">
 
                         <div class="flex-fill">
@@ -1270,16 +1270,17 @@ document.addEventListener('DOMContentLoaded', function () {
                                    placeholder="Search by name, username, email, or school ID...">
                         </div>
 
-                        <button type="submit" class="btn btn-primary" style="white-space: nowrap; height: 32px;">
+                        <button type="submit" class="btn btn-primary" style="white-space: nowrap; height: 32px; display: none;" id="searchBtn">
                             <i class="fas fa-search"></i> Search
                         </button>
 
-                        <a href="{{ route('dashboard', ['page' => 'add-students']) }}" class="btn btn-outline-secondary" style="height: 32px; font-size: 0.75rem; display: flex; align-items: center; justify-content: center;">
+                        <a href="javascript:void(0);" class="btn btn-outline-secondary" style="height: 32px; font-size: 0.75rem; display: flex; align-items: center; justify-content: center;" id="clearBtn">
                             Clear
                         </a>
                     </form>
                 </div>
 
+                <div id="studentsContent">
                 @if($students->isEmpty())
                     <p class="text-muted text-center py-4">
                         @if(request('search'))
@@ -1301,8 +1302,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                     <th>Course</th>
                                     <th>Year Level</th>
                                     <th>Section</th>
-                                    <th>Evaluation Status</th>
-                                  
+                                    <th>Evaluation Status</th>                          
                                     <th class="actions-column">Actions</th>
                                 </tr>
                             </thead>
@@ -1443,13 +1443,13 @@ document.addEventListener('DOMContentLoaded', function () {
                                                     data-bs-target="#editModal"
                                                     onclick="loadStudentData({{ $student->id }}, '{{ addslashes($student->username) }}', '{{ addslashes($student->email) }}', '{{ addslashes($student->full_name) }}', '{{ addslashes($student->school_id) }}', '{{ $student->course }}', '{{ $student->year_level ?? 'N/A' }}', '{{ addslashes($student->section ?? '') }}', '{{ $editImageUrl }}')">
                                                     <i class="fas fa-edit"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-outline-danger action-btn" onclick="deleteStudent({{ $student->id }}, '{{ addslashes($student->full_name) }}')">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
+                                                </button>                                    
                                                 <button class="btn btn-sm btn-outline-info action-btn" 
                                                         onclick="viewStudentData('{{ addslashes($student->full_name) }}', '{{ addslashes($student->username) }}', '{{ addslashes($student->email) }}', '{{ addslashes($student->school_id) }}', '{{ $student->course }}', '{{ $student->year_level ?? 'N/A' }}', '{{ addslashes($student->section ?? '') }}', '{{ $imageUrl }}', '{{ $student->created_at ? $student->created_at->format('Y-m-d') : '' }}')">
                                                     <i class="fas fa-eye"></i>
+                                                </button>
+                                                  <button class="btn btn-sm btn-outline-danger action-btn" onclick="deleteStudent({{ $student->id }}, '{{ addslashes($student->full_name) }}')">
+                                                    <i class="fas fa-trash"></i>
                                                 </button>
                                             </div>
                                         </td>
@@ -1537,6 +1537,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         </div>
                     @endif
                 @endif
+                </div>
             </div>
         </div>
     </div>
@@ -1680,18 +1681,18 @@ function viewStudentData(fullName, username, email, schoolId, course, yearLevel,
         html: `
             <div class="text-center mb-3">
                 <img src="${imageUrl}" alt="Student Avatar" 
-                     style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid #dee2e6; background-color: #f8f9fa;"
-                     onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=667eea&color=fff&size=100'">
-                <h5 class="mt-2 mb-3">${fullName}</h5>
+                     style="width: 140px; height: 140px; border-radius: 50%; object-fit: cover; border: 4px solid #dee2e6; background-color: #f8f9fa; box-shadow: 0 4px 6px rgba(0,0,0,0.1);"
+                     onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=667eea&color=fff&size=140'">
+                <h4 class="mt-3 mb-1" style="font-weight: 600;">${fullName}</h4>
             </div>
-            <div class="text-start">
-                <p><strong>Username:</strong> ${username}</p>
-                <p><strong>MS Email Account:</strong> ${email}</p>
-                <p><strong>School ID:</strong> ${schoolId}</p>
-                <p><strong>Course:</strong> ${course}</p>
-                <p><strong>Year Level:</strong> ${yearLevel}</p>
-                <p><strong>Section:</strong> ${section || 'N/A'}</p>
-                <p><strong>Member Since:</strong> ${createdAt}</p>
+            <div class="text-start" style="font-size: 0.85rem; line-height: 1.4;">
+                <p class="mb-1"><strong>Username:</strong> ${username}</p>
+                <p class="mb-1"><strong>MS Email Account:</strong> ${email}</p>
+                <p class="mb-1"><strong>School ID:</strong> ${schoolId}</p>
+                <p class="mb-1"><strong>Course:</strong> ${course}</p>
+                <p class="mb-1"><strong>Year Level:</strong> ${yearLevel}</p>
+                <p class="mb-1"><strong>Section:</strong> ${section || 'N/A'}</p>
+                <p class="mb-1"><strong>Member Since:</strong> ${createdAt}</p>
             </div>
         `,
         confirmButtonText: 'Close',
@@ -2331,6 +2332,65 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             });
         });
+    }
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('search');
+    const clearBtn = document.getElementById('clearBtn');
+    const searchForm = document.getElementById('studentSearchForm');
+    let searchTimeout;
+
+    function performSearch(searchTerm) {
+        const url = new URL(searchForm.action);
+        url.searchParams.set('search', searchTerm);
+        url.searchParams.set('page', 'add-students');
+        
+        console.log('Fetching:', url.toString());
+        
+        fetch(url.toString(), {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.text())
+        .then(html => {
+            console.log('Response received, length:', html.length);
+            const parser = new DOMParser();
+            const newDoc = parser.parseFromString(html, 'text/html');
+            const newContent = newDoc.getElementById('studentsContent');
+            const oldContent = document.getElementById('studentsContent');
+            
+            console.log('New content found:', !!newContent, 'Old content found:', !!oldContent);
+            
+            if (newContent && oldContent) {
+                oldContent.parentNode.replaceChild(newContent, oldContent);
+                console.log('Content replaced successfully');
+            }
+        })
+        .catch(error => console.error('Search erro  r:', error));
+    }
+
+    if (searchInput && searchForm) {
+        searchInput.addEventListener('keyup', function() {
+            console.log('Keyup event fired, value:', this.value);
+            clearTimeout(searchTimeout);
+            const searchTerm = this.value.trim();
+            
+            searchTimeout = setTimeout(() => {
+                performSearch(searchTerm);
+            }, 100);
+        });
+
+        clearBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            searchInput.value = '';
+            clearTimeout(searchTimeout);
+            performSearch('');
+        });
+    } else {
+        console.error('searchInput or searchForm not found');
     }
 });
 </script> 

@@ -523,13 +523,13 @@
                                                     data-bs-target="#editModal"
                                                     onclick="loadStaffData('{{ $staff_member->staff_id }}', '{{ addslashes($staff_member->full_name) }}', '{{ addslashes($staff_member->email) }}', '{{ addslashes($staff_member->status) }}', '{{ addslashes($staff_member->department) }}', '{{ $staff_member->staff_type }}', '{{ $editImageUrl }}')">
                                                 <i class="fas fa-edit"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-outline-danger" onclick="deleteStaff('{{ $staff_member->staff_id }}', '{{ addslashes($staff_member->full_name) }}')">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
+                                            </button>                     
                                             <button class="btn btn-sm btn-outline-info" 
                                                     onclick="viewStaffData('{{ $staff_member->staff_id }}', '{{ addslashes($staff_member->full_name) }}', '{{ addslashes($staff_member->email) }}', '{{ addslashes($staff_member->status) }}', '{{ addslashes($staff_member->department) }}', '{{ ucfirst($staff_member->staff_type) }}', '{{ $imageUrl }}')">
                                                 <i class="fas fa-eye"></i>
+                                            </button>
+                                              <button class="btn btn-sm btn-outline-danger" onclick="deleteStaff('{{ $staff_member->staff_id }}', '{{ addslashes($staff_member->full_name) }}')">
+                                                <i class="fas fa-trash"></i>
                                             </button>
                                         </td>
                                     </tr>
