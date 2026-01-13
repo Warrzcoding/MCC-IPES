@@ -1460,11 +1460,12 @@ function getAdjectivalRating($rating) {
                                         </div>
                                     </div>
                                     <div style='text-align:left; margin-right:4em;'>
-                                        <div style='margin-bottom:0.2em;'>
-                                            Received by: __________________
-                                        </div>
-                                        <div style='margin-bottom:0.1em;margin-right:2em;'>
-                                            <strong style='margin-right:0.1em;'>${deptHead}</strong>
+                                        <div style='display: flex; align-items: flex-start;'>
+                                            <div style='white-space: nowrap;'>Received by: &nbsp;</div>
+                                            <div style='display: flex; flex-direction: column;'>
+                                                <span>_________________________</span>
+                                                <strong style='margin-top: 0.1em;'>${deptHead}</strong>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
