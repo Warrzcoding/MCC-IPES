@@ -1270,8 +1270,8 @@ function getAdjectivalRating($rating) {
                                         <strong style='font-size:9pt;'>Center For Guidance Services</strong><br>
                                         <span style='font-size:8.5pt;'>Crossing Bunakan, Madridejos, Cebu</span><br>
                                         <span style='font-size:7.5pt; color: blue; text-decoration: none;'>
-                                            <i class='fab fa-facebook'></i> fb.com/MCCCenterforGuidanceServices<br>
-                                            <i class='fas fa-envelope'></i> mcc.cgsofficial@gmsil.com
+                                         <i class='fas fa-envelope'></i> mcc.cgsofficial@gmail.com<br>
+                                         <i class='fab fa-facebook'></i> fb.com/MCCCenterforGuidanceService 
                                         </span><br>
                                          <strong style='font-size:9.5pt;'>MCC Instructor's Performance Evaluation Results</strong><br>
                                        <span style='font-size:8.5pt;'>S.Y {{ $currentAcademicYear?->year }} - Semester {{ $currentAcademicYear?->semester }}</span>
@@ -1461,10 +1461,10 @@ function getAdjectivalRating($rating) {
                                     </div>
                                     <div style='text-align:left; margin-right:4em;'>
                                         <div style='margin-bottom:0.2em;'>
-                                            Received by: _____________
+                                            Received by: __________________
                                         </div>
                                         <div style='margin-bottom:0.1em;margin-right:2em;'>
-                                            <strong>${deptHead}</strong>
+                                            <strong style='margin-right:0.1em;'>${deptHead}</strong>
                                         </div>
                                     </div>
                                 </div>
