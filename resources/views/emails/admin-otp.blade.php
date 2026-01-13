@@ -30,16 +30,18 @@
             justify-content: center;
             width: 120px;
             height: 120px;
-            margin: 0 auto 20px;
+            margin: 0 auto 25px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #1f8aff, #60a9ff);
-            box-shadow: 0 12px 24px rgba(31, 138, 255, 0.3);
-            transition: transform 0.3s ease;
+            background: #ffffff;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1), 0 5px 15px rgba(0, 0, 0, 0.05);
+            border: 4px solid #f0f7ff;
+            overflow: hidden;
         }
         .header .logo {
-            width: 70%;
-            height: auto;
-            display: block;
+            width: 85%;
+            height: 85%;
+            object-fit: contain;
+            border-radius: 50%;
         }
         .header h1 {
             color: #333;
