@@ -1378,7 +1378,7 @@
     <div class="login-card">
         <div class="login-header">
             <div class="logo" style="box-shadow: 0 4px 16px rgb(253, 253, 253); display: flex; align-items: center; justify-content: center; margin-bottom: 10px;">
-                <img src="{{ asset('images/mccicin.jpg') }}" alt="MCC Logo" class="login-logo-img" style="width: 120px; height: 120px; object-fit: contain; padding: 5px; max-width: 100%; height: auto;">
+                <img src="{{ asset('images/logo.png') }}" alt="MCC Logo" class="login-logo-img" style="width: 120px; height: 120px; object-fit: contain; padding: 5px; max-width: 100%; height: auto;">
             </div>
             <h2 style="margin-top: 0;">MCC | IPES</h2>
             <p>Instructors Performance Evaluation System</p>
@@ -1439,13 +1439,13 @@
 
 
                     <!-- Student Signup Link -->
-                    <div class="signup-link">
-                        <p>Don't have an account?<a href="{{ route('pre_signup') }}">
+                   <div class="signup-link">
+                       <p>Don't have an account?<a href="{{ route('pre_signup') }}">
                             <i class="fas fa-user-plus"></i> Sign up here
                         </a></p>
-                      <!--<p>System is under testing mode , Please try signup again if you have not been approve! Thank you!<a href="{{ route('idcheck') }}">
+                      <!--<p>Don't have an account?<a href="{{ route('idcheck') }}">
                             <i class="fas fa-user-plus"></i> Sign up here
-                        </a></p>-->
+                        </a></p>    -->
                     </div>
 
                     
@@ -1619,7 +1619,7 @@
 
                 <!-- Student Signup Link -->
                 <div class="signup-link">
-                   <p>Sorry!!Forgot Password is unavailable right now!<!-- <a href="{{ route('pre_signup', ['type' => 'student', 'school_id' => $student_data['school_id']]) }}">
+                   <p>Sorry!!Forgot Password is unavailable!<!-- <a href="{{ route('pre_signup', ['type' => 'student', 'school_id' => $student_data['school_id']]) }}">
                         <i class="fas fa-user-plus"></i> Sign up here
                     </a>--></p>
                 </div>
