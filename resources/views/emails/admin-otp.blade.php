@@ -25,8 +25,8 @@
             margin-bottom: 40px;
         }
         .header .logo-wrapper {
-            width: 70px;
-            height: 70px;
+            width: 100px;
+            height: 100px;
             margin: 0 auto 25px;
             border-radius: 50%;
             background-color: #000000;
