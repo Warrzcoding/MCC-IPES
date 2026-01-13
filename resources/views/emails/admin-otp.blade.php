@@ -33,7 +33,7 @@
             margin: 0 auto 25px;
             border-radius: 50%;
             background: #ffffff;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1), 0 5px 15px rgba(0, 0, 0, 0.05);
+           
             border: 4px solid #f0f7ff;
             overflow: hidden;
         }
