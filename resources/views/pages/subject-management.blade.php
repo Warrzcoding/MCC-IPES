@@ -925,90 +925,52 @@
 
 /* Enhanced Semester Tab Styling */
 .nav-tabs {
-    border-bottom: 3px solid #e9ecef;
-    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
-    border-radius: 10px 10px 0 0;
-    padding: 8px 8px 0 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border-bottom: 2px solid #e9ecef;
+    background: #f8f9fa;
+    border-radius: 8px 8px 0 0;
+    padding: 0 10px;
+    display: flex;
+    gap: 2px;
 }
 
 .nav-tabs .nav-item {
-    margin-bottom: -3px;
+    margin-bottom: -2px;
 }
 
 .nav-tabs .nav-link {
-    border: 2px solid transparent;
-    border-radius: 8px 8px 0 0;
-    padding: 8px 16px;
+    border: none;
+    border-bottom: 2px solid transparent;
+    padding: 10px 16px;
     font-size: calc(var(--subject-text-size-subheading) - 0.05rem);
     font-weight: 600;
     color: #6c757d;
-    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background: transparent;
+    transition: none;
     position: relative;
-    overflow: hidden;
     text-decoration: none;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    margin-right: 4px;
-}
-
-.nav-tabs .nav-link::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-    transition: left 0.5s;
-}
-
-.nav-tabs .nav-link:hover::before {
-    left: 100%;
 }
 
 .nav-tabs .nav-link:hover {
     color: #007bff;
-    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
-    border-color: #007bff;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,123,255,0.2);
+    background: rgba(0, 123, 255, 0.05);
+    border-bottom-color: #dee2e6;
 }
 
 .nav-tabs .nav-link.active {
-    color: #ffffff;
-    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
-    border-color: #007bff;
-    box-shadow: 0 4px 15px rgba(0,123,255,0.3);
-    transform: translateY(-1px);
-}
-
-.nav-tabs .nav-link.active:hover {
-    background: linear-gradient(135deg, #0056b3 0%, #004085 100%);
-    box-shadow: 0 6px 20px rgba(0,123,255,0.4);
-    transform: translateY(-3px);
+    color: #007bff;
+    background: transparent;
+    border-bottom: 2px solid #007bff;
 }
 
 .nav-tabs .nav-link i {
     margin-right: 6px;
     font-size: calc(var(--subject-text-size-subheading) + 0.05rem);
-    transition: transform 0.3s ease;
-}
-
-.nav-tabs .nav-link:hover i {
-    transform: scale(1.1) rotate(5deg);
-}
-
-.nav-tabs .nav-link.active i {
-    transform: scale(1.05);
-    text-shadow: 0 1px 2px rgba(0,0,0,0.2);
 }
 
 /* Tab content styling */
 .tab-content {
     background: #ffffff;
     border-radius: 0 0 10px 10px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     padding: 0;
 }
 
@@ -1017,49 +979,34 @@
     min-height: 400px;
 }
 
-/* Active tab indicator */
-.nav-tabs .nav-link.active::after {
-    content: '';
-    position: absolute;
-    bottom: -3px;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, #007bff, #0056b3, #007bff);
-    border-radius: 2px;
-}
-
 /* Semester badge styling */
 .semester-badge {
     display: inline-block;
-    background: rgba(255,255,255,0.2);
+    background: #e9ecef;
     padding: 2px 8px;
     border-radius: 12px;
     font-size: 0.8em;
     margin-left: 8px;
     font-weight: 500;
+    color: #495057;
 }
 
 .nav-tabs .nav-link.active .semester-badge {
-    background: rgba(255,255,255,0.3);
-    color: #ffffff;
+    background: #e7f1ff;
+    color: #007bff;
 }
 
-/* Tab transition effects */
+/* Instant tab switching */
 .tab-pane {
-    opacity: 0;
-    transform: translateY(10px);
-    transition: all 0.3s ease-in-out;
+    display: none;
 }
 
 .tab-pane.active {
-    opacity: 1;
-    transform: translateY(0);
+    display: block;
 }
 
-.tab-pane.show {
-    opacity: 1;
-    transform: translateY(0);
+.fade {
+    transition: none !important;
 }
 
 /* Enhanced focus states for accessibility */
@@ -2092,51 +2039,10 @@ document.addEventListener('DOMContentLoaded', function() {
     updateTabCounts();
     
     semesterTabs.forEach(tab => {
-        // Add click animation
-        tab.addEventListener('click', function() {
-            this.style.transform = 'scale(0.95)';
-            setTimeout(() => {
-                this.style.transform = '';
-                updateTabCounts(); // Update counts after tab switch
-            }, 150);
-        });
-        
-        // Enhanced hover effects for inactive tabs
-        tab.addEventListener('mouseenter', function() {
-            if (!this.classList.contains('active')) {
-                this.style.transform = 'translateY(-2px)';
-                this.style.boxShadow = '0 6px 20px rgba(0,123,255,0.15)';
-            }
-        });
-        
-        tab.addEventListener('mouseleave', function() {
-            if (!this.classList.contains('active')) {
-                this.style.transform = '';
-                this.style.boxShadow = '0 2px 4px rgba(0,0,0,0.05)';
-            }
-        });
-        
-        // Tab switch animation
         tab.addEventListener('shown.bs.tab', function() {
-            // Add a subtle pulse effect when tab becomes active
-            this.style.animation = 'pulse 0.6s ease-in-out';
-            setTimeout(() => {
-                this.style.animation = '';
-                updateTabCounts(); // Update counts after animation
-            }, 600);
+            updateTabCounts();
         });
     });
-    
-    // Add pulse animation keyframe
-    const style = document.createElement('style');
-    style.textContent = `
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-    `;
-    document.head.appendChild(style);
 });
 </script>
 
