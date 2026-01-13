@@ -1181,11 +1181,14 @@ function getAdjectivalRating($rating) {
                         } else if (department === 'BSED' || department === 'BEED') {
                             recipientName = 'MRS. PRECILLA CANOY';
                             programHead = 'Program Head - ' + department;
-                        } else if (department === 'BSBA' || department === 'BSHM') {
+                        } else if (department === 'BSBA') {
                             recipientName = 'DR. ISRAEL N. ABARRATIGUE';
                             programHead = 'Program Head - ' + department;
-                        } else {
-                            recipientName = 'MR. DINO L. ILUSTRISIMO';
+                        }else if (department === 'BSHM') {
+                            recipientName = 'CHRISTY FORSUELO';
+                            programHead = 'Program Head - ' + department;
+                        }else {
+                            recipientName = 'DR. ISRAEL N. ABARRATIGUE';
                             programHead = 'Program Head - ' + department;
                         }
                         

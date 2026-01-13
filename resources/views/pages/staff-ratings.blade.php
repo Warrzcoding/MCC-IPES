@@ -1466,7 +1466,7 @@ function getAdjectivalRating($rating) {
                                                 <span>_________________________</span>
                                                 <strong style='margin-top: 0.1em;'>${deptHead}</strong>
                                             </div>
-                                        </div>
+                                         </div>
                                     </div>
                                 </div>
                             </div>
