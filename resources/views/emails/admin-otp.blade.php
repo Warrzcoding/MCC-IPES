@@ -22,26 +22,28 @@
         }
         .header {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 40px;
         }
         .header .logo-wrapper {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 120px;
-            height: 120px;
+            width: 130px;
+            height: 130px;
             margin: 0 auto 25px;
             border-radius: 50%;
-            background: #ffffff;
-           
-            border: 4px solid #f0f7ff;
-            overflow: hidden;
+            background-color: #ffffff;
+            border: 5px solid #1f8aff;
+            box-shadow: 0 10px 25px rgba(31, 138, 255, 0.2);
+            display: table;
+        }
+        .header .logo-cell {
+            display: table-cell;
+            vertical-align: middle;
+            text-align: center;
         }
         .header .logo {
-            width: 85%;
-            height: 85%;
-            object-fit: contain;
-            border-radius: 50%;
+            width: 90px;
+            height: auto;
+            display: inline-block;
+            vertical-align: middle;
         }
         .header h1 {
             color: #333;
@@ -67,13 +69,13 @@
         }
         .otp-box {
             display: inline-block;
-            padding: 10px 16px;
+            padding: 15px 20px;
             background: #ffffff;
             color: #1f8aff;
-            border-radius: 10px;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
             font-family: 'Courier New', monospace;
-            font-size: 28px;
+            font-size: 32px;
             font-weight: 700;
             letter-spacing: 6px;
         }
@@ -118,7 +120,9 @@
     <div class="email-container">
         <div class="header">
             <div class="logo-wrapper">
-                <img class="logo" src="{{ asset('images/logo.png') }}" alt="MCC-IPES Logo">
+                <div class="logo-cell">
+                    <img class="logo" src="{{ asset('images/logo.png') }}" alt="MCC-IPES Logo">
+                </div>
             </div>
             <h1>MCC-IPES Administrator Verification</h1>
             <p>Instructors Performance Evaluation System</p>
