@@ -723,7 +723,7 @@
                     
                     <div class="mb-3">
                         <label for="editFullName" class="form-label">Full Name</label>
-                        <input type="text" class="form-control" id="editFullName" name="full_name"  readonly="true" required>
+                        <input type="text" class="form-control" id="editFullName" name="full_name"  required>
                     </div>
                     <div class="mb-3">
                         <label for="editStaffId" class="form-label">Staff ID</label>
