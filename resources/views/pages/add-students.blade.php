@@ -932,10 +932,16 @@
   max-width: 80px;
 }
 
+#studentsTable th:nth-child(9), /* Status */
+#studentsTable td:nth-child(9) {
+  min-width: 60px;
+  max-width: 60px;
+}
+
 #studentsTable th:nth-child(10), /* Evaluation Status */
 #studentsTable td:nth-child(10) {
-  min-width: 160px;
-  max-width: 200px;
+  min-width: 200px;
+  max-width: 240px;
   white-space: normal;
 }
 
@@ -1270,11 +1276,11 @@ document.addEventListener('DOMContentLoaded', function () {
                                    placeholder="Search by name, username, email, or school ID...">
                         </div>
 
-                        <button type="submit" class="btn btn-primary" style="white-space: nowrap; height: 32px; display: none;" id="searchBtn">
+                        <button type="submit" class="btn btn-primary" style="white-space: nowrap; height: 32px;">
                             <i class="fas fa-search"></i> Search
                         </button>
 
-                        <a href="javascript:void(0);" class="btn btn-outline-secondary" style="height: 32px; font-size: 0.75rem; display: flex; align-items: center; justify-content: center;" id="clearBtn">
+                        <a href="{{ route('dashboard', ['page' => 'add-students']) }}" class="btn btn-outline-secondary" style="height: 32px; font-size: 0.75rem; display: flex; align-items: center; justify-content: center;">
                             Clear
                         </a>
                     </form>
@@ -1302,6 +1308,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                     <th>Course</th>
                                     <th>Year Level</th>
                                     <th>Section</th>
+                                    <th>Status</th>
                                     <th>Evaluation Status</th>                          
                                     <th class="actions-column">Actions</th>
                                 </tr>
@@ -1337,6 +1344,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                         <td>{{ $student->course }}</td>
                                         <td>{{ $student->year_level ?? 'N/A' }}</td>
                                         <td>{{ $student->section ?? 'N/A' }}</td>
+                                        <td>{{ $student->student_status ?? 'N/A' }}</td>
                                         <td class="evaluation-status-compact">
                                             @php
                                                 // Calculate evaluation counts using same logic as evaluates.blade.php
@@ -1442,11 +1450,11 @@ document.addEventListener('DOMContentLoaded', function () {
                                                 <button class="btn btn-sm btn-outline-primary action-btn" 
                                                     data-bs-toggle="modal" 
                                                     data-bs-target="#editModal"
-                                                    onclick="loadStudentData({{ $student->id }}, '{{ addslashes($student->username) }}', '{{ addslashes($student->email) }}', '{{ addslashes($student->full_name) }}', '{{ addslashes($student->school_id) }}', '{{ $student->course }}', '{{ $student->year_level ?? 'N/A' }}', '{{ addslashes($student->section ?? '') }}', '{{ $editImageUrl }}')">
+                                                    onclick="loadStudentData({{ $student->id }}, '{{ addslashes($student->username) }}', '{{ addslashes($student->email) }}', '{{ addslashes($student->full_name) }}', '{{ addslashes($student->school_id) }}', '{{ $student->course }}', '{{ $student->year_level ?? 'N/A' }}', '{{ addslashes($student->section ?? '') }}', '{{ $editImageUrl }}', '{{ $student->student_status }}')">
                                                     <i class="fas fa-edit"></i>
                                                 </button>                                    
                                                 <button class="btn btn-sm btn-outline-info action-btn" 
-                                                        onclick="viewStudentData('{{ addslashes($student->full_name) }}', '{{ addslashes($student->username) }}', '{{ addslashes($student->email) }}', '{{ addslashes($student->school_id) }}', '{{ $student->course }}', '{{ $student->year_level ?? 'N/A' }}', '{{ addslashes($student->section ?? '') }}', '{{ $imageUrl }}', '{{ $student->created_at ? $student->created_at->format('Y-m-d') : '' }}')">
+                                                        onclick="viewStudentData('{{ addslashes($student->full_name) }}', '{{ addslashes($student->username) }}', '{{ addslashes($student->email) }}', '{{ addslashes($student->school_id) }}', '{{ $student->course }}', '{{ $student->year_level ?? 'N/A' }}', '{{ addslashes($student->section ?? '') }}', '{{ $imageUrl }}', '{{ $student->created_at ? $student->created_at->format('Y-m-d') : '' }}', '{{ $student->student_status }}')">
                                                     <i class="fas fa-eye"></i>
                                                 </button>
                                                   <button class="btn btn-sm btn-outline-danger action-btn" onclick="deleteStudent({{ $student->id }}, '{{ addslashes($student->full_name) }}')">
@@ -1611,6 +1619,13 @@ document.addEventListener('DOMContentLoaded', function () {
                         </select>
                         <div class="form-text">Section will be populated based on course and year level selection</div>
                     </div>
+                    <div class="mb-3">
+                        <label for="editStudentStatus" class="form-label">Student Status</label>
+                        <select class="form-select" id="editStudentStatus" name="student_status" required>
+                            <option value="Regular">Regular</option>
+                            <option value="Irregular">Irregular</option>
+                        </select>
+                    </div>
                     
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -1674,7 +1689,7 @@ function deleteStudent(id, name) {
     });
 }
 
-function viewStudentData(fullName, username, email, schoolId, course, yearLevel, section, image, createdAt) {
+function viewStudentData(fullName, username, email, schoolId, course, yearLevel, section, image, createdAt, studentStatus) {
     // Use SweetAlert for viewing student details
     const imageUrl = image && image.trim() !== '' ? image : 'https://ui-avatars.com/api/?name=' + encodeURIComponent(fullName) + '&background=667eea&color=fff&size=150';
     
@@ -1693,6 +1708,7 @@ function viewStudentData(fullName, username, email, schoolId, course, yearLevel,
                 <p class="mb-1"><strong>Course:</strong> ${course}</p>
                 <p class="mb-1"><strong>Year Level:</strong> ${yearLevel}</p>
                 <p class="mb-1"><strong>Section:</strong> ${section || 'N/A'}</p>
+                <p class="mb-1"><strong>Status:</strong> ${studentStatus || 'N/A'}</p>
                 <p class="mb-1"><strong>Member Since:</strong> ${createdAt}</p>
             </div>
         `,
@@ -1705,7 +1721,7 @@ function viewStudentData(fullName, username, email, schoolId, course, yearLevel,
     });
 }
 
-function loadStudentData(id, username, email, fullName, schoolId, course, yearLevel, section, image) {
+function loadStudentData(id, username, email, fullName, schoolId, course, yearLevel, section, image, studentStatus) {
     document.getElementById('editStudentId').value = id;
     document.getElementById('editUsername').value = username;
     document.getElementById('editEmail').value = email;
@@ -1713,6 +1729,7 @@ function loadStudentData(id, username, email, fullName, schoolId, course, yearLe
     document.getElementById('editSchoolId').value = schoolId;
     document.getElementById('editCourse').value = course;
     document.getElementById('editYearLevel').value = yearLevel;
+    document.getElementById('editStudentStatus').value = studentStatus || 'Regular';
     
     // Populate sections based on course and year level, and select the current section
        // Populate sections based on course and year level, and select the current section
@@ -2336,62 +2353,5 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-document.addEventListener('DOMContentLoaded', function() {
-    const searchInput = document.getElementById('search');
-    const clearBtn = document.getElementById('clearBtn');
-    const searchForm = document.getElementById('studentSearchForm');
-    let searchTimeout;
 
-    function performSearch(searchTerm) {
-        const url = new URL(searchForm.action);
-        url.searchParams.set('search', searchTerm);
-        url.searchParams.set('page', 'add-students');
-        
-        console.log('Fetching:', url.toString());
-        
-        fetch(url.toString(), {
-            method: 'GET',
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        })
-        .then(response => response.text())
-        .then(html => {
-            console.log('Response received, length:', html.length);
-            const parser = new DOMParser();
-            const newDoc = parser.parseFromString(html, 'text/html');
-            const newContent = newDoc.getElementById('studentsContent');
-            const oldContent = document.getElementById('studentsContent');
-            
-            console.log('New content found:', !!newContent, 'Old content found:', !!oldContent);
-            
-            if (newContent && oldContent) {
-                oldContent.parentNode.replaceChild(newContent, oldContent);
-                console.log('Content replaced successfully');
-            }
-        })
-        .catch(error => console.error('Search erro  r:', error));
-    }
-
-    if (searchInput && searchForm) {
-        searchInput.addEventListener('keyup', function() {
-            console.log('Keyup event fired, value:', this.value);
-            clearTimeout(searchTimeout);
-            const searchTerm = this.value.trim();
-            
-            searchTimeout = setTimeout(() => {
-                performSearch(searchTerm);
-            }, 100);
-        });
-
-        clearBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            searchInput.value = '';
-            clearTimeout(searchTimeout);
-            performSearch('');
-        });
-    } else {
-        console.error('searchInput or searchForm not found');
-    }
-});
 </script> 

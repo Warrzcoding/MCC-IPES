@@ -158,6 +158,7 @@ if (!empty($statusFilterValue)) {
             'course' => 'required|string|in:BSIT,BSHM,BSBA,BSED,BEED',
             'year_level' => 'required|string|in:1st Year,2nd Year,3rd Year,4th Year',
             'section' => 'nullable|string|max:255',
+            'student_status' => 'required|string|in:Regular,Irregular',
             'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048'
         ]);
 
@@ -210,7 +211,8 @@ if (!empty($statusFilterValue)) {
                 'school_id' => $request->school_id,
                 'course' => $request->course,
                 'year_level' => $request->year_level,
-                'section' => $request->section
+                'section' => $request->section,
+                'student_status' => $request->student_status
             ];
 
             if ($update_image) {

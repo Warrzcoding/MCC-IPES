@@ -30,6 +30,7 @@ class SignupController extends Controller
             'course' => 'required|string|in:BSIT,BSHM,BSBA,BSED,BEED',
             'year_level' => 'required|string|in:1st Year,2nd Year,3rd Year,4th Year',
             'section' => 'required|string',
+            'student_status' => 'required|string|in:Regular,Irregular',
             'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
 
@@ -60,6 +61,7 @@ class SignupController extends Controller
             'course' => $request->course,
             'year_level' => $request->year_level,
             'section' => $request->section,
+            'student_status' => $request->student_status,
             'role' => 'student',
             'status' => 'pending',
             'profile_image' => $profileImage

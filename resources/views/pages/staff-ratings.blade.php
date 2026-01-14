@@ -1245,7 +1245,7 @@ function getAdjectivalRating($rating) {
                     } else if (dept === 'BSBA') {
                         deptHead = 'DR. ISRAEL N. ABBARATIGUE';
                     } else if (dept === 'BSHM') {
-                        deptHead = 'CHRISTY FORSUELO';
+                        deptHead = 'DR. ISRAEL N. ABARRATIGUE';
                     } else if (dept === 'GEC') {
                         deptHead = 'DR. ISRAEL N. ABARRATIGUE';
                     }
@@ -1261,33 +1261,35 @@ function getAdjectivalRating($rating) {
                                 .questions-table { page-break-before: avoid !important; }
                             }
                         </style>
-                        <div style="padding:8px;font-family:'Times New Roman', serif; font-size:9pt; max-width: 900px; margin: 0 auto; line-height: 1.15;">
+                        <div style="padding:8px;font-family:'Times New Roman', serif; font-size:10pt; max-width: 900px; margin: 0 auto; line-height: 1.15;">
                             <div class='header-section' style='text-align:center;margin-bottom:0.2em;padding-bottom:0;'>
                                 <div style='display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:2.15em;'>
                                     <img src='/images/cgs.jpg' alt='Left Logo' style='width:60px;height:60px;flex-shrink:0;margin-right:5px;' onerror='this.style.display="none"'>
                                     <div style='text-align:center; flex:0 0 auto;'>   
-                                        <strong style='font-size:10pt;'>MADRIDEJOS COMMUNITY COLLEGE</strong><br>                                   
-                                        <strong style='font-size:9pt;'>Center For Guidance Services</strong><br>
-                                        <span style='font-size:8.5pt;'>Crossing Bunakan, Madridejos, Cebu</span><br>
-                                        <span style='font-size:7.5pt; color: blue; text-decoration: none;'>
+                                        <strong style='font-size:11pt;'>MADRIDEJOS COMMUNITY COLLEGE</strong><br>                                   
+                                        <strong style='font-size:10.5pt;'>Center For Guidance Services</strong><br>
+                                        <span style='font-size:10pt;'>Crossing Bunakan, Madridejos, Cebu</span><br>
+                                        <span style='font-size:9pt; color: blue; text-decoration: none;'>
                                          <i class='fas fa-envelope'></i> mcc.cgsofficial@gmail.com<br>
                                          <i class='fab fa-facebook'></i> fb.com/MCCCenterforGuidanceService 
                                         </span><br>
-                                         <strong style='font-size:9.5pt;'>MCC Instructor's Performance Evaluation Results</strong><br>
-                                       <span style='font-size:8.5pt;'>S.Y {{ $currentAcademicYear?->year }} - Semester {{ $currentAcademicYear?->semester }}</span>
+                                         <strong style='font-size:11pt;'>MCC Instructor's Performance Evaluation Results</strong><br>
+                                       <span style='font-size:10pt;'>S.Y {{ $currentAcademicYear?->year }} - {{ $currentAcademicYear?->semester == 1 ? 'First' : ($currentAcademicYear?->semester == 2 ? 'Second' : $currentAcademicYear?->semester) }} Semester </span>
                                     </div>
                                     <img src='/images/logo.png' alt='Right Logo' style='width:80px;height:80px;flex-shrink:0;margin-left:5px;' onerror='this.style.display="none"'>
                                 </div>
                             </div>
+
                             
                             <!-- Instructor Information Line -->
-                            <div class='instructor-info' style='margin-bottom:0.3em;font-size:9pt;display:flex;justify-content:space-between;align-items:center;'>
-                                <di style='text-align:left;'><strong>Name:</strong> ${staff.full_name}</di>
-                                <div style='text-align:right;'><strong>Dept:</strong> ${staff.department}</div>
+                            <div class='instructor-info' style='margin-bottom:0.5em; font-size:10pt; display:grid; grid-template-columns: 1fr auto 1fr; align-items:center;'>
+                                <div style='text-align:left;'><strong>Name of Instructor:</strong></div>
+                                <div style='text-align:center; font-size:14pt; color:#007bff; font-weight:bold; padding: 0 10px;'>${staff.full_name}</div>
+                                <div style='text-align:right;'><strong>Department:</strong> ${staff.department}</div>
                             </div>
 
                             <!-- Questions and Ratings Table -->
-                            <table class='questions-table' style='width:100%;border-collapse:collapse;margin-bottom:0.4em;border:1px solid #333; font-size:8.5pt;'>
+                            <table class='questions-table' style='width:100%;border-collapse:collapse;margin-bottom:0.4em;border:1px solid #333; font-size:10pt;'>
                                 <tbody>
                                     <!-- Header Row (as regular tbody row to prevent repetition) -->
                                     <tr style='background:#f8f9fa;page-break-inside:avoid;page-break-after:avoid; height:16px;'>
@@ -1315,7 +1317,7 @@ function getAdjectivalRating($rating) {
                             // Add category header row
                             html += `
                                 <tr style='height:14px;'>
-                                    <td colspan="2" style='border:1px solid #333;padding:2px 3px;background:#e3f2fd;font-weight:bold;color:#007bff; font-size:7.5pt;'>
+                                    <td colspan="2" style='border:1px solid #333;padding:2px 3px;background:#e3f2fd;font-weight:bold;color:#007bff; font-size:9pt;'>
                                         ${categoryName}
                                     </td>
                                 </tr>
@@ -1327,8 +1329,8 @@ function getAdjectivalRating($rating) {
                                 
                                 html += `
                                     <tr style='height:18px;'>
-                                        <td style='border:1px solid #333;padding:2px 3px;text-align:left;vertical-align:middle; word-wrap:break-word; font-size:8pt;'>${eval.question_text}</td>
-                                        <td style='border:1px solid #333;padding:2px 3px;text-align:center;font-weight:bold; height:18px; font-size:8pt;'>${rating.toFixed(2)}</td>
+                                        <td style='border:1px solid #333;padding:2px 3px;text-align:left;vertical-align:middle; word-wrap:break-word; font-size:9.5pt;'>${eval.question_text}</td>
+                                        <td style='border:1px solid #333;padding:2px 3px;text-align:center;font-weight:bold; height:18px; font-size:9.5pt;'>${rating.toFixed(2)}</td>
                                     </tr>
                                 `;
                             });
@@ -1350,8 +1352,8 @@ function getAdjectivalRating($rating) {
                             
                             <!-- Summary Evaluation Table - Start on New Page -->
                             <div style='page-break-before:always; margin-top:2em; padding-left:3em; margin-bottom:0.5em;'>
-                                <h3 style='font-size:10pt;font-weight:bold;margin-bottom:0.4em;margin-top:0;color:#333;border-bottom:1px solid #ffffff;padding-bottom:0.2em;'>Summary Evaluation</h3>
-                                <table style='width:95%;border-collapse:collapse;border:1px solid #333; font-size:8.5pt;'>
+                                <h3 style='font-size:11pt;font-weight:bold;margin-bottom:0.4em;margin-top:0;color:#333;border-bottom:1px solid #ffffff;padding-bottom:0.2em; text-align:center;'>Summary of Evaluation Scores</h3>
+                                <table style='width:95%;border-collapse:collapse;border:1px solid #333; font-size:10pt;'>
                                     <thead>
                                         <tr style='background:#f8f9fa; height:16px;'>
                                             <th style='border:1px solid #333;padding:2px 3px;text-align:left;font-weight:bold;width:25%;'>Criteria</th>
@@ -1436,7 +1438,7 @@ function getAdjectivalRating($rating) {
                             </div>
                             
                             <!-- Signature Section -->
-                            <div style='margin-top:2em;margin-bottom:0em;text-align:left; font-size:10pt; line-height:1.3; padding-left:3em;'>
+                            <div style='margin-top:4em;margin-bottom:0em;text-align:left; font-size:10pt; line-height:1.3; padding-left:3em;'>
                                 <div style='margin-bottom:1em;'>
                                     Prepared by:
                                 </div>
@@ -1447,27 +1449,19 @@ function getAdjectivalRating($rating) {
                                     Guidance Advocate
                                 </div>
 
-                                <div style='display:flex; justify-content:space-between; align-items:flex-start;'>
+                                <div style='display:flex; justify-content:space-between; align-items:flex-end;'>
                                     <div style='text-align:left;'>
                                         <div style='margin-bottom:1em;'>
                                             Reviewed and Noted by:
                                         </div>
                                         <div style='margin-bottom:0.1em;'>
-                                            <strong>DR. LIZA D. GARCIA</strong>
+                                            <strong>DR. LIZA D. GARCIA, RGC</strong>
                                         </div>
                                         <div>
                                             Guidance Counselor
                                         </div>
                                     </div>
-                                    <div style='text-align:left; margin-right:4em;'>
-                                        <div style='display: flex; align-items: flex-start;'>
-                                            <div style='white-space: nowrap;'>Received by: &nbsp;</div>
-                                            <div style='display: flex; flex-direction: column;'>
-                                                <span>_________________________</span>
-                                                <strong style='margin-top: 0.1em;'>${deptHead}</strong>
-                                            </div>
-                                         </div>
-                                    </div>
+                                   
                                 </div>
                             </div>
                         </div>

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use App\Models\User;
+use App\Models\IdChecker;
 use Illuminate\Support\Facades\Validator;
 
 class PreSignupController extends Controller
@@ -156,6 +157,54 @@ class PreSignupController extends Controller
             return redirect()->route('idcheck')->with('success', 'School ID found! You can now proceed with registration.');
         } else {
             return redirect()->route('idcheck')->with('error', 'School ID not found. Please check your ID or contact support.');
+        }
+    }
+
+    // AJAX endpoint for checking ID from idchecker table
+    public function checkIdAjax(Request $request)
+    {
+        try {
+            $request->validate([
+                'id_number' => 'required|string|regex:/^[0-9]{4}-[0-9]{4}$/'
+            ], [
+                'id_number.required' => 'ID number is required.',
+                'id_number.regex' => 'ID number must be in format: 0000-0000'
+            ]);
+
+            $idRecord = IdChecker::where('id_number', $request->id_number)->first();
+
+            if ($idRecord) {
+                $fullName = trim($idRecord->fname . ' ' . $idRecord->mname . ' ' . $idRecord->lname);
+                
+                return response()->json([
+                    'status' => 'found',
+                    'data' => [
+                        'id_number' => $idRecord->id_number,
+                        'firstname' => $idRecord->fname,
+                        'middlename' => $idRecord->mname,
+                        'lastname' => $idRecord->lname,
+                        'fullname' => $fullName,
+                        'course' => $idRecord->course,
+                        'year' => $idRecord->year,
+                        'section' => $idRecord->section,
+                        'gender' => $idRecord->gender
+                    ]
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 'not_found'
+                ]);
+            }
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'An error occurred while checking ID.'
+            ], 500);
         }
     }
 }

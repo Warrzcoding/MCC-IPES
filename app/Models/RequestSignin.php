@@ -28,5 +28,6 @@ class RequestSignin extends Model
         'last_active_at',
         'email_verified_at',
         'remember_token',
+        'student_status',
     ];
 } 

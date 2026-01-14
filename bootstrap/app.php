@@ -12,7 +12,12 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        $middleware->alias([
+            'account.lockout' => \App\Http\Middleware\CheckAccountLockout::class,
+            'track.activity' => \App\Http\Middleware\TrackUserActivity::class,
+            'superadmin' => \App\Http\Middleware\SuperAdminMiddleware::class,
+            'throttle.otp' => \App\Http\Middleware\ThrottleOtpRequests::class,
+        ]);
     })
     ->withCommands([
         FixPermissionsCommand::class,

@@ -72,6 +72,7 @@ class RequestSigninController extends Controller
                 'course' => $request->course,
                 'year_level' => $request->year_level,
                 'section' => $request->section,
+                'student_status' => $request->student_status,
                 'role' => $request->role === 'admin' ? 'student' : $request->role, // Convert admin to student
                 'profile_image' => $request->profile_image,
                 'status' => 'active',
@@ -134,6 +135,7 @@ class RequestSigninController extends Controller
                     'course' => $req->course,
                     'year_level' => $req->year_level,
                     'section' => $req->section,
+                    'student_status' => $req->student_status,
                     'role' => $req->role === 'admin' ? 'student' : $req->role,
                     'profile_image' => $req->profile_image,
                     'status' => 'active',

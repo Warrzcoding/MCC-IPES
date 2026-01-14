@@ -28,7 +28,8 @@ class User extends Authenticatable
         'is_main_admin',
         'last_login',
         'last_active_at',
-        'remember_token'
+        'remember_token',
+        'student_status'
     ];
 
     protected $hidden = [

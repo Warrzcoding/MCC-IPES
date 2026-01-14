@@ -1101,7 +1101,7 @@
 
                 @if(!in_array('staff', $disabledSidebarFeatures))
                 <a href="{{ route('dashboard', ['page' => 'add-staff']) }}" class="nav-link {{ $page === 'add-staff' ? 'active' : '' }}">
-                    <i class="fas fa-chalkboard-teacher"></i> Staff
+                    <i class="fas fa-chalkboard-teacher"></i> Instructors
                 </a>
                 @endif
 

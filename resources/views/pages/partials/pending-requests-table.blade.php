@@ -13,6 +13,7 @@
                 <th>Course</th>
                 <th>Year Level</th>
                 <th>Section</th>
+                <th>Status</th>
                 <th>Requested At</th>
                 <th class="text-center">
                     Actions
@@ -38,6 +39,7 @@
                 <td>{{ $request->course }}</td>
                 <td>{{ $request->year_level }}</td>
                 <td>{{ $request->section ?? '-' }}</td>
+                <td>{{ $request->student_status ?? '-' }}</td>
                 <td>{{ $request->created_at->format('Y-m-d H:i') }}</td>
                 <td class="text-center">
                     <div class="d-flex gap-1 justify-content-center align-items-center">

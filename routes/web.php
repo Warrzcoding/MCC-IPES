@@ -46,6 +46,7 @@ Route::post('/pre-signup/verify-otp', [PreSignupController::class, 'verifyOtp'])
 // ID Check Routes
 Route::get('/idcheck', [PreSignupController::class, 'showIdCheckForm'])->name('idcheck');
 Route::post('/idcheck', [PreSignupController::class, 'checkId'])->name('idcheck.submit');
+Route::post('/idcheck/verify', [PreSignupController::class, 'checkIdAjax'])->name('idcheck.verify');
 
 // Signup Routes
 Route::get('/signup', [SignupController::class, 'showSignupForm'])->name('signup');
@@ -164,7 +165,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/dashboard/pending-requests/delete-multiple', [RequestSigninController::class, 'deleteMultiple'])->name('pending.requests.deleteMultiple');
 });
 
-
+ 
 // reCAPTCHA setup and test routes
 Route::get('/recaptcha/setup', function () {
     return view('recaptcha-setup');

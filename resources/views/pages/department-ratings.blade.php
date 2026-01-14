@@ -1157,83 +1157,80 @@ function getAdjectivalRating($rating) {
 
     function generateAndPrintReport(staffData, department) {
         
-        const departmentTitle = department === 'all' ? 'All Departments' : department;
+        const departmentTitle = department === 'all' ? 'All Departments' : (department === 'EDUC' ? 'CoEd' : department);
         const currentDate = new Date().toLocaleDateString('en-US', {
             year: 'numeric',
             month: 'long',
             day: 'numeric'
         });
 
+        let recipientName = '';
+        let programHead = '';
+        
+        if (department === 'BSIT') {
+            recipientName = 'DR. DINO L. ILUSTRISIMO';
+            programHead = 'Program Head - BSIT';
+        } else if (department === 'EDUC') {
+            recipientName = 'DR. PRECILLA CANOY';
+            programHead = 'Dean - College of Education';
+        } else if (department === 'BSBA') {
+            recipientName = 'DR. ISRAEL N. ABARRATIGUE';
+            programHead = 'Dean - BSBA-FM and BSHM';
+        }else if (department === 'BSHM') {
+            recipientName = 'DR. ISRAEL N. ABARRATIGUE';
+             programHead = 'Dean - BSBA-FM and BSHM';
+        }else {
+            recipientName = 'DR. ISRAEL N. ABARRATIGUE';
+            programHead = 'GEC Facilitator';
+        }
+
         let html = `
-            <div style="padding:8px;font-family:'Times New Roman', serif; font-size:9pt; max-width: 900px; margin: 0 auto; line-height: 1.15;">
-                <div class='header-section' style='text-align:center;margin-bottom:0.2em;padding-bottom:0;'>
+            <div style="padding: 0 1in; font-family:'Times New Roman', serif; font-size:10pt; max-width: 900px; margin: 0 auto; line-height: 1.15;">
+                <div class='header-section' style='text-align:center; margin-bottom:0.2em; padding-bottom:0;'>
                     <div style='display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:2.15em;'>
                         <img src='/images/cgs.jpg' alt='Left Logo' style='width:60px;height:60px;flex-shrink:0;margin-right:5px;' onerror='this.style.display="none"'>
                         <div style='text-align:center; flex:0 0 auto;'>   
-                            <strong style='font-size:10pt;'>MADRIDEJOS COMMUNITY COLLEGE</strong><br>                                   
-                            <strong style='font-size:9pt;'>Center For Guidance Services</strong><br>
-                            <span style='font-size:8.5pt;'>Crossing Bunakan, Madridejos, Cebu</span><br>
-                            <span style='font-size:7.5pt; color: blue; text-decoration: none;'>
+                            <strong style='font-size:11pt;'>MADRIDEJOS COMMUNITY COLLEGE</strong><br>                                   
+                            <strong style='font-size:10.5pt;'>Center For Guidance Services</strong><br>
+                            <span style='font-size:10pt;'>Crossing Bunakan, Madridejos, Cebu</span><br>
+                            <span style='font-size:9pt; color: blue; text-decoration: none;'>
                              <i class='fas fa-envelope'></i> mcc.cgsofficial@gmail.com<br>
                              <i class='fab fa-facebook'></i> fb.com/MCCCenterforGuidanceService 
                             </span><br>
-                             <strong style='font-size:9.5pt;'>MCC Department's Performance Evaluation Results</strong><br>
-                           <span style='font-size:8.5pt;'>S.Y {{ $currentAcademicYear?->year }} - Semester {{ $currentAcademicYear?->semester }}</span>
+                             <strong style='font-size:11pt;'>MCC Department's Performance Evaluation Results</strong><br>
+                           <span style='font-size:10pt;'>S.Y {{ $currentAcademicYear?->year }} - {{ $currentAcademicYear?->semester == 1 ? 'First' : ($currentAcademicYear?->semester == 2 ? 'Second' : $currentAcademicYear?->semester) }} Sem </span>
                         </div>
                         <img src='/images/logo.png' alt='Right Logo' style='width:80px;height:80px;flex-shrink:0;margin-left:5px;' onerror='this.style.display="none"'>
                     </div>
                 </div>
                 
-                <div style="text-align: left; margin-bottom: 0.8em; font-size: 7.5pt; line-height: 1.2;">
-                    ${(() => {
-                        let recipientName = '';
-                        let programHead = '';
-                        
-                        if (department === 'BSIT') {
-                            recipientName = 'MR. DINO L. ILUSTRISIMO';
-                            programHead = 'Program Head - BSIT';
-                        } else if (department === 'BSED' || department === 'BEED') {
-                            recipientName = 'MRS. PRECILLA CANOY';
-                            programHead = 'Program Head - ' + department;
-                        } else if (department === 'BSBA') {
-                            recipientName = 'DR. ISRAEL N. ABARRATIGUE';
-                            programHead = 'Program Head - ' + department;
-                        }else if (department === 'BSHM') {
-                            recipientName = 'CHRISTY FORSUELO';
-                            programHead = 'Program Head - ' + department;
-                        }else {
-                            recipientName = 'DR. ISRAEL N. ABARRATIGUE';
-                            programHead = 'Program Head - ' + department;
-                        }
-                        
-                        return `
-                            <p style="margin-bottom: 0.15em;">To: <strong>${recipientName}</strong></p>
-                            <p style="margin-bottom: 0.3em; margin-left: 1em;">${programHead}</p>
-                            
-                            <p style="margin-bottom: 0.3em;">From: Center for Guidance Services</p>
-                            
-                            <p style="margin-bottom: 0.3em;">Subject: Endorsement of Performance Evaluations of ${departmentTitle} Instructors</p>
-                            
-                            <p style="margin-bottom: 1em;">Greetings of Peace!</p>
-                            
-                            <p style="margin-bottom: 0.4em;">I am writing to formally endorse the Results of Performance Evaluation of ${departmentTitle} for academic Year S.Y 2024-2025 - Semester 1.</p>
-                            
-                            <p style="margin-bottom: 0.4em;">Please be advised that the following instructors have been evaluated by all MCC Students.</p>
-                            
-                            <p style="margin-bottom: 0.6em;">Enclosed with this letter, you will find a detailed report highlighting the evaluation results for instructor.</p>
-                        `;
-                    })()}
+                <div style="text-align: left; margin-bottom: 0.8em; font-size: 10pt; line-height: 1.2;">
+                    <p style="margin-bottom: 0.15em;">To:  <strong>${recipientName}</strong></p>
+                    <p style="margin-bottom: 0.3em; margin-left: 2em;">${programHead}</p>
+                    
+                    <p style="margin-bottom: 0.3em;">From: Center for Guidance Services</p>
+                    
+                    <p style="margin-bottom: 0.3em;">Subject: Endorsement of Performance Evaluation   of ${departmentTitle} Instructors</p>
+                    
+                    <p style="margin-bottom: 1em;">Greetings of Peace!</p>
+                    
+                    <p style="margin-bottom: 0.4em;">I am writing to formally endorse the Results of Performance Evaluation of ${departmentTitle} instructors for Academic Year {{ $currentAcademicYear?->year }} - {{ $currentAcademicYear?->semester == 1 ? 'First' : ($currentAcademicYear?->semester == 2 ? 'Second' : $currentAcademicYear?->semester) }} Semester.</p>
+                    
+                    <p style="margin-bottom: 0.4em;">Please be advised that the following instructors have been evaluated by all MCC Students.</p>
+                    
+                    <p style="margin-bottom: 0.6em;">Enclosed with this letter, you will find a detailed report highlighting the evaluation results for each instructor.</p>
                 </div>
                 
                 <div style="margin-bottom: 0.8em;">
                     <table style="width: 100%; border-collapse: collapse; margin-top: 0.4em;">
                         <thead>
                             <tr style="background-color: #f8f9fa;">
-                                <th style="border: 1px solid #ddd; padding: 4px 6px; text-align: left; font-weight: bold; font-size: 7.5pt;">NAME OF INSTRUCTOR</th>
-                                <th style="border: 1px solid #ddd; padding: 4px 6px; text-align: center; font-weight: bold; font-size: 7.5pt;">AVERAGE SCORE</th>
-                                <th style="border: 1px solid #ddd; padding: 4px 6px; text-align: center; font-weight: bold; font-size: 7.5pt;">ADJECTIVAL DESCRIPTIVE</th>
+                                <th style="border: 1px solid #ddd; padding: 4px 6px; text-align: left; font-weight: bold; font-size: 10pt;">NAME OF INSTRUCTORS</th>
+                                <th style="border: 1px solid #ddd; padding: 4px 6px; text-align: center; font-weight: bold; font-size: 10pt;">AVERAGE SCORES</th>
+                                <th style="border: 1px solid #ddd; padding: 4px 6px; text-align: center; font-weight: bold; font-size: 10pt;">ADJECTIVAL DESCRIPTIVE</th>
                             </tr>
                         </thead>
+                        <tbody>
                         <tbody>
         `;
 
@@ -1242,9 +1239,9 @@ function getAdjectivalRating($rating) {
             const adjective = adjectivalFromLegend(staff.rating);
             html += `
                 <tr style="background-color: ${rowColor};">
-                    <td style="border: 1px solid #ddd; padding: 4px 6px; text-align: left; font-size: 7pt;">${staff.name}</td>
-                    <td style="border: 1px solid #ddd; padding: 4px 6px; text-align: center; font-weight: bold; color: #007bff; font-size: 7pt;">${staff.rating.toFixed(2)}</td>
-                    <td style="border: 1px solid #ddd; padding: 4px 6px; text-align: center; font-weight: bold; color: #28a745; font-size: 7pt;">${adjective}</td>
+                    <td style="border: 1px solid #ddd; padding: 4px 6px; text-align: left; font-size: 9.5pt;">${staff.name}</td>
+                    <td style="border: 1px solid #ddd; padding: 4px 6px; text-align: center; font-weight: bold; color: #232527; font-size: 9.5pt;">${staff.rating.toFixed(2)}</td>
+                    <td style="border: 1px solid #ddd; padding: 4px 6px; text-align: center; font-weight: bold; color: #080908; font-size: 9.5pt;">${adjective}</td>
                 </tr>
             `;
         });
@@ -1252,6 +1249,42 @@ function getAdjectivalRating($rating) {
         html += `
                         </tbody>
                     </table>
+                </div>
+
+                <!-- Signature Section -->
+                <div style='margin-top:4em;margin-bottom:0em;text-align:left; font-size:10pt; line-height:1.3;'>
+                    <div style='margin-bottom:1em;'>
+                        Prepared by:
+                    </div>
+                    <div style='margin-bottom:0.1em;'>
+                        <strong>DHINA B. DALISAY</strong>
+                    </div>
+                    <div style='margin-bottom:2em;'>
+                        Guidance Advocate
+                    </div>
+
+                    <div style='display:flex; justify-content:space-between; align-items:flex-start;'>
+                        <div style='text-align:left;'>
+                            <div style='margin-bottom:1em;'>
+                                Reviewed and Noted by:
+                            </div>
+                            <div style='margin-bottom:0.1em;'>
+                                <strong>DR. LIZA D. GARCIA, RGC</strong>
+                            </div>
+                            <div>
+                                Guidance Counselor
+                            </div>
+                        </div>
+                        <div style='text-align:left; margin-right:2em;'>
+                            <div style='display: flex; align-items: flex-start;'>
+                                <div style='white-space: nowrap;'>Received by: &nbsp;</div>
+                                <div style='display: flex; flex-direction: column;'>
+                                    <span>_________________________</span>
+                                    <strong style='margin-top: 0.1em;'>${recipientName}</strong>
+                                </div>
+                             </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         `;
@@ -1300,4 +1333,4 @@ function getAdjectivalRating($rating) {
 
 
 
-</script> 1168-
+</script>

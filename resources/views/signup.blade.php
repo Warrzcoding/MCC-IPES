@@ -467,18 +467,35 @@
                 </div>
             </div>
 
-            <div class="mb-2">
-                <label for="email" class="form-label">
-                    <i class="fas fa-envelope"></i> {{ isset($verified_email) && $verified_email ? 'MS Account' : 'Email' }} *
-                </label>
-                <input type="email" class="form-control @error('email') is-invalid @enderror"
-                       id="email" name="email" readonly="true"
-                       value="{{ isset($verified_email) && $verified_email ? $verified_email : old('email') }}"
-                       required placeholder="Enter email address"
-                       @if(isset($verified_email) && $verified_email) readonly @endif>
-                @error('email')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
+            <div class="row">
+                <div class="col-md-6 mb-2">
+                    <label for="email" class="form-label">
+                        <i class="fas fa-envelope"></i> {{ isset($verified_email) && $verified_email ? 'MS Account' : 'Email' }} *
+                    </label>
+                    <input type="email" class="form-control @error('email') is-invalid @enderror"
+                           id="email" name="email" readonly="true"
+                           value="{{ isset($verified_email) && $verified_email ? $verified_email : old('email') }}"
+                           required placeholder="Enter email address"
+                           @if(isset($verified_email) && $verified_email) readonly @endif>
+                    @error('email')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <!-- Student Status -->
+                <div class="col-md-6 mb-2">
+                    <label for="student_status" class="form-label">
+                        <i class="fas fa-graduation-cap"></i> Student Status *
+                    </label>
+                    <select class="form-select @error('student_status') is-invalid @enderror" id="student_status" name="student_status" required>
+                        <option value="">Select status...</option>
+                        <option value="Regular" {{ old('student_status') == 'Regular' ? 'selected' : '' }}>Regular</option>
+                        <option value="Irregular" {{ old('student_status') == 'Irregular' ? 'selected' : '' }}>Irregular</option>
+                    </select>
+                    @error('student_status')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
             </div>
 
             <!-- School Information -->
