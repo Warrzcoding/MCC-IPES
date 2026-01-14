@@ -1171,7 +1171,7 @@
                 </a>-->
                 
                 <a href="{{ route('dashboard', ['page' => 'evaluates']) }}" class="nav-link {{ $page === 'evaluates' ? 'active' : '' }}">
-                    <i class="fas fa-clipboard-check"></i> Evaluate Staff
+                    <i class="fas fa-clipboard-check"></i> Evaluation
                 </a>
             @endif
         </div>
