@@ -124,17 +124,11 @@
 <div class="row questionnaire-page">
     <div class="col-12">
         <div class="card border-0 shadow-sm">
-            <div class="card-header bg-transparent border-0 questionnaire-page">
-                <h5 class="mb-0">
-                    <i class="fas fa-clipboard-list me-2"></i>
-                    Questionnaires Management
-                </h5>
-            </div>
             <div class="card-body questionnaire-page">
-                <div class="alert alert-info">
+               <!-- <div class="alert alert-info">
                     <i class="fas fa-info-circle me-2"></i>
                     <strong>Questionnaires:</strong> This section allows administrators to manage evaluation questions and academic years.
-                </div>
+                </div>-->
             </div>
         </div>
     </div>

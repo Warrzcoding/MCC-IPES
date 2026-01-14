@@ -366,19 +366,16 @@ div[id^="editAcademicYearModal"] .modal-footer .btn {
     <div class="col-12">
         <div class="card border-0 shadow-sm">
             <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center">
-                <h5 class="mb-0 d-flex align-items-center">
-                    <i class="fas fa-calendar-alt me-2"></i>
-                    Academic Year Management
-                </h5>
+                 <h7  class="m-0 font-weight-bold text-primary">Academic Year List</h7>
                 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addAcademicYearModal">
                     <i class="fas fa-plus"></i> Add Academic Year
                 </button>
             </div>
             <div class="card-body">
-                <div class="alert alert-info">
+               <!-- <div class="alert alert-info">
                     <i class="fas fa-info-circle me-2"></i>
                     <strong>Academic Year:</strong> This section allows administrators to manage academic years and evaluation periods.
-                </div>
+                </div>-->
                 <div class="table-responsive">
                     <table class="table table-bordered align-middle">
                         <thead>

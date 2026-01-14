@@ -190,11 +190,11 @@ class DashboardController extends Controller
         // Set page title based on current page
         $page_titles = [
             'dashboard' => 'Dashboard',
-            'add-students' => 'Add Students',
-            'add-staff' => 'Add Staff',
+            'add-students' => 'Students Management',
+            'add-staff' => 'Instructors Management',
             'subject-management' => 'Subject Management',
-            'academicyear' => 'Academic Year',
-            'questionnaires' => 'Questionnaires',
+            'academicyear' => 'Academic Year Management',
+            'questionnaires' => 'Questionnaires Management',
             'staff-ratings' => 'Individual Ratings',
             'department-ratings' => 'Department Ratings',
             'overall-ratings' => 'Overall Ratings',

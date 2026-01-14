@@ -1189,10 +1189,7 @@
     <div class="col-12">
         <div class="card shadow mb-4">
             <div class="card-header py-3 d-flex justify-content-between align-items-center">
-              <h5 class="mb-0">
-                    <i class="fas fa-user-graduate me-2"></i>
-                     Students Management
-                </h5>
+              <h7  class="m-0 font-weight-bold text-primary">Students List</h7>
                 <div class="d-flex align-items-center gap-2">
                   @php
         $pendingCount = isset($pendingRequestsCount) ? $pendingRequestsCount : 0;
@@ -1265,6 +1262,7 @@ document.addEventListener('DOMContentLoaded', function () {
             </div>
             <div class="card-body">
                 <!-- Search Form -->
+                 
                 <div class="search-filter-form">
                     <form method="GET" action="{{ route('dashboard', ['page' => 'add-students']) }}" class="d-flex gap-2 align-items-end" id="studentSearchForm">
                         <input type="hidden" name="page" value="add-students">

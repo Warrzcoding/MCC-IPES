@@ -356,17 +356,17 @@
         <div class="card border-0 shadow-sm">
             <div class="card-header bg-transparent border-0">
               <h5 class="mb-0">
-                    <i class="fas fa-book me-2"></i>
-                     Subject Management
+                   <!-- <i class="fas fa-book me-2"></i>
+                     Subject Management-->
                 </h5>
             </div>
-            <div class="card-body">
+            <!--<div class="card-body">
                 <div class="alert alert-info">
                     <i class="fas fa-info-circle me-2"></i>
                     <strong>Subject Management:</strong> This section allows administrators to add and manage academic subjects.
                 </div>
                 
-            </div>
+            </div>-->
         </div>
     </div>
 </div>

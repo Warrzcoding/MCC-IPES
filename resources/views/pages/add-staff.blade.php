@@ -41,12 +41,12 @@
         <div class="card shadow mb-4">
             <div class="card-header py-3 d-flex justify-content-between align-items-center">
                <h5 class="mb-0">
-                    <i class="fas fa-chalkboard-teacher me-2"></i>
-                     Staff Members Managements
+                    <!--<i class="fas fa-chalkboard-teacher me-2"></i>
+                     Instructors Managements-->
                 </h5>
                 <div>
                     <button class="btn btn-primary btn-compact-action" data-bs-toggle="modal" data-bs-target="#addModal">
-                        <i class="fas fa-plus"></i> Add Staff
+                        <i class="fas fa-plus"></i> Add Instructor
                     </button>
                 </div>
             </div>
@@ -437,7 +437,7 @@
 
                   <!--Start of golbal serach-->
             <div class="card-header py-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
-                <h6 class="m-0 font-weight-bold text-primary">Staff List</h6>
+                <h7  class="m-0 font-weight-bold text-primary">Instructors List</h7>
                 <div class="d-flex gap-2 flex-wrap align-items-center">
                     <form method="GET" action="{{ route('dashboard') }}" class="d-flex gap-2" style="flex-wrap: wrap; align-items: center;">
                         <input type="hidden" name="page" value="add-staff">
@@ -628,7 +628,7 @@
     <div class="modal-dialog modal-compact">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Add New Staff</h5>
+                <h5 class="modal-title">Add New Instructors</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
@@ -639,7 +639,7 @@
                             <img id="imagePreview" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxjaXJjbGUgY3g9IjUwIiBjeT0iNTAiIHI9IjUwIiBmaWxsPSIjZTllY2VmIi8+Cjxzdmcgd2lkdGg9IjUwIiBoZWlnaHQ9IjUwIiB2aWV3Qm94PSIwIDAgMjQgMjQiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeD0iMjUiIHk9IjI1Ij4KPHBhdGggZD0iTTEyIDEyQzE0LjIxIDAgMjQtMS4yNyAyNC02cy05Ljc5LTYtMjQtNi0yNCAxLjI3LTI0IDYgOS43OSA2IDI0IDZ6IiBmaWxsPSIjNmM3NTdkIi8+CjxwYXRoIGQ9Ik0xMiAxMmM2LjYyNyAwIDEyLTUuMzczIDEyLTEycy01LjM3My0xMi0xMi0xMi0xMiA1LjM3My0xMiAxMiA1LjM3MyAxMiAxMiAxMnoiIGZpbGw9IiM2Yzc1N2QiLz4KPC9zdmc+Cjwvc3ZnPg==" alt="Preview" 
                                  style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 2px solid #dee2e6; background-color: #f8f9fa;">
                         </div>
-                        <label for="staff_image" class="form-label">Staff Photo</label>
+                        <label for="staff_image" class="form-label">Profile Image</label>
                         <input type="file" class="form-control" id="staff_image" name="staff_image" accept="image/*" onchange="previewImage(this)">
                         <small class="form-text text-muted">Optional. Supported formats: JPG, JPEG, PNG, GIF</small>
                     </div>
@@ -649,7 +649,7 @@
                         <input type="text" class="form-control" id="full_name" name="full_name" value="{{ old('full_name') }}" required>
                     </div>
                     <div class="mb-3">
-                        <label for="staff_id" class="form-label">Staff ID</label>
+                        <label for="staff_id" class="form-label">Instructor  ID</label>
                         <input type="text" class="form-control" id="staff_id" name="staff_id" value="{{ old('staff_id') }}" readonly>
                         <small class="form-text text-muted">Auto-generated from full name initials + 6 random digits (e.g., WI123456).</small>
                     </div>
@@ -689,7 +689,7 @@
 
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary">Add Staff</button>
+                        <button type="submit" class="btn btn-primary">Add Instructor</button>
                     </div>
                 </form>
             </div>
@@ -702,7 +702,7 @@
     <div class="modal-dialog modal-compact">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Edit Staff</h5>
+                <h5 class="modal-title">Edit Instructor</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
@@ -714,7 +714,7 @@
                             <img id="editImagePreview" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxjaXJjbGUgY3g9IjUwIiBjeT0iNTAiIHI9IjUwIiBmaWxsPSIjZTllY2VmIi8+Cjxzdmcgd2lkdGg9IjUwIiBoZWlnaHQ9IjUwIiB2aWV3Qm94PSIwIDAgMjQgMjQiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeD0iMjUiIHk9IjI1Ij4KPHBhdGggZD0iTTEyIDEyQzE0LjIxIDAgMjQtMS4yNyAyNC02cy05Ljc5LTYtMjQtNi0yNCAxLjI3LTI0IDYgOS43OSA2IDI0IDZ6IiBmaWxsPSIjNmM3NTdkIi8+CjxwYXRoIGQ9Ik0xMiAxMmM2LjYyNyAwIDEyLTUuMzczIDEyLTEycy01LjM3My0xMi0xMi0xMi0xMiA1LjM3My0xMiAxMiA1LjM3MyAxMiAxMiAxMnoiIGZpbGw9IiM2Yzc1N2QiLz4KPC9zdmc+Cjwvc3ZnPg==" alt="Preview" 
                                  style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 2px solid #dee2e6; background-color: #f8f9fa;">
                         </div>
-                        <label for="edit_staff_image" class="form-label">Staff Photo</label>
+                        <label for="edit_staff_image" class="form-label">Profile Image</label>
                         <input type="file" class="form-control" id="edit_staff_image" name="staff_image" accept="image/*" onchange="previewEditImage(this)">
                         <small class="form-text text-muted">Leave empty to keep current image</small>
                     </div>
@@ -726,7 +726,7 @@
                         <input type="text" class="form-control" id="editFullName" name="full_name"  readonly="true" required>
                     </div>
                     <div class="mb-3">
-                        <label for="editStaffId" class="form-label">Staff ID</label>
+                        <label for="editStaffId" class="form-label">Instructor ID</label>
                         <input type="text" class="form-control" id="editStaffId" name="staff_id" required pattern="[A-Z]{2}[0-9]{6}" minlength="8" maxlength="8" inputmode="text" title="Enter a Staff ID in the format: two uppercase letters followed by six digits (e.g., WI123456)" readonly>
                         <small class="form-text text-muted">Format: WI123456 (2 uppercase letters, 6 digits)</small>
                     </div>
@@ -877,12 +877,12 @@ function updateDepartmentOptions(staffTypeId, departmentId) {
 
 function deleteStaff(id, name) {
     Swal.fire({
-        title: 'Delete Staff',
+        title: 'Delete Instructor',
         html: `
             <div class="text-center">
                 <i class="fas fa-exclamation-triangle text-warning" style="font-size: 3rem; margin-bottom: 1rem;"></i>
                 <p>Are you sure you want to delete <strong>"${name}"</strong>?</p>
-                <p class="text-muted small">This action cannot be undone and will permanently remove the staff from the system.</p>
+                <p class="text-muted small">This action cannot be undone and will permanently remove the instructor from the system.</p>
             </div>
         `,
         icon: 'warning',
@@ -1137,11 +1137,11 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault();
             
             Swal.fire({
-                title: 'Updating Staff...',
+                title: 'Updating...',
                 html: `
                     <div class="text-center">
                         <i class="fas fa-spinner fa-spin text-primary" style="font-size: 2rem; margin-bottom: 1rem;"></i>
-                        <p>Please wait while we update the staff information.</p>
+                        <p>Please wait while we update the instructor information.</p>
                     </div>
                 `,
                 icon: 'info',
@@ -1167,7 +1167,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 Swal.fire({
                     title: 'Success!',
-                    text: 'Staff updated successfully!',
+                    text: 'Instructor updated successfully!',
                     icon: 'success',
                     timer: 3000,
                     showConfirmButton: false,
@@ -1197,7 +1197,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.error('Error:', error);
                 Swal.fire({
                     title: 'Error!',
-                    text: 'Failed to update staff. Please try again.',
+                    text: 'Failed to update instructor. Please try again.',
                     icon: 'error',
                     confirmButtonText: 'OK'
                 });
@@ -1216,7 +1216,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 html: `
                     <div class="text-center">
                         <i class="fas fa-spinner fa-spin text-primary" style="font-size: 2rem; margin-bottom: 1rem;"></i>
-                        <p>Please wait while we remove the staff from the system.</p>
+                        <p>Please wait while we remove the instructor from the system.</p>
                     </div>
                 `,
                 icon: 'info',
@@ -1241,8 +1241,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 Swal.close();
                 
                 Swal.fire({
-                    title: 'Staff Deleted!',
-                    text: 'The staff has been successfully removed from the system.',
+                    title: 'Instructor Deleted!',
+                    text: 'Instructor has been successfully removed from the system.',
                     icon: 'success',
                     timer: 3000,
                     showConfirmButton: false,
