@@ -1194,19 +1194,19 @@ function getAdjectivalRating($rating) {
             <div style="padding: 0 1in; font-family: Arial, sans-serif; font-size:10pt; max-width: 900px; margin: 0 auto; line-height: 1.15;">
                 <div class='header-section' style='text-align:center; margin-bottom:0.2em; padding-bottom:0;'>
                     <div style='display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:2.15em;'>
-                        <img src='/images/cgs.jpg' alt='Left Logo' style='width:60px;height:60px;flex-shrink:0;margin-right:5px;' onerror='this.style.display="none"'>
+                        <img src='/images/cgs.jpg' alt='Left Logo' style='width:80px;height:80px;flex-shrink:0;margin-right:5px;' onerror='this.style.display="none"'>
                         <div style='text-align:center; flex:0 0 auto;'>   
-                            <strong style='font-size:11pt;'>MADRIDEJOS COMMUNITY COLLEGE</strong><br>                                   
-                            <strong style='font-size:10.5pt;'>Center For Guidance Services</strong><br>
-                            <span style='font-size:10pt;'>Crossing Bunakan, Madridejos, Cebu</span><br>
-                            <span style='font-size:9pt; color: blue; text-decoration: none;'>
+                            <strong style='font-size:12pt; font-family: "Arial Black", Gadget, sans-serif;'>MADRIDEJOS COMMUNITY COLLEGE</strong><br>                                   
+                            <strong style='font-size:11.5pt; font-family: "Century Gothic", CenturyGothic, AppleGothic, sans-serif;'>Center For Guidance Services</strong><br>
+                            <span style='font-size:8pt;'>Crossing Bunakan, Madridejos, Cebu</span><br>
+                            <span style='font-size:8pt; color: blue; text-decoration: none; font-family: "Century Gothic", sans-serif; font-weight: 300;'>
                              <i class='fas fa-envelope'></i> mcc.cgsofficial@gmail.com<br>
                              <i class='fab fa-facebook'></i> fb.com/MCCCenterforGuidanceService 
-                            </span><br>
-                             <strong style='font-size:11pt;'>MCC Department's Performance Evaluation Results</strong><br>
-                           <span style='font-size:10pt;'>S.Y {{ $currentAcademicYear?->year }} - {{ $currentAcademicYear?->semester == 1 ? 'First' : ($currentAcademicYear?->semester == 2 ? 'Second' : $currentAcademicYear?->semester) }} Sem </span>
+                            </span><br><br>
+                             <strong style='font-size:10pt; font-family: "Century Gothic", sans-serif;'>MCC Department's Performance Evaluation Results</strong><br>
+                           <span style='font-size:10pt; font-family: "Century Gothic", sans-serif; font-weight: normal;'>S.Y {{ $currentAcademicYear?->year }} - {{ $currentAcademicYear?->semester == 1 ? 'First' : ($currentAcademicYear?->semester == 2 ? 'Second' : $currentAcademicYear?->semester) }} Sem </span>
                         </div>
-                        <img src='/images/logo.png' alt='Right Logo' style='width:80px;height:80px;flex-shrink:0;margin-left:5px;' onerror='this.style.display="none"'>
+                        <img src='/images/logo.png' alt='Right Logo' style='width:100px;height:100px;flex-shrink:0;margin-left:5px;' onerror='this.style.display="none"'>
                     </div>
                 </div>
                 
