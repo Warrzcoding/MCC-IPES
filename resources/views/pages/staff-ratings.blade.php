@@ -1345,7 +1345,7 @@ function getAdjectivalRating($rating) {
                             <tr>
                                 <td colspan="2" style='border:1px solid #333;padding:2em;text-align:center;color:#666;'>
                                     <strong>No Evaluation Data Available</strong><br>
-                                    This staff member has not been evaluated yet.
+                                    This instructor member has not been evaluated yet.
                                 </td>
                             </tr>
                         `;
@@ -1356,9 +1356,9 @@ function getAdjectivalRating($rating) {
                             </table>
                             
                             <!-- Summary Evaluation Table - Start on New Page -->
-                            <div style='page-break-before:always; margin-top:2em; padding-left:3em; margin-bottom:0.5em;'>
+                            <div style='page-break-before:always; margin-top:2em; margin-bottom:0.5em;'>
                                 <h3 style='font-size:11pt;font-weight:bold;margin-bottom:0.4em;margin-top:0;color:#333;border-bottom:1px solid #ffffff;padding-bottom:0.2em; text-align:center;'>Summary of Evaluation Scores</h3>
-                                <table style='width:95%;border-collapse:collapse;border:1px solid #333; font-size:10pt;'>
+                                <table style='width:100%;border-collapse:collapse;border:1px solid #333; font-size:10pt;'>
                                     <thead>
                                         <tr style='background:#f8f9fa; height:16px;'>
                                             <th style='border:1px solid #333;padding:2px 3px;text-align:left;font-weight:bold;width:25%;'>Criteria</th>
