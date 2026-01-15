@@ -1214,6 +1214,10 @@ function getAdjectivalRating($rating) {
 
     function printStaffReport(staffId) {
         
+        const toRoman = (num) => {
+            const roman = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII", "XIII", "XIV", "XV"];
+            return roman[num] || num;
+        };
         // Show loading state
         Swal.fire({
             title: 'Generating Report...',
@@ -1261,7 +1265,7 @@ function getAdjectivalRating($rating) {
                                 .questions-table { page-break-before: avoid !important; }
                             }
                         </style>
-                        <div style="padding:8px;font-family:'Times New Roman', serif; font-size:10pt; max-width: 900px; margin: 0 auto; line-height: 1.15;">
+                        <div style="padding:8px;font-family: Arial, sans-serif; font-size:10pt; max-width: 900px; margin: 0 auto; line-height: 1.15;">
                             <div class='header-section' style='text-align:center;margin-bottom:0.2em;padding-bottom:0;'>
                                 <div style='display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:2.15em;'>
                                     <img src='/images/cgs.jpg' alt='Left Logo' style='width:60px;height:60px;flex-shrink:0;margin-right:5px;' onerror='this.style.display="none"'>
@@ -1284,7 +1288,7 @@ function getAdjectivalRating($rating) {
                             <!-- Instructor Information Line -->
                             <div class='instructor-info' style='margin-bottom:0.5em; font-size:10pt; display:grid; grid-template-columns: 1fr auto 1fr; align-items:center;'>
                                 <div style='text-align:left;'><strong>Name of Instructor:</strong></div>
-                                <div style='text-align:center; font-size:14pt; color:#007bff; font-weight:bold; padding: 0 10px;'>${staff.full_name}</div>
+                                <div style='text-align:center; font-size:14pt; color:#007bff; font-weight:bold; padding: 0 10px; font-family: "Century Gothic", AppleGothic, sans-serif; text-transform: uppercase;'>${staff.full_name}</div>
                                 <div style='text-align:right;'><strong>Department:</strong> ${staff.department}</div>
                             </div>
 
@@ -1311,14 +1315,15 @@ function getAdjectivalRating($rating) {
                         });
 
                         // Display each category with its questions in the order they were encountered
-                        categoryOrder.forEach(categoryName => {
+                        categoryOrder.forEach((categoryName, index) => {
                             const categoryEvals = categories[categoryName];
+                            const romanNumber = toRoman(index + 1);
                             
                             // Add category header row
                             html += `
                                 <tr style='height:14px;'>
                                     <td colspan="2" style='border:1px solid #333;padding:2px 3px;background:#e3f2fd;font-weight:bold;color:#007bff; font-size:9pt;'>
-                                        ${categoryName}
+                                        ${romanNumber}. ${categoryName}
                                     </td>
                                 </tr>
                             `;
@@ -1388,10 +1393,11 @@ function getAdjectivalRating($rating) {
                         let totalSum = 0;
                         let totalCount = 0;
                         
-                        Object.keys(categoryTotals).forEach(categoryName => {
+                        Object.keys(categoryTotals).forEach((categoryName, index) => {
                             const average = categoryTotals[categoryName] / categoryCounts[categoryName];
                             const verbalInterpretation = getAdjectivalRating(average);
                             const descriptiveExplanation = getDescriptiveExplanation(verbalInterpretation);
+                            const romanNumber = toRoman(index + 1);
                             
                             // Add to total calculation
                             totalSum += average;
@@ -1399,7 +1405,7 @@ function getAdjectivalRating($rating) {
                             
                             html += `
                                 <tr style='height:16px;'>
-                                    <td style='border:1px solid #333;padding:2px 3px;text-align:left;vertical-align:middle;'>${categoryName}</td>
+                                    <td style='border:1px solid #333;padding:2px 3px;text-align:left;vertical-align:middle;'>${romanNumber}. ${categoryName}</td>
                                     <td style='border:1px solid #333;padding:2px 3px;text-align:center;font-weight:bold;vertical-align:middle;'>${average.toFixed(2)}</td>
                                     <td style='border:1px solid #333;padding:2px 3px;text-align:center;font-weight:bold;vertical-align:middle;'>${verbalInterpretation}</td>
                                     <td style='border:1px solid #333;padding:2px 3px;text-align:left;font-style:italic;vertical-align:middle;line-height:1.2;'>${descriptiveExplanation}</td>

@@ -1107,7 +1107,7 @@
 
                 @if(!in_array('subject-management', $disabledSidebarFeatures))
                 <a href="{{ route('dashboard', ['page' => 'subject-management']) }}" class="nav-link {{ $page === 'subject-management' ? 'active' : '' }}">
-                    <i class="fas fa-book"></i> Subject
+                    <i class="fas fa-book"></i> Subjects
                 </a>
                 @endif
 

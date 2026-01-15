@@ -1185,7 +1185,7 @@ function getAdjectivalRating($rating) {
         }
 
         let html = `
-            <div style="padding: 0 1in; font-family:'Times New Roman', serif; font-size:10pt; max-width: 900px; margin: 0 auto; line-height: 1.15;">
+            <div style="padding: 0 1in; font-family: Arial, sans-serif; font-size:10pt; max-width: 900px; margin: 0 auto; line-height: 1.15;">
                 <div class='header-section' style='text-align:center; margin-bottom:0.2em; padding-bottom:0;'>
                     <div style='display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:2.15em;'>
                         <img src='/images/cgs.jpg' alt='Left Logo' style='width:60px;height:60px;flex-shrink:0;margin-right:5px;' onerror='this.style.display="none"'>
@@ -1210,13 +1210,13 @@ function getAdjectivalRating($rating) {
                     
                     <p style="margin-bottom: 0.3em;">From: Center for Guidance Services</p>
                     
-                    <p style="margin-bottom: 0.3em;">Subject: Endorsement of Performance Evaluation   of ${departmentTitle} Instructors</p>
+                    <p style="margin-bottom: 1em;">Subject: Endorsement of Performance Evaluation   of ${departmentTitle} Instructors</p>
                     
                     <p style="margin-bottom: 1em;">Greetings of Peace!</p>
                     
-                    <p style="margin-bottom: 0.4em;">I am writing to formally endorse the Results of Performance Evaluation of ${departmentTitle} instructors for Academic Year {{ $currentAcademicYear?->year }} - {{ $currentAcademicYear?->semester == 1 ? 'First' : ($currentAcademicYear?->semester == 2 ? 'Second' : $currentAcademicYear?->semester) }} Semester.</p>
+                    <p style="margin-bottom: 0.7em;">I am writing to formally endorse the Results of Performance Evaluation of ${departmentTitle} instructors for Academic Year {{ $currentAcademicYear?->year }} - {{ $currentAcademicYear?->semester == 1 ? 'First' : ($currentAcademicYear?->semester == 2 ? 'Second' : $currentAcademicYear?->semester) }} Semester.</p>
                     
-                    <p style="margin-bottom: 0.4em;">Please be advised that the following instructors have been evaluated by all MCC Students.</p>
+                    <p style="margin-bottom: 0.7em;">Please be advised that the following instructors have been evaluated by all MCC Students.</p>
                     
                     <p style="margin-bottom: 0.6em;">Enclosed with this letter, you will find a detailed report highlighting the evaluation results for each instructor.</p>
                 </div>
@@ -1239,9 +1239,9 @@ function getAdjectivalRating($rating) {
             const adjective = adjectivalFromLegend(staff.rating);
             html += `
                 <tr style="background-color: ${rowColor};">
-                    <td style="border: 1px solid #ddd; padding: 4px 6px; text-align: left; font-size: 9.5pt;">${staff.name}</td>
-                    <td style="border: 1px solid #ddd; padding: 4px 6px; text-align: center; font-weight: bold; color: #232527; font-size: 9.5pt;">${staff.rating.toFixed(2)}</td>
-                    <td style="border: 1px solid #ddd; padding: 4px 6px; text-align: center; font-weight: bold; color: #080908; font-size: 9.5pt;">${adjective}</td>
+                    <td style="border: 1px solid #ddd; padding: 4px 6px; text-align: left; font-size: 9.5pt; font-family: 'Century Gothic', sans-serif; text-transform: uppercase;">${staff.name}</td>
+                    <td style="border: 1px solid #ddd; padding: 4px 6px; text-align: center; font-weight: bold; color: #232527; font-size: 9.5pt; font-family: 'Century Gothic', sans-serif; text-transform: uppercase;">${staff.rating.toFixed(2)}</td>
+                    <td style="border: 1px solid #ddd; padding: 4px 6px; text-align: center; font-weight: bold; color: #080908; font-size: 9.5pt; font-family: 'Century Gothic', sans-serif; text-transform: uppercase;">${adjective}</td>
                 </tr>
             `;
         });
@@ -1263,19 +1263,20 @@ function getAdjectivalRating($rating) {
                         Guidance Advocate
                     </div>
 
-                    <div style='display:flex; justify-content:space-between; align-items:flex-start;'>
-                        <div style='text-align:left;'>
-                            <div style='margin-bottom:1em;'>
-                                Reviewed and Noted by:
-                            </div>
-                            <div style='margin-bottom:0.1em;'>
-                                <strong>DR. LIZA D. GARCIA, RGC</strong>
-                            </div>
-                            <div>
-                                Guidance Counselor
-                            </div>
+                    <div style='text-align:left;'>
+                        <div style='margin-bottom:1em;'>
+                            Reviewed and Noted by:
                         </div>
-                        <div style='text-align:left; margin-right:2em;'>
+                        <div style='margin-bottom:0.1em;'>
+                            <strong>DR. LIZA D. GARCIA, RGC</strong>
+                        </div>
+                        <div>
+                            Guidance Counselor
+                        </div>
+                    </div>
+
+                    <div style='margin-top: 1em; display: flex; justify-content: flex-end; padding-right: 1em;'>
+                        <div style='text-align:left;'>
                             <div style='display: flex; align-items: flex-start;'>
                                 <div style='white-space: nowrap;'>Received by: &nbsp;</div>
                                 <div style='display: flex; flex-direction: column;'>
