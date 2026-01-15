@@ -34,6 +34,16 @@ class SignupController extends Controller
             'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
 
+        // Check for existing school_id in users table
+        if (User::where('school_id', $request->school_id)->exists()) {
+            return back()->withErrors(['school_id' => 'ID exist already.'])->withInput();
+        }
+
+        // Check for existing school_id in request_signin table
+        if (RequestSignin::where('school_id', $request->school_id)->exists()) {
+            return back()->withErrors(['school_id' => 'You have already Request, Please Admin Approval.'])->withInput();
+        }
+
         // Handle profile image upload
         $profileImage = null;
         if ($request->hasFile('profile_image')) {
@@ -87,13 +97,13 @@ class SignupController extends Controller
             if ($existsInUsers) {
                 return response()->json([
                     'exists' => true,
-                    'message' => 'This School ID is already in use.',
+                    'message' => 'ID exist already.',
                     'table' => 'users'
                 ]);
             } elseif ($existsInRequests) {
                 return response()->json([
                     'exists' => true,
-                    'message' => 'This School ID is already registered or pending approval.',
+                    'message' => 'You have already Request, Please Admin Approval.',
                     'table' => 'request_signin'
                 ]);
             }
@@ -114,7 +124,16 @@ class SignupController extends Controller
             if ($existsInUsers) {
                 return response()->json([
                     'available' => false,
-                    'message' => 'This School ID is already registered and in use.'
+                    'message' => 'ID exist already.'
+                ]);
+            }
+
+            $existsInRequests = \App\Models\RequestSignin::where('school_id', $school_id)->exists();
+
+            if ($existsInRequests) {
+                return response()->json([
+                    'available' => false,
+                    'message' => 'You have already Request, Please Admin Approval.'
                 ]);
             }
         }

@@ -614,7 +614,7 @@
 
         <div class="signup-link">
             <p>Already have an account? <a href="{{ route('login') }}">
-                <i class="fas fa-sign-in-alt"></i> Login here
+                <i ></i> Login here
             </a></p>
         </div>
     </div>
@@ -634,6 +634,23 @@
         @endif
 
         document.addEventListener('DOMContentLoaded', function() {
+            // Auto-hide server-side validation error messages after 5 seconds
+            setTimeout(() => {
+                const errorMessages = document.querySelectorAll('.invalid-feedback');
+                errorMessages.forEach(error => {
+                    // Only hide if it's a direct child of a row or col (server-side errors)
+                    // and not the one we manually create with 'custom-error' class
+                    if (!error.classList.contains('custom-error')) {
+                        error.style.display = 'none';
+                        // Find the associated input and remove is-invalid class
+                        const input = error.parentNode.querySelector('.form-control, .form-select');
+                        if (input) {
+                            input.classList.remove('is-invalid');
+                        }
+                    }
+                });
+            }, 5000);
+
             // Profile image preview
             const profileImageInput = document.getElementById('profileImageInput');
             const previewImg = document.getElementById('previewImg');
@@ -1235,6 +1252,14 @@
                         errorDiv.className = 'invalid-feedback d-block custom-error';
                         errorDiv.textContent = availabilityData.message;
                         schoolIdField.parentNode.appendChild(errorDiv);
+
+                        // Timeout to remove the error message after 5 seconds
+                        setTimeout(() => {
+                            if (errorDiv) {
+                                errorDiv.remove();
+                                schoolIdField.classList.remove('is-invalid');
+                            }
+                        }, 5000);
 
                         // Scroll to the field
                         schoolIdField.scrollIntoView({ behavior: 'smooth', block: 'center' });
