@@ -744,14 +744,16 @@ if (Auth::user()->isAdmin()) {
                                                     @php 
                                                     $rating = $evaluation->avg_rating;
                                                     @endphp
-                                                    @if($rating >= 4.5)
-                                                        <span class="badge bg-success w-100">Excellent Performance</span>
-                                                    @elseif($rating >= 3.5)
-                                                        <span class="badge bg-primary w-100">Very Good</span>
-                                                    @elseif($rating >= 2.5)
-                                                        <span class="badge bg-warning w-100">Good</span>
+                                                    @if($rating >= 4.51)
+                                                        <span class="badge bg-success w-100">Outstanding</span>
+                                                    @elseif($rating >= 3.51)
+                                                        <span class="badge bg-info w-100" style="color: #fff;">Very Satisfactory</span>
+                                                    @elseif($rating >= 2.51)
+                                                        <span class="badge bg-warning w-100" style="color: #000;">Satisfactory</span>
+                                                    @elseif($rating >= 1.51)
+                                                        <span class="badge w-100" style="background-color: #fd7e14; color: white;">Unsatisfactory</span>
                                                     @else
-                                                        <span class="badge bg-danger w-100">Needs Improvement</span>
+                                                        <span class="badge bg-danger w-100">Poor</span>
                                                     @endif
                                                 </div>
                                             </div>

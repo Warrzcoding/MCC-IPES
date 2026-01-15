@@ -133,10 +133,10 @@
 @php
 if (!function_exists('getRatingStatus')) {
     function getRatingStatus($rating) {
-        if ($rating >= 4) return ['status' => 'Excellent', 'color' => '#28a745', 'bg' => '#d4edda'];
-        if ($rating >= 3) return ['status' => 'Good', 'color' => '#17a2b8', 'bg' => '#d1ecf1'];
-        if ($rating >= 2) return ['status' => 'Average', 'color' => '#ffc107', 'bg' => '#fff3cd'];
-        if ($rating >= 1) return ['status' => 'Below Average', 'color' => '#fd7e14', 'bg' => '#ffeaa7'];
+        if ($rating >= 4.51) return ['status' => 'Outstanding', 'color' => '#28a745', 'bg' => '#d4edda'];
+        if ($rating >= 3.51) return ['status' => 'Very Satisfactory', 'color' => '#17a2b8', 'bg' => '#d1ecf1'];
+        if ($rating >= 2.51) return ['status' => 'Satisfactory', 'color' => '#ffc107', 'bg' => '#fff3cd'];
+        if ($rating >= 1.51) return ['status' => 'Unsatisfactory', 'color' => '#fd7e14', 'bg' => '#ffeaa7'];
         return ['status' => 'Poor', 'color' => '#dc3545', 'bg' => '#f8d7da'];
     }
 }
@@ -377,14 +377,14 @@ if (!function_exists('getRatingStatus')) {
         top: 0;
     }
     .range-bar-green { background: #28a745 !important; }
-    .range-bar-blue { background: #007bff !important; }
+    .range-bar-blue { background: #17a2b8 !important; }
     .range-bar-yellow { background: #ffc107 !important; }
     .range-bar-orange { background: #fd7e14 !important; }
     .range-bar-red { background: #dc3545 !important; }
     
     /* More specific selectors */
     .range-bar-fill.range-bar-green { background-color: #28a745 !important; }
-    .range-bar-fill.range-bar-blue { background-color: #007bff !important; }
+    .range-bar-fill.range-bar-blue { background-color: #17a2b8 !important; }
     .range-bar-fill.range-bar-yellow { background-color: #ffc107 !important; }
     .range-bar-fill.range-bar-orange { background-color: #fd7e14 !important; }
     .range-bar-fill.range-bar-red { background-color: #dc3545 !important; }

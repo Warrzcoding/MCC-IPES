@@ -3,10 +3,10 @@
 @php
 // Function to get rating status and color
 function getRatingStatus($rating) {
-    if ($rating >= 4) return ['status' => 'Excellent', 'color' => '#28a745', 'bg' => '#d4edda'];
-    if ($rating >= 3) return ['status' => 'Good', 'color' => '#17a2b8', 'bg' => '#d1ecf1'];
-    if ($rating >= 2) return ['status' => 'Average', 'color' => '#ffc107', 'bg' => '#fff3cd'];
-    if ($rating >= 1) return ['status' => 'Below Average', 'color' => '#fd7e14', 'bg' => '#ffeaa7'];
+    if ($rating >= 4.51) return ['status' => 'Outstanding', 'color' => '#28a745', 'bg' => '#d4edda'];
+    if ($rating >= 3.51) return ['status' => 'Very Satisfactory', 'color' => '#17a2b8', 'bg' => '#d1ecf1'];
+    if ($rating >= 2.51) return ['status' => 'Satisfactory', 'color' => '#ffc107', 'bg' => '#fff3cd'];
+    if ($rating >= 1.51) return ['status' => 'Unsatisfactory', 'color' => '#fd7e14', 'bg' => '#ffeaa7'];
     return ['status' => 'Poor', 'color' => '#dc3545', 'bg' => '#f8d7da'];
 }
 
@@ -14,9 +14,9 @@ function getRatingStatus($rating) {
 function getAdjectivalRating($rating) {
     if ($rating >= 4.51) return 'Outstanding';
     if ($rating >= 3.51) return 'Very Satisfactory';
-    if ($rating >= 2.52) return 'Satisfactory';
+    if ($rating >= 2.51) return 'Satisfactory';
     if ($rating >= 1.51) return 'Unsatisfactory';
-    return 'Unsatisfactory';
+    return 'Poor';
 }
 @endphp
 
@@ -211,21 +211,21 @@ function getAdjectivalRating($rating) {
         top: 0;
     }
     .range-bar-green { background: #28a745; }
-    .range-bar-blue { background: #007bff; }
+    .range-bar-blue { background: #17a2b8; }
     .range-bar-yellow { background: #ffc107; }
     .range-bar-orange { background: #fd7e14; }
     .range-bar-red { background: #dc3545; }
     
     /* Legend color indicators */
     .range-legend span.color.range-bar-green { background: #28a745; }
-    .range-legend span.color.range-bar-blue { background: #007bff; }
+    .range-legend span.color.range-bar-blue { background: #17a2b8; }
     .range-legend span.color.range-bar-yellow { background: #ffc107; }
     .range-legend span.color.range-bar-orange { background: #fd7e14; }
     .range-legend span.color.range-bar-red { background: #dc3545; }
     
     /* Ensure range bar fills work in modal context */
     #staffProfileModal .range-bar-fill.range-bar-green { background: #28a745 !important; }
-    #staffProfileModal .range-bar-fill.range-bar-blue { background: #007bff !important; }
+    #staffProfileModal .range-bar-fill.range-bar-blue { background: #17a2b8 !important; }
     #staffProfileModal .range-bar-fill.range-bar-yellow { background: #ffc107 !important; }
     #staffProfileModal .range-bar-fill.range-bar-orange { background: #fd7e14 !important; }
     #staffProfileModal .range-bar-fill.range-bar-red { background: #dc3545 !important; }
@@ -314,7 +314,7 @@ function getAdjectivalRating($rating) {
 
     /* Additional specificity for modal content */
     .modal-body .range-bar-fill.range-bar-green { background-color: #28a745 !important; }
-    .modal-body .range-bar-fill.range-bar-blue { background-color: #007bff !important; }
+    .modal-body .range-bar-fill.range-bar-blue { background-color: #17a2b8 !important; }
     .modal-body .range-bar-fill.range-bar-yellow { background-color: #ffc107 !important; }
     .modal-body .range-bar-fill.range-bar-orange { background-color: #fd7e14 !important; }
     .modal-body .range-bar-fill.range-bar-red { background-color: #dc3545 !important; }
@@ -1131,11 +1131,11 @@ function getAdjectivalRating($rating) {
         html += `<div><strong>${staff.full_name}</strong><br><span class='badge bg-secondary'>${staff.department}</span><br><span class='badge bg-info'>${staff.staff_type}</span><br><small class='text-muted'>${staff.email}</small></div></div>`;
         html += `<div class='col-md-9'><h6 class='fw-bold mb-3'>Category Ratings</h6>`;
         html += `<div class='range-legend mb-2'>
-    <div class='legend-item'><span class='color range-bar-green' style='background-color: #28a745 !important; display: inline-block; width: 22px; height: 22px; border-radius: 50%; border: 2px solid #fff; outline: 1.5px solid #bbb;'></span><span class='range-legend-label'>Excellent (4-5)</span></div>
-    <div class='legend-item'><span class='color range-bar-blue' style='background-color: #007bff !important; display: inline-block; width: 22px; height: 22px; border-radius: 50%; border: 2px solid #fff; outline: 1.5px solid #bbb;'></span><span class='range-legend-label'>Good (3-4)</span></div>
-    <div class='legend-item'><span class='color range-bar-yellow' style='background-color: #ffc107 !important; display: inline-block; width: 22px; height: 22px; border-radius: 50%; border: 2px solid #fff; outline: 1.5px solid #bbb;'></span><span class='range-legend-label'>Average (2-3)</span></div>
-    <div class='legend-item'><span class='color range-bar-orange' style='background-color: #fd7e14 !important; display: inline-block; width: 22px; height: 22px; border-radius: 50%; border: 2px solid #fff; outline: 1.5px solid #bbb;'></span><span class='range-legend-label'>Below Avg (1-2)</span></div>
-    <div class='legend-item'><span class='color range-bar-red' style='background-color: #dc3545 !important; display: inline-block; width: 22px; height: 22px; border-radius: 50%; border: 2px solid #fff; outline: 1.5px solid #bbb;'></span><span class='range-legend-label'>Poor (&lt;1)</span></div>
+    <div class='legend-item'><span class='color range-bar-green' style='background-color: #28a745 !important; display: inline-block; width: 22px; height: 22px; border-radius: 50%; border: 2px solid #fff; outline: 1.5px solid #bbb;'></span><span class='range-legend-label'>Outstanding (4.51-5.00)</span></div>
+    <div class='legend-item'><span class='color range-bar-blue' style='background-color: #17a2b8 !important; display: inline-block; width: 22px; height: 22px; border-radius: 50%; border: 2px solid #fff; outline: 1.5px solid #bbb;'></span><span class='range-legend-label'>Very Satisfactory (3.51-4.50)</span></div>
+    <div class='legend-item'><span class='color range-bar-yellow' style='background-color: #ffc107 !important; display: inline-block; width: 22px; height: 22px; border-radius: 50%; border: 2px solid #fff; outline: 1.5px solid #bbb;'></span><span class='range-legend-label'>Satisfactory (2.51-3.50)</span></div>
+    <div class='legend-item'><span class='color range-bar-orange' style='background-color: #fd7e14 !important; display: inline-block; width: 22px; height: 22px; border-radius: 50%; border: 2px solid #fff; outline: 1.5px solid #bbb;'></span><span class='range-legend-label'>Unsatisfactory (1.51-2.50)</span></div>
+    <div class='legend-item'><span class='color range-bar-red' style='background-color: #dc3545 !important; display: inline-block; width: 22px; height: 22px; border-radius: 50%; border: 2px solid #fff; outline: 1.5px solid #bbb;'></span><span class='range-legend-label'>Poor (Below 1.51)</span></div>
 </div>`;
         if (categories.length === 0) {
             html += `<div class='text-muted'>No categories found for this staff type.</div>`;
@@ -1144,16 +1144,16 @@ function getAdjectivalRating($rating) {
             categories.forEach(category => {
                 const avg = averages[category.title] !== undefined ? averages[category.title] : 0;
                 let colorClass = 'range-bar-red';
-                if (avg >= 4) colorClass = 'range-bar-green';
-                else if (avg >= 3) colorClass = 'range-bar-blue';
-                else if (avg >= 2) colorClass = 'range-bar-yellow';
-                else if (avg >= 1) colorClass = 'range-bar-orange';
+                if (avg >= 4.51) colorClass = 'range-bar-green';
+                else if (avg >= 3.51) colorClass = 'range-bar-blue';
+                else if (avg >= 2.51) colorClass = 'range-bar-yellow';
+                else if (avg >= 1.51) colorClass = 'range-bar-orange';
                 const percent = ((avg-1)/4)*100; // 1-5 scale
                 let backgroundColor = '#dc3545'; // default red
-                if (avg >= 4) backgroundColor = '#28a745'; // green
-                else if (avg >= 3) backgroundColor = '#007bff'; // blue
-                else if (avg >= 2) backgroundColor = '#ffc107'; // yellow
-                else if (avg >= 1) backgroundColor = '#fd7e14'; // orange
+                if (avg >= 4.51) backgroundColor = '#28a745'; // green
+                else if (avg >= 3.51) backgroundColor = '#17a2b8'; // cyan/info
+                else if (avg >= 2.51) backgroundColor = '#ffc107'; // yellow
+                else if (avg >= 1.51) backgroundColor = '#fd7e14'; // orange
                 html += `<div class='mb-3'><div class='d-flex justify-content-between'><span>${category.title}</span><span class='fw-bold'>${avg.toFixed(2)}/5</span></div><div class='range-bar' style='width: 100%; height: 8px; border-radius: 6px; background: #e9ecef; margin-top: 6px; margin-bottom: 2px; position: relative;'><div class='range-bar-fill ${colorClass}' style='width:${percent}%; height: 100%; border-radius: 6px; position: absolute; left: 0; top: 0; background-color: ${backgroundColor} !important;'></div></div></div>`;
             });
             html += `</div>`;
@@ -1535,9 +1535,9 @@ function getAdjectivalRating($rating) {
     function getAdjectivalRating(rating) {
         if (rating >= 4.51) return 'Outstanding';
         if (rating >= 3.51) return 'Very Satisfactory';
-        if (rating >= 2.52) return 'Satisfactory';
+        if (rating >= 2.51) return 'Satisfactory';
         if (rating >= 1.51) return 'Unsatisfactory';
-        return 'Unsatisfactory';
+        return 'Poor';
     }
 
     // Function to get descriptive explanation based on verbal interpretation
@@ -1551,6 +1551,8 @@ function getAdjectivalRating($rating) {
                 return "Performance meets expectations and shows<br>adequate competency in this area.";
             case 'Unsatisfactory':
                 return "Performance does not meet the required standards<br>and needs improvement.";
+            case 'Poor':
+                return "Performance is significantly below expectations<br>and requires immediate corrective action.";
             default:
                 return "No evaluation data available<br>for this criteria.";
         }

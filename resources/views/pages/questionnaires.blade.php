@@ -126,7 +126,7 @@
         <div class="card border-0 shadow-sm">
             <div class="card-body questionnaire-page">
                <!-- <div class="alert alert-info">
-                    <i class="fas fa-info-circle me-2"></i>
+                 <i class="fas fa-info-circle me-2"></i>
                     <strong>Questionnaires:</strong> This section allows administrators to manage evaluation questions and academic years.
                 </div>-->
             </div>
@@ -345,7 +345,7 @@
                                 <label for="response_type" class="form-label">Response Type <span class="text-danger">*</span></label>
                                 <select class="form-select" id="response_type" name="response_type" required>
                                     <option value="">Select Response Type</option>
-                                    <option value="Rating_Scale" {{ old('response_type') == 'Rating_Scale' ? 'selected' : '' }}>Rating Scale (Poor, Fair, Good, Very Good, Excellent)</option>
+                                    <option value="Rating_Scale" {{ old('response_type') == 'Rating_Scale' ? 'selected' : '' }}>Rating Scale (Poor, Unsatisfactory, Satisfactory, Very Satisfactory, Outstanding)</option>
                                     <option value="Frequency" {{ old('response_type') == 'Frequency' ? 'selected' : '' }}>Frequency (Rarely, Sometimes, Most of the Time, Always)</option>
                                     <option value="Agreement" {{ old('response_type') == 'Agreement' ? 'selected' : '' }}>Agreement (Strongly Disagree, Disagree, Neutral, Agree, Strongly Agree)</option>
                                     <option value="Satisfaction" {{ old('response_type') == 'Satisfaction' ? 'selected' : '' }}>Satisfaction (Very Dissatisfied, Dissatisfied, Neutral, Satisfied, Very Satisfied)</option>
@@ -391,7 +391,7 @@
                         <label for="editResponseType" class="form-label">Response Type <span class="text-danger">*</span></label>
                         <select class="form-select" id="editResponseType" name="response_type" required>
                             <option value="">Select Response Type</option>
-                            <option value="Rating_Scale">Rating Scale (Poor, Fair, Good, Very Good, Excellent)</option>
+                            <option value="Rating_Scale">Rating Scale (Poor, Unsatisfactory, Satisfactory, Very Satisfactory, Outstanding)</option>
                             <option value="Frequency">Frequency (Rarely, Sometimes, Most of the Time, Always)</option>
                             <option value="Agreement">Agreement (Strongly Disagree, Disagree, Neutral, Agree, Strongly Agree)</option>
                             <option value="Satisfaction">Satisfaction (Very Dissatisfied, Dissatisfied, Neutral, Satisfied, Very Satisfied)</option>
