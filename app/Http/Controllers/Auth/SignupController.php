@@ -41,7 +41,7 @@ class SignupController extends Controller
 
         // Check for existing school_id in request_signin table
         if (RequestSignin::where('school_id', $request->school_id)->exists()) {
-            return back()->withErrors(['school_id' => 'You have already Request, Please Admin Approval.'])->withInput();
+            return back()->withErrors(['school_id' => 'You have already Request, Please Wait Admin Approval.'])->withInput();
         }
 
         // Handle profile image upload
