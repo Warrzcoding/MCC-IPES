@@ -403,7 +403,7 @@ function getAdjectivalRating($rating) {
         <!-- Instructors Column (Left) -->
         <div class="col-lg-6 col-md-12 mb-4">
             <div class="card shadow-sm border-0">
-                <div class="section-header">
+                <div class="section-header d-flex align-items-center justify-content-between">
                     <div class="section-title">
                         <i class="fas fa-chalkboard-teacher"></i>
                         <span>Instructors Ranking</span>
@@ -412,6 +412,9 @@ function getAdjectivalRating($rating) {
                         @endphp
                         <span class="section-count">{{ $instructors->count() }}</span>
                     </div>
+                    <button class="btn btn-sm btn-light fw-bold rounded-pill shadow-sm px-3" onclick="confirmGenerateReport('teaching')" style="font-size: 0.75rem;">
+                        <i class="fas fa-file-alt me-1"></i> Report
+                    </button>
                 </div>
                 <div class="staff-list">
                     @if($instructors->count() > 0)
@@ -483,7 +486,7 @@ function getAdjectivalRating($rating) {
         <!-- Non-Teaching Staff Column (Right) -->
         <div class="col-lg-6 col-md-12 mb-4">
             <div class="card shadow-sm border-0">
-                <div class="section-header">
+                <div class="section-header d-flex align-items-center justify-content-between">
                     <div class="section-title">
                         <i class="fas fa-users-cog"></i>
                         <span>Non-Teaching Staff Ranking</span>
@@ -492,6 +495,9 @@ function getAdjectivalRating($rating) {
                         @endphp
                         <span class="section-count">{{ $nonTeachingStaff->count() }}</span>
                     </div>
+                    <button class="btn btn-sm btn-light fw-bold rounded-pill shadow-sm px-3" onclick="confirmGenerateReport('non-teaching')" style="font-size: 0.75rem;">
+                        <i class="fas fa-file-alt me-1"></i> Report
+                    </button>
                 </div>
                 <div class="staff-list">
                     @if($nonTeachingStaff->count() > 0)
@@ -607,6 +613,42 @@ function getAdjectivalRating($rating) {
 </div>
 
 <script>
+// Function to handle report generation confirmation
+function confirmGenerateReport(type) {
+    const title = type === 'teaching' ? 'Instructors' : 'Non-Teaching Staff';
+    Swal.fire({
+        title: 'Generate Performance Report',
+        html: `Are you sure you want to generate the ranking report for <b>${title}</b>?<br><small class="text-muted">This will prepare a printable version of the current rankings.</small>`,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: '<i class="fas fa-print me-1"></i> Confirm',
+        cancelButtonText: 'Cancel',
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            Swal.fire({
+                title: 'Preparing Report',
+                text: 'Preparing the ranking data for printing...',
+                icon: 'info',
+                timer: 2000,
+                showConfirmButton: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            }).then(() => {
+                Swal.fire({
+                    title: 'Coming Soon',
+                    text: 'The backend report generation for this section is currently under development.',
+                    icon: 'info',
+                    confirmButtonColor: '#3085d6'
+                });
+            });
+        }
+    });
+}
+
 // Function to view comments (reused from staff-ratings)
 function viewComments(staffId, staffName) {
     document.getElementById('staffNameInModal').textContent = staffName;
