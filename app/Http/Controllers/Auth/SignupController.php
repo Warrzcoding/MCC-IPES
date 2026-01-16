@@ -41,7 +41,7 @@ class SignupController extends Controller
 
         // Check for existing school_id in request_signin table
         if (RequestSignin::where('school_id', $request->school_id)->exists()) {
-            return back()->withErrors(['school_id' => 'You have already Request, Please Wait Admin Approval.'])->withInput();
+            return back()->withErrors(['school_id' => 'You have already requested, Please wait admin approval.'])->withInput();
         }
 
         // Handle profile image upload
@@ -103,7 +103,7 @@ class SignupController extends Controller
             } elseif ($existsInRequests) {
                 return response()->json([
                     'exists' => true,
-                    'message' => 'You have already Request, Please Admin Approval.',
+                    'message' => 'You have already requested, Please wait admin approval.',
                     'table' => 'request_signin'
                 ]);
             }
@@ -133,7 +133,7 @@ class SignupController extends Controller
             if ($existsInRequests) {
                 return response()->json([
                     'available' => false,
-                    'message' => 'You have already Request, Please Admin Approval.'
+                    'message' => 'You have already requested, Please wait admin approval.'
                 ]);
             }
         }

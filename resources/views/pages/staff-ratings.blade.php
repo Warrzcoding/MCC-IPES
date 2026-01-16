@@ -1263,6 +1263,7 @@ function getAdjectivalRating($rating) {
                                 .header-section { page-break-after: avoid !important; }
                                 .instructor-info { page-break-after: avoid !important; }
                                 .questions-table { page-break-before: avoid !important; }
+                                thead { display: table-header-group !important; }
                             }
                         </style>
                         <div style="padding:8px;font-family: Arial, sans-serif; font-size:10pt; max-width: 900px; margin: 0 auto; line-height: 1.15;">
@@ -1294,12 +1295,13 @@ function getAdjectivalRating($rating) {
 
                             <!-- Questions and Ratings Table -->
                             <table class='questions-table' style='width:100%;border-collapse:collapse;margin-bottom:0.4em;border:1px solid #333; font-size:10pt;'>
-                                <tbody>
-                                    <!-- Header Row (as regular tbody row to prevent repetition) -->
+                                <thead>
                                     <tr style='background:#f8f9fa;page-break-inside:avoid;page-break-after:avoid; height:16px;'>
-                                        <td style='border:1px solid #333;padding:2px 3px;text-align:left;font-weight:bold;width:70%; overflow:hidden; white-space:nowrap;'>Questionnaires</td>
-                                        <td style='border:1px solid #333;padding:2px 3px;text-align:center;font-weight:bold;width:30%; height:16px;'>Rating</td>
+                                        <th style='border:1px solid #333;padding:2px 3px;text-align:left;font-weight:bold;width:70%; overflow:hidden; white-space:nowrap;'>Questionnaires</th>
+                                        <th style='border:1px solid #333;padding:2px 3px;text-align:center;font-weight:bold;width:30%; height:16px;'>Rating</th>
                                     </tr>
+                                </thead>
+                                <tbody>
                     `;
 
                     if (evaluations && evaluations.length > 0) {
