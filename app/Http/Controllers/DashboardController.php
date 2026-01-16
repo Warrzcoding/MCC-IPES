@@ -598,6 +598,9 @@ class DashboardController extends Controller
         }
 
         if ($page === 'overall-ratings') {
+            // Get the active academic year (where is_active = 1)
+            $currentAcademicYear = \App\Models\AcademicYear::where('is_active', 1)->first();
+
             // Fetch TEACHING staff members WITH evaluations, sorted by rating (highest to lowest)
             $teachingStaffRatings = \App\Models\Staff::select(
                 'staff.id',
@@ -654,6 +657,7 @@ class DashboardController extends Controller
                 'teachingStaffRatings',
                 'nonTeachingStaffRatings',
                 'years',
+                'currentAcademicYear',
                 // Analytics variables
                 'studentsPerCourse',
                 'evaluatedStudentsPerCourse',

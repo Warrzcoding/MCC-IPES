@@ -386,6 +386,26 @@ function getAdjectivalRating($rating) {
             margin-right: 10px;
         }
     }
+
+    @media print {
+        /* Hide everything except our custom print area */
+        body * { visibility: hidden !important; }
+        #customPrintArea, #customPrintArea * { visibility: visible !important; }
+        #customPrintArea { 
+            position: absolute !important; 
+            left: 0 !important; 
+            top: 0 !important; 
+            width: 100% !important; 
+            padding: 10px 0 !important;
+            background: white !important;
+            margin: 0 !important;
+        }
+        /* Remove browser headers/footers */
+        @page { 
+            margin: 0 !important; 
+            size: A4;
+        }
+    }
 </style>
 
 <div class="container-fluid page-full-width py-4">
@@ -628,25 +648,228 @@ function confirmGenerateReport(type) {
         reverseButtons: true
     }).then((result) => {
         if (result.isConfirmed) {
-            Swal.fire({
-                title: 'Preparing Report',
-                text: 'Preparing the ranking data for printing...',
-                icon: 'info',
-                timer: 2000,
-                showConfirmButton: false,
-                didOpen: () => {
-                    Swal.showLoading();
-                }
-            }).then(() => {
-                Swal.fire({
-                    title: 'Coming Soon',
-                    text: 'The backend report generation for this section is currently under development.',
-                    icon: 'info',
-                    confirmButtonColor: '#3085d6'
-                });
-            });
+            generateOverallReport(type);
         }
     });
+}
+
+function generateOverallReport(type) {
+    const title = type === 'teaching' ? 'Instructors' : 'Non-Teaching Staff';
+    
+    // Show loading alert
+    Swal.fire({
+        title: 'Generating Report...',
+        text: 'Please wait while we prepare your report.',
+        icon: 'info',
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        showConfirmButton: false,
+        didOpen: () => {
+            Swal.showLoading();
+        }
+    });
+
+    const staffData = getCurrentOverallStaffData(type);
+
+    if (staffData.length === 0) {
+        Swal.fire({
+            title: 'No Data Available',
+            text: `No ${title.toLowerCase()} found to generate a report.`,
+            icon: 'warning',
+            confirmButtonText: 'OK',
+            confirmButtonColor: '#ffc107'
+        });
+        return;
+    }
+
+    setTimeout(() => {
+        printOverallReport(staffData, type);
+        Swal.close();
+    }, 1000);
+}
+
+function getCurrentOverallStaffData(type) {
+    const staffData = [];
+    // Select correct column based on type
+    const columnSelector = type === 'teaching' ? '.col-lg-6:first-child' : '.col-lg-6:last-child';
+    const items = document.querySelectorAll(`${columnSelector} .staff-item`);
+
+    items.forEach(item => {
+        const nameEl = item.querySelector('.staff-name');
+        const ratingEl = item.querySelector('.rating-number');
+        const deptEl = item.querySelector('.badge.bg-secondary');
+
+        if (nameEl && ratingEl) {
+            const name = nameEl.textContent.trim();
+            const rating = parseFloat(ratingEl.textContent.split('/')[0]);
+            const department = deptEl ? deptEl.textContent.trim() : 'N/A';
+
+            if (!isNaN(rating)) {
+                staffData.push({
+                    name: name,
+                    rating: rating,
+                    department: department
+                });
+            }
+        }
+    });
+
+    return staffData;
+}
+
+function printOverallReport(staffData, type) {
+    const title = type === 'teaching' ? 'Instructors' : 'Non-Teaching Staff';
+    const adjectivalLabel = type === 'teaching' ? 'ADJECTIVAL DESCRIPTIVE' : 'ADJECTIVAL DESCRIPTION';
+    
+    let html = `
+        <div style="padding: 0.3in 0.5in 0 0.5in; font-family: Arial, sans-serif; font-size:10pt; max-width: 1000px; margin: 0 auto; line-height: 1.15;">
+            <div class='header-section' style='text-align:center; margin-top:0; margin-bottom:0.2em; padding-bottom:0;'>
+                <div style='display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:2.15em;'>
+                    <img src='/images/cgs.jpg' alt='Left Logo' style='width:80px;height:80px;flex-shrink:0;margin-right:5px;' onerror='this.style.display="none"'>
+                    <div style='text-align:center; flex:0 0 auto;'>   
+                        <strong style='font-size:12pt; font-family: "Arial Black", Gadget, sans-serif;'>MADRIDEJOS COMMUNITY COLLEGE</strong><br>                                   
+                        <strong style='font-size:11.5pt; font-family: "Century Gothic", CenturyGothic, AppleGothic, sans-serif;'>Center For Guidance Services</strong><br>
+                        <span style='font-size:8pt;'>Crossing Bunakan, Madridejos, Cebu</span><br>
+                        <span style='font-size:8pt; color: blue; text-decoration: none; font-family: "Century Gothic", sans-serif; font-weight: 300;'>
+                         <i class='fas fa-envelope'></i> mcc.cgsofficial@gmail.com<br>
+                         <i class='fab fa-facebook'></i> fb.com/MCCCenterforGuidanceService 
+                        </span><br><br>
+                         <strong style='font-size:10pt; font-family: "Century Gothic", sans-serif;'>MCC Overall Performance Evaluation Results</strong><br>
+                       <span style='font-size:10pt; font-family: "Century Gothic", sans-serif; font-weight: normal;'>S.Y {{ $currentAcademicYear?->year }} - {{ $currentAcademicYear?->semester == 1 ? 'First' : ($currentAcademicYear?->semester == 2 ? 'Second' : $currentAcademicYear?->semester) }} Sem </span>
+                    </div>
+                    <img src='/images/logo.png' alt='Right Logo' style='width:100px;height:100px;flex-shrink:0;margin-left:5px;' onerror='this.style.display="none"'>
+                </div>
+            </div>
+            
+            <div style="text-align: left; margin-bottom: 0.8em; font-size: 10pt; line-height: 1.2;">
+                <p style="margin-bottom: 0.15em;">To:  <strong>All Concerned</strong></p>
+                <p style="margin-bottom: 0.3em; margin-left: 2em;">MCC Community</p>
+                
+                <p style="margin-bottom: 0.3em;">From: Center for Guidance Services</p>
+                
+                <p style="margin-bottom: 1em;">Subject: Endorsement of Performance Evaluation of ${title}</p>
+                
+                <p style="margin-bottom: 1em;">Greetings of Peace!</p>
+                
+                <p style="margin-bottom: 0.7em;">I am writing to formally endorse the Results of Performance Evaluation of ${title} for Academic Year {{ $currentAcademicYear?->year }} - {{ $currentAcademicYear?->semester == 1 ? 'First' : ($currentAcademicYear?->semester == 2 ? 'Second' : $currentAcademicYear?->semester) }} Semester.</p>
+                
+                <p style="margin-bottom: 0.7em;">Please be advised that the following ${title.toLowerCase()} have been evaluated by all MCC Students.</p>
+                
+                <p style="margin-bottom: 0.6em;">Enclosed with this letter, you will find a detailed report highlighting the evaluation results for each staff member.</p>
+            </div>
+            
+            <div style="margin-bottom: 0.8em;">
+                <table style="width: 100%; border-collapse: collapse; margin-top: 0.4em;">
+                    <thead>
+                        <tr style="background-color: #f8f9fa;">
+                            <th style="border: 1px solid #ddd; padding: 4px 6px; text-align: left; font-weight: bold; font-size: 10pt;">${type === 'teaching' ? 'NAME OF INSTRUCTORS' : 'NAME OF STAFF'}</th>
+                            <th style="border: 1px solid #ddd; padding: 4px 6px; text-align: center; font-weight: bold; font-size: 10pt;">AVERAGE SCORES</th>
+                            <th style="border: 1px solid #ddd; padding: 4px 6px; text-align: center; font-weight: bold; font-size: 10pt;">${adjectivalLabel}</th>
+                            <th style="border: 1px solid #ddd; padding: 4px 6px; text-align: center; font-weight: bold; font-size: 10pt;">DEPARTMENT</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+    `;
+
+    staffData.forEach((staff, index) => {
+        const rowColor = index % 2 === 0 ? '#ffffff' : '#f8f9fa';
+        const adjective = adjectivalFromLegend(staff.rating);
+        html += `
+            <tr style="background-color: ${rowColor};">
+                <td style="border: 1px solid #ddd; padding: 4px 6px; text-align: left; font-size: 9.5pt; font-family: 'Century Gothic', sans-serif; text-transform: uppercase;">${staff.name}</td>
+                <td style="border: 1px solid #ddd; padding: 4px 6px; text-align: center; font-weight: bold; color: #232527; font-size: 9.5pt; font-family: 'Century Gothic', sans-serif; text-transform: uppercase;">${staff.rating.toFixed(2)}</td>
+                <td style="border: 1px solid #ddd; padding: 4px 6px; text-align: center; font-weight: bold; color: #080908; font-size: 9.5pt; font-family: 'Century Gothic', sans-serif; text-transform: uppercase;">${adjective}</td>
+                <td style="border: 1px solid #ddd; padding: 4px 6px; text-align: center; font-size: 9.5pt; font-family: 'Century Gothic', sans-serif; text-transform: uppercase;">${staff.department}</td>
+            </tr>
+        `;
+    });
+
+    html += `
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Signature Section -->
+            <div style='margin-top:4em;margin-bottom:0em;text-align:left; font-size:10pt; line-height:1.3;'>
+                <div style='margin-bottom:1em;'>
+                    Prepared by:
+                </div>
+                <div style='margin-bottom:0.1em;'>
+                    <strong>DHINA B. DALISAY</strong>
+                </div>
+                <div style='margin-bottom:2em;'>
+                    Guidance Advocate
+                </div>
+
+                <div style='text-align:left;'>
+                    <div style='margin-bottom:1em;'>
+                        Reviewed and Noted by:
+                    </div>
+                    <div style='margin-bottom:0.1em;'>
+                        <strong>DR. LIZA D. GARCIA, RGC</strong>
+                    </div>
+                    <div>
+                        Guidance Counselor
+                    </div>
+                </div>
+
+                <div style='margin-top: 1em; display: flex; justify-content: flex-end; padding-right: 1in;'>
+                    <div style='text-align:left;'>
+                        <div style='display: flex; align-items: flex-start;'>
+                            <div style='white-space: nowrap;'>Received by: &nbsp;</div>
+                            <div style='display: flex; flex-direction: column;'>
+                                <span>___________________________</span>
+                                <strong style='margin-top: 0.1em;'>DR. FLORIPIZ A. MONTECILLO</strong>
+                                <span> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbspCollege President</span>
+                            </div>
+                            
+                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+
+    // Use in-page printing to avoid browser headers/footers
+    const existingArea = document.getElementById('customPrintArea');
+    if (existingArea) existingArea.remove();
+    
+    const printArea = document.createElement('div');
+    printArea.id = 'customPrintArea';
+    printArea.innerHTML = html;
+    document.body.appendChild(printArea);
+
+    // Clear document title to minimize header text
+    const originalTitle = document.title;
+    document.title = '';
+
+    const onAfterPrint = () => {
+        window.removeEventListener('afterprint', onAfterPrint);
+        const pa = document.getElementById('customPrintArea');
+        if (pa) pa.remove();
+        document.title = originalTitle;
+        
+        Swal.fire({
+            title: 'Report Generated!',
+            text: `The overall ${title.toLowerCase()} report has been prepared for printing.`,
+            icon: 'success',
+            confirmButtonText: 'OK',
+            confirmButtonColor: '#28a745',
+            timer: 3000,
+            timerProgressBar: true
+        });
+    };
+    
+    window.addEventListener('afterprint', onAfterPrint);
+    setTimeout(() => { window.print(); }, 100);
+}
+
+function adjectivalFromLegend(rating) {
+    if (rating >= 4.51) return 'Outstanding';
+    if (rating >= 3.51) return 'Very Satisfactory';
+    if (rating >= 2.51) return 'Satisfactory';
+    if (rating >= 1.51) return 'Unsatisfactory';
+    return 'Poor';
 }
 
 // Function to view comments (reused from staff-ratings)
