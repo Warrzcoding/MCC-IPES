@@ -224,6 +224,10 @@ function getAdjectivalRating($rating) {
         /* Hide everything except our custom print area */
         body * { visibility: hidden !important; }
         #customPrintArea, #customPrintArea * { visibility: visible !important; }
+        body, html {
+            height: auto !important;
+            overflow: visible !important;
+        }
         #customPrintArea { 
             position: absolute !important; 
             left: 0 !important; 
@@ -242,7 +246,7 @@ function getAdjectivalRating($rating) {
         /* Ensure table headers repeat and rows don't break */
         table { page-break-inside: auto; }
         tr { page-break-inside: avoid; page-break-after: auto; }
-        thead { display: table-header-group; }
+        thead { display: table-header-group !important; }
     }
     .report-header {
         width: 100%;
@@ -1197,7 +1201,7 @@ function getAdjectivalRating($rating) {
         }
 
         let html = `
-            <div style="padding: 0.5in 0.5in 0.5in 0.5in; font-family: Arial, sans-serif; font-size:10pt; max-width: 900px; margin: 0 auto; line-height: 1.15;">
+            <div style="padding: 0.5in 0.5in 0.5in 0.5in; font-family: Arial, sans-serif; font-size:10pt; max-width: 1000px; margin: 0 auto; line-height: 1.15;">
                 <div class='header-section' style='text-align:center; margin-bottom:0.2em; padding-bottom:0;'>
                     <div style='display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:2.15em;'>
                         <img src='/images/cgs.jpg' alt='Left Logo' style='width:80px;height:80px;flex-shrink:0;margin-right:5px;' onerror='this.style.display="none"'>
@@ -1236,14 +1240,13 @@ function getAdjectivalRating($rating) {
                 <div style="margin-bottom: 0.8em;">
                     <table style="width: 100%; border-collapse: collapse; margin-top: 0.4em;">
                         <thead>
-                            <tr style="height: 40px; border: none !important;"><th colspan="3" style="border: none !important;"></th></tr>
+                            <tr style="height: 40px !important; border: none !important;"><th colspan="3" style="border: none !important; height: 40px !important;"></th></tr>
                             <tr style="background-color: #f8f9fa;">
                                 <th style="border: 1px solid #ddd; padding: 4px 6px; text-align: left; font-weight: bold; font-size: 10pt;">NAME OF INSTRUCTORS</th>
                                 <th style="border: 1px solid #ddd; padding: 4px 6px; text-align: center; font-weight: bold; font-size: 10pt;">AVERAGE SCORES</th>
                                 <th style="border: 1px solid #ddd; padding: 4px 6px; text-align: center; font-weight: bold; font-size: 10pt;">ADJECTIVAL DESCRIPTIVE</th>
                             </tr>
                         </thead>
-                        <tbody>
                         <tbody>
         `;
 
