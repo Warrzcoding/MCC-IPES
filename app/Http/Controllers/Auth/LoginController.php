@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use App\Mail\AdminOtpMail;
 use App\Models\User;
+use App\Models\RequestSignin;
 use App\Services\RecaptchaService;
 use App\Services\GeolocationService;
 use Carbon\Carbon;
@@ -75,7 +76,7 @@ public function verifyStudentId(Request $request)
         'school_id' => 'required|string'
     ]);
 
-    $student = \App\Models\User::where('school_id', $request->school_id)
+    $student = User::where('school_id', $request->school_id)
         ->where('role', 'student')
         ->first();
 
@@ -96,9 +97,19 @@ public function verifyStudentId(Request $request)
                 'id_verified' => true
             ]);
     } else {
-        // Pass error to show SweetAlert
+        // Secondly check to request_signin table if exist
+        $pendingRequest = RequestSignin::where('school_id', $request->school_id)->first();
+        
+        if ($pendingRequest) {
+            return redirect()->route('login')
+                ->with('id_error', 'Already requested, please wait for admin approval.')
+                ->with('id_error_title', 'Request Pending');
+        }
+
+        // If not exist in both, say ID not Found
         return redirect()->route('login')
-            ->with('id_error', 'School ID not found. Please check your ID or sign up.');
+            ->with('id_error', 'ID not Found')
+            ->with('id_error_title', 'ID Not Found');
     }
 }
 

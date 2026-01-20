@@ -1326,7 +1326,7 @@
         <script>
             Swal.fire({
                 icon: 'error',
-                title: 'ID Not Found',
+                title: '{{ session('id_error_title', 'ID Not Found') }}',
                 text: '{{ session('id_error') }}',
                 confirmButtonColor: '#667eea'
             });
@@ -1440,12 +1440,12 @@
 
                     <!-- Student Signup Link -->
                    <div class="signup-link">
-                       <p>Don't have an account?<a href="{{ route('pre_signup') }}">
+                      <p>Don't have an account?<a href="{{ route('pre_signup') }}">
                             <i class="fas fa-user-plus"></i> Sign up here
                         </a></p>
-                      <!--<p>Don't have an account?<a href="{{ route('idcheck') }}">
+                     <!-- <p>Don't have an account?<a href="{{ route('idcheck') }}">
                             <i class="fas fa-user-plus"></i> Sign up here
-                        </a></p>    -->
+                        </a></p>-->
                     </div>
 
                     
