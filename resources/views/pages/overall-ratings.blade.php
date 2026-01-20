@@ -734,7 +734,7 @@ function printOverallReport(staffData, type) {
                          <i class='fas fa-envelope'></i> mcc.cgsofficial@gmail.com<br>
                          <i class='fab fa-facebook'></i> fb.com/MCCCenterforGuidanceService 
                         </span><br><br>
-                         <strong style='font-size:10pt; font-family: "Century Gothic", sans-serif;'>MCC Overall Performance Evaluation Results</strong><br>
+                         <strong style='font-size:10pt; font-family: "Century Gothic", sans-serif;'>MCC Instructor's Performance Evaluation Results</strong><br>
                        <span style='font-size:10pt; font-family: "Century Gothic", sans-serif; font-weight: normal;'>S.Y {{ $currentAcademicYear?->year }} - {{ $currentAcademicYear?->semester == 1 ? 'First' : ($currentAcademicYear?->semester == 2 ? 'Second' : $currentAcademicYear?->semester) }} Sem </span>
                     </div>
                     <img src='/images/logo.png' alt='Right Logo' style='width:100px;height:100px;flex-shrink:0;margin-left:5px;' onerror='this.style.display="none"'>
@@ -742,20 +742,16 @@ function printOverallReport(staffData, type) {
             </div>
             
             <div style="text-align: left; margin-bottom: 0.8em; font-size: 10pt; line-height: 1.2;">
-                <p style="margin-bottom: 0.15em;">To:  <strong>All Concerned</strong></p>
-                <p style="margin-bottom: 0.3em; margin-left: 2em;">MCC Community</p>
+                <p style="margin-bottom: 0.15em;">To:<strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DR. FLORIPIZ A. MONTECILLO</strong></p>
+                <p style="margin-bottom: 0.3em; margin-left: 2em;"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;College President</p>        
+                <p style="margin-bottom: 0.3em;">From:&nbsp;&nbsp;&nbsp;&nbsp;Center for Guidance Services</p>
+                <p style="margin-bottom: 1em;">Subject:&nbsp;Endorsement of Performance Evaluation of ${title}</p>   
                 
-                <p style="margin-bottom: 0.3em;">From: Center for Guidance Services</p>
-                
-                <p style="margin-bottom: 1em;">Subject: Endorsement of Performance Evaluation of ${title}</p>
-                
-                <p style="margin-bottom: 1em;">Greetings of Peace!</p>
-                
-                <p style="margin-bottom: 0.7em;">I am writing to formally endorse the Results of Performance Evaluation of ${title} for Academic Year {{ $currentAcademicYear?->year }} - {{ $currentAcademicYear?->semester == 1 ? 'First' : ($currentAcademicYear?->semester == 2 ? 'Second' : $currentAcademicYear?->semester) }} Semester.</p>
+               <p style="margin-bottom: 1em;">Greetings of Peace!</p>
+     
+                <p style="margin-bottom: 0.7em;">I am writing to formally endorse the Results Summary of Performance Evaluation of all MCC ${title} for Academic Year {{ $currentAcademicYear?->year }} - {{ $currentAcademicYear?->semester == 1 ? 'First' : ($currentAcademicYear?->semester == 2 ? 'Second' : $currentAcademicYear?->semester) }} Semester.</p>
                 
                 <p style="margin-bottom: 0.7em;">Please be advised that the following ${title.toLowerCase()} have been evaluated by all MCC Students.</p>
-                
-                <p style="margin-bottom: 0.6em;">Enclosed with this letter, you will find a detailed report highlighting the evaluation results for each staff member.</p>
             </div>
             
             <div style="margin-bottom: 0.8em;">
