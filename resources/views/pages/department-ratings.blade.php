@@ -229,14 +229,20 @@ function getAdjectivalRating($rating) {
             left: 0 !important; 
             top: 0 !important; 
             width: 100% !important; 
-            padding: 20px !important;
+            padding: 0 !important;
             background: white !important;
+            margin: 0 !important;
         }
-        /* Remove browser headers/footers */
+        /* Proper margins for every page - set to 0 to hide browser headers/footers */
         @page { 
             margin: 0 !important; 
             size: A4;
         }
+        
+        /* Ensure table headers repeat and rows don't break */
+        table { page-break-inside: auto; }
+        tr { page-break-inside: avoid; page-break-after: auto; }
+        thead { display: table-header-group; }
     }
     .report-header {
         width: 100%;
@@ -1191,7 +1197,7 @@ function getAdjectivalRating($rating) {
         }
 
         let html = `
-            <div style="padding: 0 1in; font-family: Arial, sans-serif; font-size:10pt; max-width: 900px; margin: 0 auto; line-height: 1.15;">
+            <div style="padding: 0.5in 0.5in 0.5in 0.5in; font-family: Arial, sans-serif; font-size:10pt; max-width: 900px; margin: 0 auto; line-height: 1.15;">
                 <div class='header-section' style='text-align:center; margin-bottom:0.2em; padding-bottom:0;'>
                     <div style='display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:2.15em;'>
                         <img src='/images/cgs.jpg' alt='Left Logo' style='width:80px;height:80px;flex-shrink:0;margin-right:5px;' onerror='this.style.display="none"'>
@@ -1230,6 +1236,7 @@ function getAdjectivalRating($rating) {
                 <div style="margin-bottom: 0.8em;">
                     <table style="width: 100%; border-collapse: collapse; margin-top: 0.4em;">
                         <thead>
+                            <tr style="height: 40px; border: none !important;"><th colspan="3" style="border: none !important;"></th></tr>
                             <tr style="background-color: #f8f9fa;">
                                 <th style="border: 1px solid #ddd; padding: 4px 6px; text-align: left; font-weight: bold; font-size: 10pt;">NAME OF INSTRUCTORS</th>
                                 <th style="border: 1px solid #ddd; padding: 4px 6px; text-align: center; font-weight: bold; font-size: 10pt;">AVERAGE SCORES</th>
