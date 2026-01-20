@@ -400,9 +400,9 @@ function getAdjectivalRating($rating) {
             background: white !important;
             margin: 0 !important;
         }
-        /* Proper margins for every page */
+        /* Proper margins for every page - set to 0 to hide browser headers/footers */
         @page { 
-            margin: 0.5in 0.5in !important; 
+            margin: 0 !important; 
             size: A4;
         }
         
@@ -727,7 +727,7 @@ function printOverallReport(staffData, type) {
     const adjectivalLabel = type === 'teaching' ? 'ADJECTIVAL DESCRIPTIVE' : 'ADJECTIVAL DESCRIPTION';
     
     let html = `
-        <div style="padding: 0.1in 0.5in 0 0.5in; font-family: Arial, sans-serif; font-size:10pt; max-width: 1000px; margin: 0 auto; line-height: 1.15;">
+        <div style="padding: 0.5in 0.5in 0.5in 0.5in; font-family: Arial, sans-serif; font-size:10pt; max-width: 1000px; margin: 0 auto; line-height: 1.15;">
             <div class='header-section' style='text-align:center; margin-top:0; margin-bottom:0.2em; padding-bottom:0;'>
                 <div style='display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:2.15em;'>
                     <img src='/images/cgs.jpg' alt='Left Logo' style='width:80px;height:80px;flex-shrink:0;margin-right:5px;' onerror='this.style.display="none"'>
@@ -762,7 +762,7 @@ function printOverallReport(staffData, type) {
             <div style="margin-bottom: 0.8em;">
                 <table style="width: 100%; border-collapse: collapse; margin-top: 0.4em;">
                     <thead>
-                        <tr style="height: 15px; border: none !important;"><th colspan="4" style="border: none !important;"></th></tr>
+                        <tr style="height: 40px; border: none !important;"><th colspan="4" style="border: none !important;"></th></tr>
                         <tr style="background-color: #f8f9fa;">
                             <th style="border: 1px solid #ddd; padding: 4px 6px; text-align: left; font-weight: bold; font-size: 10pt;">${type === 'teaching' ? 'NAME OF INSTRUCTORS' : 'NAME OF STAFF'}</th>
                             <th style="border: 1px solid #ddd; padding: 4px 6px; text-align: center; font-weight: bold; font-size: 10pt;">AVERAGE SCORES</th>
