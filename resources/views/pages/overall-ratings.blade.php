@@ -396,15 +396,20 @@ function getAdjectivalRating($rating) {
             left: 0 !important; 
             top: 0 !important; 
             width: 100% !important; 
-            padding: 10px 0 !important;
+            padding: 0 !important;
             background: white !important;
             margin: 0 !important;
         }
-        /* Remove browser headers/footers */
+        /* Proper margins for every page */
         @page { 
-            margin: 0 !important; 
+            margin: 0.5in 0.5in !important; 
             size: A4;
         }
+        
+        /* Ensure table headers repeat and rows don't break */
+        table { page-break-inside: auto; }
+        tr { page-break-inside: avoid; page-break-after: auto; }
+        thead { display: table-header-group; }
     }
 </style>
 
@@ -722,7 +727,7 @@ function printOverallReport(staffData, type) {
     const adjectivalLabel = type === 'teaching' ? 'ADJECTIVAL DESCRIPTIVE' : 'ADJECTIVAL DESCRIPTION';
     
     let html = `
-        <div style="padding: 0.3in 0.5in 0 0.5in; font-family: Arial, sans-serif; font-size:10pt; max-width: 1000px; margin: 0 auto; line-height: 1.15;">
+        <div style="padding: 0.1in 0.5in 0 0.5in; font-family: Arial, sans-serif; font-size:10pt; max-width: 1000px; margin: 0 auto; line-height: 1.15;">
             <div class='header-section' style='text-align:center; margin-top:0; margin-bottom:0.2em; padding-bottom:0;'>
                 <div style='display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:2.15em;'>
                     <img src='/images/cgs.jpg' alt='Left Logo' style='width:80px;height:80px;flex-shrink:0;margin-right:5px;' onerror='this.style.display="none"'>
@@ -731,7 +736,7 @@ function printOverallReport(staffData, type) {
                         <strong style='font-size:11.5pt; font-family: "Century Gothic", CenturyGothic, AppleGothic, sans-serif;'>CENTER FOR GUIDANCE SERVICES</strong><br>
                         <span style='font-size:8pt;'>Crossing Bunakan, Madridejos, Cebu</span><br>
                         <span style='font-size:8pt; color: blue; text-decoration: none; font-family: "Century Gothic", sans-serif; font-weight: 300;'>
-                         <i class='fas fa-envelope'></i> mcc.cgsofficial@gmail.com<br>
+                         <i class='fas fa-envelope'></i> mcc.cgsofficial@gmail.com<br> 
                          <i class='fab fa-facebook'></i> fb.com/MCCCenterforGuidanceService 
                         </span><br><br>
                          <strong style='font-size:10pt; font-family: "Century Gothic", sans-serif;'>MCC Instructor's Performance Evaluation Results</strong><br>
@@ -757,6 +762,7 @@ function printOverallReport(staffData, type) {
             <div style="margin-bottom: 0.8em;">
                 <table style="width: 100%; border-collapse: collapse; margin-top: 0.4em;">
                     <thead>
+                        <tr style="height: 15px; border: none !important;"><th colspan="4" style="border: none !important;"></th></tr>
                         <tr style="background-color: #f8f9fa;">
                             <th style="border: 1px solid #ddd; padding: 4px 6px; text-align: left; font-weight: bold; font-size: 10pt;">${type === 'teaching' ? 'NAME OF INSTRUCTORS' : 'NAME OF STAFF'}</th>
                             <th style="border: 1px solid #ddd; padding: 4px 6px; text-align: center; font-weight: bold; font-size: 10pt;">AVERAGE SCORES</th>
