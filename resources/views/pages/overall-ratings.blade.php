@@ -394,15 +394,15 @@ function getAdjectivalRating($rating) {
         #customPrintArea { 
             position: absolute !important; 
             left: 0 !important; 
-            top: 0.5in !important; 
+            top: 0 !important; 
             width: 100% !important; 
-            padding: 0 !important;
+            padding: 10px 0 !important;
             background: white !important;
             margin: 0 !important;
         }
         /* Remove browser headers/footers */
         @page { 
-            margin: 0.5in !important; 
+            margin: 0 !important; 
             size: A4;
         }
     }
@@ -433,7 +433,7 @@ function getAdjectivalRating($rating) {
                         <span class="section-count">{{ $instructors->count() }}</span>
                     </div>
                     <button class="btn btn-sm btn-light fw-bold rounded-pill shadow-sm px-3" onclick="confirmGenerateReport('teaching')" style="font-size: 0.75rem;">
-                        <i class="fas fa-file-alt me-1"></i> Print Report
+                        <i class="fas fa-file-alt me-1"></i> Report
                     </button>
                 </div>
                 <div class="staff-list">
@@ -516,7 +516,7 @@ function getAdjectivalRating($rating) {
                         <span class="section-count">{{ $nonTeachingStaff->count() }}</span>
                     </div>
                     <button class="btn btn-sm btn-light fw-bold rounded-pill shadow-sm px-3" onclick="confirmGenerateReport('non-teaching')" style="font-size: 0.75rem;">
-                        <i class="fas fa-file-alt me-1"></i> Print Report
+                        <i class="fas fa-file-alt me-1"></i> Report
                     </button>
                 </div>
                 <div class="staff-list">
@@ -722,7 +722,7 @@ function printOverallReport(staffData, type) {
     const adjectivalLabel = type === 'teaching' ? 'ADJECTIVAL DESCRIPTIVE' : 'ADJECTIVAL DESCRIPTION';
     
     let html = `
-        <div style="padding: 0.5in 0.2in 0.5in 0.2in; font-family: Arial, sans-serif; font-size:10pt; max-width: 1000px; margin: 0 auto; line-height: 1.15;">
+        <div style="padding: 0.3in 0.5in 0 0.5in; font-family: Arial, sans-serif; font-size:10pt; max-width: 1000px; margin: 0 auto; line-height: 1.15;">
             <div class='header-section' style='text-align:center; margin-top:0; margin-bottom:0.2em; padding-bottom:0;'>
                 <div style='display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:2.15em;'>
                     <img src='/images/cgs.jpg' alt='Left Logo' style='width:80px;height:80px;flex-shrink:0;margin-right:5px;' onerror='this.style.display="none"'>
@@ -755,7 +755,7 @@ function printOverallReport(staffData, type) {
             </div>
             
             <div style="margin-bottom: 0.8em;">
-                <table style="width: 100%; border-collapse: collapse; margin-top: 1.5em;">
+                <table style="width: 100%; border-collapse: collapse; margin-top: 0.4em;">
                     <thead>
                         <tr style="background-color: #f8f9fa;">
                             <th style="border: 1px solid #ddd; padding: 4px 6px; text-align: left; font-weight: bold; font-size: 10pt;">${type === 'teaching' ? 'NAME OF INSTRUCTORS' : 'NAME OF STAFF'}</th>
@@ -771,7 +771,7 @@ function printOverallReport(staffData, type) {
         const rowColor = index % 2 === 0 ? '#ffffff' : '#f8f9fa';
         const adjective = adjectivalFromLegend(staff.rating);
         html += `
-            <tr style="background-color: ${rowColor}; page-break-inside: avoid;">
+            <tr style="background-color: ${rowColor};">
                 <td style="border: 1px solid #ddd; padding: 4px 6px; text-align: left; font-size: 9.5pt; font-family: 'Century Gothic', sans-serif; text-transform: uppercase;">${staff.name}</td>
                 <td style="border: 1px solid #ddd; padding: 4px 6px; text-align: center; font-weight: bold; color: #232527; font-size: 9.5pt; font-family: 'Century Gothic', sans-serif; text-transform: uppercase;">${staff.rating.toFixed(2)}</td>
                 <td style="border: 1px solid #ddd; padding: 4px 6px; text-align: center; font-weight: bold; color: #080908; font-size: 9.5pt; font-family: 'Century Gothic', sans-serif; text-transform: uppercase;">${adjective}</td>
