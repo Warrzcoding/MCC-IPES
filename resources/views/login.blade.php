@@ -1440,10 +1440,11 @@
 
                     <!-- Student Signup Link -->
                    <div class="signup-link">
-                      <p>Don't have an account?<a href="{{ route('pre_signup') }}">
+                     <p>Second Semester Evaluation is Coming!!!</p>
+                     <!-- <p>Don't have an account?<a href="{{ route('pre_signup') }}">
                             <i class="fas fa-user-plus"></i> Sign up here
                         </a></p>
-                     <!-- <p>Don't have an account?<a href="{{ route('idcheck') }}">
+                     <p>Don't have an account?<a href="{{ route('idcheck') }}">
                             <i class="fas fa-user-plus"></i> Sign up here
                         </a></p>-->
                     </div>
