@@ -655,7 +655,7 @@
                 @endif
                 
                 <div class="d-flex justify-content-center align-items-center gap-3 flex-wrap status-badges">
-                    <button type="button" class="btn position-relative p-0" id="evaluatedStaffBadge" data-bs-toggle="popover" data-bs-trigger="focus" title="Evaluated Staff Breakdown" data-bs-html="true" data-bs-content="
+                    <button type="button" class="btn position-relative p-0" id="evaluatedStaffBadge" data-bs-toggle="popover" data-bs-trigger="click" title="Evaluated Staff Breakdown" data-bs-html="true" data-bs-content="
                         <div class='evaluated-popover-content'>
                             <div class='evaluated-popover-label'><i class='fas fa-chalkboard-teacher'></i> <span>Teaching Staff:</span> <strong>{{ $teachingCount }}</strong></div>
                             <div class='evaluated-popover-label'><i class='fas fa-users-cog'></i> <span>Non-Teaching Staff:</span> <strong>{{ $nonTeachingCount }}</strong></div>
@@ -748,8 +748,9 @@
                                                                     <i class="fas fa-info-circle ms-1 text-primary cursor-pointer subject-popover" 
                                                                        style="font-size: 0.8rem;"
                                                                        onclick="event.stopPropagation()"
+                                                                       tabindex="0"
                                                                        data-bs-toggle="popover" 
-                                                                       data-bs-trigger="hover focus click" 
+                                                                       data-bs-trigger="click" 
                                                                        data-bs-placement="top"
                                                                        title="Full Subject List"
                                                                        data-bs-content="{{ $subjectNames }}"></i>
@@ -1067,7 +1068,16 @@ document.addEventListener('DOMContentLoaded', function() {
     var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
     var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
         return new bootstrap.Popover(popoverTriggerEl)
-    })
+    });
+
+    // Close popovers when clicking outside
+    document.addEventListener('click', function (e) {
+        if (!e.target.closest('[data-bs-toggle="popover"]') && !e.target.closest('.popover')) {
+            popoverList.forEach(function (p) {
+                p.hide();
+            });
+        }
+    });
 
     // Handle radio button styling
     document.addEventListener('change', function(e) {
