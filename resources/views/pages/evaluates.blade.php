@@ -3,7 +3,9 @@
     $nonTeachingEvaluated = $nonTeachingEvaluated ?? 0;
     $teachingEvaluatedStaff = $teachingEvaluatedStaff ?? collect();
     $nonTeachingEvaluatedStaff = $nonTeachingEvaluatedStaff ?? collect();
-    $evaluations = \App\Models\Evaluation::where('user_id', auth()->id())->get();
+    $evaluations = \App\Models\Evaluation::where('user_id', auth()->id())
+        ->where('academic_year_id', $currentAcademicYear->id ?? null)
+        ->get();
     $distinctStaffIds = $evaluations->pluck('staff_id')->unique();
     $evaluatedTeachingIds = \App\Models\Staff::whereIn('id', $distinctStaffIds)->where('staff_type', 'teaching')->pluck('id')->toArray();
     $evaluatedNonTeachingIds = \App\Models\Staff::whereIn('id', $distinctStaffIds)->where('staff_type', 'non-teaching')->pluck('id')->toArray();
@@ -713,7 +715,7 @@
                 @else
                     <!-- Privacy Reminder Section (only for open status) -->
                     <div id="privacyReminder" class="privacy-reminder-box d-flex flex-column align-items-center justify-content-center" style="max-width: 600px; margin: 0 auto 30px auto;">
-                        <div class="mb-3">
+                        <div class="mb-3 text-center">
                             <i class="fas fa-user-secret fa-2x mb-2"></i>
                             <h5 class="fw-bold">Evaluator Privacy Notice</h5>
                             <p class="mb-0">Your identity and responses are strictly confidential. Please provide honest and constructive feedback. No one will know your answers or comments.</p>

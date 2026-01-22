@@ -432,7 +432,7 @@
                 <label for="profileImageInput" class="upload-btn">
                     <i class="fas fa-folder-open"></i> Choose File
                 </label>
-                <input type="file" class="d-none @error('profile_image') is-invalid @enderror" name="profile_image" accept="image/*" id="profileImageInput">
+                <input type="file" class="d-none @error('profile_image') is-invalid @enderror" name="profile_image" accept="image/*" id="profileImageInput" >
                 @error('profile_image')
                     <div class="invalid-feedback d-block">{{ $message }}</div>
                 @enderror

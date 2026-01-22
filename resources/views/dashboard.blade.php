@@ -1170,7 +1170,10 @@
                     <i class="fas fa-users"></i> All Staff
                 </a>-->
                 
-                <a href="{{ route('dashboard', ['page' => 'evaluates']) }}" class="nav-link {{ $page === 'evaluates' ? 'active' : '' }}">
+                @php
+                    $targetPage = (strtolower(Auth::user()->student_status) === 'irregular') ? 'irevaluates' : 'evaluates';
+                @endphp
+                <a href="{{ route('dashboard', ['page' => $targetPage]) }}" class="nav-link {{ in_array($page, ['evaluates', 'irevaluates']) ? 'active' : '' }}">
                     <i class="fas fa-clipboard-check"></i> Evaluation
                 </a>
             @endif
@@ -1195,7 +1198,7 @@
             @if(View::exists($page_file))
                 @if($page === 'questionnaires')
                     @include($page_file, ['questionnaires_data' => $questionnaires_data])
-                @elseif($page === 'evaluates')
+                @elseif($page === 'evaluates' || $page === 'irevaluates')
                     @include($page_file, [
                         'totalEvaluated' => $totalEvaluated ?? 0,
                         'teachingEvaluated' => $teachingEvaluated ?? 0,

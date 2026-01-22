@@ -27,7 +27,7 @@ class DashboardController extends Controller
         $allowed_pages = [
             'dashboard', 'add-students', 'add-staff', 'subject-management', 'academicyear',
             'questionnaires', 'staff-ratings', 'department-ratings', 'overall-ratings', 'profile', 'staff-list',
-            'evaluates', 'pending-requests', 'rejected-requests', 'login-monitor', // <-- Ensure this is included
+            'evaluates', 'irevaluates', 'pending-requests', 'rejected-requests', 'login-monitor', // <-- Ensure this is included
             'regularbackup'
         ];
 
@@ -50,6 +50,8 @@ class DashboardController extends Controller
 
         // --- Analytics Data for Dashboard Charts (always set for admin) ---
         if ($user->isAdmin()) {
+            $currentAcademicYear = \App\Models\AcademicYear::where('is_active', 1)->first();
+
             $studentsPerCourse = \App\Models\User::where('role', 'student')
                 ->select('course', \DB::raw('count(*) as total'))
                 ->groupBy('course')
@@ -57,6 +59,9 @@ class DashboardController extends Controller
 
             $evaluatedStudentsPerCourse = \App\Models\Evaluation::join('users', 'evaluations.user_id', '=', 'users.id')
                 ->where('users.role', 'student')
+                ->when($currentAcademicYear, function($q) use ($currentAcademicYear) {
+                    return $q->where('evaluations.academic_year_id', $currentAcademicYear->id);
+                })
                 ->select('users.course', \DB::raw('count(distinct evaluations.user_id) as evaluated'))
                 ->groupBy('users.course')
                 ->pluck('evaluated', 'users.course');
@@ -174,9 +179,17 @@ class DashboardController extends Controller
             $staffPerformanceStatsPerSemester = collect();
         }
         
-        // Students can only access: dashboard, staff-list, evaluates, profile
+        // Students can only access: dashboard, staff-list, evaluates, irevaluates, profile
         if ($user->isStudent()) {
-            $student_pages = ['dashboard', 'staff-list', 'evaluates', 'profile'];
+            $student_pages = ['dashboard', 'staff-list', 'evaluates', 'irevaluates', 'profile'];
+            
+            // Auto-correct page based on student status
+            if ($page === 'evaluates' && strtolower($user->student_status) === 'irregular') {
+                $page = 'irevaluates';
+            } elseif ($page === 'irevaluates' && strtolower($user->student_status) !== 'irregular') {
+                $page = 'evaluates';
+            }
+
             if (!in_array($page, $student_pages)) {
                 $page = 'dashboard';
             }
@@ -200,7 +213,8 @@ class DashboardController extends Controller
             'overall-ratings' => 'Overall Ratings',
             'profile' => 'Profile',
             'staff-list' => 'Staff List',
-            'evaluates' => 'Evaluates Staff',
+            'evaluates' => 'Regular Student',
+            'irevaluates' => 'Irregular Student',
             'pending-requests' => 'Pending Requests',
             'rejected-requests' => 'Rejected Requests',
             'login-monitor' => 'Login Monitor',
@@ -451,7 +465,7 @@ class DashboardController extends Controller
             $admins = User::where('role', 'admin')->orderBy('full_name')->get();
         }
 
-        if ($page === 'evaluates') {
+        if ($page === 'evaluates' || $page === 'irevaluates') {
             // Get the active academic year (where is_active = 1)
             $currentAcademicYear = \App\Models\AcademicYear::where('is_active', 1)->first();
             $isOpen = false;
@@ -474,36 +488,67 @@ class DashboardController extends Controller
             $studentCourse = $user->course;
             $studentYearLevel = $user->year_level;
             $studentSection = $user->section;
-            
-            // Get teaching staff directly from subjects table with proper filtering including semester
-            // First get the instructor names from subjects table
+            $isIrregular = strtolower($user->student_status) === 'irregular';
             $activeSemester = $currentAcademicYear ? (string) $currentAcademicYear->semester : null;
-            $instructorNames = \App\Models\Subject::whereRaw('LOWER(TRIM(sub_department)) = ?', [strtolower(trim($studentCourse))])
-                ->whereRaw('LOWER(TRIM(sub_year)) = ?', [strtolower(trim($studentYearLevel))])
-                ->whereRaw('LOWER(TRIM(section)) = ?', [strtolower(trim($studentSection))])
-                ->when($activeSemester, function ($q) use ($activeSemester) {
-                    $sem = strtolower(trim((string) $activeSemester));
-                    $aliases = in_array($sem, ['2','2nd','second','second semester','sem 2','semester 2'])
-                        ? ['2','2nd','second','second semester','sem 2','semester 2']
-                        : ['1','1st','first','first semester','sem 1','semester 1'];
-                    $q->where(function ($qq) use ($aliases) {
-                        foreach ($aliases as $a) {
-                            $qq->orWhereRaw('LOWER(TRIM(semester)) = ?', [$a]);
-                        }
-                    });
-                })
-                ->whereNotNull('assign_instructor')
-                ->where('assign_instructor', '!=', '')
-                ->distinct()
-                ->pluck('assign_instructor')
-                ->toArray();
+            $instructorNames = [];
             
-            // Then get the staff records that match these instructor names and are teaching staff
-            $teachingStaff = \App\Models\Staff::whereIn('full_name', $instructorNames)
-                ->where('staff_type', 'teaching')
-                ->get();
+            if ($isIrregular && $page === 'irevaluates') {
+                // For irregular students, fetch distinct subjects and instructors matching their course and current semester
+                $studentSubjects = \App\Models\Subject::whereRaw('LOWER(TRIM(sub_department)) = ?', [strtolower(trim($studentCourse))])
+                    ->when($activeSemester, function ($q) use ($activeSemester) {
+                        $sem = strtolower(trim((string) $activeSemester));
+                        $aliases = in_array($sem, ['2','2nd','second','second semester','sem 2','semester 2'])
+                            ? ['2','2nd','second','second semester','sem 2','semester 2']
+                            : ['1','1st','first','first semester','sem 1','semester 1'];
+                        $q->where(function ($qq) use ($aliases) {
+                            foreach ($aliases as $a) {
+                                $qq->orWhereRaw('LOWER(TRIM(semester)) = ?', [$a]);
+                            }
+                        });
+                    })
+                    ->whereNotNull('assign_instructor')
+                    ->where('assign_instructor', '!=', '')
+                    ->select(\DB::raw('DISTINCT TRIM(assign_instructor) as assign_instructor'), \DB::raw('TRIM(sub_name) as sub_name'))
+                    ->orderBy('sub_name')
+                    ->get();
+                
+                // We still need teachingStaff for the evaluation form logic if it relies on staff IDs
+                // Let's get the staff IDs for these instructors
+                $instructorNames = $studentSubjects->pluck('assign_instructor')->unique()->toArray();
+                $teachingStaff = \App\Models\Staff::whereIn('full_name', $instructorNames)
+                    ->where('staff_type', 'teaching')
+                    ->get();
+            } else {
+                // Get teaching staff directly from subjects table with proper filtering including semester
+                // First get the instructor names from subjects table
+                $instructorNames = \App\Models\Subject::whereRaw('LOWER(TRIM(sub_department)) = ?', [strtolower(trim($studentCourse))])
+                    ->whereRaw('LOWER(TRIM(sub_year)) = ?', [strtolower(trim($studentYearLevel))])
+                    ->whereRaw('LOWER(TRIM(section)) = ?', [strtolower(trim($studentSection))])
+                    ->when($activeSemester, function ($q) use ($activeSemester) {
+                        $sem = strtolower(trim((string) $activeSemester));
+                        $aliases = in_array($sem, ['2','2nd','second','second semester','sem 2','semester 2'])
+                            ? ['2','2nd','second','second semester','sem 2','semester 2']
+                            : ['1','1st','first','first semester','sem 1','semester 1'];
+                        $q->where(function ($qq) use ($aliases) {
+                            foreach ($aliases as $a) {
+                                $qq->orWhereRaw('LOWER(TRIM(semester)) = ?', [$a]);
+                            }
+                        });
+                    })
+                    ->whereNotNull('assign_instructor')
+                    ->where('assign_instructor', '!=', '')
+                    ->select(\DB::raw('DISTINCT TRIM(assign_instructor) as assign_instructor'))
+                    ->pluck('assign_instructor')
+                    ->toArray();
+                
+                // Then get the staff records that match these instructor names and are teaching staff
+                $teachingStaff = \App\Models\Staff::whereIn('full_name', $instructorNames)
+                    ->where('staff_type', 'teaching')
+                    ->get();
+            }
                 
             $nonTeachingStaff = \App\Models\Staff::where('staff_type', 'non-teaching')->get();
+            $studentSubjects = $studentSubjects ?? collect();
 
             // DEBUG: Log the filtering results (remove this after testing)
             \Log::info('Student Evaluation Filter Debug (DashboardController)', [
@@ -526,6 +571,7 @@ class DashboardController extends Controller
                     'nonTeachingQuestions',
                     'teachingStaff',
                     'nonTeachingStaff',
+                    'studentSubjects',
                     'currentAcademicYear',
                     // Analytics data:
                     'studentsPerCourse',

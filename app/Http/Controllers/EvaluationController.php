@@ -14,6 +14,16 @@ class EvaluationController extends Controller
 {
     public function showForm()
     {
+        return $this->renderEvaluationView();
+    }
+
+    public function showEvaluationForm()
+    {
+        return $this->renderEvaluationView();
+    }
+
+    private function renderEvaluationView()
+    {
         // Get the active academic year (where is_active = 1)
         $currentAcademicYear = AcademicYear::where('is_active', 1)->first();
         $isOpen = false;
@@ -24,6 +34,9 @@ class EvaluationController extends Controller
         $teachingEvaluatedStaff = collect();
         $nonTeachingEvaluatedStaff = collect();
         $totalEvaluated = 0;
+
+        $userId = auth()->id();
+        $user = auth()->user();
 
         if ($currentAcademicYear) {
             // Get all questions for the current active academic year that are open
@@ -36,35 +49,32 @@ class EvaluationController extends Controller
             // Separate by staff type
             $teachingQuestions = $openQuestions->where('staff_type', 'teaching');
             $nonTeachingQuestions = $openQuestions->where('staff_type', 'non-teaching');
-
-            // BADGE COUNTS: count unique staff evaluated by user for each type (native PHP logic)
-            $userId = auth()->id();
-            $evalCounts = DB::table('evaluations as e')
-                ->join('staff as s', 'e.staff_id', '=', 's.id')
-                ->select('s.staff_type', DB::raw('COUNT(DISTINCT e.staff_id) as count'))
-                ->where('e.user_id', $userId)
-                ->groupBy('s.staff_type')
-                ->get();
-
-            $teachingEvaluated = \App\Models\Evaluation::where('user_id', auth()->id())
+            
+            // Count unique staff evaluated by user for each type
+            $teachingEvaluated = \App\Models\Evaluation::where('user_id', $userId)
+                ->where('academic_year_id', $currentAcademicYear->id)
                 ->whereHas('staff', function($q) { $q->where('staff_type', 'teaching'); })
                 ->distinct('staff_id')
                 ->count('staff_id');
 
-            $nonTeachingEvaluated = \App\Models\Evaluation::where('user_id', auth()->id())
+            $nonTeachingEvaluated = \App\Models\Evaluation::where('user_id', $userId)
+                ->where('academic_year_id', $currentAcademicYear->id)
                 ->whereHas('staff', function($q) { $q->where('staff_type', 'non-teaching'); })
                 ->distinct('staff_id')
                 ->count('staff_id');
 
             // For modal: get unique staff objects evaluated by user for each type
             $teachingEvaluatedStaff = \App\Models\Evaluation::where('user_id', $userId)
+                ->where('academic_year_id', $currentAcademicYear->id)
                 ->whereHas('staff', function($q) { $q->where('staff_type', 'teaching'); })
                 ->with('staff')
                 ->get()
                 ->pluck('staff')
                 ->unique('id')
                 ->values();
+                
             $nonTeachingEvaluatedStaff = \App\Models\Evaluation::where('user_id', $userId)
+                ->where('academic_year_id', $currentAcademicYear->id)
                 ->whereHas('staff', function($q) { $q->where('staff_type', 'non-teaching'); })
                 ->with('staff')
                 ->get()
@@ -72,22 +82,21 @@ class EvaluationController extends Controller
                 ->unique('id')
                 ->values();
 
-            // Set totalEvaluated to the count of distinct staff_id for the current user
-            $totalEvaluated = \App\Models\Evaluation::where('user_id', auth()->id())
+            $totalEvaluated = \App\Models\Evaluation::where('user_id', $userId)
+                ->where('academic_year_id', $currentAcademicYear->id)
                 ->distinct('staff_id')
                 ->count('staff_id');
         }
 
         // Filter teaching staff based on student's course, year level, and section from subjects table
-        $user = auth()->user();
         $studentCourse = $user->course;
         $studentYearLevel = $user->year_level;
         $studentSection = $user->section;
         
-        // Get teaching staff directly from subjects table with proper filtering
-        // First get the instructor names from subjects table
         $activeSemester = $currentAcademicYear ? (string) $currentAcademicYear->semester : null;
-        $instructorNames = \App\Models\Subject::whereRaw('LOWER(TRIM(sub_department)) = ?', [strtolower(trim($studentCourse))])
+        
+        // Get teaching staff from subjects table with proper filtering
+        $studentSubjects = \App\Models\Subject::whereRaw('LOWER(TRIM(sub_department)) = ?', [strtolower(trim($studentCourse))])
             ->whereRaw('LOWER(TRIM(sub_year)) = ?', [strtolower(trim($studentYearLevel))])
             ->whereRaw('LOWER(TRIM(section)) = ?', [strtolower(trim($studentSection))])
             ->when($activeSemester, function ($q) use ($activeSemester) {
@@ -103,162 +112,27 @@ class EvaluationController extends Controller
             })
             ->whereNotNull('assign_instructor')
             ->where('assign_instructor', '!=', '')
-            ->distinct()
-            ->pluck('assign_instructor')
-            ->toArray();
+            ->select(\DB::raw('DISTINCT TRIM(assign_instructor) as assign_instructor'), \DB::raw('TRIM(sub_name) as sub_name'))
+            ->get();
+            
+        $instructorNames = $studentSubjects->pluck('assign_instructor')->unique()->toArray();
         
-        // Then get the staff records that match these instructor names and are teaching staff
         $teachingStaff = \App\Models\Staff::whereIn('full_name', $instructorNames)
             ->where('staff_type', 'teaching')
             ->get();
             
-        // Get non-teaching staff (no semester filter; always include all non-teaching every semester)
         $nonTeachingStaff = \App\Models\Staff::where('staff_type', 'non-teaching')->get();
 
-        // DEBUG: Log the filtering results (remove this after testing)
-        \Log::info('Student Evaluation Filter Debug', [
-            'student_course' => $studentCourse,
-            'student_year' => $studentYearLevel, 
-            'student_section' => $studentSection,
-            'instructor_names_from_subjects' => $instructorNames,
-            'teaching_staff_count' => $teachingStaff->count(),
-            'teaching_staff_names' => $teachingStaff->pluck('full_name')->toArray(),
-            'non_teaching_staff_count' => $nonTeachingStaff->count(),
-            'non_teaching_staff_names' => $nonTeachingStaff->pluck('full_name')->toArray()
-        ]);
+        // Determine which view to return based on user status
+        $viewName = (strtolower($user->student_status) === 'irregular') ? 'pages.irevaluates' : 'pages.evaluates';
 
-        $teachingEvaluatedStaff = $teachingEvaluatedStaff ?? collect();
-        $nonTeachingEvaluatedStaff = $nonTeachingEvaluatedStaff ?? collect();
-
-        // Remove debug statement - questions are now properly fetched based on active academic year
-
-        return view('pages.evaluates', compact(
+        return view($viewName, compact(
             'isOpen',
             'teachingQuestions',
             'nonTeachingQuestions',
             'teachingStaff',
             'nonTeachingStaff',
-            'teachingEvaluated',
-            'nonTeachingEvaluated',
-            'teachingEvaluatedStaff',
-            'nonTeachingEvaluatedStaff',
-            'totalEvaluated',
-            'currentAcademicYear'
-        ));
-    }
-
-    public function showEvaluationForm()
-    {
-        // Get the active academic year (where is_active = 1)
-        $currentAcademicYear = AcademicYear::where('is_active', 1)->first();
-        $isOpen = false;
-        $teachingQuestions = collect();
-        $nonTeachingQuestions = collect();
-        $teachingEvaluated = 0;
-        $nonTeachingEvaluated = 0;
-        $teachingEvaluatedStaff = collect();
-        $nonTeachingEvaluatedStaff = collect();
-        $totalEvaluated = 0;
-
-        if ($currentAcademicYear) {
-            // Get questions that belong to the active academic year and are open
-            $openQuestions = Question::where('academic_year_id', $currentAcademicYear->id)
-                ->where('is_open', 1)
-                ->get();
-            $isOpen = $openQuestions->count() > 0;
-            $teachingQuestions = $openQuestions->where('staff_type', 'teaching');
-            $nonTeachingQuestions = $openQuestions->where('staff_type', 'non-teaching');
-
-            $userId = auth()->id();
-            $teachingEvaluated = \App\Models\Evaluation::where('user_id', $userId)
-                ->whereHas('staff', function($q) { $q->where('staff_type', 'teaching'); })
-                ->select('staff_id')
-                ->distinct()
-                ->count();
-            $nonTeachingEvaluated = \App\Models\Evaluation::where('user_id', $userId)
-                ->whereHas('staff', function($q) { $q->where('staff_type', 'non-teaching'); })
-                ->select('staff_id')
-                ->distinct()
-                ->count();
-
-            $teachingEvaluatedStaff = \App\Models\Evaluation::where('user_id', $userId)
-                ->whereHas('staff', function($q) { $q->where('staff_type', 'teaching'); })
-                ->with('staff')
-                ->get()
-                ->pluck('staff')
-                ->unique('id')
-                ->values();
-            $nonTeachingEvaluatedStaff = \App\Models\Evaluation::where('user_id', $userId)
-                ->whereHas('staff', function($q) { $q->where('staff_type', 'non-teaching'); })
-                ->with('staff')
-                ->get()
-                ->pluck('staff')
-                ->unique('id')
-                ->values();
-            $totalEvaluated = \App\Models\Evaluation::where('user_id', $userId)
-                ->distinct('staff_id')
-                ->count('staff_id');
-        }
-
-        // Filter teaching staff based on student's course, year level, and section from subjects table
-        $user = auth()->user();
-        $studentCourse = $user->course;
-        $studentYearLevel = $user->year_level;
-        $studentSection = $user->section;
-        
-        // Get teaching staff directly from subjects table with proper filtering
-        // First get the instructor names from subjects table
-        $activeSemester = $currentAcademicYear ? (string) $currentAcademicYear->semester : null;
-        $instructorNames = \App\Models\Subject::whereRaw('LOWER(TRIM(sub_department)) = ?', [strtolower(trim($studentCourse))])
-            ->whereRaw('LOWER(TRIM(sub_year)) = ?', [strtolower(trim($studentYearLevel))])
-            ->whereRaw('LOWER(TRIM(section)) = ?', [strtolower(trim($studentSection))])
-            ->when($activeSemester, function ($q) use ($activeSemester) {
-                $sem = strtolower(trim((string) $activeSemester));
-                $aliases = in_array($sem, ['2','2nd','second','second semester','sem 2','semester 2'])
-                    ? ['2','2nd','second','second semester','sem 2','semester 2']
-                    : ['1','1st','first','first semester','sem 1','semester 1'];
-                $q->where(function ($qq) use ($aliases) {
-                    foreach ($aliases as $a) {
-                        $qq->orWhereRaw('LOWER(TRIM(semester)) = ?', [$a]);
-                    }
-                });
-            })
-            ->whereNotNull('assign_instructor')
-            ->where('assign_instructor', '!=', '')
-            ->distinct()
-            ->pluck('assign_instructor')
-            ->toArray();
-        
-        // Then get the staff records that match these instructor names and are teaching staff
-        $teachingStaff = \App\Models\Staff::whereIn('full_name', $instructorNames)
-            ->where('staff_type', 'teaching')
-            ->get();
-            
-        // Get non-teaching staff (no semester filter; always include all non-teaching every semester)
-        $nonTeachingStaff = Staff::where('staff_type', 'non-teaching')->get();
-
-        // DEBUG: Log the filtering results (remove this after testing)
-        \Log::info('Student Evaluation Filter Debug (showEvaluationForm)', [
-            'student_course' => $studentCourse,
-            'student_year' => $studentYearLevel, 
-            'student_section' => $studentSection,
-            'active_semester' => $activeSemester,
-            'instructor_names_from_subjects' => $instructorNames,
-            'teaching_staff_count' => $teachingStaff->count(),
-            'teaching_staff_names' => $teachingStaff->pluck('full_name')->toArray(),
-            'non_teaching_staff_count' => $nonTeachingStaff->count(),
-            'non_teaching_staff_names' => $nonTeachingStaff->pluck('full_name')->toArray()
-        ]);
-
-        $teachingEvaluatedStaff = $teachingEvaluatedStaff ?? collect();
-        $nonTeachingEvaluatedStaff = $nonTeachingEvaluatedStaff ?? collect();
-
-        return view('pages.evaluates', compact(
-            'isOpen',
-            'teachingQuestions',
-            'nonTeachingQuestions',
-            'teachingStaff',
-            'nonTeachingStaff',
+            'studentSubjects',
             'teachingEvaluated',
             'nonTeachingEvaluated',
             'teachingEvaluatedStaff',
@@ -271,56 +145,114 @@ class EvaluationController extends Controller
     public function submit(\Illuminate\Http\Request $request)
     {
         $request->validate([
-            'staff_id' => 'required|exists:staff,id',
+            'staff_id' => 'required', // Can be single ID or comma-separated IDs or array
             'responses' => 'required|array',
         ]);
 
         $userId = auth()->id();
+        $staffIds = is_array($request->staff_id) ? $request->staff_id : explode(',', $request->staff_id);
 
         // Get the current active academic year
         $activeAcademicYear = \App\Models\AcademicYear::where('is_active', 1)->first();
         $academicYearId = $activeAcademicYear ? $activeAcademicYear->id : null;
 
-        // Prevent duplicate evaluation for the same staff by the same user
-        $alreadyEvaluated = \App\Models\Evaluation::where('staff_id', $request->staff_id)
-            ->where('user_id', $userId)
-            ->exists();
-        if ($alreadyEvaluated) {
+        if (!$academicYearId) {
             return redirect()->back()->with([
-                'message' => 'You have already evaluated this staff member.',
+                'message' => 'No active academic year found.',
                 'message_type' => 'danger'
             ]);
         }
 
-        foreach ($request->responses as $questionId => $responseValue) {
-            $question = \App\Models\Question::find($questionId);
-            $score = null;
-            if ($question) {
-                $score = \App\Models\ResponseOption::where('response_type', $question->response_type)
-                    ->where('option_value', $responseValue)
-                    ->value('option_order');
+        // Questions count for validation
+        $teachingQuestionsCount = \App\Models\Question::where('academic_year_id', $academicYearId)->where('staff_type', 'teaching')->where('is_open', 1)->count();
+        $nonTeachingQuestionsCount = \App\Models\Question::where('academic_year_id', $academicYearId)->where('staff_type', 'non-teaching')->where('is_open', 1)->count();
+
+        DB::beginTransaction();
+        try {
+            foreach ($staffIds as $staffId) {
+                if (empty($staffId)) continue;
+
+                $staff = \App\Models\Staff::find($staffId);
+                if (!$staff) continue;
+
+                // Prevent duplicate evaluation for the same staff by the same user in the same academic year
+                $alreadyEvaluated = \App\Models\Evaluation::where('staff_id', $staffId)
+                    ->where('user_id', $userId)
+                    ->where('academic_year_id', $academicYearId)
+                    ->exists();
+                
+                if ($alreadyEvaluated) {
+                    continue; // Skip if already evaluated
+                }
+
+                // Support both flat responses [q_id => val] and nested responses [staff_id => [q_id => val]]
+                $staffResponses = $request->responses;
+                if (isset($staffResponses[$staffId]) && is_array($staffResponses[$staffId])) {
+                    $staffResponses = $staffResponses[$staffId];
+                }
+
+                // Skip if no responses for this staff member (e.g. in bulk mode if one was skipped)
+                if (!is_array($staffResponses) || empty($staffResponses)) {
+                    continue;
+                }
+
+                // Validation: Ensure all questions are answered for this staff member
+                $requiredCount = ($staff->staff_type === 'teaching') ? $teachingQuestionsCount : $nonTeachingQuestionsCount;
+                if (count($staffResponses) < $requiredCount) {
+                    throw new \Exception("Incomplete evaluation for staff: {$staff->full_name}");
+                }
+
+                // Support individual comments per staff if provided
+                $comments = $request->comments;
+                if (is_array($comments) && isset($comments[$staffId])) {
+                    $comments = $comments[$staffId];
+                } elseif (is_string($comments)) {
+                    // Fallback for single submission mode
+                } else {
+                    $comments = null;
+                }
+
+                foreach ($staffResponses as $questionId => $responseValue) {
+                    if (empty($responseValue)) continue;
+
+                    $question = \App\Models\Question::find($questionId);
+                    $score = null;
+                    if ($question) {
+                        $score = \App\Models\ResponseOption::where('response_type', $question->response_type)
+                            ->where('option_value', $responseValue)
+                            ->value('option_order');
+                    }
+                    
+                    \App\Models\Evaluation::create([
+                        'staff_id' => $staffId,
+                        'question_id' => $questionId,
+                        'response' => $responseValue,
+                        'response_score' => $score,
+                        'user_id' => $userId,
+                        'comments' => $comments,
+                        'academic_year_id' => $academicYearId,
+                        'created_at' => now(),
+                    ]);
+                }
+
+                \Log::info('Evaluation submitted successfully', [
+                    'user_id' => $userId,
+                    'staff_id' => $staffId,
+                    'academic_year_id' => $academicYearId
+                ]);
             }
-            \App\Models\Evaluation::create([
-                'staff_id' => $request->staff_id,
-                'question_id' => $questionId,
-                'response' => $responseValue,
-                'response_score' => $score,
-                'user_id' => $userId,
-                'comments' => $request->comments,
-                'academic_year_id' => $academicYearId,
-                'created_at' => now(),
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::error('Evaluation submission failed', ['error' => $e->getMessage()]);
+            return redirect()->back()->with([
+                'message' => 'Error: ' . $e->getMessage(),
+                'message_type' => 'danger'
             ]);
         }
 
-        // Log for debugging
-        \Log::info('Evaluation submitted successfully', [
-            'user_id' => $userId,
-            'staff_id' => $request->staff_id,
-            'responses_count' => count($request->responses)
-        ]);
-
         return redirect()->back()->with([
-            'message' => 'Evaluation submitted successfully!',
+            'message' => 'Evaluation(s) submitted successfully!',
             'message_type' => 'success'
         ]);
     }
