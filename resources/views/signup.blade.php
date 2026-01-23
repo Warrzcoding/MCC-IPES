@@ -119,7 +119,9 @@
         }
 
         .image-upload-section {
-            text-align: center;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
             margin-bottom: 0.96rem;
             padding: 0.48rem;
             border: 2px dashed #ddd;
@@ -131,19 +133,26 @@
             width: 51.2px;
             height: 51.2px;
             border-radius: 50%;
-            margin: 0 auto 0.32rem;
             border: 3px solid #667eea;
             object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        .image-upload-content {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.15rem;
         }
 
         .upload-btn {
             background: #f8f9fa;
             border: 1px solid #667eea;
             color: #667eea;
-            padding: 0.32rem 0.64rem;
+            padding: 0.18rem 0.5rem; /* smaller button */
             border-radius: 6px;
             cursor: pointer;
-            font-size: 0.7rem;
+            font-size: 0.65rem;      /* smaller text */
         }
 
         .upload-btn:hover {
@@ -427,27 +436,38 @@
 
             <!-- Profile Image Upload -->
             <div class="image-upload-section">
-                <img id="previewImg" src="https://ui-avatars.com/api/?name=Profile&background=cccccc&color=555555&rounded=true&size=80" alt="Preview" class="image-preview">
-                <p class="text-muted small mb-1">Upload profile photo (JPEG or PNG, max 2 MB)</p>
-                <label for="profileImageInput" class="upload-btn">
-                    <i class="fas fa-folder-open"></i> Choose File
-                </label>
-                <input type="file" class="d-none @error('profile_image') is-invalid @enderror" name="profile_image" accept="image/*" id="profileImageInput" >
-                @error('profile_image')
-                    <div class="invalid-feedback d-block">{{ $message }}</div>
-                @enderror
+                <img id="previewImg"
+                     src="https://ui-avatars.com/api/?name=Profile&background=cccccc&color=555555&rounded=true&size=80"
+                     alt="Preview"
+                     class="image-preview">
+
+                <div class="image-upload-content">
+                    <p class="text-muted small mb-0">Upload profile photo (JPEG or PNG, max 2 MB)</p>
+                    <label for="profileImageInput" class="upload-btn mb-0">
+                        <i class="fas fa-folder-open"></i> Choose File
+                    </label>
+                    
+                    <input type="file"
+                           class="d-none @error('profile_image') is-invalid @enderror"
+                           name="profile_image"
+                           accept="image/*"
+                           id="profileImageInput">
+                    @error('profile_image')
+                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                    @enderror
+                </div>
             </div>
 
             <!-- Personal Information -->
             <div class="row">
                 <div class="col-md-6 mb-2">
                     <label for="full_name" class="form-label">
-                        <i class="fas fa-user"></i> Full Name *
+                        <i class="fas fa-user"s></i> Full Name *
                     </label>
                     <input type="text" class="form-control @error('full_name') is-invalid @enderror"
                            id="full_name" name="full_name" value="{{ old('full_name') }}" required
                            pattern="[A-Za-z\s\.]+" maxlength="50"
-                           placeholder="Enter full name">
+                           placeholder="Enter fullname">
                     @error('full_name')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -507,7 +527,7 @@
                     <input type="text" class="form-control @error('school_id') is-invalid @enderror"
                            id="school_id" name="school_id" value="{{ old('school_id') }}" required
                            pattern="\d{4}-\d{4}" maxlength="9" inputmode="numeric"
-                           placeholder="0000-0000">
+                           placeholder="2020-0000" >
                     @error('school_id')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -572,7 +592,7 @@
                     <div class="password-container">
                         <input type="password" class="form-control @error('password') is-invalid @enderror"
                                id="password" name="password" required maxlength="25"
-                               placeholder="Create ipes password">
+                               placeholder="Create password">
                         <button type="button" class="password-toggle" id="passwordToggle" aria-label="Toggle password visibility">
                             <i class="fas fa-eye"></i>
                         </button>
