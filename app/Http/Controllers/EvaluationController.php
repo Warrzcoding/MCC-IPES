@@ -8,6 +8,7 @@ use App\Models\Question;
 use App\Models\Staff;
 use App\Models\Subject;
 use App\Models\SavedQuestion;
+use App\Models\InstructorSelection;
 use Illuminate\Support\Facades\DB;
 
 class EvaluationController extends Controller
@@ -123,6 +124,12 @@ class EvaluationController extends Controller
             
         $nonTeachingStaff = \App\Models\Staff::where('staff_type', 'non-teaching')->get();
 
+        // Get saved instructor selections for this user and academic year
+        $savedSelections = InstructorSelection::where('user_id', $userId)
+            ->where('academic_year_id', $currentAcademicYear->id ?? null)
+            ->with('staff')
+            ->get();
+
         // Determine which view to return based on user status
         $viewName = (strtolower($user->student_status) === 'irregular') ? 'pages.irevaluates' : 'pages.evaluates';
 
@@ -138,7 +145,8 @@ class EvaluationController extends Controller
             'teachingEvaluatedStaff',
             'nonTeachingEvaluatedStaff',
             'totalEvaluated',
-            'currentAcademicYear'
+            'currentAcademicYear',
+            'savedSelections'
         ));
     }
 
@@ -392,6 +400,114 @@ class EvaluationController extends Controller
             return response()->json(['success' => true, 'message' => 'All results saved, academic year closed, and original tables cleared.']);
         } catch (\Exception $e) {
             DB::rollBack();
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
+
+    public function saveInstructorSelection(Request $request)
+    {
+        $request->validate([
+            'staff_id' => 'required',
+            'staff_type' => 'required|in:teaching,non-teaching',
+            'action' => 'required|in:select,deselect'
+        ]);
+
+        $userId = auth()->id();
+        $academicYear = AcademicYear::where('is_active', 1)->first();
+
+        if (!$academicYear) {
+            return response()->json(['success' => false, 'message' => 'No active academic year found.'], 404);
+        }
+
+        try {
+            if ($request->action === 'select') {
+                InstructorSelection::updateOrCreate(
+                    [
+                        'user_id' => $userId,
+                        'staff_id' => $request->staff_id,
+                        'academic_year_id' => $academicYear->id
+                    ],
+                    [
+                        'staff_type' => $request->staff_type,
+                        // Maintain stage if updating existing
+                    ]
+                );
+            } else {
+                InstructorSelection::where([
+                    'user_id' => $userId,
+                    'staff_id' => $request->staff_id,
+                    'academic_year_id' => $academicYear->id
+                ])->delete();
+            }
+
+            // Update selection count for all selections of this user/AY
+            $count = InstructorSelection::where([
+                'user_id' => $userId,
+                'academic_year_id' => $academicYear->id,
+                'staff_type' => $request->staff_type
+            ])->count();
+
+            InstructorSelection::where([
+                'user_id' => $userId,
+                'academic_year_id' => $academicYear->id,
+                'staff_type' => $request->staff_type
+            ])->update(['selection_count' => $count]);
+
+            return response()->json(['success' => true, 'count' => $count]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
+
+    public function updateSelectionStage(Request $request)
+    {
+        $request->validate([
+            'staff_type' => 'required|in:teaching,non-teaching',
+            'stage' => 'required|in:selection,review,locked'
+        ]);
+
+        $userId = auth()->id();
+        $academicYear = AcademicYear::where('is_active', 1)->first();
+
+        if (!$academicYear) {
+            return response()->json(['success' => false, 'message' => 'No active academic year found.'], 404);
+        }
+
+        try {
+            InstructorSelection::where([
+                'user_id' => $userId,
+                'academic_year_id' => $academicYear->id,
+                'staff_type' => $request->staff_type
+            ])->update(['selection_stage' => $request->stage]);
+
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
+
+    public function clearInstructorSelections(Request $request)
+    {
+        $request->validate([
+            'staff_type' => 'required|in:teaching,non-teaching'
+        ]);
+
+        $userId = auth()->id();
+        $academicYear = AcademicYear::where('is_active', 1)->first();
+
+        if (!$academicYear) {
+            return response()->json(['success' => false, 'message' => 'No active academic year found.'], 404);
+        }
+
+        try {
+            InstructorSelection::where([
+                'user_id' => $userId,
+                'academic_year_id' => $academicYear->id,
+                'staff_type' => $request->staff_type
+            ])->delete();
+
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
     }

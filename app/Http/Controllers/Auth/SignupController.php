@@ -14,13 +14,24 @@ class SignupController extends Controller
     {
         $type = $request->query('type', 'student');
         $school_id = $request->query('school_id');
-        $verified_email = $request->query('verified_email');
+        $verified_email = $request->query('verified_email') ?? session('pre_signup_email');
+        $verified_id_info = session('verified_id_info');
         
-        return view('signup', compact('type', 'school_id', 'verified_email'));
+        return view('signup', compact('type', 'school_id', 'verified_email', 'verified_id_info'));
     }
 
     public function signup(Request $request)
     {
+        // Verify reCAPTCHA if token is present
+        if ($request->has('g-recaptcha-response')) {
+            $recaptchaService = app(\App\Services\RecaptchaService::class);
+            $verification = $recaptchaService->verifyV3($request->input('g-recaptcha-response'), 'signup');
+            
+            if (!$verification['success'] || $verification['score'] < 0.3) {
+                return back()->withErrors(['captcha' => 'Security verification failed. Please try again.'])->withInput();
+            }
+        }
+
         $request->validate([
             'username' => 'required|string|regex:/^[A-Za-z\.]+$/|max:50',
             'email' => 'required|email',

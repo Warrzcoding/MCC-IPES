@@ -174,7 +174,9 @@ class PreSignupController extends Controller
             $idRecord = IdChecker::where('id_number', $request->id_number)->first();
 
             if ($idRecord) {
-                $fullName = trim($idRecord->fname . ' ' . $idRecord->mname . ' ' . $idRecord->lname);
+                // Construct fullname: fname mname_initial. lname
+                $mInitial = $idRecord->mname ? strtoupper(substr($idRecord->mname, 0, 1)) . '.' : '';
+                $fullName = trim($idRecord->fname . ($mInitial ? ' ' . $mInitial : '') . ' ' . $idRecord->lname);
                 
                 return response()->json([
                     'status' => 'found',
@@ -185,7 +187,7 @@ class PreSignupController extends Controller
                         'lastname' => $idRecord->lname,
                         'fullname' => $fullName,
                         'course' => $idRecord->course,
-                        'year' => $idRecord->year,
+                        'year' => (string)$idRecord->year,
                         'section' => $idRecord->section,
                         'gender' => $idRecord->gender
                     ]
@@ -204,6 +206,74 @@ class PreSignupController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => 'An error occurred while checking ID.'
+            ], 500);
+        }
+    }
+
+    // Store the verified ID information in session
+    public function storeVerifiedId(Request $request)
+    {
+        try {
+            \Log::info('ID Check Verification Attempt', [
+                'ip' => $request->ip(),
+                'data' => $request->all()
+            ]);
+
+            // Optional reCAPTCHA verification if token is provided
+            if ($request->has('recaptcha_token')) {
+                $recaptchaService = app(\App\Services\RecaptchaService::class);
+                $verification = $recaptchaService->verifyV3($request->recaptcha_token, 'idcheck_verify');
+                
+                \Log::info('reCAPTCHA Verification Result', $verification);
+
+                if (!$verification['success'] || $verification['score'] < 0.3) {
+                    \Log::warning('Security verification failed for ID check', [
+                        'score' => $verification['score'] ?? 'N/A',
+                        'errors' => $verification['error_codes'] ?? []
+                    ]);
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => 'Security verification failed. Please try again.'
+                    ], 403);
+                }
+            }
+
+            $data = $request->validate([
+                'id_number' => 'required|string',
+                'fullname' => 'required|string',
+                'firstname' => 'nullable|string',
+                'middlename' => 'nullable|string',
+                'lastname' => 'nullable|string',
+                'course' => 'nullable|string',
+                'year' => 'nullable',
+                'section' => 'nullable|string',
+                'gender' => 'nullable|string'
+            ]);
+
+            Session::put('verified_id_info', $data);
+            \Log::info('ID Verification Success', ['id_number' => $data['id_number']]);
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'ID information stored successfully.'
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            \Log::error('ID Verification Validation Failed', [
+                'errors' => $e->errors(),
+                'input' => $request->all()
+            ]);
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Validation failed.',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            \Log::error('ID Verification System Error: ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString()
+            ]);
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to store ID information.'
             ], 500);
         }
     }

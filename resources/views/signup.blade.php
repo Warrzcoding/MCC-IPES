@@ -462,10 +462,12 @@
             <div class="row">
                 <div class="col-md-6 mb-2">
                     <label for="full_name" class="form-label">
-                        <i class="fas fa-user"s></i> Full Name *
+                        <i class="fas fa-user"></i> Full Name *
                     </label>
                     <input type="text" class="form-control @error('full_name') is-invalid @enderror"
-                           id="full_name" name="full_name" value="{{ old('full_name') }}" required
+                           id="full_name" name="full_name"   readonly="true"
+                           value="{{ isset($verified_id_info) ? $verified_id_info['fullname'] : old('full_name') }}" 
+                           required
                            pattern="[A-Za-z\s\.]+" maxlength="50"
                            placeholder="Enter fullname">
                     @error('full_name')
@@ -493,7 +495,7 @@
                         <i class="fas fa-envelope"></i> {{ isset($verified_email) && $verified_email ? 'MS Account' : 'Email' }} *
                     </label>
                     <input type="email" class="form-control @error('email') is-invalid @enderror"
-                           id="email" name="email" readonly="true"
+                           id="email" name="email" 
                            value="{{ isset($verified_email) && $verified_email ? $verified_email : old('email') }}"
                            required placeholder="Enter email address"
                            @if(isset($verified_email) && $verified_email) readonly @endif>
@@ -525,7 +527,9 @@
                         <i class="fas fa-id-card"></i> School ID *
                     </label>
                     <input type="text" class="form-control @error('school_id') is-invalid @enderror"
-                           id="school_id" name="school_id" value="{{ old('school_id') }}" required
+                           id="school_id" name="school_id" readonly="true"
+                           value="{{ isset($verified_id_info) ? $verified_id_info['id_number'] : (isset($school_id) ? $school_id : old('school_id')) }}" 
+                           required
                            pattern="\d{4}-\d{4}" maxlength="9" inputmode="numeric"
                            placeholder="2020-0000" >
                     @error('school_id')
@@ -537,13 +541,19 @@
                     <label for="course" class="form-label">
                         <i class="fas fa-book"></i> Course *
                     </label>
+                    @php
+                        $selectedCourse = old('course');
+                        if (isset($verified_id_info) && $verified_id_info['course']) {
+                            $selectedCourse = $verified_id_info['course'];
+                        }
+                    @endphp
                     <select class="form-select @error('course') is-invalid @enderror" id="course" name="course" required>
                         <option value="">Select course...</option>
-                        <option value="BSIT" {{ old('course') == 'BSIT' ? 'selected' : '' }}>BSIT</option>
-                        <option value="BSHM" {{ old('course') == 'BSHM' ? 'selected' : '' }}>BSHM</option>
-                        <option value="BSBA" {{ old('course') == 'BSBA' ? 'selected' : '' }}>BSBA</option>
-                        <option value="BSED" {{ old('course') == 'BSED' ? 'selected' : '' }}>BSED</option>
-                        <option value="BEED" {{ old('course') == 'BEED' ? 'selected' : '' }}>BEED</option>
+                        <option value="BSIT" {{ $selectedCourse == 'BSIT' ? 'selected' : '' }}>BSIT</option>
+                        <option value="BSHM" {{ $selectedCourse == 'BSHM' ? 'selected' : '' }}>BSHM</option>
+                        <option value="BSBA" {{ $selectedCourse == 'BSBA' ? 'selected' : '' }}>BSBA</option>
+                        <option value="BSED" {{ $selectedCourse == 'BSED' ? 'selected' : '' }}>BSED</option>
+                        <option value="BEED" {{ $selectedCourse == 'BEED' ? 'selected' : '' }}>BEED</option>
                     </select>
                     @error('course')
                         <div class="invalid-feedback">{{ $message }}</div>
@@ -556,12 +566,24 @@
                     <label for="year_level" class="form-label">
                         <i class="fas fa-calendar-alt"></i> Year Level *
                     </label>
+                    @php
+                        $selectedYear = old('year_level');
+                        if (isset($verified_id_info) && $verified_id_info['year']) {
+                            $year = $verified_id_info['year'];
+                            // Normalize year format if needed
+                            if ($year == '1' || $year == '1st') $selectedYear = '1st Year';
+                            elseif ($year == '2' || $year == '2nd') $selectedYear = '2nd Year';
+                            elseif ($year == '3' || $year == '3rd') $selectedYear = '3rd Year';
+                            elseif ($year == '4' || $year == '4th') $selectedYear = '4th Year';
+                            else $selectedYear = $year; // fallback
+                        }
+                    @endphp
                     <select class="form-select @error('year_level') is-invalid @enderror" id="year_level" name="year_level" required>
                         <option value="">Select year...</option>
-                        <option value="1st Year" {{ old('year_level') == '1st Year' ? 'selected' : '' }}>1st Year</option>
-                        <option value="2nd Year" {{ old('year_level') == '2nd Year' ? 'selected' : '' }}>2nd Year</option>
-                        <option value="3rd Year" {{ old('year_level') == '3rd Year' ? 'selected' : '' }}>3rd Year</option>
-                        <option value="4th Year" {{ old('year_level') == '4th Year' ? 'selected' : '' }}>4th Year</option>
+                        <option value="1st Year" {{ $selectedYear == '1st Year' ? 'selected' : '' }}>1st Year</option>
+                        <option value="2nd Year" {{ $selectedYear == '2nd Year' ? 'selected' : '' }}>2nd Year</option>
+                        <option value="3rd Year" {{ $selectedYear == '3rd Year' ? 'selected' : '' }}>3rd Year</option>
+                        <option value="4th Year" {{ $selectedYear == '4th Year' ? 'selected' : '' }}>4th Year</option>
                     </select>
                     @error('year_level')
                         <div class="invalid-feedback">{{ $message }}</div>
@@ -633,9 +655,7 @@
         </form>
 
         <div class="signup-link">
-            <p>Already have an account? <a href="{{ route('login') }}">
-                <i ></i> Login here
-            </a></p>
+            <p>Already have an account? <a href="{{ route('login') }}">Login here</a></p>
         </div>
     </div>
 
@@ -1159,8 +1179,9 @@
                         option.value = section.value;
                         option.textContent = section.label;
 
-                        // Check if this was the previously selected value
-                        if (section.value === '{{ old("section") }}') {
+                        // Check if this was the previously selected value or from verified info
+                        const verifiedSection = '{{ isset($verified_id_info) ? $verified_id_info["section"] : "" }}';
+                        if (section.value === '{{ old("section") }}' || section.value === verifiedSection) {
                             option.selected = true;
                         }
 
@@ -1171,6 +1192,9 @@
 
             courseSelect.addEventListener('change', updateSections);
             yearSelect.addEventListener('change', updateSections);
+
+            // Initial call to populate sections if course and year are pre-filled
+            updateSections();
 
             // Form validation
             const signupForm = document.getElementById('signupForm');

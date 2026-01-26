@@ -47,6 +47,7 @@ Route::post('/pre-signup/verify-otp', [PreSignupController::class, 'verifyOtp'])
 Route::get('/idcheck', [PreSignupController::class, 'showIdCheckForm'])->name('idcheck');
 Route::post('/idcheck', [PreSignupController::class, 'checkId'])->name('idcheck.submit');
 Route::post('/idcheck/verify', [PreSignupController::class, 'checkIdAjax'])->name('idcheck.verify');
+Route::post('/idcheck/store-session', [PreSignupController::class, 'storeVerifiedId'])->name('idcheck.store_session');
 
 // Signup Routes
 Route::get('/signup', [SignupController::class, 'showSignupForm'])->name('signup');
@@ -88,6 +89,11 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/evaluations/save-and-clear-all', [EvaluationController::class, 'saveAndClearAllResults'])->name('evaluations.saveAndClearAll');
     Route::get('/admin/check-evaluations-exist', [EvaluationController::class, 'checkEvaluationsExist'])->name('evaluations.checkExist');
     Route::get('/admin/check-questions-empty', [EvaluationController::class, 'checkQuestionsEmpty'])->name('evaluations.checkQuestionsEmpty');
+
+    // Instructor Selection Persistence Routes
+    Route::post('/evaluations/instructor-selection/save', [EvaluationController::class, 'saveInstructorSelection'])->name('instructor-selection.save');
+    Route::post('/evaluations/instructor-selection/update-stage', [EvaluationController::class, 'updateSelectionStage'])->name('instructor-selection.update-stage');
+    Route::post('/evaluations/instructor-selection/clear', [EvaluationController::class, 'clearInstructorSelections'])->name('instructor-selection.clear');
 
     // Academic Year Routes
     Route::get('/dashboard/academic-years', [AcademicYearController::class, 'index'])->name('academic-years.index');

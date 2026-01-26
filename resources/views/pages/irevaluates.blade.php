@@ -629,7 +629,7 @@
 </style>
 
 <div class="row page-full-width evaluations-page justify-content-center">
-    <div class="col-12 col-lg-10 col-xl-8">
+     <div class="col-12 col-lg-10 col-xl-8">
         <div class="card border-0 shadow-sm evaluation-card" style="position: relative;">
             <div class="card-header bg-transparent border-0 text-center">
                 <div class="text-center mb-3">
@@ -719,7 +719,7 @@
                             <div class="tab-content" id="staffTypeTabsContent">
                                 <!-- Teaching Staff Tab -->
                                 <div class="tab-pane fade show active" id="teaching-content" role="tabpanel">
-                                    <div class="row g-3 staff-container justify-content-center" id="teachingList">
+                                    <div class="row g-3 staff-container justify-content-end" id="teachingList" style="padding-left: 1rem;">
                                         @foreach($studentSubjects->groupBy('assign_instructor') as $instructorName => $subjects)
                                             @php 
                                                 $staff = $teachingStaff->where('full_name', $instructorName)->first();
@@ -742,7 +742,7 @@
                                                             </div>
                                                             <div class="flex-grow-1">
                                                                 <h6 class="mb-0 fw-bold text-dark">{{ $instructorName }}</h6>
-                                                                <small class="text-muted d-flex align-items-center" title="{{ $subjectNames }}">
+                                                                <small class="text-muted d-flex align-items-center mb-1" title="{{ $subjectNames }}">
                                                                     <i class="fas fa-book me-1"></i>
                                                                     <span class="text-truncate" style="max-width: 150px;">{{ $subjectNames }}</span>
                                                                     <i class="fas fa-info-circle ms-1 text-primary cursor-pointer subject-popover" 
@@ -755,17 +755,17 @@
                                                                        title="Full Subject List"
                                                                        data-bs-content="{{ $subjectNames }}"></i>
                                                                 </small>
-                                                            </div>
-                                                            <div class="ms-2">
-                                                                @if($evaluated)
-                                                                    <span class="badge bg-success-soft text-success rounded-pill">
-                                                                        <i class="fas fa-check-circle me-1"></i>Evaluated
-                                                                    </span>
-                                                                @endif
-                                                                <div class="completion-status-badge" style="display: none;">
-                                                                    <span class="badge bg-success rounded-pill">
-                                                                        <i class="fas fa-check me-1"></i>Ready
-                                                                    </span>
+                                                                <div>
+                                                                    @if($evaluated)
+                                                                        <span class="badge bg-success-soft text-success rounded-pill">
+                                                                            <i class="fas fa-check-circle me-1"></i>Evaluated
+                                                                        </span>
+                                                                    @endif
+                                                                    <div class="completion-status-badge" style="display: none;">
+                                                                        <span class="badge bg-success rounded-pill">
+                                                                            <i class="fas fa-check me-1"></i>Ready
+                                                                        </span>
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -790,11 +790,19 @@
                                                 Done Selection
                                             </button>
                                         </div>
-                                        <div id="lockedControls" style="display: none;">
+                                        <div id="reviewControls" style="display: none;">
                                             <div class="d-flex justify-content-center gap-3">
                                                 <button type="button" class="btn btn-outline-secondary px-4 fw-bold rounded-pill" onclick="unlockSelection()">
-                                                    <i class="fas fa-edit me-2"></i>Edit Selection
+                                                    <i class="fas fa-edit me-2"></i>Edit
                                                 </button>
+                                                <button type="button" class="btn btn-success px-4 fw-bold rounded-pill shadow-sm" id="confirmSelectionBtn" onclick="finalConfirmSelection()">
+                                                    <i class="fas fa-check-double me-2"></i>Confirm
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div id="lockedControls" style="display: none;">
+                                            <div class="alert alert-success d-inline-block px-4 py-2 rounded-pill mb-0 shadow-sm">
+                                                <i class="fas fa-lock me-2"></i>Selection Locked - You can now start the evaluation
                                             </div>
                                         </div>
                                     </div>
@@ -806,7 +814,7 @@
                                         <i class="fas fa-info-circle me-2"></i>
                                         <strong>Non-teaching evaluation is currently not available.</strong>
                                     </div>
-                                    <div class="row g-3 staff-container justify-content-center" id="nonTeachingList" style="opacity: 0.7; pointer-events: none;">
+                                    <div class="row g-3 staff-container justify-content-end" id="nonTeachingList" style="opacity: 0.7; pointer-events: none; padding-right: 2rem;">
                                         @foreach($nonTeachingStaff as $staff)
                                             @php $evaluated = in_array($staff->id, $evaluatedNonTeachingIds, true); @endphp
                                             <div class="col-md-6 staff-item" data-name="{{ strtolower($staff->full_name) }}" data-id="{{ strtolower($staff->staff_id) }}">
@@ -823,18 +831,18 @@
                                                             </div>
                                                             <div class="flex-grow-1">
                                                                 <h6 class="mb-0 fw-bold text-dark">{{ $staff->full_name }}</h6>
-                                                                <small class="text-muted">{{ $staff->staff_id }}</small>
-                                                            </div>
-                                                            <div class="ms-2">
-                                                                @if($evaluated)
-                                                                    <span class="badge bg-success-soft text-success rounded-pill">
-                                                                        <i class="fas fa-check-circle me-1"></i>Evaluated
-                                                                    </span>
-                                                                @endif
-                                                                <div class="completion-status-badge" style="display: none;">
-                                                                    <span class="badge bg-success rounded-pill">
-                                                                        <i class="fas fa-check me-1"></i>Ready
-                                                                    </span>
+                                                                <small class="text-muted mb-1 d-block">{{ $staff->staff_id }}</small>
+                                                                <div>
+                                                                    @if($evaluated)
+                                                                        <span class="badge bg-success-soft text-success rounded-pill">
+                                                                            <i class="fas fa-check-circle me-1"></i>Evaluated
+                                                                        </span>
+                                                                    @endif
+                                                                    <div class="completion-status-badge" style="display: none;">
+                                                                        <span class="badge bg-success rounded-pill">
+                                                                            <i class="fas fa-check me-1"></i>Ready
+                                                                        </span>
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -859,11 +867,19 @@
                                                 Done Selection
                                             </button>
                                         </div>
-                                        <div id="lockedControlsNonTeaching" style="display: none;">
+                                        <div id="reviewControlsNonTeaching" style="display: none;">
                                             <div class="d-flex justify-content-center gap-3">
                                                 <button type="button" class="btn btn-outline-secondary px-4 fw-bold rounded-pill" onclick="unlockSelection()">
                                                     <i class="fas fa-edit me-2"></i>Edit Selection
                                                 </button>
+                                                <button type="button" class="btn btn-success px-4 fw-bold rounded-pill shadow-sm" id="confirmSelectionBtnNonTeaching" onclick="finalConfirmSelection()">
+                                                    <i class="fas fa-check-double me-2"></i>Confirm Selection
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div id="lockedControlsNonTeaching" style="display: none;">
+                                            <div class="alert alert-success d-inline-block px-4 py-2 rounded-pill mb-0 shadow-sm">
+                                                <i class="fas fa-lock me-2"></i>Selection Locked - You can now start the evaluation
                                             </div>
                                         </div>
                                     </div>
@@ -1020,6 +1036,7 @@ let selectedStaff = [];
 let activeStaffId = null;
 
 document.addEventListener('DOMContentLoaded', function() {
+    restoreSelectionState();
     // Handle session messages
     @if(session('message'))
         Swal.fire({
@@ -1168,6 +1185,118 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
+
+function saveSelectionState(locked = false) {
+    localStorage.setItem('ireval_selected_staff', JSON.stringify(selectedStaff));
+    localStorage.setItem('ireval_selection_locked', locked ? 'true' : 'false');
+    localStorage.setItem('ireval_staff_type', currentStaffType);
+    updateStartButtonText();
+}
+
+function clearSelectionState() {
+    localStorage.removeItem('ireval_selected_staff');
+    localStorage.removeItem('ireval_selection_locked');
+    localStorage.removeItem('ireval_staff_type');
+    updateStartButtonText();
+}
+
+function updateStartButtonText() {
+    const startBtn = document.getElementById('startEvaluationBtn');
+    if (!startBtn) return;
+    
+    const isLocked = localStorage.getItem('ireval_selection_locked') === 'true';
+    if (isLocked) {
+        startBtn.innerHTML = '<i class=\"fas fa-play me-2\"></i>Continue Evaluation';
+        startBtn.className = 'btn btn-primary px-3 px-md-4 py-2 fw-bold rounded-pill';
+    } else {
+        startBtn.innerHTML = '<i class=\"fas fa-play me-2\"></i>Select Specific Instructors';
+        startBtn.className = 'btn btn-success px-3 px-md-4 py-2 fw-bold rounded-pill';
+    }
+}
+
+function restoreSelectionState() {
+    const savedStaff = localStorage.getItem('ireval_selected_staff');
+    const isLocked = localStorage.getItem('ireval_selection_locked') === 'true';
+    const savedType = localStorage.getItem('ireval_staff_type') || 'teaching';
+
+    if (savedStaff) {
+        selectedStaff = JSON.parse(savedStaff);
+        currentStaffType = savedType;
+        
+        // Update checkboxes and cards visual state
+        selectedStaff.forEach(staff => {
+            const checkbox = document.querySelector(`.select-staff-checkbox[data-staff-id=\"${staff.id}\"]`);
+            if (checkbox) {
+                checkbox.checked = true;
+                const card = checkbox.closest('.staff-card');
+                if (card) card.classList.add('selected');
+            }
+        });
+
+        // Update staff type tab
+        if (savedType === 'non-teaching') {
+            const nonTeachingTab = document.getElementById('non-teaching-tab');
+            if (nonTeachingTab) nonTeachingTab.click();
+        }
+
+        if (isLocked) {
+            // Apply locked UI state
+            const container = document.getElementById('staffListSection');
+            const items = container.querySelectorAll('.staff-item');
+            
+            items.forEach(item => {
+                const checkbox = item.querySelector('.select-staff-checkbox');
+                const staffId = checkbox ? checkbox.getAttribute('data-staff-id') : null;
+                const isSelected = selectedStaff.some(s => s.id == staffId);
+
+                if (isSelected) {
+                    item.classList.remove('d-none');
+                    const evalBtnWrapper = item.querySelector('.evaluate-btn-wrapper');
+                    if (evalBtnWrapper) {
+                        evalBtnWrapper.style.display = 'block';
+                        const btn = evalBtnWrapper.querySelector('button');
+                        if (btn) btn.disabled = false;
+                    }
+                    const cbWrapper = item.querySelector('.checkbox-wrapper');
+                    if (cbWrapper) cbWrapper.style.display = 'none';
+                } else {
+                    item.classList.add('d-none');
+                }
+            });
+
+            // Toggle controls to Locked state
+            if (currentStaffType === 'teaching') {
+                document.getElementById('initialControls').style.display = 'none';
+                document.getElementById('reviewControls').style.display = 'none';
+                document.getElementById('lockedControls').style.display = 'block';
+                document.getElementById('lockedControls').classList.remove('d-none');
+            } else {
+                document.getElementById('initialControlsNonTeaching').style.display = 'none';
+                document.getElementById('reviewControlsNonTeaching').style.display = 'none';
+                document.getElementById('lockedControlsNonTeaching').style.display = 'block';
+                document.getElementById('lockedControlsNonTeaching').classList.remove('d-none');
+            }
+
+            // Hide search
+            const searchContainer = document.querySelector('.staff-search-container');
+            if (searchContainer) searchContainer.style.display = 'none';
+
+            // Auto-open the selection wrapper and hide privacy notice
+            const privacyReminder = document.getElementById('privacyReminder');
+            const wrapper = document.getElementById('selectionAndEvaluationWrapper');
+            if (privacyReminder && wrapper) {
+                privacyReminder.classList.add('d-none');
+                wrapper.classList.remove('d-none');
+                wrapper.style.display = 'block';
+            }
+        }
+        
+        // Enable Done button if not locked
+        const doneBtn = currentStaffType === 'teaching' ? document.getElementById('doneSelectionBtn') : document.getElementById('doneNonTeachingBtn');
+        if (doneBtn) doneBtn.disabled = selectedStaff.length === 0;
+    }
+    updateStartButtonText();
+}
 function loadEvaluation(staffId) {
     const container = document.getElementById('evaluationFormSection');
     // Clear all radios and textareas first
@@ -1253,10 +1382,10 @@ function handleStaffSelection(cardElement, id, type, name, evaluated, subject = 
         // Update selected visual state
         if (checkbox.checked) {
             cardElement.classList.add('selected');
-            selectedStaff.push({ id, type, name, subject });
+            selectedStaff.push({ id, type, name, subject }); saveSelectionState();
         } else {
             cardElement.classList.remove('selected');
-            selectedStaff = selectedStaff.filter(s => s.id !== id);
+            selectedStaff = selectedStaff.filter(s => s.id !== id); saveSelectionState();
         }
 
         // Enable/Disable Done button
@@ -1276,9 +1405,13 @@ function confirmSelection() {
         const card = item.querySelector('.staff-card');
         if (card.classList.contains('selected')) {
             item.classList.remove('d-none');
-            // Show evaluate button
-            const evalBtn = item.querySelector('.evaluate-btn-wrapper');
-            if (evalBtn) evalBtn.style.display = 'block';
+            // Show evaluate button but keep it DISABLED for now
+            const evalBtnWrapper = item.querySelector('.evaluate-btn-wrapper');
+            if (evalBtnWrapper) {
+                evalBtnWrapper.style.display = 'block';
+                const btn = evalBtnWrapper.querySelector('button');
+                if (btn) btn.disabled = true;
+            }
             // Hide checkbox
             const cbWrapper = item.querySelector('.checkbox-wrapper');
             if (cbWrapper) cbWrapper.style.display = 'none';
@@ -1287,29 +1420,21 @@ function confirmSelection() {
         }
     });
 
-    // Toggle controls
+    // Toggle controls to Review state
     if (currentStaffType === 'teaching') {
         document.getElementById('initialControls').classList.add('d-none');
         document.getElementById('initialControls').style.display = 'none';
-        document.getElementById('lockedControls').classList.remove('d-none');
-        document.getElementById('lockedControls').style.display = 'block';
-        // Remove the Proceed button from locked controls if it exists or hide it
-        const proceedBtn = document.querySelector('#lockedControls button.btn-success');
-        if (proceedBtn) {
-            proceedBtn.classList.add('d-none');
-            proceedBtn.style.display = 'none';
-        }
+        document.getElementById('reviewControls').classList.remove('d-none');
+        document.getElementById('reviewControls').style.display = 'block';
+        document.getElementById('lockedControls').classList.add('d-none');
+        document.getElementById('lockedControls').style.display = 'none';
     } else {
         document.getElementById('initialControlsNonTeaching').classList.add('d-none');
         document.getElementById('initialControlsNonTeaching').style.display = 'none';
-        document.getElementById('lockedControlsNonTeaching').classList.remove('d-none');
-        document.getElementById('lockedControlsNonTeaching').style.display = 'block';
-        // Remove the Proceed button from locked controls
-        const proceedBtn = document.querySelector('#lockedControlsNonTeaching button.btn-success');
-        if (proceedBtn) {
-            proceedBtn.classList.add('d-none');
-            proceedBtn.style.display = 'none';
-        }
+        document.getElementById('reviewControlsNonTeaching').classList.remove('d-none');
+        document.getElementById('reviewControlsNonTeaching').style.display = 'block';
+        document.getElementById('lockedControlsNonTeaching').classList.add('d-none');
+        document.getElementById('lockedControlsNonTeaching').style.display = 'none';
     }
 
     // Hide search
@@ -1320,15 +1445,48 @@ function confirmSelection() {
     }
 }
 
-function unlockSelection() {
-    // Show the privacy reminder box again
-    const privacyReminder = document.getElementById('privacyReminder');
-    if (privacyReminder) {
-        privacyReminder.classList.remove('d-none');
-        privacyReminder.classList.add('d-flex');
-        privacyReminder.style.display = 'flex';
-    }
+function finalConfirmSelection() {
+    Swal.fire({
+        title: 'Finalize Selection?',
+        text: "This will lock your instructor selection for evaluation. You won't be able to edit the selection after this.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#48bb78',
+        cancelButtonColor: '#718096',
+        confirmButtonText: 'Yes, lock it!',
+        cancelButtonText: 'Wait, let me check'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Enable all evaluation buttons
+            const container = document.getElementById('staffListSection');
+            const evalBtns = container.querySelectorAll('.evaluate-btn-wrapper button');
+            evalBtns.forEach(btn => btn.disabled = false);
 
+            // Toggle controls to Locked state
+            if (currentStaffType === 'teaching') {
+                document.getElementById('reviewControls').classList.add('d-none');
+                document.getElementById('reviewControls').style.display = 'none';
+                document.getElementById('lockedControls').classList.remove('d-none');
+                document.getElementById('lockedControls').style.display = 'block';
+            } else {
+                document.getElementById('reviewControlsNonTeaching').classList.add('d-none');
+                document.getElementById('reviewControlsNonTeaching').style.display = 'none';
+                document.getElementById('lockedControlsNonTeaching').classList.remove('d-none');
+                document.getElementById('lockedControlsNonTeaching').style.display = 'block';
+            }
+
+            Swal.fire({
+                icon: 'success',
+                title: 'Selection Locked',
+                text: 'You can now proceed with the evaluations.',
+                timer: 2000,
+                showConfirmButton: false
+            });
+        }
+    });
+}
+
+function unlockSelection() { clearSelectionState();
     // Show all items
     const container = document.getElementById('staffListSection');
     const items = container.querySelectorAll('.staff-item');
@@ -1336,28 +1494,35 @@ function unlockSelection() {
     items.forEach(item => {
         item.classList.remove('d-none');
         // Hide evaluate button
-        const evalBtn = item.querySelector('.evaluate-btn-wrapper');
-        if (evalBtn) {
-            evalBtn.classList.add('d-none');
-            evalBtn.style.display = 'none';
+        const evalBtnWrapper = item.querySelector('.evaluate-btn-wrapper');
+        if (evalBtnWrapper) {
+            evalBtnWrapper.style.display = 'none';
+            const btn = evalBtnWrapper.querySelector('button');
+            if (btn) btn.disabled = true;
         }
         // Show checkbox
         const cbWrapper = item.querySelector('.checkbox-wrapper');
         if (cbWrapper) {
-            cbWrapper.classList.remove('d-none');
             cbWrapper.style.display = 'block';
         }
     });
 
-    // Toggle controls
-    document.getElementById('initialControls').classList.remove('d-none');
-    document.getElementById('initialControls').style.display = 'block';
-    document.getElementById('lockedControls').classList.add('d-none');
-    document.getElementById('lockedControls').style.display = 'none';
-    document.getElementById('initialControlsNonTeaching').classList.remove('d-none');
-    document.getElementById('initialControlsNonTeaching').style.display = 'block';
-    document.getElementById('lockedControlsNonTeaching').classList.add('d-none');
-    document.getElementById('lockedControlsNonTeaching').style.display = 'none';
+    // Toggle controls back to Initial state
+    if (currentStaffType === 'teaching') {
+        document.getElementById('initialControls').classList.remove('d-none');
+        document.getElementById('initialControls').style.display = 'block';
+        document.getElementById('reviewControls').classList.add('d-none');
+        document.getElementById('reviewControls').style.display = 'none';
+        document.getElementById('lockedControls').classList.add('d-none');
+        document.getElementById('lockedControls').style.display = 'none';
+    } else {
+        document.getElementById('initialControlsNonTeaching').classList.remove('d-none');
+        document.getElementById('initialControlsNonTeaching').style.display = 'block';
+        document.getElementById('reviewControlsNonTeaching').classList.add('d-none');
+        document.getElementById('reviewControlsNonTeaching').style.display = 'none';
+        document.getElementById('lockedControlsNonTeaching').classList.add('d-none');
+        document.getElementById('lockedControlsNonTeaching').style.display = 'none';
+    }
 
     // Show search
     const searchContainer = document.querySelector('.staff-search-container');
