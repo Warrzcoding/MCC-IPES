@@ -1441,12 +1441,12 @@
                     <!-- Student Signup Link -->
                    <div class="signup-link">
                     <!-- <p>Second Semester Evaluation is Coming!!!</p>-->
-                      <p>Don't have an account?<a href="{{ route('pre_signup') }}">
-                            <i class="fas fa-user-plus"></i> Sign up here
-                        </a></p>
-                   <!--  <p>Don't have an account?<a href="{{ route('idcheck') }}">
+                    <!--  <p>Don't have an account?<a href="{{ route('pre_signup') }}">
                             <i class="fas fa-user-plus"></i> Sign up here
                         </a></p>-->
+                      <p>Don't have an account?<a href="{{ route('idcheck') }}">
+                            <i class="fas fa-user-plus"></i> Sign up here
+                        </a></p>
                     </div>
 
                     
@@ -1482,6 +1482,12 @@
                             </span>
                             <input type="password" class="form-control" id="admin_password" name="password"
                                    placeholder="Enter your password" value="" autocomplete="new-password" {{ ($admin_otp_pending && $adminOtpOverlayEnabled) ? 'readonly' : '' }}>
+                        </div>
+                        <div class="d-flex align-items-center justify-content-end mt-2">
+                            <label class="form-check-label me-2 small" for="showAdminPassword" style="font-size: 0.875rem; color: #666;">
+                                Show password
+                            </label>
+                            <input class="form-check-input" type="checkbox" id="showAdminPassword" style="transform: scale(0.8);">
                         </div>
                     </div>
 
@@ -1615,6 +1621,7 @@
                       <!--  <a href="{{ route('password.request') }}" class="forgot-link">
                             Forgot Password?
                         </a>-->
+                       
                     </div>
                 </form>
 
