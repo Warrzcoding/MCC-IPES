@@ -734,7 +734,7 @@
         <div class="login-header">
              <div class="logo">
                 <img src="{{ asset('images/mccicin.jpg') }}" alt="MCC Logo"
-                     style="width: 60%; height: 60%; object-fit: cover; border-radius: 50%;">
+                     style="width: 60%; height: 60%; object-fit: cover; border-radius: 10%;">
             </div>
             <h2>ID Verification</h2>
             <p>STUDENT ACCESS CHECK</p>
@@ -752,13 +752,11 @@
                         <i class="fas fa-id-card-alt"></i>
                     </span>
                     <input type="text" class="form-control" id="school_id" name="id_number"
-                           placeholder="2024-0001" required
+                           placeholder="Enter School-ID" required
                            pattern="[0-9]{4}-[0-9]{4}" maxlength="9"
                            title="Format: 0000-0000 (e.g., 2024-0001)" value="" autocomplete="off">
                 </div>
-                <div class="input-hint">
-                    Format: 4 digits, dash, 4 digits (0000-0000)
-                </div>
+              
             </div>
 
             <button type="button" class="btn btn-primary" id="checkIdBtn">
