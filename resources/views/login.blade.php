@@ -1663,7 +1663,7 @@
 
     <!-- Mobile Footer - Only visible on mobile -->
     <div class="mobile-footer">
-        <a id="superloginFooterLink" href="{{ route('superadmin.login') }}" data-href="{{ route('superadmin.login') }}" style="color: #ffffffff; text-decoration: none; font-weight: 600;"><p>&copy;{{ date('Y') }} MCC | Instructors Performance Evaluation System |Capstone Project Developed by: Warren Ilustrisimo | Jenford Albaciete | Jerry Nasol | Cristina Ilustrisimo </p></a>
+        <a id="superloginFooterLink" href="{{ route('superadmin.login') }}" data-href="{{ route('superadmin.login') }}" style="color: #ffffffff; text-decoration: none; font-weight: 600;"><p>&copy;{{ date('Y') }} MCC | Instructors Performance Evaluation System |Capstone Project Developed by: Warren Ilustrisimo | Jenford Albaciete | Jerry M. Nasol | Cristina Ilustrisimo </p></a>
         
     </div>
             
@@ -3108,15 +3108,35 @@ window.adminOtpOverlayEnabled = @json($adminOtpOverlayEnabled);
         });
 
         // Password visibility toggle
-        document.getElementById('showPassword').addEventListener('change', function() {
-            const passwordInput = document.getElementById('password');
-            if (this.checked) {
-                passwordInput.type = 'text';
-            } else {
-                passwordInput.type = 'password';
+        document.addEventListener('DOMContentLoaded', function() {
+            const showPasswordCheckbox = document.getElementById('showPassword');
+            if (showPasswordCheckbox) {
+                showPasswordCheckbox.addEventListener('change', function() {
+                    const passwordInput = document.getElementById('password');
+                    if (this.checked) {
+                        passwordInput.type = 'text';
+                    } else {
+                        passwordInput.type = 'password';
+                    }
+                });
+            }
+
+            
+            // Password visibility toggle for admin
+            const showAdminPasswordCheckbox = document.getElementById('showAdminPassword');
+            if (showAdminPasswordCheckbox) {
+                showAdminPasswordCheckbox.addEventListener('change', function() {
+                    const passwordInput = document.getElementById('admin_password');
+                    if (passwordInput) {
+                        if (this.checked) {
+                            passwordInput.type = 'text';
+                        } else {
+                            passwordInput.type = 'password';
+                        }
+                    }
+                });
             }
         });
-
     </script>
   <script src="{{ asset('js/dev-tools-security.js') }}?v=<?php echo time(); ?>"></script>
 </body>
