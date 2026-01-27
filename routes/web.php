@@ -94,6 +94,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/evaluations/instructor-selection/save', [EvaluationController::class, 'saveInstructorSelection'])->name('instructor-selection.save');
     Route::post('/evaluations/instructor-selection/update-stage', [EvaluationController::class, 'updateSelectionStage'])->name('instructor-selection.update-stage');
     Route::post('/evaluations/instructor-selection/clear', [EvaluationController::class, 'clearInstructorSelections'])->name('instructor-selection.clear');
+    Route::post('/evaluations/confirm-selection', [EvaluationController::class, 'confirmSelection'])->name('selection.confirm');
+    Route::post('/evaluations/unlock-selection', [EvaluationController::class, 'unlockSelection'])->name('selection.unlock');
 
     // Academic Year Routes
     Route::get('/dashboard/academic-years', [AcademicYearController::class, 'index'])->name('academic-years.index');

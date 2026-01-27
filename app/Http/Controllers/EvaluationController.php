@@ -130,6 +130,14 @@ class EvaluationController extends Controller
             ->with('staff')
             ->get();
 
+        // Get locked selections specifically (ensure array format)
+        $lockedSelectionsData = InstructorSelection::getLockedSelectionByType($userId, $currentAcademicYear->id ?? null);
+        $lockedSelections = [
+            'teaching' => $lockedSelectionsData['teaching'] ?? collect(),
+            'non-teaching' => $lockedSelectionsData['non-teaching'] ?? collect(),
+        ];
+        $hasLockedSelection = InstructorSelection::hasLockedSelection($userId, $currentAcademicYear->id ?? null);
+
         // Determine which view to return based on user status
         $viewName = (strtolower($user->student_status) === 'irregular') ? 'pages.irevaluates' : 'pages.evaluates';
 
@@ -146,7 +154,9 @@ class EvaluationController extends Controller
             'nonTeachingEvaluatedStaff',
             'totalEvaluated',
             'currentAcademicYear',
-            'savedSelections'
+            'savedSelections',
+            'lockedSelections',
+            'hasLockedSelection'
         ));
     }
 
@@ -263,6 +273,84 @@ class EvaluationController extends Controller
             'message' => 'Evaluation(s) submitted successfully!',
             'message_type' => 'success'
         ]);
+    }
+
+    /**
+     * AJAX endpoint to confirm and lock instructor selection
+     */
+    public function confirmSelection(Request $request)
+    {
+        $request->validate([
+            'staff_ids' => 'required|array',
+            'staff_ids.*' => 'required|integer',
+            'staff_type' => 'required|in:teaching,non-teaching',
+        ]);
+
+        try {
+            $userId = auth()->id();
+            $activeAcademicYear = AcademicYear::where('is_active', 1)->first();
+            $academicYearId = $activeAcademicYear ? $activeAcademicYear->id : null;
+
+            if (!$academicYearId) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No active academic year found.'
+                ], 400);
+            }
+
+            // Save selections to database and mark as locked
+            InstructorSelection::saveSelection(
+                $userId,
+                $academicYearId,
+                $request->staff_ids,
+                $request->staff_type,
+                true  // is_locked = true
+            );
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Selection confirmed and locked successfully!'
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Selection confirmation failed', ['error' => $e->getMessage()]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Error: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * AJAX endpoint to unlock selection for editing
+     */
+    public function unlockSelection(Request $request)
+    {
+        try {
+            $userId = auth()->id();
+            $activeAcademicYear = AcademicYear::where('is_active', 1)->first();
+            $academicYearId = $activeAcademicYear ? $activeAcademicYear->id : null;
+
+            if (!$academicYearId) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No active academic year found.'
+                ], 400);
+            }
+
+            // Clear selections to allow re-selection
+            InstructorSelection::clearSelection($userId, $academicYearId);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Selection unlocked for editing!'
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Selection unlock failed', ['error' => $e->getMessage()]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Error: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     public function getStaffComments(Request $request)

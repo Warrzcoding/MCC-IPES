@@ -26,6 +26,13 @@
     $nonTeachingCount = count($evaluatedNonTeachingIds);
     $distinctStaffIds = array_unique(array_merge($evaluatedTeachingIds, $evaluatedNonTeachingIds));
     
+    // Get locked selections from database - with defaults
+    $lockedSelections = isset($lockedSelections) ? $lockedSelections : [
+        'teaching' => collect(),
+        'non-teaching' => collect()
+    ];
+    $hasLockedSelection = $hasLockedSelection ?? false;
+    
     // Calculate completion status
     $totalAvailableTeaching = isset($teachingStaff) ? $teachingStaff->count() : 0;
     $totalAvailableNonTeaching = isset($nonTeachingStaff) ? $nonTeachingStaff->count() : 0;
@@ -161,6 +168,16 @@
 .tab-pane {
     position: relative;
     z-index: 1;
+}
+
+/* Disable Non-Teaching Tab */
+#non-teaching-content {
+    display: none !important;
+}
+#non-teaching-tab {
+    opacity: 0.6 !important;
+    cursor: not-allowed !important;
+    position: relative;
 }
 
 /* Section Title (from evaluates.blade) */
@@ -607,6 +624,19 @@
         font-size: 1.5rem !important;
     }
 
+    /* Disabled Evaluate Button Styling */
+    .evaluate-btn-wrapper button:disabled {
+        background: linear-gradient(135deg, #cbd5e0 0%, #a0aec0 100%) !important;
+        color: #4a5568 !important;
+        cursor: not-allowed !important;
+        opacity: 0.7 !important;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+    }
+    .evaluate-btn-wrapper button:disabled:hover {
+        transform: none !important;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+    }
+
     /* Make content wider on mobile with equal spacing */
     .evaluation-form-inner {
         max-width: 100%;
@@ -702,7 +732,7 @@
                                     </button>
                                 </li>
                                 <li class="nav-item" role="presentation">
-                                    <button class="nav-link" id="non-teaching-tab" data-bs-toggle="tab" data-bs-target="#non-teaching-content" type="button" role="tab" onclick="setStaffType('non-teaching')">
+                                    <button class="nav-link" id="non-teaching-tab" type="button" role="tab">
                                         <i class="fas fa-users-cog tab-icon me-2"></i>Non-Teaching
                                     </button>
                                 </li>
@@ -770,8 +800,10 @@
                                                             </div>
                                                         </div>
                                                         <div class="evaluate-btn-wrapper mt-2" style="display: none;">
-                                                            <button type="button" class="btn btn-sm btn-primary w-100 rounded-pill py-2 fw-bold" onclick="event.stopPropagation(); openEvaluation({{ $staffId }}, 'teaching', '{{ addslashes($instructorName) }}')">
-                                                                <i class="fas fa-file-alt me-1"></i> Open Evaluation Form
+                                                            <button type="button" class="btn btn-sm btn-primary w-100 rounded-pill py-2 fw-bold" 
+                                                                {{ $evaluated ? 'disabled' : '' }}
+                                                                onclick="event.stopPropagation(); {{ $evaluated ? "Swal.fire({icon:'info', title:'Already Evaluated', text:'You have already submitted an evaluation for this instructor.', confirmButtonColor:'#667eea'})" : "openEvaluation($staffId, 'teaching', '" . addslashes($instructorName) . "')" }}">
+                                                                <i class="fas fa-file-alt me-1"></i> {{ $evaluated ? 'Already Evaluated' : 'Open Evaluation Form' }}
                                                             </button>
                                                         </div>
                                                     </div>
@@ -847,8 +879,10 @@
                                                             </div>
                                                         </div>
                                                         <div class="evaluate-btn-wrapper mt-2" style="display: none;">
-                                                            <button type="button" class="btn btn-sm btn-success w-100 rounded-pill py-2 fw-bold" onclick="event.stopPropagation(); openEvaluation({{ $staff->id }}, 'non-teaching', '{{ addslashes($staff->full_name) }}')">
-                                                                <i class="fas fa-file-alt me-1"></i> Open Evaluation Form
+                                                            <button type="button" class="btn btn-sm btn-success w-100 rounded-pill py-2 fw-bold" 
+                                                                {{ $evaluated ? 'disabled' : '' }}
+                                                                onclick="event.stopPropagation(); {{ $evaluated ? "Swal.fire({icon:'info', title:'Already Evaluated', text:'You have already submitted an evaluation for this staff member.', confirmButtonColor:'#667eea'})" : "openEvaluation($staff->id, 'non-teaching', '" . addslashes($staff->full_name) . "')" }}">
+                                                                <i class="fas fa-file-alt me-1"></i> {{ $evaluated ? 'Already Evaluated' : 'Open Evaluation Form' }}
                                                             </button>
                                                         </div>
                                                     </div>
@@ -1035,8 +1069,74 @@ let currentStaffType = 'teaching';
 let selectedStaff = [];
 let activeStaffId = null;
 
+// Data from database (Blade PHP variables)
+const dbHasLockedSelection = {{ (isset($hasLockedSelection) && $hasLockedSelection) ? 'true' : 'false' }};
+const dbLockedSelections = {
+    teaching: {{ isset($lockedSelections) && isset($lockedSelections['teaching']) ? json_encode($lockedSelections['teaching']->map(function($s) { return ['id' => $s->staff_id, 'name' => $s->staff->full_name ?? '']; })->values()->toArray()) : '[]' }},
+    'non-teaching': {{ isset($lockedSelections) && isset($lockedSelections['non-teaching']) ? json_encode($lockedSelections['non-teaching']->map(function($s) { return ['id' => $s->staff_id, 'name' => $s->staff->full_name ?? '']; })->values()->toArray()) : '[]' }}
+};
+
 document.addEventListener('DOMContentLoaded', function() {
-    restoreSelectionState();
+    // Check if user has locked selection from database (persistent across devices)
+    if (dbHasLockedSelection) {
+        restoreLockedSelectionFromDatabase();
+    } else {
+        restoreSelectionState();
+    }
+    
+    // Setup non-teaching tab disable globally (always active)
+    const nonTeachingTab = document.getElementById('non-teaching-tab');
+    if (nonTeachingTab) {
+        // Disable the button completely
+        nonTeachingTab.disabled = true;
+        nonTeachingTab.style.opacity = '0.5';
+        nonTeachingTab.style.cursor = 'not-allowed';
+        
+        // Remove Bootstrap tab functionality
+        nonTeachingTab.removeAttribute('data-bs-toggle');
+        nonTeachingTab.removeAttribute('data-bs-target');
+        nonTeachingTab.classList.remove('active');
+        
+        // Use mousedown to capture before Bootstrap's click
+        nonTeachingTab.addEventListener('mousedown', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+            console.log('Non-teaching tab clicked - showing alert');
+            Swal.fire({
+                icon: 'warning',
+                title: 'Unavailable',
+                text: 'Non-Teaching evaluation is currently not available.',
+                confirmButtonColor: '#667eea',
+                confirmButtonText: 'OK',
+                customClass: {
+                    popup: 'animated fadeInDown'
+                }
+            });
+            return false;
+        }, true); // Use capture phase
+        
+        // Also add click listener as backup
+        nonTeachingTab.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+            return false;
+        }, true);
+    }
+    
+    // Setup INSTRUCTORS tab to restore locked state when clicked
+    const teachingTab = document.getElementById('teaching-tab');
+    if (teachingTab && dbHasLockedSelection) {
+        teachingTab.addEventListener('click', function(e) {
+            // Restore locked UI state after a brief delay to allow Bootstrap to process
+            setTimeout(function() {
+                applyLockedUIState();
+                console.log('Restored locked state for teaching tab');
+            }, 50);
+        });
+    }
+    
     // Handle session messages
     @if(session('message'))
         Swal.fire({
@@ -1058,26 +1158,6 @@ document.addEventListener('DOMContentLoaded', function() {
             privacyReminder.classList.add('d-none');
             wrapper.classList.remove('d-none');
             wrapper.style.display = 'block'; // Keep for compatibility but d-none will override if present
-
-            // Setup non-teaching tab disable
-            const nonTeachingTab = document.getElementById('non-teaching-tab');
-            if (nonTeachingTab) {
-                nonTeachingTab.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopImmediatePropagation();
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Unavailable',
-                        text: 'Non-Teaching evaluation is currently not available.',
-                        confirmButtonColor: '#667eea',
-                        confirmButtonText: 'OK',
-                        customClass: {
-                            popup: 'animated fadeInDown'
-                        }
-                    });
-                    return false;
-                });
-            }
         });
     }
 
@@ -1183,6 +1263,39 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     }
+    
+    // Watch for any DOM changes when in locked mode - restore locked state if cards visibility changes
+    if (dbHasLockedSelection) {
+        const observer = new MutationObserver(function(mutations) {
+            // Check if any staff-item visibility has changed unexpectedly
+            const container = document.getElementById('staffListSection');
+            if (container) {
+                const items = container.querySelectorAll('.staff-item');
+                let visibleCount = 0;
+                items.forEach(item => {
+                    if (!item.classList.contains('d-none')) {
+                        visibleCount++;
+                    }
+                });
+                
+                // If more cards are visible than selected staff, restore locked state
+                if (visibleCount > selectedStaff.length && selectedStaff.length > 0) {
+                    console.log('Detected unexpected card visibility change - restoring locked state');
+                    applyLockedUIState();
+                }
+            }
+        });
+        
+        const staffListSection = document.getElementById('staffListSection');
+        if (staffListSection) {
+            observer.observe(staffListSection, {
+                attributes: true,
+                attributeFilter: ['class', 'style'],
+                subtree: true,
+                childList: false
+            });
+        }
+    }
 });
 
 
@@ -1191,6 +1304,133 @@ function saveSelectionState(locked = false) {
     localStorage.setItem('ireval_selection_locked', locked ? 'true' : 'false');
     localStorage.setItem('ireval_staff_type', currentStaffType);
     updateStartButtonText();
+}
+
+function restoreLockedSelectionFromDatabase() {
+    // Determine which staff type has locked selections
+    const hasTeachingLocked = dbLockedSelections.teaching && dbLockedSelections.teaching.length > 0;
+    const hasNonTeachingLocked = dbLockedSelections['non-teaching'] && dbLockedSelections['non-teaching'].length > 0;
+    
+    console.log('Restoring from DB - Teaching:', hasTeachingLocked, 'NonTeaching:', hasNonTeachingLocked);
+    console.log('dbLockedSelections:', dbLockedSelections);
+    
+    if (hasTeachingLocked) {
+        currentStaffType = 'teaching';
+        selectedStaff = dbLockedSelections.teaching.map(s => ({
+            id: parseInt(s.id), // Ensure it's a number
+            type: 'teaching',
+            name: s.name
+        }));
+        console.log('Selected Teaching Staff:', selectedStaff);
+    } else if (hasNonTeachingLocked) {
+        currentStaffType = 'non-teaching';
+        selectedStaff = dbLockedSelections['non-teaching'].map(s => ({
+            id: parseInt(s.id), // Ensure it's a number
+            type: 'non-teaching',
+            name: s.name
+        }));
+        console.log('Selected NonTeaching Staff:', selectedStaff);
+    } else {
+        console.log('No locked selections found in database');
+        return; // No locked selection
+    }
+
+    // Apply locked UI state immediately
+    applyLockedUIState();
+}
+
+function applyLockedUIState() {
+    // Hide privacy reminder and show wrapper
+    const privacyReminder = document.getElementById('privacyReminder');
+    const wrapper = document.getElementById('selectionAndEvaluationWrapper');
+    if (privacyReminder && wrapper) {
+        privacyReminder.classList.add('d-none');
+        wrapper.classList.remove('d-none');
+        wrapper.style.display = 'block';
+    }
+
+    // Switch to correct tab if non-teaching
+    if (currentStaffType === 'non-teaching') {
+        const nonTeachingTab = document.getElementById('non-teaching-tab');
+        if (nonTeachingTab) {
+            try {
+                const bootstrapTab = new bootstrap.Tab(nonTeachingTab);
+                bootstrapTab.show();
+            } catch(e) {
+                console.warn('Bootstrap Tab error:', e);
+                nonTeachingTab.click();
+            }
+        }
+    }
+
+    // Filter UI: Show only locked/selected items
+    const container = document.getElementById('staffListSection');
+    if (!container) {
+        console.warn('staffListSection not found');
+        return;
+    }
+    
+    const items = container.querySelectorAll('.staff-item');
+    console.log('Total items:', items.length, 'Selected staff:', selectedStaff);
+    
+    items.forEach(item => {
+        const card = item.querySelector('.staff-card');
+        const checkbox = item.querySelector('.select-staff-checkbox');
+        const staffId = checkbox ? parseInt(checkbox.getAttribute('data-staff-id')) : null;
+        
+        // Check if this staff ID is in selected array
+        const isSelected = selectedStaff.some(s => {
+            const match = s.id === staffId;
+            if (match) console.log('Matched staff ID:', staffId);
+            return match;
+        });
+
+        if (isSelected) {
+            item.classList.remove('d-none');
+            if (card) card.classList.add('selected');
+            
+            // Show evaluate button and ENABLE it (locked state)
+            const evalBtnWrapper = item.querySelector('.evaluate-btn-wrapper');
+            if (evalBtnWrapper) {
+                evalBtnWrapper.style.display = 'block';
+                const btn = evalBtnWrapper.querySelector('button');
+                if (btn) btn.disabled = false;
+            }
+            // Hide checkbox
+            const cbWrapper = item.querySelector('.checkbox-wrapper');
+            if (cbWrapper) cbWrapper.style.display = 'none';
+        } else {
+            item.classList.add('d-none');
+        }
+    });
+
+    // Hide search container
+    const searchContainer = document.querySelector('.staff-search-container');
+    if (searchContainer) {
+        searchContainer.classList.add('d-none');
+        searchContainer.style.display = 'none';
+    }
+
+    // Toggle to LOCKED state (hide review controls, show locked controls)
+    if (currentStaffType === 'teaching') {
+        const initialControls = document.getElementById('initialControls');
+        const reviewControls = document.getElementById('reviewControls');
+        const lockedControls = document.getElementById('lockedControls');
+        if (initialControls) initialControls.style.display = 'none';
+        if (reviewControls) reviewControls.style.display = 'none';
+        if (lockedControls) lockedControls.style.display = 'block';
+    } else {
+        const initialControlsNT = document.getElementById('initialControlsNonTeaching');
+        const reviewControlsNT = document.getElementById('reviewControlsNonTeaching');
+        const lockedControlsNT = document.getElementById('lockedControlsNonTeaching');
+        if (initialControlsNT) initialControlsNT.style.display = 'none';
+        if (reviewControlsNT) reviewControlsNT.style.display = 'none';
+        if (lockedControlsNT) lockedControlsNT.style.display = 'block';
+    }
+
+    // Update start button text
+    updateStartButtonText();
+    console.log('Locked UI state applied successfully');
 }
 
 function clearSelectionState() {
@@ -1457,79 +1697,176 @@ function finalConfirmSelection() {
         cancelButtonText: 'Wait, let me check'
     }).then((result) => {
         if (result.isConfirmed) {
-            // Enable all evaluation buttons
-            const container = document.getElementById('staffListSection');
-            const evalBtns = container.querySelectorAll('.evaluate-btn-wrapper button');
-            evalBtns.forEach(btn => btn.disabled = false);
+            // Send AJAX request to save locked selection to database
+            const staffIds = selectedStaff.map(s => s.id);
+            
+            fetch('{{ route("selection.confirm") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify({
+                    staff_ids: staffIds,
+                    staff_type: currentStaffType
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Enable all evaluation buttons
+                    const container = document.getElementById('staffListSection');
+                    const evalBtns = container.querySelectorAll('.evaluate-btn-wrapper button');
+                    evalBtns.forEach(btn => btn.disabled = false);
 
-            // Toggle controls to Locked state
-            if (currentStaffType === 'teaching') {
-                document.getElementById('reviewControls').classList.add('d-none');
-                document.getElementById('reviewControls').style.display = 'none';
-                document.getElementById('lockedControls').classList.remove('d-none');
-                document.getElementById('lockedControls').style.display = 'block';
-            } else {
-                document.getElementById('reviewControlsNonTeaching').classList.add('d-none');
-                document.getElementById('reviewControlsNonTeaching').style.display = 'none';
-                document.getElementById('lockedControlsNonTeaching').classList.remove('d-none');
-                document.getElementById('lockedControlsNonTeaching').style.display = 'block';
-            }
+                    // Toggle controls to Locked state
+                    if (currentStaffType === 'teaching') {
+                        document.getElementById('reviewControls').classList.add('d-none');
+                        document.getElementById('reviewControls').style.display = 'none';
+                        document.getElementById('lockedControls').classList.remove('d-none');
+                        document.getElementById('lockedControls').style.display = 'block';
+                    } else {
+                        document.getElementById('reviewControlsNonTeaching').classList.add('d-none');
+                        document.getElementById('reviewControlsNonTeaching').style.display = 'none';
+                        document.getElementById('lockedControlsNonTeaching').classList.remove('d-none');
+                        document.getElementById('lockedControlsNonTeaching').style.display = 'block';
+                    }
 
-            Swal.fire({
-                icon: 'success',
-                title: 'Selection Locked',
-                text: 'You can now proceed with the evaluations.',
-                timer: 2000,
-                showConfirmButton: false
+                    // Save locked state to localStorage
+                    saveSelectionState(true);
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Selection Locked',
+                        text: 'You can now proceed with the evaluations. Your selection is saved and will persist across reloads.',
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.message || 'Failed to confirm selection',
+                        confirmButtonColor: '#667eea'
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'An error occurred while confirming your selection.',
+                    confirmButtonColor: '#667eea'
+                });
             });
         }
     });
 }
 
-function unlockSelection() { clearSelectionState();
-    // Show all items
-    const container = document.getElementById('staffListSection');
-    const items = container.querySelectorAll('.staff-item');
-    
-    items.forEach(item => {
-        item.classList.remove('d-none');
-        // Hide evaluate button
-        const evalBtnWrapper = item.querySelector('.evaluate-btn-wrapper');
-        if (evalBtnWrapper) {
-            evalBtnWrapper.style.display = 'none';
-            const btn = evalBtnWrapper.querySelector('button');
-            if (btn) btn.disabled = true;
-        }
-        // Show checkbox
-        const cbWrapper = item.querySelector('.checkbox-wrapper');
-        if (cbWrapper) {
-            cbWrapper.style.display = 'block';
+function unlockSelection() {
+    Swal.fire({
+        title: 'Unlock Selection?',
+        text: "This will allow you to edit your instructor selection. You'll need to confirm again before evaluating.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#f59e0b',
+        cancelButtonColor: '#718096',
+        confirmButtonText: 'Yes, unlock it!',
+        cancelButtonText: 'Keep it locked'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Send AJAX request to unlock selection
+            fetch('{{ route("selection.unlock") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Clear local state
+                    selectedStaff = [];
+                    clearSelectionState();
+                    
+                    // Show all items
+                    const container = document.getElementById('staffListSection');
+                    const items = container.querySelectorAll('.staff-item');
+                    
+                    items.forEach(item => {
+                        item.classList.remove('d-none');
+                        const card = item.querySelector('.staff-card');
+                        card.classList.remove('selected');
+                        
+                        // Hide evaluate button
+                        const evalBtnWrapper = item.querySelector('.evaluate-btn-wrapper');
+                        if (evalBtnWrapper) {
+                            evalBtnWrapper.style.display = 'none';
+                            const btn = evalBtnWrapper.querySelector('button');
+                            if (btn) btn.disabled = true;
+                        }
+                        // Show checkbox
+                        const cbWrapper = item.querySelector('.checkbox-wrapper');
+                        if (cbWrapper) {
+                            cbWrapper.style.display = 'block';
+                            const checkbox = cbWrapper.querySelector('input[type="checkbox"]');
+                            if (checkbox) checkbox.checked = false;
+                        }
+                    });
+
+                    // Toggle controls back to Initial state
+                    if (currentStaffType === 'teaching') {
+                        document.getElementById('initialControls').classList.remove('d-none');
+                        document.getElementById('initialControls').style.display = 'block';
+                        document.getElementById('reviewControls').classList.add('d-none');
+                        document.getElementById('reviewControls').style.display = 'none';
+                        document.getElementById('lockedControls').classList.add('d-none');
+                        document.getElementById('lockedControls').style.display = 'none';
+                    } else {
+                        document.getElementById('initialControlsNonTeaching').classList.remove('d-none');
+                        document.getElementById('initialControlsNonTeaching').style.display = 'block';
+                        document.getElementById('reviewControlsNonTeaching').classList.add('d-none');
+                        document.getElementById('reviewControlsNonTeaching').style.display = 'none';
+                        document.getElementById('lockedControlsNonTeaching').classList.add('d-none');
+                        document.getElementById('lockedControlsNonTeaching').style.display = 'none';
+                    }
+
+                    // Show search
+                    const searchContainer = document.querySelector('.staff-search-container');
+                    if (searchContainer) {
+                        searchContainer.classList.remove('d-none');
+                        searchContainer.style.display = 'block';
+                    }
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Selection Unlocked',
+                        text: 'You can now edit your instructor selection.',
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.message || 'Failed to unlock selection',
+                        confirmButtonColor: '#667eea'
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'An error occurred while unlocking your selection.',
+                    confirmButtonColor: '#667eea'
+                });
+            });
         }
     });
-
-    // Toggle controls back to Initial state
-    if (currentStaffType === 'teaching') {
-        document.getElementById('initialControls').classList.remove('d-none');
-        document.getElementById('initialControls').style.display = 'block';
-        document.getElementById('reviewControls').classList.add('d-none');
-        document.getElementById('reviewControls').style.display = 'none';
-        document.getElementById('lockedControls').classList.add('d-none');
-        document.getElementById('lockedControls').style.display = 'none';
-    } else {
-        document.getElementById('initialControlsNonTeaching').classList.remove('d-none');
-        document.getElementById('initialControlsNonTeaching').style.display = 'block';
-        document.getElementById('reviewControlsNonTeaching').classList.add('d-none');
-        document.getElementById('reviewControlsNonTeaching').style.display = 'none';
-        document.getElementById('lockedControlsNonTeaching').classList.add('d-none');
-        document.getElementById('lockedControlsNonTeaching').style.display = 'none';
-    }
-
-    // Show search
-    const searchContainer = document.querySelector('.staff-search-container');
-    if (searchContainer) {
-        searchContainer.classList.remove('d-none');
-        searchContainer.style.display = 'block';
-    }
 }
 
 function openEvaluation(id, type, name) {
