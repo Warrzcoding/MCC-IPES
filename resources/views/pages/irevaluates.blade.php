@@ -718,7 +718,7 @@
                             <p class="mb-0">Your identity and responses are strictly confidential. Please provide honest and constructive feedback. No one will know your answers or comments.</p>
                         </div>
                         <button id="startEvaluationBtn" class="btn btn-success px-3 px-md-4 py-2 fw-bold rounded-pill" type="button">
-                            <i class="fas fa-play me-2"></i>Select Specific Instructor
+                            <i class="fas fa-play me-2"></i>Select Specific Instructorssss
                         </button>
                     </div>
 
@@ -1079,6 +1079,12 @@ const dbLockedSelections = {
 document.addEventListener('DOMContentLoaded', function() {
     // Check if user has locked selection from database (persistent across devices)
     if (dbHasLockedSelection) {
+        // Hide tabs immediately if locked (before restoring state)
+        const navigationSection = document.getElementById('navigationSection');
+        if (navigationSection) {
+            navigationSection.style.display = 'none';
+            navigationSection.classList.add('d-none');
+        }
         restoreLockedSelectionFromDatabase();
     } else {
         restoreSelectionState();
@@ -1388,7 +1394,14 @@ function applyLockedUIState() {
         wrapper.style.display = 'block';
     }
 
-    // Switch to correct tab if non-teaching
+    // HIDE TAB NAVIGATION when locked - prevent tab switching
+    const navigationSection = document.getElementById('navigationSection');
+    if (navigationSection) {
+        navigationSection.style.display = 'none';
+        navigationSection.classList.add('d-none');
+    }
+
+    // Switch to correct tab if non-teaching (before hiding tabs)
     if (currentStaffType === 'non-teaching') {
         const nonTeachingTab = document.getElementById('non-teaching-tab');
         if (nonTeachingTab) {
@@ -1400,18 +1413,38 @@ function applyLockedUIState() {
                 nonTeachingTab.click();
             }
         }
+    } else {
+        // Ensure teaching tab is active
+        const teachingTab = document.getElementById('teaching-tab');
+        const teachingContent = document.getElementById('teaching-content');
+        if (teachingTab && teachingContent) {
+            teachingTab.classList.add('active');
+            teachingContent.classList.add('show', 'active');
+        }
     }
 
     // Filter UI: Show only locked/selected items
-    // Only process items in the currently active tab
-    const activeTabPane = document.querySelector('.tab-pane.active');
-    if (!activeTabPane) {
-        console.warn('No active tab pane found');
+    // Process items based on current staff type (since tabs are hidden, we know which tab to use)
+    const targetTabPane = currentStaffType === 'teaching' 
+        ? document.getElementById('teaching-content')
+        : document.getElementById('non-teaching-content');
+    
+    if (!targetTabPane) {
+        console.warn('Target tab pane not found');
         return;
     }
     
-    const items = activeTabPane.querySelectorAll('.staff-item');
-    console.log('Total items in active tab:', items.length, 'Selected staff:', selectedStaff);
+    // Make sure the target tab pane is visible
+    targetTabPane.classList.add('show', 'active');
+    const otherTabPane = currentStaffType === 'teaching' 
+        ? document.getElementById('non-teaching-content')
+        : document.getElementById('teaching-content');
+    if (otherTabPane) {
+        otherTabPane.classList.remove('show', 'active');
+    }
+    
+    const items = targetTabPane.querySelectorAll('.staff-item');
+    console.log('Total items in target tab:', items.length, 'Selected staff:', selectedStaff);
     
     items.forEach(item => {
         const card = item.querySelector('.staff-card');
@@ -1470,7 +1503,7 @@ function applyLockedUIState() {
 
     // Update start button text
     updateStartButtonText();
-    console.log('Locked UI state applied successfully for', currentStaffType);
+    console.log('Locked UI state applied successfully for', currentStaffType, '- tabs hidden');
 }
 
 function clearSelectionState() {
@@ -1520,29 +1553,49 @@ function restoreSelectionState() {
         }
 
         if (isLocked) {
-            // Apply locked UI state
-            const container = document.getElementById('staffListSection');
-            const items = container.querySelectorAll('.staff-item');
-            
-            items.forEach(item => {
-                const checkbox = item.querySelector('.select-staff-checkbox');
-                const staffId = checkbox ? checkbox.getAttribute('data-staff-id') : null;
-                const isSelected = selectedStaff.some(s => s.id == staffId);
+            // Hide tab navigation when locked
+            const navigationSection = document.getElementById('navigationSection');
+            if (navigationSection) {
+                navigationSection.style.display = 'none';
+                navigationSection.classList.add('d-none');
+            }
 
-                if (isSelected) {
-                    item.classList.remove('d-none');
-                    const evalBtnWrapper = item.querySelector('.evaluate-btn-wrapper');
-                    if (evalBtnWrapper) {
-                        evalBtnWrapper.style.display = 'block';
-                        const btn = evalBtnWrapper.querySelector('button');
-                        if (btn) btn.disabled = false;
-                    }
-                    const cbWrapper = item.querySelector('.checkbox-wrapper');
-                    if (cbWrapper) cbWrapper.style.display = 'none';
-                } else {
-                    item.classList.add('d-none');
+            // Apply locked UI state
+            const targetTabPane = savedType === 'teaching' 
+                ? document.getElementById('teaching-content')
+                : document.getElementById('non-teaching-content');
+            
+            if (targetTabPane) {
+                targetTabPane.classList.add('show', 'active');
+                const otherTabPane = savedType === 'teaching' 
+                    ? document.getElementById('non-teaching-content')
+                    : document.getElementById('teaching-content');
+                if (otherTabPane) {
+                    otherTabPane.classList.remove('show', 'active');
                 }
-            });
+                
+                const items = targetTabPane.querySelectorAll('.staff-item');
+                
+                items.forEach(item => {
+                    const checkbox = item.querySelector('.select-staff-checkbox');
+                    const staffId = checkbox ? parseInt(checkbox.getAttribute('data-staff-id')) : null;
+                    const isSelected = selectedStaff.some(s => s.id == staffId);
+
+                    if (isSelected) {
+                        item.classList.remove('d-none');
+                        const evalBtnWrapper = item.querySelector('.evaluate-btn-wrapper');
+                        if (evalBtnWrapper) {
+                            evalBtnWrapper.style.display = 'block';
+                            const btn = evalBtnWrapper.querySelector('button');
+                            if (btn) btn.disabled = false;
+                        }
+                        const cbWrapper = item.querySelector('.checkbox-wrapper');
+                        if (cbWrapper) cbWrapper.style.display = 'none';
+                    } else {
+                        item.classList.add('d-none');
+                    }
+                });
+            }
 
             // Toggle controls to Locked state
             if (currentStaffType === 'teaching') {
@@ -1588,7 +1641,11 @@ function loadEvaluation(staffId) {
 }
 
 function setStaffType(type) {
-    if (selectedStaff.length > 0 && document.getElementById('initialControls').classList.contains('d-none')) {
+    // Check if tabs are hidden (locked state) - prevent any tab switching
+    const navigationSection = document.getElementById('navigationSection');
+    const isTabsHidden = navigationSection && (navigationSection.style.display === 'none' || navigationSection.classList.contains('d-none'));
+    
+    if (isTabsHidden || (selectedStaff.length > 0 && document.getElementById('initialControls').classList.contains('d-none'))) {
         // Selection is locked, don't allow switching types unless they edit
         Swal.fire({
             icon: 'warning',
@@ -1770,6 +1827,13 @@ function finalConfirmSelection() {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
+                    // HIDE TAB NAVIGATION after confirmation
+                    const navigationSection = document.getElementById('navigationSection');
+                    if (navigationSection) {
+                        navigationSection.style.display = 'none';
+                        navigationSection.classList.add('d-none');
+                    }
+
                     // Enable all evaluation buttons
                     const container = document.getElementById('staffListSection');
                     const evalBtns = container.querySelectorAll('.evaluate-btn-wrapper button');
@@ -1894,6 +1958,13 @@ function unlockSelection() {
                     if (searchContainer) {
                         searchContainer.classList.remove('d-none');
                         searchContainer.style.display = 'block';
+                    }
+
+                    // SHOW TAB NAVIGATION again when unlocked
+                    const navigationSection = document.getElementById('navigationSection');
+                    if (navigationSection) {
+                        navigationSection.style.display = 'block';
+                        navigationSection.classList.remove('d-none');
                     }
 
                     Swal.fire({
