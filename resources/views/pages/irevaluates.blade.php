@@ -1127,14 +1127,37 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Setup INSTRUCTORS tab to restore locked state when clicked
     const teachingTab = document.getElementById('teaching-tab');
-    if (teachingTab && dbHasLockedSelection) {
-        teachingTab.addEventListener('click', function(e) {
-            // Restore locked UI state after a brief delay to allow Bootstrap to process
-            setTimeout(function() {
-                applyLockedUIState();
-                console.log('Restored locked state for teaching tab');
-            }, 50);
+    const staffTypeTabs = document.getElementById('staffTypeTabs');
+    
+    // Listen to Bootstrap tab events on the entire tab container
+    if (staffTypeTabs) {
+        staffTypeTabs.addEventListener('shown.bs.tab', function(e) {
+            const targetId = e.target.getAttribute('data-bs-target') || e.target.getAttribute('href');
+            
+            // If teaching tab is shown and we have locked selection, restore locked state
+            if (targetId === '#teaching-content' && dbHasLockedSelection) {
+                currentStaffType = 'teaching';
+                setTimeout(function() {
+                    applyLockedUIState();
+                    console.log('Restored locked state for teaching tab after Bootstrap tab switch');
+                }, 50);
+            }
         });
+    }
+    
+    if (teachingTab) {
+        // Also handle click as backup
+        if (dbHasLockedSelection) {
+            teachingTab.addEventListener('click', function(e) {
+                // Restore locked UI state after a brief delay to allow Bootstrap to process
+                setTimeout(function() {
+                    if (currentStaffType === 'teaching') {
+                        applyLockedUIState();
+                        console.log('Restored locked state for teaching tab on click');
+                    }
+                }, 100);
+            });
+        }
     }
     
     // Handle session messages
@@ -1197,9 +1220,25 @@ document.addEventListener('DOMContentLoaded', function() {
             const activeTab = document.querySelector('.tab-pane.active');
             const items = activeTab.querySelectorAll('.staff-item');
             
+            // Check if we're in locked state
+            const isLocked = dbHasLockedSelection && selectedStaff.length > 0;
+            
             items.forEach(item => {
                 const name = item.getAttribute('data-name');
                 const id = item.getAttribute('data-id');
+                const checkbox = item.querySelector('.select-staff-checkbox');
+                const staffId = checkbox ? parseInt(checkbox.getAttribute('data-staff-id')) : null;
+                
+                // In locked state, only show items that are in selectedStaff
+                if (isLocked) {
+                    const isSelected = selectedStaff.some(s => s.id === staffId);
+                    if (!isSelected) {
+                        item.classList.add('d-none');
+                        return;
+                    }
+                }
+                
+                // Then apply search filter
                 if (name.includes(searchTerm) || id.includes(searchTerm)) {
                     item.classList.remove('d-none');
                 } else {
@@ -1364,14 +1403,15 @@ function applyLockedUIState() {
     }
 
     // Filter UI: Show only locked/selected items
-    const container = document.getElementById('staffListSection');
-    if (!container) {
-        console.warn('staffListSection not found');
+    // Only process items in the currently active tab
+    const activeTabPane = document.querySelector('.tab-pane.active');
+    if (!activeTabPane) {
+        console.warn('No active tab pane found');
         return;
     }
     
-    const items = container.querySelectorAll('.staff-item');
-    console.log('Total items:', items.length, 'Selected staff:', selectedStaff);
+    const items = activeTabPane.querySelectorAll('.staff-item');
+    console.log('Total items in active tab:', items.length, 'Selected staff:', selectedStaff);
     
     items.forEach(item => {
         const card = item.querySelector('.staff-card');
@@ -1430,7 +1470,7 @@ function applyLockedUIState() {
 
     // Update start button text
     updateStartButtonText();
-    console.log('Locked UI state applied successfully');
+    console.log('Locked UI state applied successfully for', currentStaffType);
 }
 
 function clearSelectionState() {
@@ -1575,12 +1615,28 @@ function setStaffType(type) {
     }
 
     currentStaffType = type;
-    // Clear search when switching tabs
-    const searchInput = document.getElementById('staffSearch');
-    if (searchInput) {
-        searchInput.value = '';
-        const allItems = document.querySelectorAll('.staff-item');
-        allItems.forEach(item => item.classList.remove('d-none'));
+    
+    // Check if we have locked selection from database
+    const isLocked = dbHasLockedSelection && 
+                     ((type === 'teaching' && dbLockedSelections.teaching && dbLockedSelections.teaching.length > 0) ||
+                      (type === 'non-teaching' && dbLockedSelections['non-teaching'] && dbLockedSelections['non-teaching'].length > 0));
+    
+    // If switching to teaching tab and we have locked selection, restore it
+    if (type === 'teaching' && isLocked && dbHasLockedSelection) {
+        // Restore locked state after tab switch completes
+        setTimeout(function() {
+            applyLockedUIState();
+            console.log('Restored locked state in setStaffType for teaching');
+        }, 100);
+        // Don't clear search or show all items if locked
+    } else {
+        // Clear search when switching tabs (only if not locked)
+        const searchInput = document.getElementById('staffSearch');
+        if (searchInput) {
+            searchInput.value = '';
+            const allItems = document.querySelectorAll('.staff-item');
+            allItems.forEach(item => item.classList.remove('d-none'));
+        }
     }
 
     // Show/hide selection controls based on type
