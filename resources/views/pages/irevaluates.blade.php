@@ -718,7 +718,7 @@
                             <p class="mb-0">Your identity and responses are strictly confidential. Please provide honest and constructive feedback. No one will know your answers or comments.</p>
                         </div>
                         <button id="startEvaluationBtn" class="btn btn-success px-3 px-md-4 py-2 fw-bold rounded-pill" type="button">
-                            <i class="fas fa-play me-2"></i>Select Specific Instructorssss
+                            <i class="fas fa-play me-2"></i>Select Specific Instructor
                         </button>
                     </div>
 
@@ -1080,12 +1080,15 @@ document.addEventListener('DOMContentLoaded', function() {
     // Check if user has locked selection from database (persistent across devices)
     if (dbHasLockedSelection) {
         // Hide tabs immediately if locked (before restoring state)
-        const navigationSection = document.getElementById('navigationSection');
-        if (navigationSection) {
-            navigationSection.style.display = 'none';
-            navigationSection.classList.add('d-none');
-        }
+        enforceTabVisibility();
         restoreLockedSelectionFromDatabase();
+        
+        // Set up periodic check to ensure tabs stay hidden (every 500ms)
+        setInterval(function() {
+            if (dbHasLockedSelection) {
+                enforceTabVisibility();
+            }
+        }, 500);
     } else {
         restoreSelectionState();
     }
@@ -1134,9 +1137,55 @@ document.addEventListener('DOMContentLoaded', function() {
     // Setup INSTRUCTORS tab to restore locked state when clicked
     const teachingTab = document.getElementById('teaching-tab');
     const staffTypeTabs = document.getElementById('staffTypeTabs');
+    const navigationSection = document.getElementById('navigationSection');
     
-    // Listen to Bootstrap tab events on the entire tab container
-    if (staffTypeTabs) {
+    // If database has locked selection, prevent any tab interactions
+    if (dbHasLockedSelection && navigationSection) {
+        // Prevent tab clicks entirely when locked
+        if (teachingTab) {
+            teachingTab.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                enforceTabVisibility();
+                return false;
+            }, true);
+        }
+        
+        // Watch for any attempts to show navigation section and hide it immediately
+        const navObserver = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.type === 'attributes' && 
+                    (mutation.attributeName === 'style' || mutation.attributeName === 'class')) {
+                    const target = mutation.target;
+                    if (target === navigationSection || target.contains(navigationSection)) {
+                        enforceTabVisibility();
+                    }
+                }
+            });
+        });
+        
+        if (navigationSection) {
+            navObserver.observe(navigationSection, {
+                attributes: true,
+                attributeFilter: ['style', 'class'],
+                childList: false,
+                subtree: false
+            });
+            
+            // Also observe parent to catch any display changes
+            if (navigationSection.parentElement) {
+                navObserver.observe(navigationSection.parentElement, {
+                    attributes: true,
+                    attributeFilter: ['style', 'class'],
+                    childList: false,
+                    subtree: true
+                });
+            }
+        }
+    }
+    
+    // Listen to Bootstrap tab events on the entire tab container (only if not locked)
+    if (staffTypeTabs && !dbHasLockedSelection) {
         staffTypeTabs.addEventListener('shown.bs.tab', function(e) {
             const targetId = e.target.getAttribute('data-bs-target') || e.target.getAttribute('href');
             
@@ -1149,21 +1198,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 }, 50);
             }
         });
-    }
-    
-    if (teachingTab) {
-        // Also handle click as backup
-        if (dbHasLockedSelection) {
-            teachingTab.addEventListener('click', function(e) {
-                // Restore locked UI state after a brief delay to allow Bootstrap to process
-                setTimeout(function() {
-                    if (currentStaffType === 'teaching') {
-                        applyLockedUIState();
-                        console.log('Restored locked state for teaching tab on click');
-                    }
-                }, 100);
-            });
-        }
     }
     
     // Handle session messages
@@ -1312,6 +1346,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Watch for any DOM changes when in locked mode - restore locked state if cards visibility changes
     if (dbHasLockedSelection) {
         const observer = new MutationObserver(function(mutations) {
+            // Always enforce tab visibility based on database status
+            enforceTabVisibility();
+            
             // Check if any staff-item visibility has changed unexpectedly
             const container = document.getElementById('staffListSection');
             if (container) {
@@ -1340,15 +1377,46 @@ document.addEventListener('DOMContentLoaded', function() {
                 childList: false
             });
         }
+        
+        // Also watch navigation section to ensure it stays hidden
+        const navigationSection = document.getElementById('navigationSection');
+        if (navigationSection) {
+            const navObserver = new MutationObserver(function(mutations) {
+                enforceTabVisibility();
+            });
+            navObserver.observe(navigationSection, {
+                attributes: true,
+                attributeFilter: ['class', 'style'],
+                childList: false,
+                subtree: false
+            });
+        }
     }
 });
 
+
+// Utility function to ensure tabs visibility matches database locked status
+function enforceTabVisibility() {
+    const navigationSection = document.getElementById('navigationSection');
+    if (!navigationSection) return;
+    
+    // If database has locked selection, ALWAYS hide tabs
+    if (dbHasLockedSelection) {
+        navigationSection.style.display = 'none';
+        navigationSection.classList.add('d-none');
+    }
+}
 
 function saveSelectionState(locked = false) {
     localStorage.setItem('ireval_selected_staff', JSON.stringify(selectedStaff));
     localStorage.setItem('ireval_selection_locked', locked ? 'true' : 'false');
     localStorage.setItem('ireval_staff_type', currentStaffType);
     updateStartButtonText();
+    
+    // Enforce tab visibility based on database status
+    if (locked) {
+        enforceTabVisibility();
+    }
 }
 
 function restoreLockedSelectionFromDatabase() {
@@ -1382,6 +1450,9 @@ function restoreLockedSelectionFromDatabase() {
 
     // Apply locked UI state immediately
     applyLockedUIState();
+    
+    // Ensure tabs stay hidden based on database status
+    enforceTabVisibility();
 }
 
 function applyLockedUIState() {
@@ -1503,6 +1574,10 @@ function applyLockedUIState() {
 
     // Update start button text
     updateStartButtonText();
+    
+    // Always enforce tab visibility based on database status (safety check)
+    enforceTabVisibility();
+    
     console.log('Locked UI state applied successfully for', currentStaffType, '- tabs hidden');
 }
 
@@ -2052,13 +2127,29 @@ function updateFormStaffData(id, type, name) {
 }
 
 function showStaffList() {
-    // We stay in the "Selection Locked" view if it was already confirmed
-    const isLocked = document.getElementById('initialControls').classList.contains('d-none') || 
-                     document.getElementById('initialControlsNonTeaching').classList.contains('d-none');
+    // Always check database locked status first (persistent across devices)
+    const navigationSection = document.getElementById('navigationSection');
     
-    if (!isLocked) {
-        document.getElementById('navigationSection').classList.remove('d-none');
-        document.getElementById('navigationSection').style.display = 'block';
+    // If user has locked selection in database, ALWAYS hide tabs
+    if (dbHasLockedSelection) {
+        if (navigationSection) {
+            navigationSection.style.display = 'none';
+            navigationSection.classList.add('d-none');
+        }
+        // Also ensure locked UI state is applied
+        applyLockedUIState();
+    } else {
+        // Check UI state as fallback
+        const isLocked = document.getElementById('initialControls').classList.contains('d-none') || 
+                         document.getElementById('initialControlsNonTeaching').classList.contains('d-none');
+        
+        if (!isLocked && navigationSection) {
+            navigationSection.classList.remove('d-none');
+            navigationSection.style.display = 'block';
+        } else if (isLocked && navigationSection) {
+            navigationSection.style.display = 'none';
+            navigationSection.classList.add('d-none');
+        }
     }
     
     document.getElementById('staffListSection').classList.remove('d-none');
