@@ -761,7 +761,7 @@
                                                 <div class="card staff-card h-100 {{ $evaluated ? 'evaluated' : '' }} {{ !$staffId ? 'opacity-75' : '' }}" 
                                                     onclick="{{ $staffId ? "handleStaffSelection(this, $staffId, 'teaching', '$instructorName', " . ($evaluated ? 'true' : 'false') . ", '" . addslashes($subjectNames) . "')" : "Swal.fire({icon:'warning', title:'Staff Not Found', text:'This instructor is not yet registered in the system. Please contact the administrator.', confirmButtonColor:'#667eea'})" }}">
                                                     <div class="card-body d-flex flex-column">
-                                                        <div class="d-flex align-items-center mb-2">
+                                                        <div class="d-flex align-items-center mb-2">  
                                                             <div class="flex-shrink-0 me-3 checkbox-wrapper">
                                                                 <div class="form-check">
                                                                     <input class="form-check-input select-staff-checkbox" type="checkbox" name="selected_staff[]" 
