@@ -1083,7 +1083,7 @@ const dbHasLockedSelection =
      (dbLockedSelections['non-teaching'] && dbLockedSelections['non-teaching'].length > 0));
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Check if user has locked selection from database (persistent across devices)
+    // DB is source of truth: if no locked rows in instructor_selections, always start normal (ignore localStorage/cache)
     if (dbHasLockedSelection) {
         // Hide tabs immediately if locked (before restoring state)
         enforceTabVisibility();
@@ -1096,7 +1096,9 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }, 500);
     } else {
-        restoreSelectionState();
+        // No locked selection in DB: clear any stale localStorage and reset UI to normal
+        clearSelectionState();
+        resetUIToNormal();
     }
     
     // Setup non-teaching tab disable globally (always active)
@@ -1591,6 +1593,88 @@ function clearSelectionState() {
     localStorage.removeItem('ireval_selected_staff');
     localStorage.removeItem('ireval_selection_locked');
     localStorage.removeItem('ireval_staff_type');
+    updateStartButtonText();
+}
+
+/**
+ * Reset UI to normal when DB has no locked selection (e.g. after instructor_selections was emptied).
+ * Clears stale locked state so the page shows all cards, tabs, and selection flow again.
+ */
+function resetUIToNormal() {
+    selectedStaff = [];
+    currentStaffType = 'teaching';
+
+    // Show tab navigation
+    const navigationSection = document.getElementById('navigationSection');
+    if (navigationSection) {
+        navigationSection.style.display = 'block';
+        navigationSection.classList.remove('d-none');
+    }
+
+    // Show all staff cards in both tab panes
+    ['teaching-content', 'non-teaching-content'].forEach(function(panelId) {
+        const pane = document.getElementById(panelId);
+        if (!pane) return;
+        pane.querySelectorAll('.staff-item').forEach(function(item) {
+            item.classList.remove('d-none');
+            const card = item.querySelector('.staff-card');
+            if (card) card.classList.remove('selected');
+            const checkbox = item.querySelector('.select-staff-checkbox');
+            if (checkbox) {
+                checkbox.checked = false;
+                checkbox.disabled = false;
+            }
+            const cbWrapper = item.querySelector('.checkbox-wrapper');
+            if (cbWrapper) cbWrapper.style.display = 'block';
+            const evalBtnWrapper = item.querySelector('.evaluate-btn-wrapper');
+            if (evalBtnWrapper) {
+                evalBtnWrapper.style.display = 'none';
+                const btn = evalBtnWrapper.querySelector('button');
+                if (btn) btn.disabled = true;
+            }
+        });
+    });
+
+    // Ensure teaching tab is active
+    const teachingTab = document.getElementById('teaching-tab');
+    const nonTeachingTab = document.getElementById('non-teaching-tab');
+    const teachingContent = document.getElementById('teaching-content');
+    const nonTeachingContent = document.getElementById('non-teaching-content');
+    if (teachingTab) teachingTab.classList.add('active');
+    if (nonTeachingTab) nonTeachingTab.classList.remove('active');
+    if (teachingContent) teachingContent.classList.add('show', 'active');
+    if (nonTeachingContent) nonTeachingContent.classList.remove('show', 'active');
+
+    // Show search container
+    const searchContainer = document.querySelector('.staff-search-container');
+    if (searchContainer) {
+        searchContainer.classList.remove('d-none');
+        searchContainer.style.display = 'block';
+    }
+
+    // Show initial controls, hide review and locked (teaching)
+    const initialControls = document.getElementById('initialControls');
+    const reviewControls = document.getElementById('reviewControls');
+    const lockedControls = document.getElementById('lockedControls');
+    if (initialControls) { initialControls.style.display = 'block'; initialControls.classList.remove('d-none'); }
+    if (reviewControls) { reviewControls.style.display = 'none'; reviewControls.classList.add('d-none'); }
+    if (lockedControls) { lockedControls.style.display = 'none'; lockedControls.classList.add('d-none'); }
+
+    // Show initial controls, hide review and locked (non-teaching)
+    const initialControlsNT = document.getElementById('initialControlsNonTeaching');
+    const reviewControlsNT = document.getElementById('reviewControlsNonTeaching');
+    const lockedControlsNT = document.getElementById('lockedControlsNonTeaching');
+    if (initialControlsNT) { initialControlsNT.style.display = 'none'; initialControlsNT.classList.add('d-none'); }
+    if (reviewControlsNT) { reviewControlsNT.style.display = 'none'; reviewControlsNT.classList.add('d-none'); }
+    if (lockedControlsNT) { lockedControlsNT.style.display = 'none'; lockedControlsNT.classList.add('d-none'); }
+
+    document.getElementById('selectionControls').classList.remove('d-none');
+    document.getElementById('selectionControls').style.display = 'block';
+    document.getElementById('selectionControlsNonTeaching').style.display = 'none';
+
+    const doneBtn = document.getElementById('doneSelectionBtn');
+    if (doneBtn) doneBtn.disabled = true;
+
     updateStartButtonText();
 }
 
