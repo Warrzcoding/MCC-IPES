@@ -1345,46 +1345,52 @@ document.addEventListener('DOMContentLoaded', function () {
                                         <td>{{ $student->student_status ?? 'N/A' }}</td>
                                         <td class="evaluation-status-compact">
                                             @php
-                                                // Calculate evaluation counts using same logic as evaluates.blade.php
+                                                // Numerator: how many staff this student has evaluated (by type)
                                                 $evaluations = \App\Models\Evaluation::where('user_id', $student->id)->get();
                                                 $distinctStaffIds = $evaluations->pluck('staff_id')->unique();
                                                 $teachingCount = \App\Models\Staff::whereIn('id', $distinctStaffIds)->where('staff_type', 'teaching')->count();
                                                 $nonTeachingCount = \App\Models\Staff::whereIn('id', $distinctStaffIds)->where('staff_type', 'non-teaching')->count();
 
-                                                // Get total available staff for this student
                                                 $currentAcademicYear = \App\Models\AcademicYear::where('is_active', 1)->first();
                                                 $totalTeachingStaff = 0;
                                                 $totalNonTeachingStaff = 0;
+                                                $isIrregular = (strtolower(trim($student->student_status ?? '')) === 'irregular');
 
-                                                if ($currentAcademicYear) {
-                                                    // Get active semester for filtering
-                                                    $activeSemester = $currentAcademicYear ? (string) $currentAcademicYear->semester : null;
-
-                                                    // Get instructor names for student's specific course, year level, section, and active semester
-                                                    $instructorNames = \App\Models\Subject::whereRaw('LOWER(TRIM(sub_department)) = ?', [strtolower(trim($student->course))])
-                                                        ->whereRaw('LOWER(TRIM(sub_year)) = ?', [strtolower(trim($student->year_level))])
-                                                        ->whereRaw('LOWER(TRIM(section)) = ?', [strtolower(trim($student->section))])
-                                                        ->when($activeSemester, function ($q) use ($activeSemester) {
-                                                            $sem = strtolower(trim((string) $activeSemester));
-                                                            $aliases = in_array($sem, ['2','2nd','second','second semester','sem 2','semester 2'])
-                                                                ? ['2','2nd','second','second semester','sem 2','semester 2']
-                                                                : ['1','1st','first','first semester','sem 1','semester 1'];
-                                                            $q->where(function ($qq) use ($aliases) {
+                                                if ($isIrregular && $currentAcademicYear) {
+                                                    // Irregular: denominator = count of locked instructor_selections for this user
+                                                    $lockedByType = \App\Models\InstructorSelection::getLockedSelectionByType($student->id, $currentAcademicYear->id);
+                                                    $lockedTeaching = $lockedByType['teaching'] ?? collect();
+                                                    $lockedNonTeaching = $lockedByType['non-teaching'] ?? collect();
+                                                    $totalTeachingStaff = $lockedTeaching->count();
+                                                    $totalNonTeachingStaff = $lockedNonTeaching->count();
+                                                    // Count only evaluations for staff that are in locked selection
+                                                    $lockedTeachingStaffIds = $lockedTeaching->pluck('staff_id')->toArray();
+                                                    $lockedNonTeachingStaffIds = $lockedNonTeaching->pluck('staff_id')->toArray();
+                                                    $teachingCount = $lockedTeachingStaffIds ? \App\Models\Evaluation::where('user_id', $student->id)->whereIn('staff_id', $lockedTeachingStaffIds)->distinct('staff_id')->count('staff_id') : 0;
+                                                    $nonTeachingCount = $lockedNonTeachingStaffIds ? \App\Models\Evaluation::where('user_id', $student->id)->whereIn('staff_id', $lockedNonTeachingStaffIds)->distinct('staff_id')->count('staff_id') : 0;
+                                                } else {
+                                                    // Regular: same as before — total from Subject/Staff (course, year, section, semester)
+                                                    if ($currentAcademicYear) {
+                                                        $activeSemester = (string) $currentAcademicYear->semester;
+                                                        $sem = strtolower(trim($activeSemester));
+                                                        $aliases = in_array($sem, ['2','2nd','second','second semester','sem 2','semester 2'])
+                                                            ? ['2','2nd','second','second semester','sem 2','semester 2']
+                                                            : ['1','1st','first','first semester','sem 1','semester 1'];
+                                                        $instructorNames = \App\Models\Subject::whereRaw('LOWER(TRIM(sub_department)) = ?', [strtolower(trim($student->course))])
+                                                            ->whereRaw('LOWER(TRIM(sub_year)) = ?', [strtolower(trim($student->year_level))])
+                                                            ->whereRaw('LOWER(TRIM(section)) = ?', [strtolower(trim($student->section))])
+                                                            ->where(function ($qq) use ($aliases) {
                                                                 foreach ($aliases as $a) {
                                                                     $qq->orWhereRaw('LOWER(TRIM(semester)) = ?', [$a]);
                                                                 }
-                                                            });
-                                                        })
-                                                        ->whereNotNull('assign_instructor')
-                                                        ->where('assign_instructor', '!=', '')
-                                                        ->distinct('assign_instructor')
-                                                        ->pluck('assign_instructor');
-
-                                                    // Count actual teaching staff records that match these instructor names
-                                                    $totalTeachingStaff = \App\Models\Staff::whereIn('full_name', $instructorNames)
-                                                        ->where('staff_type', 'teaching')
-                                                        ->count();
-                                                    $totalNonTeachingStaff = \App\Models\Staff::where('staff_type', 'non-teaching')->count();
+                                                            })
+                                                            ->whereNotNull('assign_instructor')
+                                                            ->where('assign_instructor', '!=', '')
+                                                            ->distinct('assign_instructor')
+                                                            ->pluck('assign_instructor');
+                                                        $totalTeachingStaff = \App\Models\Staff::whereIn('full_name', $instructorNames)->where('staff_type', 'teaching')->count();
+                                                        $totalNonTeachingStaff = \App\Models\Staff::where('staff_type', 'non-teaching')->count();
+                                                    }
                                                 }
 
                                                 // Determine completion status for each category
