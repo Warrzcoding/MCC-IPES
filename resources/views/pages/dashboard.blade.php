@@ -38,81 +38,92 @@ if (Auth::user()->isAdmin()) {
     // My Evaluations (count of distinct staff evaluated by this student)
     $stats['my_evaluations'] = \App\Models\Evaluation::where('user_id', Auth::id())->distinct('staff_id')->count('staff_id');
     
-    // Non-teaching Staff (count staff where staff_type is non-teaching)
-    $stats['non_teaching_staff'] = \App\Models\Staff::where('staff_type', 'non-teaching')->count();
-    
-    // Department Instructors (count unique instructors teaching subjects that match student's course, year_level, section, and active semester)
-    // Get the active academic year to filter by semester
     $currentAcademicYear = \App\Models\AcademicYear::where('is_active', 1)->first();
-    $activeSemester = $currentAcademicYear ? (string) $currentAcademicYear->semester : null;
-    
-    $stats['department_instructors'] = \App\Models\Subject::whereRaw('LOWER(TRIM(sub_department)) = ?', [strtolower(trim(Auth::user()->course))])
-        ->whereRaw('LOWER(TRIM(sub_year)) = ?', [strtolower(trim(Auth::user()->year_level))])
-        ->whereRaw('LOWER(TRIM(section)) = ?', [strtolower(trim(Auth::user()->section))])
-        ->when($activeSemester, function ($q) use ($activeSemester) {
-            $sem = strtolower(trim((string) $activeSemester));
-            $aliases = in_array($sem, ['2','2nd','second','second semester','sem 2','semester 2'])
-                ? ['2','2nd','second','second semester','sem 2','semester 2']
-                : ['1','1st','first','first semester','sem 1','semester 1'];
-            $q->where(function ($qq) use ($aliases) {
-                foreach ($aliases as $a) {
-                    $qq->orWhereRaw('LOWER(TRIM(semester)) = ?', [$a]);
-                }
-            });
-        })
-        ->whereNotNull('assign_instructor')
-        ->where('assign_instructor', '!=', '')
-        ->distinct('assign_instructor')
-        ->count('assign_instructor');
-    
-    // Calculate evaluation completion status for department instructors
-    $departmentInstructorIds = \App\Models\Subject::whereRaw('LOWER(TRIM(sub_department)) = ?', [strtolower(trim(Auth::user()->course))])
-        ->whereRaw('LOWER(TRIM(sub_year)) = ?', [strtolower(trim(Auth::user()->year_level))])
-        ->whereRaw('LOWER(TRIM(section)) = ?', [strtolower(trim(Auth::user()->section))])
-        ->when($activeSemester, function ($q) use ($activeSemester) {
-            $sem = strtolower(trim((string) $activeSemester));
-            $aliases = in_array($sem, ['2','2nd','second','second semester','sem 2','semester 2'])
-                ? ['2','2nd','second','second semester','sem 2','semester 2']
-                : ['1','1st','first','first semester','sem 1','semester 1'];
-            $q->where(function ($qq) use ($aliases) {
-                foreach ($aliases as $a) {
-                    $qq->orWhereRaw('LOWER(TRIM(semester)) = ?', [$a]);
-                }
-            });
-        })
-        ->whereNotNull('assign_instructor')
-        ->where('assign_instructor', '!=', '')
-        ->pluck('assign_instructor')
-        ->unique()
-        ->values();
+    $isIrregular = (strtolower(trim(Auth::user()->student_status ?? '')) === 'irregular');
 
-    // Get staff IDs for department instructors
-    $departmentStaffIds = \App\Models\Staff::whereIn('full_name', $departmentInstructorIds)
-        ->where('staff_type', 'teaching')
-        ->pluck('id');
+    if ($isIrregular && $currentAcademicYear) {
+        // Irregular: totals = locked instructor_selections count for this user
+        $lockedByType = \App\Models\InstructorSelection::getLockedSelectionByType(Auth::id(), $currentAcademicYear->id);
+        $lockedTeaching = $lockedByType['teaching'] ?? collect();
+        $lockedNonTeaching = $lockedByType['non-teaching'] ?? collect();
+        $stats['department_instructors'] = $lockedTeaching->count();
+        $stats['non_teaching_staff'] = $lockedNonTeaching->count();
+        $lockedTeachingStaffIds = $lockedTeaching->pluck('staff_id')->toArray();
+        $lockedNonTeachingStaffIds = $lockedNonTeaching->pluck('staff_id')->toArray();
+        $evaluatedDepartmentInstructors = $lockedTeachingStaffIds
+            ? \App\Models\Evaluation::where('user_id', Auth::id())->whereIn('staff_id', $lockedTeachingStaffIds)->distinct('staff_id')->count('staff_id')
+            : 0;
+        $evaluatedNonTeachingStaff = $lockedNonTeachingStaffIds
+            ? \App\Models\Evaluation::where('user_id', Auth::id())->whereIn('staff_id', $lockedNonTeachingStaffIds)->distinct('staff_id')->count('staff_id')
+            : 0;
+    } else {
+        // Regular: same as before — department instructors from Subject, non-teaching from Staff
+        $stats['non_teaching_staff'] = \App\Models\Staff::where('staff_type', 'non-teaching')->count();
+        $activeSemester = $currentAcademicYear ? (string) $currentAcademicYear->semester : null;
 
-    // Count evaluated department instructors
-    $evaluatedDepartmentInstructors = \App\Models\Evaluation::where('user_id', Auth::id())
-        ->whereIn('staff_id', $departmentStaffIds)
-        ->distinct('staff_id')
-        ->count('staff_id');
+        $stats['department_instructors'] = \App\Models\Subject::whereRaw('LOWER(TRIM(sub_department)) = ?', [strtolower(trim(Auth::user()->course))])
+            ->whereRaw('LOWER(TRIM(sub_year)) = ?', [strtolower(trim(Auth::user()->year_level))])
+            ->whereRaw('LOWER(TRIM(section)) = ?', [strtolower(trim(Auth::user()->section))])
+            ->when($activeSemester, function ($q) use ($activeSemester) {
+                $sem = strtolower(trim((string) $activeSemester));
+                $aliases = in_array($sem, ['2','2nd','second','second semester','sem 2','semester 2'])
+                    ? ['2','2nd','second','second semester','sem 2','semester 2']
+                    : ['1','1st','first','first semester','sem 1','semester 1'];
+                $q->where(function ($qq) use ($aliases) {
+                    foreach ($aliases as $a) {
+                        $qq->orWhereRaw('LOWER(TRIM(semester)) = ?', [$a]);
+                    }
+                });
+            })
+            ->whereNotNull('assign_instructor')
+            ->where('assign_instructor', '!=', '')
+            ->distinct('assign_instructor')
+            ->count('assign_instructor');
 
-    // Get all non-teaching staff IDs
-    $nonTeachingStaffIds = \App\Models\Staff::where('staff_type', 'non-teaching')->pluck('id');
+        $departmentInstructorIds = \App\Models\Subject::whereRaw('LOWER(TRIM(sub_department)) = ?', [strtolower(trim(Auth::user()->course))])
+            ->whereRaw('LOWER(TRIM(sub_year)) = ?', [strtolower(trim(Auth::user()->year_level))])
+            ->whereRaw('LOWER(TRIM(section)) = ?', [strtolower(trim(Auth::user()->section))])
+            ->when($activeSemester, function ($q) use ($activeSemester) {
+                $sem = strtolower(trim((string) $activeSemester));
+                $aliases = in_array($sem, ['2','2nd','second','second semester','sem 2','semester 2'])
+                    ? ['2','2nd','second','second semester','sem 2','semester 2']
+                    : ['1','1st','first','first semester','sem 1','semester 1'];
+                $q->where(function ($qq) use ($aliases) {
+                    foreach ($aliases as $a) {
+                        $qq->orWhereRaw('LOWER(TRIM(semester)) = ?', [$a]);
+                    }
+                });
+            })
+            ->whereNotNull('assign_instructor')
+            ->where('assign_instructor', '!=', '')
+            ->pluck('assign_instructor')
+            ->unique()
+            ->values();
 
-    // Count evaluated non-teaching staff
-    $evaluatedNonTeachingStaff = \App\Models\Evaluation::where('user_id', Auth::id())
-        ->whereIn('staff_id', $nonTeachingStaffIds)
-        ->distinct('staff_id')
-        ->count('staff_id');
+        $departmentStaffIds = \App\Models\Staff::whereIn('full_name', $departmentInstructorIds)
+            ->where('staff_type', 'teaching')
+            ->pluck('id');
 
-    // Calculate completion percentages
-    $departmentInstructorCompletion = $stats['department_instructors'] > 0 
-        ? ($evaluatedDepartmentInstructors / $stats['department_instructors']) * 100 
+        $evaluatedDepartmentInstructors = \App\Models\Evaluation::where('user_id', Auth::id())
+            ->whereIn('staff_id', $departmentStaffIds)
+            ->distinct('staff_id')
+            ->count('staff_id');
+
+        $nonTeachingStaffIds = \App\Models\Staff::where('staff_type', 'non-teaching')->pluck('id');
+
+        $evaluatedNonTeachingStaff = \App\Models\Evaluation::where('user_id', Auth::id())
+            ->whereIn('staff_id', $nonTeachingStaffIds)
+            ->distinct('staff_id')
+            ->count('staff_id');
+    }
+
+    // Calculate completion percentages (same for both regular and irregular)
+    $departmentInstructorCompletion = $stats['department_instructors'] > 0
+        ? ($evaluatedDepartmentInstructors / $stats['department_instructors']) * 100
         : 0;
-    
-    $nonTeachingStaffCompletion = $stats['non_teaching_staff'] > 0 
-        ? ($evaluatedNonTeachingStaff / $stats['non_teaching_staff']) * 100 
+
+    $nonTeachingStaffCompletion = $stats['non_teaching_staff'] > 0
+        ? ($evaluatedNonTeachingStaff / $stats['non_teaching_staff']) * 100
         : 0;
 
     // My Recent Evaluations with staff details
