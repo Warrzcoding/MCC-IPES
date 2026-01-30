@@ -718,7 +718,7 @@
                             <p class="mb-0">Your identity and responses are strictly confidential. Please provide honest and constructive feedback. No one will know your answers or comments.</p>
                         </div>
                         <button id="startEvaluationBtn" class="btn btn-success px-3 px-md-4 py-2 fw-bold rounded-pill" type="button">
-                            <i class="fas fa-play me-2"></i>Select Specific Instructor
+                            <i class="fas fa-play me-2"></i>Select Specific Instructors
                         </button>
                     </div>
 
@@ -925,9 +925,9 @@
                         <div id="evaluationFormSection" style="display: none;" class="tab-content">
                             <div class="evaluation-form-wrapper">
                                 <div class="evaluation-form-inner">
-                                    <button type="button" class="btn btn-link text-decoration-none mb-3 p-0" onclick="showStaffList()">
+                                   <!-- <button type="button" class="btn btn-link text-decoration-none mb-3 p-0" onclick="showStaffList()">
                                         <i class="fas fa-arrow-left me-1"></i> Back to selection
-                                    </button>
+                                    </button>-->
                                     
                                     <div class="selected-staff-info mb-4 p-4 bg-white rounded-3 d-flex align-items-center shadow-sm border">
                                         <div class="bg-light rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 65px; height: 65px; border: 2px solid #e2e8f0;">
@@ -1070,11 +1070,17 @@ let selectedStaff = [];
 let activeStaffId = null;
 
 // Data from database (Blade PHP variables)
-const dbHasLockedSelection = {{ (isset($hasLockedSelection) && $hasLockedSelection) ? 'true' : 'false' }};
 const dbLockedSelections = {
     teaching: {{ isset($lockedSelections) && isset($lockedSelections['teaching']) ? json_encode($lockedSelections['teaching']->map(function($s) { return ['id' => $s->staff_id, 'name' => $s->staff->full_name ?? '']; })->values()->toArray()) : '[]' }},
     'non-teaching': {{ isset($lockedSelections) && isset($lockedSelections['non-teaching']) ? json_encode($lockedSelections['non-teaching']->map(function($s) { return ['id' => $s->staff_id, 'name' => $s->staff->full_name ?? '']; })->values()->toArray()) : '[]' }}
 };
+
+// IMPORTANT: derive lock state from DB rows too (sidebar navigation must still restore lock)
+// Some edge-cases can cause `$hasLockedSelection` to be false while `lockedSelections` has rows.
+const dbHasLockedSelection =
+    {{ (isset($hasLockedSelection) && $hasLockedSelection) ? 'true' : 'false' }} ||
+    ((dbLockedSelections.teaching && dbLockedSelections.teaching.length > 0) ||
+     (dbLockedSelections['non-teaching'] && dbLockedSelections['non-teaching'].length > 0));
 
 document.addEventListener('DOMContentLoaded', function() {
     // Check if user has locked selection from database (persistent across devices)
@@ -2127,35 +2133,40 @@ function updateFormStaffData(id, type, name) {
 }
 
 function showStaffList() {
-    // Always check database locked status first (persistent across devices)
     const navigationSection = document.getElementById('navigationSection');
-    
-    // If user has locked selection in database, ALWAYS hide tabs
+
+    // First: switch sections (always)
+    document.getElementById('staffListSection').classList.remove('d-none');
+    document.getElementById('staffListSection').style.display = 'block';
+    document.getElementById('evaluationFormSection').classList.add('d-none');
+    document.getElementById('evaluationFormSection').style.display = 'none';
+
+    // DB is source-of-truth: if locked in DB, ALWAYS restore from DB and ALWAYS hide tabs
     if (dbHasLockedSelection) {
         if (navigationSection) {
             navigationSection.style.display = 'none';
             navigationSection.classList.add('d-none');
         }
-        // Also ensure locked UI state is applied
+
+        // Rebuild `selectedStaff` from DB and re-apply locked filtering every time we come back
+        // (fixes the case where other JS temporarily unhides all cards).
+        restoreLockedSelectionFromDatabase();
         applyLockedUIState();
-    } else {
-        // Check UI state as fallback
-        const isLocked = document.getElementById('initialControls').classList.contains('d-none') || 
-                         document.getElementById('initialControlsNonTeaching').classList.contains('d-none');
-        
-        if (!isLocked && navigationSection) {
-            navigationSection.classList.remove('d-none');
-            navigationSection.style.display = 'block';
-        } else if (isLocked && navigationSection) {
-            navigationSection.style.display = 'none';
-            navigationSection.classList.add('d-none');
-        }
+        enforceTabVisibility();
+        return;
     }
-    
-    document.getElementById('staffListSection').classList.remove('d-none');
-    document.getElementById('staffListSection').style.display = 'block';
-    document.getElementById('evaluationFormSection').classList.add('d-none');
-    document.getElementById('evaluationFormSection').style.display = 'none';
+
+    // Not locked in DB: fall back to UI/local state
+    const isLockedUI = document.getElementById('initialControls').classList.contains('d-none') ||
+                       document.getElementById('initialControlsNonTeaching').classList.contains('d-none');
+
+    if (!isLockedUI && navigationSection) {
+        navigationSection.classList.remove('d-none');
+        navigationSection.style.display = 'block';
+    } else if (isLockedUI && navigationSection) {
+        navigationSection.style.display = 'none';
+        navigationSection.classList.add('d-none');
+    }
 }
 
 function toggleInputs(container, enabled) {
