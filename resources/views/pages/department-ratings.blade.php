@@ -550,7 +550,7 @@ function getAdjectivalRating($rating) {
                                     <th>Staff Details</th>
                                     <th class="text-center">Rating</th>
                                     <th class="text-center">Status</th>
-                                    <th class="text-center">Statistics</th>
+                                   <!-- <th class="text-center">Statistics</th>-->
                                     <th class="text-center">Actions</th>
                                 </tr>
                             </thead>
@@ -610,12 +610,12 @@ function getAdjectivalRating($rating) {
                                             </span>
                                         </td>
                                         
-                                        <td class="text-center align-middle">
+                                       <!-- <td class="text-center align-middle">
                                             <div class="stats-item">
                                                 <div class="stats-number">{{ $staff->total_evaluations }}</div>
                                                 <div class="stats-label">Reviews</div>
                                             </div>
-                                        </td>
+                                        </td>-->
                                         
                                         <td class="text-center align-middle">
                                             <button class="btn btn-outline-primary action-btn" 
