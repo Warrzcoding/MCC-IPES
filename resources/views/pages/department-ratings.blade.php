@@ -1226,11 +1226,11 @@ function getAdjectivalRating($rating) {
                     
                      <p style="margin-bottom: 0.3em;">From:&nbsp;&nbsp;&nbsp;&nbsp;Center for Guidance Services</p>
                     
-                   <p style="margin-bottom: 1em;">Subject:&nbsp;Endorsement of Performance Evaluation   of ${departmentTitle} Instructors</p>
+                   <p style="margin-bottom: 1em;">Subject:&nbsp;Endorsement of Performance Evaluation Results of ${departmentTitle} Instructors</p>
                     
                     <p style="margin-bottom: 1em;">Greetings of Peace!</p>
                     
-                    <p style="margin-bottom: 0.7em;">I am writing to formally endorse the Results of the Performance Evaluation Results of ${departmentTitle} instructors for Academic Year {{ $currentAcademicYear?->year }} - {{ $currentAcademicYear?->semester == 1 ? 'First' : ($currentAcademicYear?->semester == 2 ? 'Second' : $currentAcademicYear?->semester) }} Semester.</p>
+                    <p style="margin-bottom: 0.7em;">I am writing to formally endorse the Results of the Performance Evaluation of ${departmentTitle} instructors for Academic Year {{ $currentAcademicYear?->year }} - {{ $currentAcademicYear?->semester == 1 ? 'First' : ($currentAcademicYear?->semester == 2 ? 'Second' : $currentAcademicYear?->semester) }} Semester.</p>
                     
                     <p style="margin-bottom: 0.7em;">Please be advised that the following instructors were evaluated by all MCC Students.</p>
                     
