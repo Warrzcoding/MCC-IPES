@@ -550,7 +550,7 @@ function getAdjectivalRating($rating) {
                                     <th>Staff Details</th>
                                     <th class="text-center">Rating</th>
                                     <th class="text-center">Status</th>
-                                   <th class="text-center">Statistics</th>
+                                   <!-- <th class="text-center">Statistics</th>-->
                                     <th class="text-center">Actions</th>
                                 </tr>
                             </thead>
@@ -1268,7 +1268,7 @@ function getAdjectivalRating($rating) {
                 </div>
 
                 <!-- Signature Section -->
-                <div style='margin-top:4em;margin-bottom:0em;text-align:left; font-size:10pt; line-height:1.3;'>
+                <div style='margin-top:10em;margin-bottom:0em;text-align:left; font-size:10pt; line-height:1.3;'>
                     <div style='margin-bottom:1em;'>
                         Prepared by:
                     </div>
@@ -1279,24 +1279,22 @@ function getAdjectivalRating($rating) {
                         Guidance Advocate
                     </div>
 
-                    <div style='display: flex; justify-content: space-between; align-items: flex-start; margin-top: 2em;'>
-                        <!-- Left: DR. LIZA Section -->
-                        <div style='text-align:left;'>
-                            <div style='margin-bottom:1em;'>
-                                Reviewed and Noted by:
-                            </div>
-                            <div>
-                                <strong>DR. LIZA D. GARCIA, RGC</strong>
-                            </div>
-                            <div>
-                                Guidance Counselor
-                            </div>
+                    <div style='text-align:left;'>
+                        <div style='margin-bottom:1em;'>
+                            Reviewed and Noted by:
                         </div>
+                        <div>
+                            <strong>DR. LIZA D. GARCIA, RGC</strong>
+                        </div>
+                        <div>
+                            Guidance Counselor
+                        </div>
+                    </div>
 
-                        <!-- Right: Received by Section -->
+                    <div style='margin-top: 1em; display: flex; justify-content: flex-end; padding-right: 1em;'>
                         <div style='text-align:left;'>
-                            <div style='display: flex; align-items: flex-start; gap: 0.5em;'>
-                                <div style='white-space: nowrap;'>Received by:</div>
+                            <div style='display: flex; align-items: flex-start;'>
+                                <div style='white-space: nowrap;'>Received by: &nbsp;</div>
                                 <div style='display: flex; flex-direction: column;'>
                                     <span>_________________________</span>
                                     <strong style='margin-top: 0.1em;'>${recipientName}</strong>
