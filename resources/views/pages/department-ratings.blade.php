@@ -1220,13 +1220,13 @@ function getAdjectivalRating($rating) {
                     </div>
                 </div>
                 
-                <div style="text-align: left; margin-bottom: 0.8em; font-size: 10pt; line-height: 1.2;">
+                <div style="text-align: left; margin-bottom: 0.2em; font-size: 10pt; line-height: 1.2;">
                     <p style="margin-bottom: 0.15em;">To:<strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${recipientName}</strong></p>
                     <p style="margin-bottom: 0.3em; margin-left: 2em;"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${programHead}</p>
                     
                      <p style="margin-bottom: 0.3em;">From:&nbsp;&nbsp;&nbsp;&nbsp;Center for Guidance Services</p>
                     
-                   <p style="margin-bottom: 1em;">Subject:&nbsp;Endorsement of Performance Evaluation Results of ${departmentTitle} Instructors</p>
+                    <p style="margin-bottom: 1em;">Subject:&nbsp;Endorsement of Performance Evaluation Results of ${departmentTitle} Instructors</p>
                     
                     <p style="margin-bottom: 1em;">Greetings of Peace!</p>
                     
@@ -1234,11 +1234,13 @@ function getAdjectivalRating($rating) {
                     
                     <p style="margin-bottom: 0.7em;">Please be advised that the following instructors were evaluated by all MCC Students.</p>
                     
-                    <p style="margin-bottom: 0.2em;">Enclosed with this letter, is a detailed report highlighting the evaluation results for each instructor.</p>
+                    <p style="margin-bottom: 0.6em;">Enclosed with this letter, is a detailed report highlighting the evaluation results for each instructor.</p>
                 </div>
-                <div style="margin-bottom: 0.8em; margin-top: -0.5em;">
-                    <table style="width: 100%; border-collapse: collapse; margin-top: 0em;">
+                
+                <div style="margin-bottom: 0.8em;">
+                    <table style="width: 100%; border-collapse: collapse; margin-top: 0.4em;">
                         <thead>
+                            <tr style="height: 40px !important; border: none !important;"><th colspan="3" style="border: none !important; height: 40px !important;"></th></tr>
                             <tr style="background-color: #f8f9fa;">
                                 <th style="border: 1px solid #ddd; padding: 4px 6px; text-align: left; font-weight: bold; font-size: 10pt;">NAME OF INSTRUCTORS</th>
                                 <th style="border: 1px solid #ddd; padding: 4px 6px; text-align: center; font-weight: bold; font-size: 10pt;">AVERAGE SCORES</th>
@@ -1277,24 +1279,22 @@ function getAdjectivalRating($rating) {
                         Guidance Advocate
                     </div>
 
-                    <div style='display: flex; justify-content: space-between; align-items: flex-start; margin-top: 2em;'>
-                        <!-- Left: DR. LIZA Section -->
-                        <div style='text-align:left;'>
-                            <div style='margin-bottom:1em;'>
-                                Reviewed and Noted by:
-                            </div>
-                            <div>
-                                <strong>DR. LIZA D. GARCIA, RGC</strong>
-                            </div>
-                            <div>
-                                Guidance Counselor
-                            </div>
+                    <div style='text-align:left;'>
+                        <div style='margin-bottom:1em;'>
+                            Reviewed and Noted by:
                         </div>
+                        <div>
+                            <strong>DR. LIZA D. GARCIA, RGC</strong>
+                        </div>
+                        <div>
+                            Guidance Counselor
+                        </div>
+                    </div>
 
-                        <!-- Right: Received by Section -->
+                    <div style='margin-top: 1em; display: flex; justify-content: flex-end; padding-right: 1em;'>
                         <div style='text-align:left;'>
-                            <div style='display: flex; align-items: flex-start; gap: 0.5em;'>
-                                <div style='white-space: nowrap;'>Received by:</div>
+                            <div style='display: flex; align-items: flex-start;'>
+                                <div style='white-space: nowrap;'>Received by: &nbsp;</div>
                                 <div style='display: flex; flex-direction: column;'>
                                     <span>_________________________</span>
                                     <strong style='margin-top: 0.1em;'>${recipientName}</strong>
@@ -1339,7 +1339,7 @@ function getAdjectivalRating($rating) {
         window.addEventListener('afterprint', onAfterPrint);
         setTimeout(() => { window.print(); }, 100);
     }
-
+ss
     function adjectivalFromLegend(rating) {
          if (rating >= 4.51) return 'Outstanding';
         if (rating >= 3.51) return 'Very Satisfactory';
