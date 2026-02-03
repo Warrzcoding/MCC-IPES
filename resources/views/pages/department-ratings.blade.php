@@ -550,7 +550,7 @@ function getAdjectivalRating($rating) {
                                     <th>Staff Details</th>
                                     <th class="text-center">Rating</th>
                                     <th class="text-center">Status</th>
-                                   <!-- <th class="text-center">Statistics</th>-->
+                                   <th class="text-center">Statistics</th>
                                     <th class="text-center">Actions</th>
                                 </tr>
                             </thead>
@@ -1220,13 +1220,13 @@ function getAdjectivalRating($rating) {
                     </div>
                 </div>
                 
-                <div style="text-align: left; margin-bottom: 0.8em; font-size: 10pt; line-height: 1.2;">
+                <div style="text-align: left; margin-bottom: 0.2em; font-size: 10pt; line-height: 1.2;">
                     <p style="margin-bottom: 0.15em;">To:<strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${recipientName}</strong></p>
                     <p style="margin-bottom: 0.3em; margin-left: 2em;"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${programHead}</p>
                     
                      <p style="margin-bottom: 0.3em;">From:&nbsp;&nbsp;&nbsp;&nbsp;Center for Guidance Services</p>
                     
-                   <p style="margin-bottom: 1em;">Subject:&nbsp;Endorsement of Performance Evaluation Results of ${departmentTitle} Instructors</p>
+                    <p style="margin-bottom: 1em;">Subject:&nbsp;Endorsement of Performance Evaluation Results of ${departmentTitle} Instructors</p>
                     
                     <p style="margin-bottom: 1em;">Greetings of Peace!</p>
                     
@@ -1268,7 +1268,7 @@ function getAdjectivalRating($rating) {
                 </div>
 
                 <!-- Signature Section -->
-                <div style='margin-top:4em;margin-bottom:0em;text-align:left; font-size:10pt; line-height:1.3;'>
+                <div style='margin-top:1em;margin-bottom:0em;text-align:left; font-size:10pt; line-height:1.3;'>
                     <div style='margin-bottom:1em;'>
                         Prepared by:
                     </div>
