@@ -1269,7 +1269,7 @@ function getAdjectivalRating($rating) {
 
                 <!-- Signature Section - Stays Intact with top spacing -->
                 <div style='page-break-inside: avoid; page-break-after: avoid; margin-top: 5em; margin-bottom: 0; text-align:left; font-size:10pt; line-height:1.3;'>
-                    <div style='page-break-inside: avoid; margin-bottom:1em;'>
+                    <div style='page-break-inside: avoid; margin-bottom:1em;'><br><br><br><br><br><br><br><br>
                         Prepared by:
                     </div>
                     <div style='page-break-inside: avoid; margin-bottom:0.1em;'>
