@@ -1268,7 +1268,7 @@ function getAdjectivalRating($rating) {
                 </div>
 
                 <!-- Spacer to push signatures down with proper spacing -->
-                <div style='height: 3em; page-break-inside: avoid; margin: 0; padding: 0;'></div>
+                <div style='height: 5em; page-break-inside: avoid; margin: 0; padding: 0;'></div>
 
                 <!-- Signature Section - Stays Intact -->
                 <div style='page-break-inside: avoid; page-break-after: avoid; margin: 0; text-align:left; font-size:10pt; line-height:1.3;'>
