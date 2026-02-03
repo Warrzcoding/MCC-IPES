@@ -1237,8 +1237,8 @@ function getAdjectivalRating($rating) {
                     <p style="margin-bottom: 0.6em;">Enclosed with this letter, is a detailed report highlighting the evaluation results for each instructor.</p>
                 </div>
                 
-                <div style="margin-bottom: 0.8em;">
-                    <table style="width: 100%; border-collapse: collapse; margin-top: 0.4em;">
+                <div style="margin-bottom: 2em;">
+                    <table style="width: 100%; border-collapse: collapse; margin-top: 0.4em; page-break-inside: auto;">
                         <thead>
                             <tr style="height: 40px !important; border: none !important;"><th colspan="3" style="border: none !important; height: 40px !important;"></th></tr>
                             <tr style="background-color: #f8f9fa;">
@@ -1267,37 +1267,40 @@ function getAdjectivalRating($rating) {
                     </table>
                 </div>
 
-                <!-- Signature Section -->
-                <div style='page-break-before: avoid; margin-top:3em; margin-bottom:0em; text-align:left; font-size:10pt; line-height:1.3;'>
-                    <div style='margin-bottom:1em;'>
+                <!-- Spacer to push signatures down with proper spacing -->
+                <div style='height: 3em; page-break-inside: avoid; margin: 0; padding: 0;'></div>
+
+                <!-- Signature Section - Stays Intact -->
+                <div style='page-break-inside: avoid; page-break-after: avoid; margin: 0; text-align:left; font-size:10pt; line-height:1.3;'>
+                    <div style='page-break-inside: avoid; margin-bottom:1em;'>
                         Prepared by:
                     </div>
-                    <div style='margin-bottom:0.1em;'>
+                    <div style='page-break-inside: avoid; margin-bottom:0.1em;'>
                         <strong>DHINA B. DALISAY</strong>
                     </div>
-                    <div style='margin-bottom:2em;'>
+                    <div style='page-break-inside: avoid; margin-bottom:2em;'>
                         Guidance Advocate
                     </div>
 
-                    <div style='display: flex; justify-content: space-between; align-items: flex-start; margin-top: 2em;'>
+                    <div style='page-break-inside: avoid; display: flex; justify-content: space-between; align-items: flex-start; margin-top: 2em;'>
                         <!-- Left: DR. LIZA Section -->
-                        <div style='text-align:left;'>
-                            <div style='margin-bottom:1em;'>
+                        <div style='page-break-inside: avoid; text-align:left;'>
+                            <div style='page-break-inside: avoid; margin-bottom:1em;'>
                                 Reviewed and Noted by:
                             </div>
-                            <div>
+                            <div style='page-break-inside: avoid;'>
                                 <strong>DR. LIZA D. GARCIA, RGC</strong>
                             </div>
-                            <div>
+                            <div style='page-break-inside: avoid;'>
                                 Guidance Counselor
                             </div>
                         </div>
 
                         <!-- Right: Received by Section -->
-                        <div style='text-align:left;'>
-                            <div style='display: flex; align-items: flex-start; gap: 0.5em;'>
+                        <div style='page-break-inside: avoid; text-align:left;'>
+                            <div style='page-break-inside: avoid; display: flex; align-items: flex-start; gap: 0.5em;'>
                                 <div style='white-space: nowrap;'>Received by:</div>
-                                <div style='display: flex; flex-direction: column;'>
+                                <div style='page-break-inside: avoid; display: flex; flex-direction: column;'>
                                     <span>_________________________</span>
                                     <strong style='margin-top: 0.1em;'>${recipientName}</strong>
                                 </div>
