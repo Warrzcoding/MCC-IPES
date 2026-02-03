@@ -1209,7 +1209,13 @@
                         'teachingQuestions' => $teachingQuestions ?? collect(),
                         'nonTeachingQuestions' => $nonTeachingQuestions ?? collect(),
                         'teachingStaff' => $teachingStaff ?? collect(),
-                        'nonTeachingStaff' => $nonTeachingStaff ?? collect()
+                        'nonTeachingStaff' => $nonTeachingStaff ?? collect(),
+                        // Ensure irregular lock state is available in the included page
+                        'currentAcademicYear' => $currentAcademicYear ?? null,
+                        'studentSubjects' => $studentSubjects ?? collect(),
+                        'savedSelections' => $savedSelections ?? collect(),
+                        'lockedSelections' => $lockedSelections ?? ['teaching' => collect(), 'non-teaching' => collect()],
+                        'hasLockedSelection' => $hasLockedSelection ?? false
                     ])
                 @else
                     @include($page_file)

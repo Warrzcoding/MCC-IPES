@@ -32,6 +32,10 @@
         'non-teaching' => collect()
     ];
     $hasLockedSelection = $hasLockedSelection ?? false;
+    // Derive locked state from actual data so it's always in sync with instructor_selections table
+    $lockedTeachingIds = $lockedSelections['teaching']->pluck('staff_id')->toArray();
+    $lockedNonTeachingIds = isset($lockedSelections['non-teaching']) ? $lockedSelections['non-teaching']->pluck('staff_id')->toArray() : [];
+    $hasLockedSelection = $hasLockedSelection || (count($lockedTeachingIds) > 0 || count($lockedNonTeachingIds) > 0);
     
     // Calculate completion status
     $totalAvailableTeaching = isset($teachingStaff) ? $teachingStaff->count() : 0;
@@ -162,12 +166,30 @@
     left: 0;
     right: 0;
     bottom: 0;
+    z-index: 0;
     background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="%23ffffff" opacity="0.05"/><circle cx="75" cy="75" r="1" fill="%23ffffff" opacity="0.05"/><circle cx="50" cy="10" r="0.5" fill="%23ffffff" opacity="0.03"/><circle cx="90" cy="40" r="0.5" fill="%23ffffff" opacity="0.03"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
     pointer-events: none;
 }
 .tab-pane {
     position: relative;
     z-index: 1;
+    pointer-events: auto;
+}
+/* Ensure locked cards and Open Evaluation Form button are never blocked by overlays */
+#staffListSection {
+    position: relative;
+    z-index: 1;
+    pointer-events: auto;
+}
+#staffListSection #teaching-content,
+#staffListSection .staff-item,
+#staffListSection .staff-card,
+#staffListSection .staff-card .card-body,
+#staffListSection .evaluate-btn-wrapper,
+#staffListSection .evaluate-btn-wrapper button {
+    position: relative;
+    z-index: 2;
+    pointer-events: auto;
 }
 
 /* Disable Non-Teaching Tab */
@@ -625,7 +647,17 @@
     }
 
     /* Disabled Evaluate Button Styling */
-    .evaluate-btn-wrapper button:disabled {
+    .evaluate-btn-wrapper,
+.evaluate-btn-wrapper button {
+    pointer-events: auto !important;
+    position: relative;
+    z-index: 10;
+    cursor: pointer;
+}
+.evaluate-btn-wrapper button:not(:disabled) {
+    cursor: pointer !important;
+}
+.evaluate-btn-wrapper button:disabled {
         background: linear-gradient(135deg, #cbd5e0 0%, #a0aec0 100%) !important;
         color: #4a5568 !important;
         cursor: not-allowed !important;
@@ -710,8 +742,8 @@
                         <p class="text-muted">Please check back later once the administrator opens the evaluation period.</p>
                     </div>
                 @else
-                    <!-- Privacy Notice (from evaluates.blade) -->
-                    <div id="privacyReminder" class="privacy-reminder-box d-flex flex-column align-items-center justify-content-center text-center p-4 mb-4 bg-light rounded-3 border" style="max-width: 600px; margin: 0 auto;">
+                    <!-- Privacy Notice (from evaluates.blade) - hidden when already locked so refresh/navigate always shows locked cards -->
+                    <div id="privacyReminder" class="privacy-reminder-box d-flex flex-column align-items-center justify-content-center text-center p-4 mb-4 bg-light rounded-3 border {{ $hasLockedSelection ? 'd-none' : '' }}" style="max-width: 600px; margin: 0 auto; {{ $hasLockedSelection ? 'display: none !important;' : '' }}">
                         <div class="mb-3">
                             <i class="fas fa-user-secret fa-2x mb-2 text-primary"></i>
                             <h5 class="fw-bold">Evaluator Privacy Notice</h5>
@@ -722,9 +754,9 @@
                         </button>
                     </div>
 
-                    <div id="selectionAndEvaluationWrapper" style="display: none;">
-                        <!-- Navigation Tabs (evaluates.blade style) -->
-                        <div id="navigationSection" class="mb-4">
+                    <div id="selectionAndEvaluationWrapper" style="{{ $hasLockedSelection ? 'display: block !important;' : 'display: none;' }}">
+                        <!-- Navigation Tabs (evaluates.blade style) - hidden when locked -->
+                        <div id="navigationSection" class="mb-4" style="{{ $hasLockedSelection ? 'display: none !important;' : '' }}" {{ $hasLockedSelection ? 'data-locked-hidden="true"' : '' }}>
                             <ul class="nav nav-tabs custom-nav-tabs" id="staffTypeTabs" role="tablist">
                                 <li class="nav-item" role="presentation">
                                     <button class="nav-link active" id="teaching-tab" data-bs-toggle="tab" data-bs-target="#teaching-content" type="button" role="tab" onclick="setStaffType('teaching')">
@@ -741,7 +773,7 @@
 
                         <!-- Search Section -->
                         <div id="staffListSection">
-                            <div class="staff-search-container position-relative mb-4 mx-auto" style="max-width: 500px;">
+                            <div class="staff-search-container position-relative mb-4 mx-auto" style="max-width: 500px; {{ $hasLockedSelection ? 'display: none !important;' : '' }}" {{ $hasLockedSelection ? 'data-locked-hidden="true"' : '' }}>
                                 <i class="fas fa-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
                                 <input type="text" id="staffSearch" class="form-control rounded-pill ps-5 border-2" placeholder="Search by name or ID...">
                             </div>
@@ -756,13 +788,14 @@
                                                 $staffId = $staff ? $staff->id : null;
                                                 $evaluated = $staffId ? in_array($staffId, $evaluatedTeachingIds, true) : false;
                                                 $subjectNames = $subjects->pluck('sub_name')->implode(', ');
+                                                $isLockedSelected = $hasLockedSelection && $staffId && in_array($staffId, $lockedTeachingIds, true);
                                             @endphp
-                                            <div class="col-md-6 staff-item" data-name="{{ strtolower($instructorName) }}" data-id="{{ strtolower($subjectNames) }}">
-                                                <div class="card staff-card h-100 {{ $evaluated ? 'evaluated' : '' }} {{ !$staffId ? 'opacity-75' : '' }}" 
-                                                    onclick="{{ $staffId ? "handleStaffSelection(this, $staffId, 'teaching', '$instructorName', " . ($evaluated ? 'true' : 'false') . ", '" . addslashes($subjectNames) . "')" : "Swal.fire({icon:'warning', title:'Staff Not Found', text:'This instructor is not yet registered in the system. Please contact the administrator.', confirmButtonColor:'#667eea'})" }}">
+                                            <div class="col-md-6 staff-item {{ $hasLockedSelection && !$isLockedSelected ? 'd-none' : '' }}" data-name="{{ strtolower($instructorName) }}" data-id="{{ strtolower($subjectNames) }}" data-staff-id="{{ $staffId }}" data-staff-type="teaching" data-staff-name="{{ addslashes($instructorName) }}">
+                                                <div class="card staff-card h-100 {{ $evaluated ? 'evaluated' : '' }} {{ $isLockedSelected ? 'selected' : '' }} {{ !$staffId ? 'opacity-75' : '' }}" 
+                                                    onclick="{{ $staffId ? "handleStaffSelection(event, this, $staffId, 'teaching', '" . addslashes($instructorName) . "', " . ($evaluated ? 'true' : 'false') . ", '" . addslashes($subjectNames) . "')" : "Swal.fire({icon:'warning', title:'Staff Not Found', text:'This instructor is not yet registered in the system. Please contact the administrator.', confirmButtonColor:'#667eea'})" }}">
                                                     <div class="card-body d-flex flex-column">
                                                         <div class="d-flex align-items-center mb-2">  
-                                                            <div class="flex-shrink-0 me-3 checkbox-wrapper">
+                                                            <div class="flex-shrink-0 me-3 checkbox-wrapper" style="{{ $isLockedSelected ? 'display: none !important;' : '' }}">
                                                                 <div class="form-check">
                                                                     <input class="form-check-input select-staff-checkbox" type="checkbox" name="selected_staff[]" 
                                                                         {{ $evaluated || !$staffId ? 'disabled' : '' }} 
@@ -799,10 +832,14 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="evaluate-btn-wrapper mt-2" style="display: none;">
-                                                            <button type="button" class="btn btn-sm btn-primary w-100 rounded-pill py-2 fw-bold" 
+                                                        <div class="evaluate-btn-wrapper mt-2" style="{{ $isLockedSelected ? 'display: block !important;' : 'display: none;' }}">
+                                                            <button type="button" class="btn btn-sm btn-primary w-100 rounded-pill py-2 fw-bold btn-open-evaluation" 
                                                                 {{ $evaluated ? 'disabled' : '' }}
-                                                                onclick="event.stopPropagation(); {{ $evaluated ? "Swal.fire({icon:'info', title:'Already Evaluated', text:'You have already submitted an evaluation for this instructor.', confirmButtonColor:'#667eea'})" : "openEvaluation($staffId, 'teaching', '" . addslashes($instructorName) . "')" }}">
+                                                                data-staff-id="{{ $staffId }}"
+                                                                data-staff-type="teaching"
+                                                                data-staff-name="{{ addslashes($instructorName) }}"
+                                                                data-evaluated="{{ $evaluated ? '1' : '0' }}"
+                                                                onclick="event.stopPropagation(); event.preventDefault(); {{ $evaluated ? "Swal.fire({icon:'info', title:'Already Evaluated', text:'You have already submitted an evaluation for this instructor.', confirmButtonColor:'#667eea'})" : "openEvaluation($staffId, 'teaching', '" . addslashes($instructorName) . "')" }}">
                                                                 <i class="fas fa-file-alt me-1"></i> {{ $evaluated ? 'Already Evaluated' : 'Open Evaluation Form' }}
                                                             </button>
                                                         </div>
@@ -817,7 +854,7 @@
                                         @endif
                                     </div>
                                     <div class="text-center mt-4" id="selectionControls">
-                                        <div id="initialControls">
+                                        <div id="initialControls" style="{{ $hasLockedSelection ? 'display: none !important;' : '' }}">
                                             <button type="button" class="btn btn-primary px-5 fw-bold rounded-pill shadow-sm" id="doneSelectionBtn" disabled onclick="confirmSelection()">
                                                 Done Selection
                                             </button>
@@ -832,7 +869,7 @@
                                                 </button>
                                             </div>
                                         </div>
-                                        <div id="lockedControls" style="display: none;">
+                                        <div id="lockedControls" style="{{ $hasLockedSelection ? 'display: block !important;' : 'display: none;' }}">
                                             <div class="alert alert-success d-inline-block px-4 py-2 rounded-pill mb-0 shadow-sm">
                                                 <i class="fas fa-lock me-2"></i>Selection Locked - You can now start the evaluation
                                             </div>
@@ -849,8 +886,8 @@
                                     <div class="row g-3 staff-container justify-content-end" id="nonTeachingList" style="opacity: 0.7; pointer-events: none; padding-right: 2rem;">
                                         @foreach($nonTeachingStaff as $staff)
                                             @php $evaluated = in_array($staff->id, $evaluatedNonTeachingIds, true); @endphp
-                                            <div class="col-md-6 staff-item" data-name="{{ strtolower($staff->full_name) }}" data-id="{{ strtolower($staff->staff_id) }}">
-                                                <div class="card staff-card h-100 {{ $evaluated ? 'evaluated' : '' }}" onclick="handleStaffSelection(this, {{ $staff->id }}, 'non-teaching', '{{ $staff->full_name }}', {{ $evaluated ? 'true' : 'false' }})">
+                                            <div class="col-md-6 staff-item" data-name="{{ strtolower($staff->full_name) }}" data-id="{{ strtolower($staff->staff_id) }}" data-staff-id="{{ $staff->id }}" data-staff-type="non-teaching" data-staff-name="{{ addslashes($staff->full_name) }}">
+                                                <div class="card staff-card h-100 {{ $evaluated ? 'evaluated' : '' }}" onclick="handleStaffSelection(event, this, {{ $staff->id }}, 'non-teaching', '{{ addslashes($staff->full_name) }}', {{ $evaluated ? 'true' : 'false' }}, '')">
                                                     <div class="card-body d-flex flex-column">
                                                         <div class="d-flex align-items-center mb-2">
                                                             <div class="flex-shrink-0 me-3 checkbox-wrapper">
@@ -879,9 +916,13 @@
                                                             </div>
                                                         </div>
                                                         <div class="evaluate-btn-wrapper mt-2" style="display: none;">
-                                                            <button type="button" class="btn btn-sm btn-success w-100 rounded-pill py-2 fw-bold" 
+                                                            <button type="button" class="btn btn-sm btn-success w-100 rounded-pill py-2 fw-bold btn-open-evaluation" 
                                                                 {{ $evaluated ? 'disabled' : '' }}
-                                                                onclick="event.stopPropagation(); {{ $evaluated ? "Swal.fire({icon:'info', title:'Already Evaluated', text:'You have already submitted an evaluation for this staff member.', confirmButtonColor:'#667eea'})" : "openEvaluation($staff->id, 'non-teaching', '" . addslashes($staff->full_name) . "')" }}">
+                                                                data-staff-id="{{ $staff->id }}"
+                                                                data-staff-type="non-teaching"
+                                                                data-staff-name="{{ addslashes($staff->full_name) }}"
+                                                                data-evaluated="{{ $evaluated ? '1' : '0' }}"
+                                                                onclick="event.stopPropagation(); event.preventDefault(); {{ $evaluated ? "Swal.fire({icon:'info', title:'Already Evaluated', text:'You have already submitted an evaluation for this staff member.', confirmButtonColor:'#667eea'})" : "openEvaluation($staff->id, 'non-teaching', '" . addslashes($staff->full_name) . "')" }}">
                                                                 <i class="fas fa-file-alt me-1"></i> {{ $evaluated ? 'Already Evaluated' : 'Open Evaluation Form' }}
                                                             </button>
                                                         </div>
@@ -1069,18 +1110,53 @@ let currentStaffType = 'teaching';
 let selectedStaff = [];
 let activeStaffId = null;
 
-// Data from database (Blade PHP variables)
+// Data from database (Blade PHP variables) - source of truth for locked state across refresh/navigate/logout-login
 const dbLockedSelections = {
     teaching: {{ isset($lockedSelections) && isset($lockedSelections['teaching']) ? json_encode($lockedSelections['teaching']->map(function($s) { return ['id' => $s->staff_id, 'name' => $s->staff->full_name ?? '']; })->values()->toArray()) : '[]' }},
     'non-teaching': {{ isset($lockedSelections) && isset($lockedSelections['non-teaching']) ? json_encode($lockedSelections['non-teaching']->map(function($s) { return ['id' => $s->staff_id, 'name' => $s->staff->full_name ?? '']; })->values()->toArray()) : '[]' }}
 };
 
-// IMPORTANT: derive lock state from DB rows too (sidebar navigation must still restore lock)
-// Some edge-cases can cause `$hasLockedSelection` to be false while `lockedSelections` has rows.
+// IMPORTANT: derive lock state from DB rows (instructor_selections table). Ensures locked state persists on refresh, navigate, or new device.
 const dbHasLockedSelection =
     {{ (isset($hasLockedSelection) && $hasLockedSelection) ? 'true' : 'false' }} ||
-    ((dbLockedSelections.teaching && dbLockedSelections.teaching.length > 0) ||
-     (dbLockedSelections['non-teaching'] && dbLockedSelections['non-teaching'].length > 0));
+    ((Array.isArray(dbLockedSelections.teaching) && dbLockedSelections.teaching.length > 0) ||
+     (Array.isArray(dbLockedSelections['non-teaching']) && dbLockedSelections['non-teaching'].length > 0));
+
+// Open Evaluation Form: capture-phase listener so we run BEFORE the card and always handle the button click.
+// After Done Selection + Confirm, only selected cards show; this ensures the button is always clickable.
+document.addEventListener('click', function(e) {
+    if (!e.target || !e.target.closest) return;
+    var btn = e.target.closest('#staffListSection .evaluate-btn-wrapper button');
+    if (!btn) return;
+    if (btn.disabled) {
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+        return;
+    }
+    var id = parseInt(btn.getAttribute('data-staff-id'), 10);
+    var type = btn.getAttribute('data-staff-type') || 'teaching';
+    var name = (btn.getAttribute('data-staff-name') || '').replace(/\\'/g, "'");
+    var evaluated = btn.getAttribute('data-evaluated') === '1';
+    if (!id || !name) {
+        var item = btn.closest('.staff-item');
+        if (item) {
+            id = parseInt(item.getAttribute('data-staff-id'), 10);
+            type = item.getAttribute('data-staff-type') || 'teaching';
+            name = (item.getAttribute('data-staff-name') || '').replace(/\\'/g, "'");
+        }
+    }
+    if (id && name) {
+        if (evaluated) {
+            Swal.fire({ icon: 'info', title: 'Already Evaluated', text: 'You have already submitted an evaluation for ' + name + ' in the current semester.', confirmButtonColor: '#667eea' });
+        } else {
+            openEvaluation(id, type, name);
+        }
+    }
+    e.preventDefault();
+    e.stopPropagation();
+    e.stopImmediatePropagation();
+}, true);
 
 document.addEventListener('DOMContentLoaded', function() {
     // DB is source of truth: if no locked rows in instructor_selections, always start normal (ignore localStorage/cache)
@@ -1096,8 +1172,17 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }, 500);
     } else {
-        // No locked selection in DB: clear any stale localStorage and reset UI to normal
-        clearSelectionState();
+        // No locked selection in DB: check localStorage as backup
+        const localStorageLocked = localStorage.getItem('ireval_selection_locked') === 'true';
+        const localStorageStaff = localStorage.getItem('ireval_selected_staff');
+        
+        // If localStorage says locked but DB says not locked, localStorage is stale - clear it
+        if (localStorageLocked && localStorageStaff) {
+            console.warn('DB has no locked selection but localStorage does - clearing stale localStorage');
+            clearSelectionState();
+        }
+        
+        // Reset UI to normal (all cards, tabs visible, selection flow)
         resetUIToNormal();
     }
     
@@ -1408,10 +1493,22 @@ function enforceTabVisibility() {
     const navigationSection = document.getElementById('navigationSection');
     if (!navigationSection) return;
     
+    // Re-check DB state dynamically (in case arrays were updated)
+    const hasLockedInDB = dbHasLockedSelection || 
+        ((dbLockedSelections.teaching && dbLockedSelections.teaching.length > 0) ||
+         (dbLockedSelections['non-teaching'] && dbLockedSelections['non-teaching'].length > 0));
+    
     // If database has locked selection, ALWAYS hide tabs
-    if (dbHasLockedSelection) {
+    if (hasLockedInDB) {
         navigationSection.style.display = 'none';
         navigationSection.classList.add('d-none');
+        
+        // Also ensure locked UI state is applied if not already
+        if (selectedStaff.length === 0 || 
+            document.getElementById('initialControls') && !document.getElementById('initialControls').classList.contains('d-none')) {
+            // State might have been reset, restore from DB
+            restoreLockedSelectionFromDatabase();
+        }
     }
 }
 
@@ -1428,16 +1525,16 @@ function saveSelectionState(locked = false) {
 }
 
 function restoreLockedSelectionFromDatabase() {
-    // Determine which staff type has locked selections
-    const hasTeachingLocked = dbLockedSelections.teaching && dbLockedSelections.teaching.length > 0;
-    const hasNonTeachingLocked = dbLockedSelections['non-teaching'] && dbLockedSelections['non-teaching'].length > 0;
+    const teachingArr = Array.isArray(dbLockedSelections.teaching) ? dbLockedSelections.teaching : [];
+    const nonTeachingArr = Array.isArray(dbLockedSelections['non-teaching']) ? dbLockedSelections['non-teaching'] : [];
+    const hasTeachingLocked = teachingArr.length > 0;
+    const hasNonTeachingLocked = nonTeachingArr.length > 0;
     
     console.log('Restoring from DB - Teaching:', hasTeachingLocked, 'NonTeaching:', hasNonTeachingLocked);
-    console.log('dbLockedSelections:', dbLockedSelections);
     
     if (hasTeachingLocked) {
         currentStaffType = 'teaching';
-        selectedStaff = dbLockedSelections.teaching.map(s => ({
+        selectedStaff = teachingArr.map(s => ({
             id: parseInt(s.id), // Ensure it's a number
             type: 'teaching',
             name: s.name
@@ -1445,18 +1542,19 @@ function restoreLockedSelectionFromDatabase() {
         console.log('Selected Teaching Staff:', selectedStaff);
     } else if (hasNonTeachingLocked) {
         currentStaffType = 'non-teaching';
-        selectedStaff = dbLockedSelections['non-teaching'].map(s => ({
-            id: parseInt(s.id), // Ensure it's a number
+        selectedStaff = nonTeachingArr.map(s => ({
+            id: parseInt(s.id),
             type: 'non-teaching',
             name: s.name
         }));
         console.log('Selected NonTeaching Staff:', selectedStaff);
     } else {
-        console.log('No locked selections found in database');
-        return; // No locked selection
+        // DB says locked but no staff in arrays (e.g. stale or edge case) - still apply locked UI so we don't stay on "Select Specific Instructor"
+        console.warn('DB has locked selection but no staff in arrays - applying locked UI anyway');
+        selectedStaff = [];
     }
 
-    // Apply locked UI state immediately
+    // Always apply locked UI when DB says locked (ensures refresh/navigate always show locked cards)
     applyLockedUIState();
     
     // Ensure tabs stay hidden based on database status
@@ -1603,6 +1701,16 @@ function clearSelectionState() {
 function resetUIToNormal() {
     selectedStaff = [];
     currentStaffType = 'teaching';
+
+    // Reset privacy reminder and wrapper visibility (show privacy reminder, hide wrapper)
+    const privacyReminder = document.getElementById('privacyReminder');
+    const wrapper = document.getElementById('selectionAndEvaluationWrapper');
+    if (privacyReminder && wrapper) {
+        privacyReminder.classList.remove('d-none');
+        privacyReminder.style.display = 'flex';
+        wrapper.classList.add('d-none');
+        wrapper.style.display = 'none';
+    }
 
     // Show tab navigation
     const navigationSection = document.getElementById('navigationSection');
@@ -1797,7 +1905,7 @@ function restoreSelectionState() {
 }
 function loadEvaluation(staffId) {
     const container = document.getElementById('evaluationFormSection');
-    // Clear all radios and textareas first
+    // Clear all radios and textareas firstaaa
     container.querySelectorAll('input[type="radio"]').forEach(radio => {
         radio.checked = false;
         radio.closest('.form-check-label')?.classList.remove('selected-rating');
@@ -1875,7 +1983,21 @@ function setStaffType(type) {
     }
 }
 
-function handleStaffSelection(cardElement, id, type, name, evaluated, subject = '') {
+function handleStaffSelection(ev, cardElement, id, type, name, evaluated, subject) {
+    subject = subject || '';
+    // When click is on "Open Evaluation Form" button (or inside its wrapper), open the form (works when locked).
+    // Use ev || window.event for inline handlers where event may not be passed.
+    var e = ev || (typeof window !== 'undefined' && window.event);
+    if (e && e.target && e.target.closest && e.target.closest('.evaluate-btn-wrapper')) {
+        if (evaluated) {
+            Swal.fire({ icon: 'info', title: 'Already Evaluated', text: 'You have already submitted an evaluation for ' + name + ' in the current semester.', confirmButtonColor: '#667eea' });
+        } else {
+            openEvaluation(id, type, name);
+        }
+        if (e.preventDefault) e.preventDefault();
+        if (e.stopPropagation) e.stopPropagation();
+        return false;
+    }
     if (evaluated) {
         Swal.fire({
             icon: 'info',
@@ -1923,12 +2045,12 @@ function confirmSelection() {
         const card = item.querySelector('.staff-card');
         if (card.classList.contains('selected')) {
             item.classList.remove('d-none');
-            // Show evaluate button but keep it DISABLED for now
+            // Show evaluate button and ENABLE it so user can click
             const evalBtnWrapper = item.querySelector('.evaluate-btn-wrapper');
             if (evalBtnWrapper) {
                 evalBtnWrapper.style.display = 'block';
                 const btn = evalBtnWrapper.querySelector('button');
-                if (btn) btn.disabled = true;
+                if (btn) btn.disabled = false;
             }
             // Hide checkbox
             const cbWrapper = item.querySelector('.checkbox-wrapper');
@@ -1991,42 +2113,42 @@ function finalConfirmSelection() {
             })
             .then(response => response.json())
             .then(data => {
-                if (data.success) {
-                    // HIDE TAB NAVIGATION after confirmation
-                    const navigationSection = document.getElementById('navigationSection');
-                    if (navigationSection) {
-                        navigationSection.style.display = 'none';
-                        navigationSection.classList.add('d-none');
-                    }
+    if (data.success) {
+        // HIDE TAB NAVIGATION after confirmation
+        const navigationSection = document.getElementById('navigationSection');
+        if (navigationSection) {
+            navigationSection.style.display = 'none';
+            navigationSection.classList.add('d-none');
+        }
 
-                    // Enable all evaluation buttons
-                    const container = document.getElementById('staffListSection');
-                    const evalBtns = container.querySelectorAll('.evaluate-btn-wrapper button');
-                    evalBtns.forEach(btn => btn.disabled = false);
+        // Enable all evaluation buttons
+        const container = document.getElementById('staffListSection');
+        const evalBtns = container.querySelectorAll('.evaluate-btn-wrapper button');
+        evalBtns.forEach(btn => btn.disabled = false);
 
-                    // Toggle controls to Locked state
-                    if (currentStaffType === 'teaching') {
-                        document.getElementById('reviewControls').classList.add('d-none');
-                        document.getElementById('reviewControls').style.display = 'none';
-                        document.getElementById('lockedControls').classList.remove('d-none');
-                        document.getElementById('lockedControls').style.display = 'block';
-                    } else {
-                        document.getElementById('reviewControlsNonTeaching').classList.add('d-none');
-                        document.getElementById('reviewControlsNonTeaching').style.display = 'none';
-                        document.getElementById('lockedControlsNonTeaching').classList.remove('d-none');
-                        document.getElementById('lockedControlsNonTeaching').style.display = 'block';
-                    }
+        // Toggle controls to Locked state
+        if (currentStaffType === 'teaching') {
+            document.getElementById('reviewControls').classList.add('d-none');
+            document.getElementById('reviewControls').style.display = 'none';
+            document.getElementById('lockedControls').classList.remove('d-none');
+            document.getElementById('lockedControls').style.display = 'block';
+        } else {
+            document.getElementById('reviewControlsNonTeaching').classList.add('d-none');
+            document.getElementById('reviewControlsNonTeaching').style.display = 'none';
+            document.getElementById('lockedControlsNonTeaching').classList.remove('d-none');
+            document.getElementById('lockedControlsNonTeaching').style.display = 'block';
+        }
 
-                    // Save locked state to localStorage
-                    saveSelectionState(true);
+        // Save locked state to localStorage (for this browser)
+        saveSelectionState(true);
 
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Selection Locked',
-                        text: 'You can now proceed with the evaluations. Your selection is saved and will persist across reloads.',
-                        timer: 2000,
-                        showConfirmButton: false
-                    });
+        Swal.fire({
+            icon: 'success',
+            title: 'Selection Locked',
+            text: 'You can now proceed with the evaluations. Your selection is saved.',
+            timer: 2000,
+            showConfirmButton: false
+        });
                 } else {
                     Swal.fire({
                         icon: 'error',
@@ -2251,7 +2373,7 @@ function showStaffList() {
         navigationSection.style.display = 'none';
         navigationSection.classList.add('d-none');
     }
-}
+}~
 
 function toggleInputs(container, enabled) {
     const inputs = container.querySelectorAll('input');
