@@ -247,6 +247,13 @@ function getAdjectivalRating($rating) {
         table { page-break-inside: auto; }
         tr { page-break-inside: avoid; page-break-after: auto; }
         thead { display: table-header-group !important; }
+        
+        /* Ensure signature section has spacing on new page */
+        .signature-section { 
+            page-break-before: avoid;
+            margin-top: 5em !important;
+            padding-top: 2em !important;
+        }
     }
     .report-header {
         width: 100%;
@@ -1268,7 +1275,7 @@ function getAdjectivalRating($rating) {
                 </div>
 
                 <!-- Signature Section -->
-                <div style='margin-top:1em;margin-bottom:0em;text-align:left; font-size:10pt; line-height:1.3;'>
+                <div class="signature-section" style='margin-top:1em;margin-bottom:0em;text-align:left; font-size:10pt; line-height:1.3;'>
                     <div style='margin-bottom:1em;'>
                         Prepared by:
                     </div>
