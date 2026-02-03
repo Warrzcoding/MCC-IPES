@@ -750,13 +750,13 @@ function printOverallReport(staffData, type) {
                 <p style="margin-bottom: 0.15em;">To:<strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DR. FLORIPIS A. MONTECILLO</strong></p>
                 <p style="margin-bottom: 0.3em; margin-left: 2em;"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;College President</p>        
                 <p style="margin-bottom: 0.3em;">From:&nbsp;&nbsp;&nbsp;&nbsp;Center for Guidance Services</p>
-                <p style="margin-bottom: 1em;">Subject:&nbsp;Endorsement of Performance Evaluation of ${title}</p>   
+                <p style="margin-bottom: 1em;">Subject:&nbsp;Endorsement of Performance Evaluation Results of ${title}</p>   
                 
                <p style="margin-bottom: 1em;">Greetings of Peace!</p>
      
                 <p style="margin-bottom: 0.7em;">I am writing to formally endorse the Results Summary of Performance Evaluation of all MCC ${title} for Academic Year {{ $currentAcademicYear?->year }} - {{ $currentAcademicYear?->semester == 1 ? 'First' : ($currentAcademicYear?->semester == 2 ? 'Second' : $currentAcademicYear?->semester) }} Semester.</p>
                 
-                <p style="margin-bottom: 0.7em;">Please be advised that the following ${title.toLowerCase()} have been evaluated by all MCC Students.</p>
+                <p style="margin-bottom: 0.7em;">Please be advised that the following ${title.toLowerCase()} were evaluated by all MCC Students.</p>
             </div>
             
             <div style="margin-bottom: 0.8em;">
@@ -821,7 +821,7 @@ function printOverallReport(staffData, type) {
                             <div style='white-space: nowrap;'>Received by: &nbsp;</div>
                             <div style='display: flex; flex-direction: column;'>
                                 <span>___________________________</span>
-                                <strong style='margin-top: 0.1em;'>DR. FLORIPIZ A. MONTECILLO</strong>
+                                <strong style='margin-top: 0.1em;'>DR. FLORIPIS A. MONTECILLO</strong>
                                 <span> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbspCollege President</span>
                             </div>
                             
