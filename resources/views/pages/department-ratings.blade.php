@@ -528,7 +528,7 @@ function getAdjectivalRating($rating) {
                                 <input type="text" id="searchInput" onkeyup="searchStaff()" 
                                        placeholder="Search teaching staff by name, department, or email..." 
                                        class="form-control" style="height: 38px;">
-                            </div>
+                            </div> 
                             
                             @if($hasEvaluations)
                             <button id="generateReportsBtn" class="btn btn-success fw-bold rounded-pill generate-reports-btn d-flex align-items-center justify-content-center gap-2 px-3" style="height: 38px; font-size:0.82rem; white-space: nowrap;">
@@ -550,7 +550,7 @@ function getAdjectivalRating($rating) {
                                     <th>Staff Details</th>
                                     <th class="text-center">Rating</th>
                                     <th class="text-center">Status</th>
-                                   <!-- <th class="text-center">Statistics</th>-->
+                                   <th class="text-center">Statistics</th>
                                     <th class="text-center">Actions</th>
                                 </tr>
                             </thead>
@@ -1279,22 +1279,24 @@ function getAdjectivalRating($rating) {
                         Guidance Advocate
                     </div>
 
-                    <div style='text-align:left;'>
-                        <div style='margin-bottom:1em;'>
-                            Reviewed and Noted by:
-                        </div>
-                        <div style='margin-bottom:0.1em;'>
-                            <strong>DR. LIZA D. GARCIA, RGC</strong>
-                        </div>
-                        <div>
-                            Guidance Counselor
-                        </div>
-                    </div>
-
-                    <div style='margin-top: 1em; display: flex; justify-content: flex-end; padding-right: 1em;'>
+                    <div style='display: flex; justify-content: space-between; align-items: flex-start; margin-top: 2em;'>
+                        <!-- Left: DR. LIZA Section -->
                         <div style='text-align:left;'>
-                            <div style='display: flex; align-items: flex-start;'>
-                                <div style='white-space: nowrap;'>Received by: &nbsp;</div>
+                            <div style='margin-bottom:1em;'>
+                                Reviewed and Noted by:
+                            </div>
+                            <div>
+                                <strong>DR. LIZA D. GARCIA, RGC</strong>
+                            </div>
+                            <div>
+                                Guidance Counselor
+                            </div>
+                        </div>
+
+                        <!-- Right: Received by Section -->
+                        <div style='text-align:left;'>
+                            <div style='display: flex; align-items: flex-start; gap: 0.5em;'>
+                                <div style='white-space: nowrap;'>Received by:</div>
                                 <div style='display: flex; flex-direction: column;'>
                                     <span>_________________________</span>
                                     <strong style='margin-top: 0.1em;'>${recipientName}</strong>
