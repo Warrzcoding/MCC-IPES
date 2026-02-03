@@ -7,7 +7,7 @@ function getRatingStatus($rating) {
     if ($rating >= 3.51) return ['status' => 'Very Satisfactory', 'color' => '#17a2b8', 'bg' => '#d1ecf1'];
     if ($rating >= 2.51) return ['status' => 'Satisfactory', 'color' => '#ffc107', 'bg' => '#fff3cd'];
     if ($rating >= 1.51) return ['status' => 'Unsatisfactory', 'color' => '#fd7e14', 'bg' => '#ffeaa7'];
-    return ['status' => 'Poor', 'color' => '#dc3545', 'bg' => '#f8d7da'];
+    return  ['status' => 'Poor', 'color' => '#dc3545', 'bg' => '#f8d7da'];
 }
 
 // Function to get adjectival descriptive rating
@@ -610,12 +610,12 @@ function getAdjectivalRating($rating) {
                                             </span>
                                         </td>
                                         
-                                       <!-- <td class="text-center align-middle">
+                                        <td class="text-center align-middle">
                                             <div class="stats-item">
                                                 <div class="stats-number">{{ $staff->total_evaluations }}</div>
                                                 <div class="stats-label">Reviews</div>
                                             </div>
-                                        </td>-->
+                                        </td>
                                         
                                         <td class="text-center align-middle">
                                             <button class="btn btn-outline-primary action-btn" 
