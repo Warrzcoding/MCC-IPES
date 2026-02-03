@@ -860,9 +860,8 @@
             this.dispatchEvent(new Event('input'));
         });
 
-        document.getElementById('checkIdBtn').addEventListener('click', async function(e) {
-            e.preventDefault();
-            
+        // Function to handle ID check (used by both button click and Enter key)
+        async function checkIdNumber() {
             const idNumber = document.getElementById('school_id').value.trim();
 
             if (!idNumber) {
@@ -930,6 +929,20 @@
                     text: 'An error occurred. Please try again.',
                     confirmButtonColor: '#667eea'
                 });
+            }
+        }
+
+        // Add click event listener to the button
+        document.getElementById('checkIdBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            checkIdNumber();
+        });
+
+        // Add keydown event listener to the input field to trigger on Enter
+        document.getElementById('school_id').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                checkIdNumber();
             }
         });
 
