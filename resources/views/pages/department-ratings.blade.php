@@ -1268,7 +1268,7 @@ function getAdjectivalRating($rating) {
                 </div>
 
                 <!-- Signature Section -->
-                <div style='margin-top:1em;margin-bottom:0em;text-align:left; font-size:10pt; line-height:1.3;'>
+                <div style='page-break-before: avoid; margin-top:3em; margin-bottom:0em; text-align:left; font-size:10pt; line-height:1.3;'>
                     <div style='margin-bottom:1em;'>
                         Prepared by:
                     </div>
