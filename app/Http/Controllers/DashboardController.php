@@ -646,6 +646,44 @@ class DashboardController extends Controller
             ->orderBy('staff.full_name', 'asc') // Secondary sort by name
             ->get();
 
+            // Recompute `average_rating` using mean-of-category averages to match
+            // the client-side (print JS) calculation: for each staff, compute the
+            // per-category average (avg of response_score for questions in that
+            // category) then compute the mean of those category averages.
+            $staffRatings->transform(function ($s) use ($currentAcademicYear) {
+                $categories = \App\Models\Question::where('staff_type', $s->staff_type)
+                    ->when($currentAcademicYear, function($q) use ($currentAcademicYear) {
+                        $q->where('academic_year_id', $currentAcademicYear->id);
+                    })
+                    ->select('title')
+                    ->distinct()
+                    ->pluck('title');
+
+                $categoryAvgs = [];
+                foreach ($categories as $category) {
+                    $questionIds = \App\Models\Question::where('staff_type', $s->staff_type)
+                        ->where('title', $category)
+                        ->when($currentAcademicYear, function($q) use ($currentAcademicYear) {
+                            $q->where('academic_year_id', $currentAcademicYear->id);
+                        })
+                        ->pluck('id');
+
+                    $avg = \App\Models\Evaluation::where('staff_id', $s->id)
+                        ->whereIn('question_id', $questionIds)
+                        ->avg('response_score');
+
+                    $categoryAvgs[] = $avg !== null ? (float) $avg : 0.0;
+                }
+
+                if (count($categoryAvgs) > 0) {
+                    $s->average_rating = array_sum($categoryAvgs) / count($categoryAvgs);
+                } else {
+                    $s->average_rating = 0;
+                }
+
+                return $s;
+            });
+
             return view('dashboard', compact(
                 'page',
                 'current_title',
