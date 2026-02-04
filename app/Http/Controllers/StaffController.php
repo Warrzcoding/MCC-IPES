@@ -353,12 +353,13 @@ class StaffController extends Controller
                     'question_id' => $question->id,
                     'question_text' => $question->description,
                     'category' => $question->title,
-                    'average_rating' => $avg ? $avg : 0, 
+                    'average_rating' => $avg !== null ? $avg : 0,
 
                 ];
             }
         // 'average_rating' => $avg ? round($avg, 2) : 0,
        //    'average_rating' => $avg ? $avg : 0, 
+       //<?php'average_rating' => $avg !== null ? $avg : 0,
             return response()->json([
                 'success' => true,
                 'staff' => [

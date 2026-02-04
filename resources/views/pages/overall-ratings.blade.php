@@ -479,7 +479,7 @@ function getAdjectivalRating($rating) {
                                             </div>
                                             
                                             <div class="rating-section">
-                                                <div class="rating-number" style="color: {{ $ratingInfo['color'] }}">
+                                                <div class="rating-number" data-rating="{{ $staff->average_rating }}" style="color: {{ $ratingInfo['color'] }}">
                                                     {{ round($staff->average_rating, 2) }}/5
                                                 </div>
                                                 <div class="rating-stars">
@@ -562,7 +562,7 @@ function getAdjectivalRating($rating) {
                                             </div>
                                             
                                             <div class="rating-section">
-                                                <div class="rating-number" style="color: {{ $ratingInfo['color'] }}">
+                                                <div class="rating-number" data-rating="{{ $staff->average_rating }}" style="color: {{ $ratingInfo['color'] }}">
                                                     {{ round($staff->average_rating, 2) }}/5
                                                 </div>
                                                 <div class="rating-stars">
@@ -706,7 +706,7 @@ function getCurrentOverallStaffData(type) {
 
         if (nameEl && ratingEl) {
             const name = nameEl.textContent.trim();
-            const rating = parseFloat(ratingEl.textContent.split('/')[0]);
+            const rating = parseFloat(ratingEl.getAttribute('data-rating') || ratingEl.textContent.split('/')[0]);
             const department = deptEl ? deptEl.textContent.trim() : 'N/A';
 
             if (!isNaN(rating)) {
@@ -779,7 +779,7 @@ function printOverallReport(staffData, type) {
         html += `
             <tr style="background-color: ${rowColor};">
                 <td style="border: 1px solid #ddd; padding: 4px 6px; text-align: left; font-size: 9.5pt; font-family: 'Century Gothic', sans-serif; text-transform: uppercase;">${staff.name}</td>
-                <td style="border: 1px solid #ddd; padding: 4px 6px; text-align: center; font-weight: bold; color: #232527; font-size: 9.5pt; font-family: 'Century Gothic', sans-serif; text-transform: uppercase;">${staff.rating.toFixed(2)}</td>
+                <td style="border: 1px solid #ddd; padding: 4px 6px; text-align: center; font-weight: bold; color: #232527; font-size: 9.5pt; font-family: 'Century Gothic', sans-serif; text-transform: uppercase;">${staff.rating.toFixed(2)}/5</td>
                 <td style="border: 1px solid #ddd; padding: 4px 6px; text-align: center; font-weight: bold; color: #080908; font-size: 9.5pt; font-family: 'Century Gothic', sans-serif; text-transform: uppercase;">${adjective}</td>
                 <td style="border: 1px solid #ddd; padding: 4px 6px; text-align: center; font-size: 9.5pt; font-family: 'Century Gothic', sans-serif; text-transform: uppercase;">${staff.department}</td>
             </tr>

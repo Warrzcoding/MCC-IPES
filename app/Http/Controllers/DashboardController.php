@@ -725,9 +725,45 @@ class DashboardController extends Controller
             ->join('evaluations', 'staff.id', '=', 'evaluations.staff_id')
             ->where('staff.staff_type', 'teaching')
             ->groupBy('staff.id', 'staff.staff_id', 'staff.full_name', 'staff.email', 'staff.department', 'staff.staff_type', 'staff.image_path')
-            ->orderBy('average_rating', 'desc')
-            ->orderBy('staff.full_name', 'asc') // Secondary sort by name
             ->get();
+
+            // Recompute average_rating using category averages to match staff-ratings
+            $teachingStaffRatings->transform(function ($s) use ($currentAcademicYear) {
+                $categories = \App\Models\Question::where('staff_type', $s->staff_type)
+                    ->when($currentAcademicYear, function($q) use ($currentAcademicYear) {
+                        $q->where('academic_year_id', $currentAcademicYear->id);
+                    })
+                    ->select('title')
+                    ->distinct()
+                    ->pluck('title');
+
+                $categoryAvgs = [];
+                foreach ($categories as $category) {
+                    $questionIds = \App\Models\Question::where('staff_type', $s->staff_type)
+                        ->where('title', $category)
+                        ->when($currentAcademicYear, function($q) use ($currentAcademicYear) {
+                            $q->where('academic_year_id', $currentAcademicYear->id);
+                        })
+                        ->pluck('id');
+
+                    $avg = \App\Models\Evaluation::where('staff_id', $s->id)
+                        ->whereIn('question_id', $questionIds)
+                        ->avg('response_score');
+
+                    $categoryAvgs[] = $avg !== null ? (float) $avg : 0.0;
+                }
+
+                if (count($categoryAvgs) > 0) {
+                    $s->average_rating = array_sum($categoryAvgs) / count($categoryAvgs);
+                } else {
+                    $s->average_rating = 0;
+                }
+
+                return $s;
+            });
+
+            // Sort by the new average_rating
+            $teachingStaffRatings = $teachingStaffRatings->sortByDesc('average_rating')->values();
 
             // Fetch NON-TEACHING staff members WITH evaluations, sorted by rating (highest to lowest)
             $nonTeachingStaffRatings = \App\Models\Staff::select(
@@ -745,9 +781,45 @@ class DashboardController extends Controller
             ->join('evaluations', 'staff.id', '=', 'evaluations.staff_id')
             ->where('staff.staff_type', 'non-teaching')
             ->groupBy('staff.id', 'staff.staff_id', 'staff.full_name', 'staff.email', 'staff.department', 'staff.staff_type', 'staff.image_path')
-            ->orderBy('average_rating', 'desc')
-            ->orderBy('staff.full_name', 'asc') // Secondary sort by name
             ->get();
+
+            // Recompute average_rating using category averages to match staff-ratings
+            $nonTeachingStaffRatings->transform(function ($s) use ($currentAcademicYear) {
+                $categories = \App\Models\Question::where('staff_type', $s->staff_type)
+                    ->when($currentAcademicYear, function($q) use ($currentAcademicYear) {
+                        $q->where('academic_year_id', $currentAcademicYear->id);
+                    })
+                    ->select('title')
+                    ->distinct()
+                    ->pluck('title');
+
+                $categoryAvgs = [];
+                foreach ($categories as $category) {
+                    $questionIds = \App\Models\Question::where('staff_type', $s->staff_type)
+                        ->where('title', $category)
+                        ->when($currentAcademicYear, function($q) use ($currentAcademicYear) {
+                            $q->where('academic_year_id', $currentAcademicYear->id);
+                        })
+                        ->pluck('id');
+
+                    $avg = \App\Models\Evaluation::where('staff_id', $s->id)
+                        ->whereIn('question_id', $questionIds)
+                        ->avg('response_score');
+
+                    $categoryAvgs[] = $avg !== null ? (float) $avg : 0.0;
+                }
+
+                if (count($categoryAvgs) > 0) {
+                    $s->average_rating = array_sum($categoryAvgs) / count($categoryAvgs);
+                } else {
+                    $s->average_rating = 0;
+                }
+
+                return $s;
+            });
+
+            // Sort by the new average_rating
+            $nonTeachingStaffRatings = $nonTeachingStaffRatings->sortByDesc('average_rating')->values();
 
             // Combine both collections for backward compatibility (if needed elsewhere)
             $allStaffRatings = $teachingStaffRatings->merge($nonTeachingStaffRatings);
