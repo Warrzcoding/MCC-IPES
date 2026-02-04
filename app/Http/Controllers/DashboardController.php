@@ -10,6 +10,7 @@ use App\Models\AcademicYear;
 use App\Models\Question;
 use App\Models\Evaluation;
 use App\Models\Subject;
+use App\Models\InstructorSelection;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 use App\Models\RequestSignin;
@@ -550,6 +551,26 @@ class DashboardController extends Controller
             $nonTeachingStaff = \App\Models\Staff::where('staff_type', 'non-teaching')->get();
             $studentSubjects = $studentSubjects ?? collect();
 
+            // Irregular selection lock state (DB-driven, persists across sidebar navigation)
+            $savedSelections = collect();
+            $lockedSelections = [
+                'teaching' => collect(),
+                'non-teaching' => collect(),
+            ];
+            $hasLockedSelection = false;
+
+            if ($currentAcademicYear) {
+                $userId = Auth::id();
+
+                $savedSelections = InstructorSelection::where('user_id', $userId)
+                    ->where('academic_year_id', $currentAcademicYear->id)
+                    ->with('staff')
+                    ->get();
+
+                $lockedSelections = InstructorSelection::getLockedSelectionByType($userId, $currentAcademicYear->id);
+                $hasLockedSelection = InstructorSelection::hasLockedSelection($userId, $currentAcademicYear->id);
+            }
+
             // DEBUG: Log the filtering results (remove this after testing)
             \Log::info('Student Evaluation Filter Debug (DashboardController)', [
                 'student_course' => $studentCourse,
@@ -573,6 +594,9 @@ class DashboardController extends Controller
                     'nonTeachingStaff',
                     'studentSubjects',
                     'currentAcademicYear',
+                    'savedSelections',
+                    'lockedSelections',
+                    'hasLockedSelection',
                     // Analytics data:
                     'studentsPerCourse',
                     'evaluatedStudentsPerCourse',
