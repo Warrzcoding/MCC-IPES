@@ -920,7 +920,7 @@ if (!function_exists('getRatingStatus')) {
             <div class="card mb-4">
                 <div class="card-header evaluation-header text-white text-center" style="background: linear-gradient(145deg, #1e3c72 0%, #2a5298 50%, #667eea 100%); border-radius: 20px; padding: 1.5rem 2rem; position: relative; overflow: hidden; box-shadow: 0 20px 40px rgba(30, 60, 114, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2), inset 0 -1px 0 rgba(0, 0, 0, 0.1); border: 1px solid rgba(255, 255, 255, 0.1);">
                     <h4 class="mb-0" style="font-size: 2.5em; font-weight: 800; color: #ffffff; text-shadow: 0 2px 4px rgba(0,0,0,0.3), 0 4px 8px rgba(0,0,0,0.2), 0 0 20px rgba(255,255,255,0.1); letter-spacing: -0.5px; line-height: 1.1; position: relative; z-index: 2;">
-                        <i class="fas fa-trophy me-2" style="color: #ffd700; filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.6)); transform: scale(1.1); display: inline-block; animation: bounce 2s ease-in-out infinite;"></i>Staff Performance Rankings for {{ $year->year }}
+                        <i class="fas fa-trophy me-2" style="color: #ffd700; filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.6)); transform: scale(1.1); display: inline-block; animation: bounce 2s ease-in-out infinite;"></i>Instructors Performance Rankings for {{ $year->year }}
                     </h4>
                     <p class="mb-0 mt-2" style="font-size: 1.3em; opacity: 0.9; text-shadow: 0 1px 3px rgba(0,0,0,0.3); font-weight: 400; color: rgba(255, 255, 255, 0.95); line-height: 1.4; position: relative; z-index: 2;">Evaluation results ranked from highest to lowest performance</p>
                 </div>
@@ -933,7 +933,7 @@ if (!function_exists('getRatingStatus')) {
                         <div class="section-header">
                             <div class="section-title">
                                 <i class="fas fa-chalkboard-teacher"></i>
-                                <span>Teaching Staff Ranking</span>
+                                <span>Instructors Ranking</span>
                                 <span class="section-count">{{ $teachingStaff->count() }}</span>
                             </div>
                         </div>
@@ -1012,7 +1012,7 @@ if (!function_exists('getRatingStatus')) {
                             @else
                                 <div class="no-staff-message">
                                     <i class="fas fa-chalkboard-teacher"></i>
-                                    <h5>No Teaching Staff Evaluations</h5>
+                                    <h5>No Instructors Evaluations</h5>
                                     <p>No evaluations have been submitted for teaching staff yet.</p>
                                 </div>
                             @endif

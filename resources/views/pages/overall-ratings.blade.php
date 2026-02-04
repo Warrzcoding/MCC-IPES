@@ -417,7 +417,7 @@ function getAdjectivalRating($rating) {
     <!-- Overall Header -->
     <div class="overall-header">
         <div class="overall-title">
-            <i class="fas fa-trophy me-3"></i>Overall Staff Performance Rankings
+            <i class="fas fa-trophy me-3"></i>Overall Instructors Performance Rankings
         </div>
         <p class="overall-subtitle">
             Comprehensive evaluation results for all staff members, ranked by performance
@@ -779,7 +779,7 @@ function printOverallReport(staffData, type) {
         html += `
             <tr style="background-color: ${rowColor};">
                 <td style="border: 1px solid #ddd; padding: 4px 6px; text-align: left; font-size: 9.5pt; font-family: 'Century Gothic', sans-serif; text-transform: uppercase;">${staff.name}</td>
-                <td style="border: 1px solid #ddd; padding: 4px 6px; text-align: center; font-weight: bold; color: #232527; font-size: 9.5pt; font-family: 'Century Gothic', sans-serif; text-transform: uppercase;">${staff.rating.toFixed(2)}</td>
+                <td style="border: 1px solid #ddd; padding: 4px 6px; text-align: center; font-weight: bold; color: #232527; font-size: 9.5pt; font-family: 'Century Gothic', sans-serif; text-transform: uppercase;">${staff.rating.toFixed(2)}/5</td>
                 <td style="border: 1px solid #ddd; padding: 4px 6px; text-align: center; font-weight: bold; color: #080908; font-size: 9.5pt; font-family: 'Century Gothic', sans-serif; text-transform: uppercase;">${adjective}</td>
                 <td style="border: 1px solid #ddd; padding: 4px 6px; text-align: center; font-size: 9.5pt; font-family: 'Century Gothic', sans-serif; text-transform: uppercase;">${staff.department}</td>
             </tr>
