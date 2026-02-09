@@ -1237,7 +1237,7 @@ function getAdjectivalRating($rating) {
                     <p style="margin-bottom: 0.6em;">Enclosed with this letter, is a detailed report highlighting the evaluation results for each instructor.</p>
                 </div>
                 
-                <div style="margin-bottom: 2em;">
+                <div style="margin-bottom: 0;">
                     <table style="width: 100%; border-collapse: collapse; margin-top: 0.4em; page-break-inside: auto;">
                         <thead>
                             <tr style="height: 40px !important; border: none !important;"><th colspan="3" style="border: none !important; height: 40px !important;"></th></tr>
@@ -1266,10 +1266,24 @@ function getAdjectivalRating($rating) {
                         </tbody>
                     </table>
                 </div>
+        `;
 
-                <!-- Signature Section - Stays Intact with top spacing -->
-                <div style='page-break-inside: avoid; page-break-after: avoid; margin-top: 5em; margin-bottom: 0; text-align:left; font-size:10pt; line-height:1.3;'>
-                    <div style='page-break-inside: avoid; margin-bottom:1em;'><br><br><br><br>
+        // Calculate if we should force the signature section to the next page
+        // Based on estimated row capacity (Page 1: ~15 rows, Other Pages: ~25 rows)
+        const rowCount = staffData.length;
+        let shouldForcePush = false;
+        if (rowCount <= 15) {
+            if (rowCount >= 14) shouldForcePush = true; // Force push if 1 or 2 rows left on P1
+        } else {
+            const remainingRows = (rowCount - 15) % 25;
+            // Force push if 1 or 2 rows left on subsequent pages or if exactly full
+            if (remainingRows >= 23 || remainingRows === 0) shouldForcePush = true;
+        }
+
+        html += `
+                <!-- Signature Section - Dynamic spacing to prevent breaking and minimize empty gaps -->
+                <div style='page-break-inside: avoid; page-break-after: avoid; margin-top: 1.5em; margin-bottom: 0; text-align:left; font-size:10pt; line-height:1.3; ${shouldForcePush ? "page-break-before: always;" : ""}'>
+                    <div style='page-break-inside: avoid; margin-bottom:1em;'>
                         Prepared by:
                     </div>
                     <div style='page-break-inside: avoid; margin-bottom:0.1em;'>
