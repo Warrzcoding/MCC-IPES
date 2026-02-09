@@ -1273,11 +1273,11 @@ function getAdjectivalRating($rating) {
         const rowCount = staffData.length;
         let shouldForcePush = false;
         if (rowCount <= 15) {
-            if (rowCount >= 14) shouldForcePush = true; // Force push if 1 or 2 rows left on P1
+            if (rowCount >= 14) shouldForcePush = true; // Force push if 0 or 1 row left on P1
         } else {
             const remainingRows = (rowCount - 15) % 25;
-            // Force push if 1 or 2 rows left on subsequent pages or if exactly full
-            if (remainingRows >= 23 || remainingRows === 0) shouldForcePush = true;
+            // Force push if 0 or 1 row left on subsequent pages
+            if (remainingRows >= 24 || remainingRows === 0) shouldForcePush = true;
         }
 
         html += `
