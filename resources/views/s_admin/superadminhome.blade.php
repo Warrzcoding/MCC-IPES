@@ -569,7 +569,7 @@
                 </a>
             </li>
             <li>
-                <a href="#">
+                <a href="{{ route('superadmin.users') }}">
                     <i class="fas fa-users"></i>
                     <span>Users Management</span>
                 </a>
@@ -647,14 +647,6 @@
                 </div>
             </div>
 
-            <!-- Alerts Section -->
-            <div class="row mb-4">
-                <div class="col-12">
-                    <div class="alert alert-success">
-                        <i class="fas fa-check-circle"></i> <strong>System Status:</strong> All systems operational and running smoothly.
-                    </div>
-                </div>
-            </div>
 
             <!-- Main Dashboard Cards -->
             <div class="row">

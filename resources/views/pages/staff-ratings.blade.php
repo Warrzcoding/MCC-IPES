@@ -1245,7 +1245,7 @@ function getAdjectivalRating($rating) {
                     if (dept === 'BSIT') {
                         deptHead = 'DR. DINO L. ILUSTRISIMO';
                     } else if (dept === 'EDUC') {
-                        deptHead = 'DR. PRESCILLA F. CANOY';
+                        deptHead = 'DR. PRISCILLA F. CANOY';
                     } else if (dept === 'BSBA') {
                         deptHead = 'DR. ISRAEL N. ABBARATIGUE';
                     } else if (dept === 'BSHM') {
