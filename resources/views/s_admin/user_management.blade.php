@@ -420,8 +420,8 @@
             </li>
             <li>
                 <a href="#">
-                    <i class="fas fa-cog"></i>
-                    <span>Settings</span>
+                    <i class="fas fa-history"></i>
+                    <span>Activity Logs</span>
                 </a>
             </li>
         </ul>

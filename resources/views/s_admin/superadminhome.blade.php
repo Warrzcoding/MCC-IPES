@@ -583,22 +583,11 @@
             </li>
             <li>
                 <a href="#">
-                    <i class="fas fa-cog"></i>
-                    <span>Settings</span>
-                </a>
-            </li>
-            <li>
-                <a href="#">
                     <i class="fas fa-history"></i>
                     <span>Activity Logs</span>
                 </a>
             </li>
-            <li>
-                <a href="#">
-                    <i class="fas fa-question-circle"></i>
-                    <span>Help & Support</span>
-                </a>
-            </li>
+          
         </ul>
     </aside>
 
@@ -621,28 +610,28 @@
                     <div class="stat-box pulse">
                         <i class="fas fa-users fa-2x" style="color: var(--accent-green);"></i>
                         <div class="stat-number">1,247</div>
-                        <div class="stat-label">Total Users</div>
+                        <div class="stat-label">INSTRUCTORS</div>
                     </div>
                 </div>
                 <div class="col-md-3 col-sm-6 mb-3">
                     <div class="stat-box pulse">
                         <i class="fas fa-graduation-cap fa-2x" style="color: var(--accent-green);"></i>
                         <div class="stat-number">342</div>
-                        <div class="stat-label">Students</div>
+                        <div class="stat-label">STUDENTS</div>
                     </div>
                 </div>
                 <div class="col-md-3 col-sm-6 mb-3">
                     <div class="stat-box pulse">
                         <i class="fas fa-chalkboard-user fa-2x" style="color: var(--accent-green);"></i>
                         <div class="stat-number">89</div>
-                        <div class="stat-label">Staff Members</div>
+                        <div class="stat-label">QUESTIONS</div>
                     </div>
                 </div>
                 <div class="col-md-3 col-sm-6 mb-3">
                     <div class="stat-box pulse">
                         <i class="fas fa-calendar-alt fa-2x" style="color: var(--accent-green);"></i>
                         <div class="stat-number">5</div>
-                        <div class="stat-label">Academic Years</div>
+                        <div class="stat-label">ACADEMIC YEAR</div>
                     </div>
                 </div>
             </div>
