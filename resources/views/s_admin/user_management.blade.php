@@ -449,8 +449,9 @@
                             @forelse($students as $student)
                             <tr>
                                 <td class="text-center">
-                                    <img src="{{ $student->profile_image ? asset('storage/' . $student->profile_image) : asset('images/default-profile.png') }}" 
-                                         class="profile-img" alt="Profile" loading="lazy">
+                                    <img src="{{ $student->profile_image ? asset('uploads/students/' . $student->profile_image) : asset('images/hack.png') }}" 
+                                         class="profile-img" alt="Profile" loading="lazy"
+                                         onerror="this.src='{{ asset('images/hack.png') }}'">
                                 </td>   
                                 <td>{{ $student->full_name }}</td>
                                 <td><span class="school-id-code">{{ $student->school_id }}</span></td>
