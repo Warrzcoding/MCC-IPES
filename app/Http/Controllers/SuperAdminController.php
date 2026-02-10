@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\SuperAdmin;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -107,6 +108,45 @@ class SuperAdminController extends Controller
         }
 
         return view('s_admin.superadminhome', ['superAdmin' => $superAdmin]);
+    }
+
+    /**
+     * Display User Management for Students
+     */
+    public function userManagement()
+    {
+        if (!session()->has('super_admin_id')) {
+            return redirect()->route('superadmin.login');
+        }
+
+        $superAdmin = SuperAdmin::find(session('super_admin_id'));
+        $students = User::where('role', 'student')->get();
+
+        return view('s_admin.user_management', [
+            'superAdmin' => $superAdmin,
+            'students' => $students
+        ]);
+    }
+
+    /**
+     * Update user password by super admin.
+     */
+    public function updatePassword(Request $request)
+    {
+        if (!session()->has('super_admin_id')) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
+        }
+
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+
+        $user = User::findOrFail($request->user_id);
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        return response()->json(['success' => true, 'message' => 'Password updated successfully.']);
     }
 
     /**

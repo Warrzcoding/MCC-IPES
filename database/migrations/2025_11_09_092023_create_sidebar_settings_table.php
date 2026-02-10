@@ -11,15 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('sidebar_settings', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('admin_id');
-            $table->json('disabled_features')->default('[]'); // Array of disabled feature keys
-            $table->timestamps();
+        if (!Schema::hasTable('sidebar_settings')) {
+            Schema::create('sidebar_settings', function (Blueprint $table) {
+                $table->id();
+                $table->unsignedBigInteger('admin_id');
+                $table->json('disabled_features')->default('[]'); // Array of disabled feature keys
+                $table->timestamps();
 
-            $table->foreign('admin_id')->references('id')->on('users')->onDelete('cascade');
-            $table->unique('admin_id'); // One setting per admin
-        });
+                $table->foreign('admin_id')->references('id')->on('users')->onDelete('cascade');
+                $table->unique('admin_id'); // One setting per admin
+            });
+        }
     }
 
     /**
