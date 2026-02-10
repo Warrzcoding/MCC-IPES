@@ -40,7 +40,16 @@
             font-family: 'Courier New', monospace;
             overflow-x: hidden;
             min-height: 100vh;
-            position: relative;
+            zoom: 0.8;
+        }
+
+        @supports not (zoom: 0.8) {
+            body {
+                transform: scale(0.8);
+                transform-origin: top center;
+                width: 125%;
+                min-height: calc(100vh / 0.8);
+            }
         }
 
         /* Hacker Scanlines */
@@ -182,6 +191,7 @@
             transition: var(--transition);
             border-left: 3px solid transparent;
             font-size: 14px;
+            font-weight: 500;
         }
 
         .sidebar-menu a:hover, .sidebar-menu a.active {
@@ -336,6 +346,29 @@
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: var(--primary-dark); }
         ::-webkit-scrollbar-thumb { background: var(--accent-green); }
+
+        /* ==================== RESPONSIVE ==================== */
+        @media (max-width: 992px) {
+            body {
+                zoom: 1;
+                transform: none;
+                width: 100%;
+                min-height: 100vh;
+            }
+
+            .topbar-title {
+                font-size: 18px;
+            }
+
+            .sidebar {
+                width: min(80vw, 320px);
+                transform: translateX(-100%);
+            }
+
+            .main-container {
+                margin-left: 0;
+            }
+        }
     </style>
 </head>
 <body>
@@ -434,9 +467,7 @@
                                     <button class="btn-action btn-password" title="Change Password" onclick="openPasswordModal('{{ $student->id }}', '{{ $student->full_name }}')">
                                         <i class="fas fa-key"></i>
                                     </button>
-                                    <button class="btn-action btn-delete" title="Delete User">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
+                                   
                                 </td>
                             </tr>
                             @empty
