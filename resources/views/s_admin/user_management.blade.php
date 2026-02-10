@@ -321,6 +321,12 @@
             transition: var(--transition);
         }
 
+        .btn-view {
+            background: transparent;
+            border: 1px solid var(--accent-green);
+            color: var(--accent-green);
+        }
+
         .btn-copy {
             background: transparent;
             border: 1px solid var(--accent-green);
@@ -339,6 +345,7 @@
             color: #ff4d4d;
         }
 
+        .btn-view:hover { background: var(--accent-green); color: var(--primary-dark); }
         .btn-copy:hover { background: var(--accent-green); color: var(--primary-dark); }
         .btn-password:hover { background: #ffc107; color: var(--primary-dark); }
         .btn-delete:hover { background: #ff4d4d; color: white; }
@@ -462,6 +469,9 @@
                                     </small>
                                 </td>
                                 <td class="text-center">
+                                    <button class="btn-action btn-view" title="View Profile" onclick="viewUserProfile('{{ $student->full_name }}', '{{ $student->school_id }}', '{{ $student->email }}', '{{ $student->profile_image ? asset('uploads/students/' . $student->profile_image) : asset('images/hack.png') }}')">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
                                     <button class="btn-action btn-copy" title="Copy Info" onclick="copyUserInfo('{{ $student->full_name }}', '{{ $student->school_id }}', '{{ $student->email }}')">
                                         <i class="fas fa-copy"></i>
                                     </button>
@@ -482,6 +492,55 @@
             </div>
         </div>
     </main>
+
+    <!-- PROFILE PREVIEW MODAL (Overlay) -->
+    <div id="profileModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; backdrop-filter: blur(8px);">
+        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 600px; background: var(--secondary-dark); border: 2px solid var(--accent-green); border-radius: 8px; box-shadow: 0 0 40px rgba(0,255,65,0.4); padding: 30px; overflow: hidden;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid var(--border-color); padding-bottom: 15px;">
+                <h6 style="color: var(--accent-green); margin: 0; letter-spacing: 2px; font-weight: bold;">
+                    <i class="fas fa-user-circle me-2"></i>USER_PROFILE_DATA
+                </h6>
+                <button onclick="closeProfileModal()" style="background: transparent; border: none; color: var(--accent-green); cursor: pointer; font-size: 24px;">&times;</button>
+            </div>
+
+            <div style="display: flex; gap: 30px; align-items: flex-start;">
+                <!-- Big Image Box -->
+                <div style="flex: 0 0 200px;">
+                    <div style="width: 200px; height: 200px; border: 2px solid var(--accent-green); border-radius: 8px; overflow: hidden; box-shadow: 0 0 15px rgba(0,255,65,0.2);">
+                        <img id="profilePreviewImg" src="" alt="Profile Large" style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+                </div>
+
+                <!-- User Data -->
+                <div style="flex: 1; font-family: 'Courier New', monospace;">
+                    <div style="margin-bottom: 15px;">
+                        <label style="color: var(--accent-green); font-size: 11px; display: block; margin-bottom: 2px; opacity: 0.7;">FULL_NAME</label>
+                        <div id="profileFullName" style="color: var(--text-light); font-size: 18px; font-weight: bold; text-shadow: 0 0 5px rgba(255,255,255,0.2);"></div>
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <label style="color: var(--accent-green); font-size: 11px; display: block; margin-bottom: 2px; opacity: 0.7;">SCHOOL_ID</label>
+                        <div id="profileSchoolId" style="color: var(--accent-green-light); font-size: 16px;"></div>
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <label style="color: var(--accent-green); font-size: 11px; display: block; margin-bottom: 2px; opacity: 0.7;">EMAIL_ADDRESS</label>
+                        <div id="profileEmail" style="color: var(--text-light); font-size: 14px;"></div>
+                    </div>
+                    <div style="margin-top: 30px; border-top: 1px solid var(--border-color); padding-top: 15px;">
+                        <div style="color: var(--accent-green); font-size: 10px; font-style: italic;">
+                            >> SYSTEM_STATUS: VERIFIED
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: 30px; text-align: right;">
+                <button onclick="closeProfileModal()" 
+                        style="background: var(--accent-green); border: none; color: var(--primary-dark); padding: 8px 25px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; transition: var(--transition); box-shadow: 0 0 10px rgba(0,255,65,0.3);">
+                    CLOSE_TERMINAL
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- PASSWORD UPDATE MODAL (Overlay) -->
     <div id="passwordModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; backdrop-filter: blur(5px);">
@@ -540,6 +599,21 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
     <script>
+        // Profile Modal Functionality
+        function viewUserProfile(name, id, email, imgSrc) {
+            document.getElementById('profileFullName').textContent = name;
+            document.getElementById('profileSchoolId').textContent = id;
+            document.getElementById('profileEmail').textContent = email;
+            document.getElementById('profilePreviewImg').src = imgSrc;
+            document.getElementById('profileModal').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeProfileModal() {
+            document.getElementById('profileModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
         // Search Functionality
         document.getElementById('userSearch').addEventListener('keyup', function() {
             let filter = this.value.toUpperCase();
@@ -591,9 +665,13 @@
 
         // Close modal when clicking outside
         window.addEventListener('click', function(event) {
-            const modal = document.getElementById('passwordModal');
-            if (event.target == modal) {
+            const passwordModal = document.getElementById('passwordModal');
+            const profileModal = document.getElementById('profileModal');
+            if (event.target == passwordModal) {
                 closePasswordModal();
+            }
+            if (event.target == profileModal) {
+                closeProfileModal();
             }
         });
 
