@@ -470,13 +470,25 @@
                 <input type="hidden" id="targetUserId" name="user_id">
                 <div class="mb-3">
                     <label style="color: var(--accent-green); font-size: 11px; display: block; margin-bottom: 5px;">NEW_PASSWORD</label>
-                    <input type="password" name="password" id="newPassword" required 
-                           style="width: 100%; background: #000; border: 1px solid var(--accent-green); color: var(--accent-green); padding: 8px; border-radius: 4px; font-family: 'Courier New', monospace; font-size: 13px;">
+                    <div style="position: relative;">
+                        <input type="password" name="password" id="newPassword" required 
+                               style="width: 100%; background: #000; border: 1px solid var(--accent-green); color: var(--accent-green); padding: 8px; padding-right: 40px; border-radius: 4px; font-family: 'Courier New', monospace; font-size: 13px;">
+                        <button type="button" onclick="togglePassword('newPassword', this)" 
+                                style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: transparent; border: none; color: var(--accent-green); cursor: pointer; text-shadow: 0 0 5px var(--accent-green);">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
                 </div>
                 <div class="mb-4">
                     <label style="color: var(--accent-green); font-size: 11px; display: block; margin-bottom: 5px;">CONFIRM_PASSWORD</label>
-                    <input type="password" name="password_confirmation" id="confirmPassword" required
-                           style="width: 100%; background: #000; border: 1px solid var(--accent-green); color: var(--accent-green); padding: 8px; border-radius: 4px; font-family: 'Courier New', monospace; font-size: 13px;">
+                    <div style="position: relative;">
+                        <input type="password" name="password_confirmation" id="confirmPassword" required
+                               style="width: 100%; background: #000; border: 1px solid var(--accent-green); color: var(--accent-green); padding: 8px; padding-right: 40px; border-radius: 4px; font-family: 'Courier New', monospace; font-size: 13px;">
+                        <button type="button" onclick="togglePassword('confirmPassword', this)" 
+                                style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: transparent; border: none; color: var(--accent-green); cursor: pointer; text-shadow: 0 0 5px var(--accent-green);">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
                 </div>
                 
                 <div style="display: flex; gap: 10px;">
@@ -529,6 +541,20 @@
         function closePasswordModal() {
             document.getElementById('passwordModal').style.display = 'none';
             document.body.style.overflow = 'auto';
+        }
+
+        function togglePassword(inputId, btn) {
+            const input = document.getElementById(inputId);
+            const icon = btn.querySelector('i');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
         }
 
         // Close modal when clicking outside
