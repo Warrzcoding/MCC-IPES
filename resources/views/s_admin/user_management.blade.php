@@ -21,7 +21,7 @@
             --accent-green: #00ff41;
             --accent-green-light: #39ff14;
             --accent-green-dark: #00cc34;
-            --text-light: #ffffff;
+            --text-light: #01c4ff;
             --text-muted: #90ee90;
             --border-color: rgba(0, 255, 65, 0.2);
             --hover-color: rgba(0, 255, 65, 0.1);
@@ -147,10 +147,10 @@
         }
 
         .logout-btn:hover {
-            background: #ff4d4d;
-            border-color: #ff4d4d;
+            background: #3e4fee;
+            border-color: #ffffff;
             color: white;
-            box-shadow: 0 0 15px rgba(255, 77, 77, 0.5);
+            box-shadow: 0 0 15px rgba(193, 176, 176, 0.5);
         }
 
         /* ==================== SIDEBAR ==================== */
