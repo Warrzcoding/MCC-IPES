@@ -21,7 +21,7 @@
             --accent-green: #00ff41;
             --accent-green-light: #39ff14;
             --accent-green-dark: #00cc34;
-            --text-light: #01c4ff;
+            --text-light: #ffffff;
             --text-muted: #90ee90;
             --border-color: rgba(0, 255, 65, 0.2);
             --hover-color: rgba(0, 255, 65, 0.1);
@@ -147,10 +147,10 @@
         }
 
         .logout-btn:hover {
-            background: #3e4fee;
-            border-color: #ffffff;
+            background: #0a4e5a;
+            border-color: #fbfaff;
             color: white;
-            box-shadow: 0 0 15px rgba(193, 176, 176, 0.5);
+            box-shadow: 0 0 15px rgb(255, 251, 251);
         }
 
         /* ==================== SIDEBAR ==================== */
@@ -385,9 +385,18 @@
             <button class="toggle-btn" onclick="toggleSidebar()">
                 <i class="fas fa-bars"></i>
             </button>
-            <div class="topbar-title">MCCIPES ADMIN</div>
+            <div class="topbar-title">MCCIPES SUPER ADMIN</div>
         </div>
         <div class="topbar-right">
+             <div class="user-info">
+                <div class="user-avatar">
+                    {{ strtoupper(substr($user->name, 0, 1)) }}
+                </div>
+                <div class="user-details">
+                    <div style="font-size: 12px; color: var(--text-muted);">{{ $user->name }}</div>
+                    <div style="font-size: 11px; color: var(--accent-green);">SUPER ADMIN</div>
+                </div>
+            </div>
             <form id="logoutForm" action="{{ route('superadmin.logout') }}" method="POST">
                 @csrf
                 <button type="button" id="logoutBtn" class="logout-btn">

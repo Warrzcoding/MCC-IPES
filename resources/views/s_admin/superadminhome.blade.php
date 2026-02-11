@@ -153,10 +153,10 @@
         }
 
         .logout-btn:hover {
-            background: #0d7effff;
-            border-color: #0bcbf1ff;
+           background: #0a4e5a;
+            border-color: #fbfaff;
             color: white;
-            box-shadow: 0 0 15px rgba(255, 255, 255, 1);
+           box-shadow: 0 0 15px rgb(255, 255, 255);
         }
 
         /* ==================== SIDEBAR ==================== */
