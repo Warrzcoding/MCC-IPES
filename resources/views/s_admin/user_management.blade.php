@@ -133,6 +133,31 @@
             letter-spacing: 2px;
             text-shadow: 0 0 10px rgba(0, 255, 65, 0.3);
         }
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-green), var(--accent-green-dark));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--accent-green);
+            font-weight: bold;
+            color: var(--primary-dark);
+            box-shadow: 0 0 10px rgba(0, 255, 65, 0.4);
+        }
 
         .logout-btn {
             background: transparent;
@@ -363,8 +388,18 @@
                 min-height: 100vh;
             }
 
+            .topbar {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
             .topbar-title {
                 font-size: 18px;
+            }
+
+            .topbar-title,
+            .user-details {
+                display: none;
             }
 
             .sidebar {
@@ -397,7 +432,7 @@
                     <div style="font-size: 11px; color: var(--accent-green);">SUPER ADMIN</div>
                 </div>
             </div>
-            <form id="logoutForm" action="{{ route('superadmin.logout') }}" method="POST">
+            <form id="logoutForm" action="{{ route('superadmin.logout') }}" method="POST" style="display: inline;">
                 @csrf
                 <button type="button" id="logoutBtn" class="logout-btn">
                     <i class="fas fa-power-off"></i> Logout
