@@ -15,7 +15,7 @@
     
     <style>
         :root {
-            --primary-dark: #0a0e27;
+           --primary-dark: #0a0e27;
             --primary: #0d1117;
             --secondary-dark: #1a1f3a;
             --accent-green: #00ff41;
@@ -544,7 +544,7 @@
                 <h6 style="color: var(--accent-green); margin: 0; letter-spacing: 2px; font-weight: bold;">
                     <i class="fas fa-user-circle me-2"></i>USER_PROFILE_DATA
                 </h6>
-                <button onclick="closeProfileModal()" style="background: transparent; border: none; color: var(--accent-green); cursor: pointer; font-size: 24px;">&times;</button>
+    
             </div>
 
             <div style="display: flex; gap: 30px; align-items: flex-start;">
@@ -593,7 +593,6 @@
                 <h6 style="color: var(--accent-green); margin: 0; letter-spacing: 1px;">
                     <i class="fas fa-shield-alt me-2"></i>OVERRIDE PASSWORD
                 </h6>
-                <button onclick="closePasswordModal()" style="background: transparent; border: none; color: var(--accent-green); cursor: pointer; font-size: 20px;">&times;</button>
             </div>
             
             <div id="modalUserInfo" style="font-size: 12px; color: var(--accent-green-light); margin-bottom: 15px; font-family: 'Courier New', monospace;">
