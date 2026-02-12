@@ -160,7 +160,7 @@
             <div class="icon-box">
                 <img src="{{ asset('images/logo.png') }}" alt="MCC Logo">
             </div>
-            <h3>Magic Link</h3>
+            <h3>Reset Password</h3>
             <p>Enter your ms email to receive a secure reset link.</p>
         </div>
 
