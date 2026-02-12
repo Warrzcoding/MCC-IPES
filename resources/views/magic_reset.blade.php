@@ -85,9 +85,25 @@
         .input-group-text {
             background: transparent;
             border: none;
-            padding-left: 15px;
+            padding: 0 15px;
             color: #4c6ef5;
             font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .toggle-password {
+            cursor: pointer;
+            color: #888;
+            transition: color 0.2s;
+            background: none;
+            border: none;
+            padding: 0 15px;
+            display: flex;
+            align-items: center;
+        }
+        .toggle-password:hover {
+            color: #4c6ef5;
         }
         .form-control {
             background: transparent;
@@ -200,6 +216,9 @@
                 <div class="input-group">
                     <span class="input-group-text"><i class="fas fa-lock"></i></span>
                     <input type="password" id="new_password" name="password" class="form-control @error('password') is-invalid @enderror" required placeholder="Min. 8 characters">
+                    <button type="button" class="toggle-password" onclick="togglePasswordVisibility('new_password', this)">
+                        <i class="fas fa-eye"></i>
+                    </button>
                 </div>
                 <div class="password-strength" id="passwordStrength">
                     <div class="password-strength-bar" id="passwordStrengthBar"></div>
@@ -225,6 +244,9 @@
                 <div class="input-group">
                     <span class="input-group-text"><i class="fas fa-check-double"></i></span>
                     <input type="password" id="confirm_password" name="password_confirmation" class="form-control" required placeholder="Repeat password">
+                    <button type="button" class="toggle-password" onclick="togglePasswordVisibility('confirm_password', this)">
+                        <i class="fas fa-eye"></i>
+                    </button>
                 </div>
                 <div id="passwordMatchIndicator" class="password-match-indicator"></div>
             </div>
@@ -236,6 +258,20 @@
     </div>
 
     <script>
+        function togglePasswordVisibility(inputId, button) {
+            const input = document.getElementById(inputId);
+            const icon = button.querySelector('i');
+            if (input.type === "password") {
+                input.type = "text";
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = "password";
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             const passwordInput = document.getElementById('new_password');
             const confirmInput = document.getElementById('confirm_password');
