@@ -1589,7 +1589,7 @@
                     // Questions table is empty - proceed with saving
                     Swal.fire({
                         title: 'Save & Clear All Results?',
-                        html: "<span style='font-size:0.95rem;'>Save all evaluation results and clear existing entries?</span>",
+                        html: "<span style='font-size:0.95rem;'>Save all evaluation results and clear evaluations and instructor selections?</span>",
                         icon: 'warning',
                         showCancelButton: true,
                         confirmButtonColor: '#dc3545',
@@ -1655,7 +1655,7 @@
                                     // Show success alert with auto-dismiss
                                     Swal.fire({
                                         title: 'Success!',
-                                        text: 'All evaluations have been saved and entries cleared successfully!',
+                                        text: 'All evaluations and instructor selections have been saved and cleared successfully!',
                                         icon: 'success',
                                         timer: 3000,
                                         showConfirmButton: false,

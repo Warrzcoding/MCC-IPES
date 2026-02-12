@@ -473,8 +473,9 @@ class EvaluationController extends Controller
                     'updated_at' => $eval->updated_at ?? now(),
                 ]);
             }
-            // Only clear evaluations table
+            // Clear evaluations and instructor selections tables
             DB::table('evaluations')->delete();
+            DB::table('instructor_selections')->delete();
 
             // Set current academic year as used and inactive
             $currentAcademicYear = \App\Models\AcademicYear::where('is_active', 1)->first();
