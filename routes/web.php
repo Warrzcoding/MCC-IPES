@@ -17,6 +17,7 @@ use App\Http\Controllers\TestRecaptchaController;
 use App\Http\Controllers\SuperAdminController;
 use App\Http\Controllers\LoginMonitorController;
 use App\Http\Controllers\TestController;
+use App\Http\Controllers\MagicLinkController;
 
 // Root route - redirect to login
 Route::get('/', function () {
@@ -62,6 +63,15 @@ Route::post('/reset-password/verify-otp', [PasswordResetController::class, 'veri
 Route::post('/reset-password/update', [PasswordResetController::class, 'update'])->name('password.reset.update');
 // Alias to support Laravel's default forgot-password link names used in Blade
 Route::get('/password/reset', [PasswordResetController::class, 'showResetForm'])->name('password.request');
+
+Route::get('/forgotpass', function () {
+    return view('forgotpass');
+})->name('forgotpass');
+
+// Magic Link Routes
+Route::post('/magic-link/send', [MagicLinkController::class, 'sendMagicLink'])->name('magic.link.send');
+Route::get('/magic-link/reset/{token}', [MagicLinkController::class, 'showResetForm'])->name('magic.reset');
+Route::post('/magic-link/update', [MagicLinkController::class, 'resetPassword'])->name('magic.reset.update');
 
 // Super Admin Routes
 Route::get('/superadmin/login', [SuperAdminController::class, 'showLoginForm'])->name('superadmin.login');
