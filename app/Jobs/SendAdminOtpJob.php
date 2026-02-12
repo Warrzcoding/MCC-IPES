@@ -32,8 +32,8 @@ class SendAdminOtpJob implements ShouldQueue
     public function handle()
     {
         try {
-            // Try admin_smtp first
-            Mail::mailer('admin_smtp')->to($this->email)->send(new AdminOtpMail($this->otp, $this->adminName, 5));
+            // Try gmail_admin first
+            Mail::mailer('gmail_admin')->to($this->email)->send(new AdminOtpMail($this->otp, $this->adminName, 5));
             Log::info("Admin OTP email sent successfully to {$this->email}");
         } catch (\Throwable $exception) {
             Log::warning('Admin OTP mailer failed, attempting default transport: ' . $exception->getMessage());

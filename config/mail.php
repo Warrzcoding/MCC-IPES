@@ -50,17 +50,31 @@ return [
             'local_domain' => env('MAIL_EHLO_DOMAIN', parse_url(env('APP_URL', 'http://localhost'), PHP_URL_HOST)),
         ],
 
-        'admin_smtp' => [
+        'gmail_admin' => [
             'transport' => 'smtp',
-            'host' => env('ADMIN_MAIL_HOST') ?: env('MAIL_HOST', 'smtp.gmail.com'),
-            'port' => env('ADMIN_MAIL_PORT') ?: env('MAIL_PORT', 587),
-            'encryption' => env('ADMIN_MAIL_ENCRYPTION') ?: env('MAIL_ENCRYPTION', 'tls'),
-            'username' => env('ADMIN_MAIL_USERNAME') ?: env('MAIL_USERNAME'),
-            'password' => env('ADMIN_MAIL_PASSWORD') ?: env('MAIL_PASSWORD'),
+            'host' => env('MAIL_ADMIN_HOST', 'smtp.gmail.com'),
+            'port' => env('MAIL_ADMIN_PORT', 587),
+            'encryption' => env('MAIL_ADMIN_ENCRYPTION', 'tls'),
+            'username' => env('MAIL_ADMIN_USERNAME'),
+            'password' => env('MAIL_ADMIN_PASSWORD'),
             'timeout' => 10,
             'from' => [
-                'address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),
-                'name' => env('MAIL_FROM_NAME', 'MCC-IPES'),
+                'address' => env('MAIL_ADMIN_FROM_ADDRESS', env('MAIL_FROM_ADDRESS')),
+                'name' => env('MAIL_ADMIN_FROM_NAME', env('MAIL_FROM_NAME', 'Admin OTP')),
+            ],
+        ],
+
+        'gmail_student' => [
+            'transport' => 'smtp',
+            'host' => env('MAIL_STUDENT_HOST', 'smtp.gmail.com'),
+            'port' => env('MAIL_STUDENT_PORT', 587),
+            'encryption' => env('MAIL_STUDENT_ENCRYPTION', 'tls'),
+            'username' => env('MAIL_STUDENT_USERNAME'),
+            'password' => env('MAIL_STUDENT_PASSWORD'),
+            'timeout' => 10,
+            'from' => [
+                'address' => env('MAIL_STUDENT_FROM_ADDRESS', env('MAIL_FROM_ADDRESS')),
+                'name' => env('MAIL_STUDENT_FROM_NAME', env('MAIL_FROM_NAME', 'Student Portal')),
             ],
         ],
         'ses' => [

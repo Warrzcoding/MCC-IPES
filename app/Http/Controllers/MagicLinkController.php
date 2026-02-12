@@ -38,8 +38,8 @@ class MagicLinkController extends Controller
         // Generate magic link URL
         $url = route('magic.reset', ['token' => $token, 'email' => $email]);
 
-        // Send email
-        Mail::to($email)->send(new MagicLinkMail($url));
+        // Send email using Student Magic Link mailer
+        Mail::mailer('gmail_student')->to($email)->send(new MagicLinkMail($url));
 
         return back()->with('success', 'Reset link sent! Please check your email in outlook.');
     }
