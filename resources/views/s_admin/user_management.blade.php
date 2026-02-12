@@ -375,6 +375,16 @@
         .btn-password:hover { background: #ffc107; color: var(--primary-dark); }
         .btn-delete:hover { background: #ff4d4d; color: white; }
 
+        .text-cyan {
+            color: #00ffff !important;
+            text-shadow: 0 0 5px rgba(0, 255, 255, 0.3);
+        }
+
+        .text-purple {
+            color: #bf94ff !important;
+            text-shadow: 0 0 5px rgba(191, 148, 255, 0.3);
+        }
+
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: var(--primary-dark); }
         ::-webkit-scrollbar-thumb { background: var(--accent-green); }
@@ -492,6 +502,7 @@
                                 <th>Full Name</th>
                                 <th>School ID</th>
                                 <th>Email</th>
+                                <th>Joined</th>
                                 <th>Password (Hashed)</th>
                                 <th class="text-center">Actions</th>
                             </tr>
@@ -504,16 +515,17 @@
                                          class="profile-img" alt="Profile" loading="lazy"
                                          onerror="this.src='{{ asset('images/hack.png') }}'">
                                 </td>   
-                                <td>{{ $student->full_name }}</td>
+                                <td class="text-cyan">{{ $student->full_name }}</td>
                                 <td><span class="school-id-code">{{ $student->school_id }}</span></td>
-                                <td>{{ $student->email }}</td>
+                                <td class="text-cyan">{{ $student->email }}</td>
+                                <td class="text-purple">{{ $student->created_at->format('M d, Y') }}</td>
                                 <td>
                                     <small class="text-muted" title="{{ $student->password }}" style="font-size: 10px;">
                                         {{ Str::limit($student->password, 12) }}
                                     </small>
                                 </td>
                                 <td class="text-center">
-                                    <button class="btn-action btn-view" title="View Profile" onclick="viewUserProfile('{{ $student->full_name }}', '{{ $student->school_id }}', '{{ $student->email }}', '{{ $student->profile_image ? asset('uploads/students/' . $student->profile_image) : asset('images/hack.png') }}')">
+                                    <button class="btn-action btn-view" title="View Profile" onclick="viewUserProfile('{{ $student->full_name }}', '{{ $student->school_id }}', '{{ $student->email }}', '{{ $student->profile_image ? asset('uploads/students/' . $student->profile_image) : asset('images/hack.png') }}', '{{ $student->created_at->format('M d, Y') }}')">
                                         <i class="fas fa-eye"></i>
                                     </button>
                                     <button class="btn-action btn-copy" title="Copy Info" onclick="copyUserInfo('{{ $student->full_name }}', '{{ $student->school_id }}', '{{ $student->email }}')">
@@ -527,7 +539,7 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="6" class="text-center py-4">No students found.</td>
+                                <td colspan="7" class="text-center py-4">No students found.</td>
                             </tr>
                             @endforelse
                         </tbody>
@@ -568,6 +580,10 @@
                     <div style="margin-bottom: 15px;">
                         <label style="color: var(--accent-green); font-size: 11px; display: block; margin-bottom: 2px; opacity: 0.7;">EMAIL_ADDRESS</label>
                         <div id="profileEmail" style="color: var(--text-light); font-size: 14px;"></div>
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <label style="color: var(--accent-green); font-size: 11px; display: block; margin-bottom: 2px; opacity: 0.7;">DATE_JOINED</label>
+                        <div id="profileJoined" class="text-purple" style="font-size: 14px;"></div>
                     </div>
                     <div style="margin-top: 30px; border-top: 1px solid var(--border-color); padding-top: 15px;">
                         <div style="color: var(--accent-green); font-size: 10px; font-style: italic;">
@@ -643,10 +659,11 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
     <script>
         // Profile Modal Functionality
-        function viewUserProfile(name, id, email, imgSrc) {
+        function viewUserProfile(name, id, email, imgSrc, joined) {
             document.getElementById('profileFullName').textContent = name;
             document.getElementById('profileSchoolId').textContent = id;
             document.getElementById('profileEmail').textContent = email;
+            document.getElementById('profileJoined').textContent = joined;
             document.getElementById('profilePreviewImg').src = imgSrc;
             document.getElementById('profileModal').style.display = 'block';
             document.body.style.overflow = 'hidden';
@@ -666,8 +683,9 @@
                 let name = rows[i].cells[1].textContent.toUpperCase();
                 let id = rows[i].cells[2].textContent.toUpperCase();
                 let email = rows[i].cells[3].textContent.toUpperCase();
+                let joined = rows[i].cells[4].textContent.toUpperCase();
                 
-                if (name.indexOf(filter) > -1 || id.indexOf(filter) > -1 || email.indexOf(filter) > -1) {
+                if (name.indexOf(filter) > -1 || id.indexOf(filter) > -1 || email.indexOf(filter) > -1 || joined.indexOf(filter) > -1) {
                     rows[i].style.display = "";
                 } else {
                     rows[i].style.display = "none";
