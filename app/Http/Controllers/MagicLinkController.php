@@ -41,7 +41,7 @@ class MagicLinkController extends Controller
         // Send email
         Mail::to($email)->send(new MagicLinkMail($url));
 
-        return back()->with('success', 'Magic link sent! Please check your email.');
+        return back()->with('success', 'Reset link sent! Please check your ms email in outlook.');
     }
 
     /**

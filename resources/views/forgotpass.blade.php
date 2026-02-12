@@ -184,7 +184,7 @@
                     <span class="input-group-text"><i class="fas fa-envelope"></i></span>
                     <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" 
                            name="email" value="{{ old('email') }}" required autocomplete="email" 
-                           autofocus placeholder="name@example.com">
+                           autofocus placeholder="sample@mcclawis.edu.ph">
                 </div>
                 @error('email')
                     <span class="invalid-feedback d-block mt-2" role="alert">
