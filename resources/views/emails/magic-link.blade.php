@@ -13,7 +13,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h2>Magic Login Link</h2>
+            <h2>MCC|IPES Reset Password</h2>
         </div>
         <p>Hello,</p>
         <p>You requested a magic link to reset your password for MCC IPES. Click the button below to proceed:</p>
