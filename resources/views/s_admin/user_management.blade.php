@@ -979,60 +979,87 @@
         document.getElementById('editUserForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
+            const form = this;
+            const modal = document.getElementById('editModal');
+            
+            // Hide modal temporarily to show confirmation
+            modal.style.display = 'none';
+
             Swal.fire({
-                title: 'PROCESS_INITIATED',
-                text: 'Updating user database record...',
-                icon: 'info',
+                title: 'CONFIRM_UPDATE?',
+                text: "Are you sure you want to update this user's information?",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: 'var(--accent-green)',
+                cancelButtonColor: '#ff4d4d',
+                confirmButtonText: 'YES, UPDATE',
+                cancelButtonText: 'CANCEL',
                 background: 'var(--secondary-dark)',
-                color: 'var(--accent-green)',
-                showConfirmButton: false,
-                didOpen: () => {
-                    Swal.showLoading();
-                }
-            });
-            
-            const formData = new FormData(this);
-            
-            fetch(this.action, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
+                color: 'var(--text-light)'
+            }).then((result) => {
+                if (result.isConfirmed) {
                     Swal.fire({
-                        icon: 'success',
-                        title: 'DATA_SYNCHRONIZED',
-                        text: 'User information updated successfully.',
+                        title: 'PROCESS_INITIATED',
+                        text: 'Updating user database record...',
+                        icon: 'info',
                         background: 'var(--secondary-dark)',
                         color: 'var(--accent-green)',
-                        timer: 2000,
-                        showConfirmButton: false
-                    }).then(() => {
-                        window.location.reload();
+                        showConfirmButton: false,
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+                    
+                    const formData = new FormData(form);
+                    
+                    fetch(form.action, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        }
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            return response.json().then(err => { throw err; });
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'DATA_SYNCHRONIZED',
+                                text: 'User information updated successfully.',
+                                background: 'var(--secondary-dark)',
+                                color: 'var(--accent-green)',
+                                timer: 2000,
+                                showConfirmButton: false
+                            }).then(() => {
+                                window.location.reload();
+                            });
+                        } else {
+                            throw new Error(data.message || 'Validation failed.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'UPDATE_FAILED',
+                            text: error.message || 'Failed to update user information.',
+                            background: 'var(--secondary-dark)',
+                            color: '#ff4d4d'
+                        }).then(() => {
+                            modal.style.display = 'block';
+                        });
                     });
                 } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'UPDATE_FAILED',
-                        text: data.message || 'Validation failed.',
-                        background: 'var(--secondary-dark)',
-                        color: '#ff4d4d'
-                    });
+                    // Show modal again if cancelled
+                    modal.style.display = 'block';
                 }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'TRANSMISSION_ERROR',
-                    text: 'Failed to update user information.',
-                    background: 'var(--secondary-dark)',
-                    color: '#ff4d4d'
-                });
             });
         });
 
