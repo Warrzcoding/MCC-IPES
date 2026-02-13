@@ -389,6 +389,16 @@
             box-shadow: 0 0 15px rgba(0, 255, 65, 0.1);
         }
 
+        .profile-img-large {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 2px solid var(--accent-green);
+            object-fit: cover;
+            margin-bottom: 15px;
+            box-shadow: 0 0 15px rgba(0, 255, 65, 0.3);
+        }
+
         /* Pagination Styling */
         .pagination {
             gap: 5px;
@@ -559,7 +569,8 @@
                                             data-time="{{ $attempt->created_at->format('F d, Y - h:i A') }}"
                                             data-ua="{{ $attempt->user_agent }}"
                                             data-lat="{{ $attempt->latitude }}"
-                                            data-lng="{{ $attempt->longitude }}">
+                                            data-lng="{{ $attempt->longitude }}"
+                                            data-profile="{{ ($attempt->user && $attempt->user->profile_image) ? asset('uploads/students/' . $attempt->user->profile_image) : asset('images/hack.png') }}">
                                             <i class="fas fa-eye"></i> View
                                         </button>
                                         <button class="btn-action btn-delete delete-attempt" data-id="{{ $attempt->id }}" data-email="{{ $attempt->email }}">
@@ -602,6 +613,9 @@
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-lg-4">
+                            <div class="text-center mb-3">
+                                <img id="modal-profile-img" src="{{ asset('images/hack.png') }}" class="profile-img-large" alt="User Profile">
+                            </div>
                             <div class="mb-4">
                                 <div class="info-label">User Information</div>
                                 <div class="info-value" id="modal-user-display">Zencoder AI</div>
@@ -674,6 +688,7 @@
                 $('#modal-ip-display').text(btn.data('ip'));
                 $('#modal-time-display').text(btn.data('time'));
                 $('#modal-ua-display').text(btn.data('ua'));
+                $('#modal-profile-img').attr('src', btn.data('profile'));
                 
                 const status = btn.data('status');
                 const statusHtml = `<span class="status-badge ${status === 'success' ? 'status-success' : 'status-failed'}">${status}</span>`;
