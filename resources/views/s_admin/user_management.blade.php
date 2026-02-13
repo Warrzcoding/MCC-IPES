@@ -7,6 +7,7 @@
 <head>
     <meta charset="UTF-8">
      <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>User Management - MCCIPES</title>
     <link rel="icon" type="image/png" href="{{ asset('images/mccicon.jpg') }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -352,6 +353,12 @@
             color: var(--accent-green);
         }
 
+        .btn-edit {
+            background: transparent;
+            border: 1px solid #00ffff;
+            color: #00ffff;
+        }
+
         .btn-copy {
             background: transparent;
             border: 1px solid var(--accent-green);
@@ -371,6 +378,7 @@
         }
 
         .btn-view:hover { background: var(--accent-green); color: var(--primary-dark); }
+        .btn-edit:hover { background: #00ffff; color: var(--primary-dark); }
         .btn-copy:hover { background: var(--accent-green); color: var(--primary-dark); }
         .btn-password:hover { background: #ffc107; color: var(--primary-dark); }
         .btn-delete:hover { background: #ff4d4d; color: white; }
@@ -503,7 +511,8 @@
                                 <th>School ID</th>
                                 <th>Email</th>
                                 <th>Joined</th>
-                                <th>Password (Hashed)</th>
+                                <th>Course</th>
+                                <th>Section</th>
                                 <th class="text-center">Actions</th>
                             </tr>
                         </thead>
@@ -519,17 +528,17 @@
                                 <td><span class="school-id-code">{{ $student->school_id }}</span></td>
                                 <td class="text-cyan">{{ $student->email }}</td>
                                 <td class="text-purple">{{ $student->created_at->format('M d, Y') }}</td>
-                                <td>
-                                    <small class="text-muted" title="{{ $student->password }}" style="font-size: 10px;">
-                                        {{ Str::limit($student->password, 12) }}
-                                    </small>
-                                </td>
+                                <td class="text-cyan">{{ $student->course }}</td>
+                                <td class="text-purple">{{ $student->section }}</td>
                                 <td class="text-center">
-                                    <button class="btn-action btn-view" title="View Profile" onclick="viewUserProfile('{{ $student->full_name }}', '{{ $student->school_id }}', '{{ $student->email }}', '{{ $student->profile_image ? asset('uploads/students/' . $student->profile_image) : asset('images/hack.png') }}', '{{ $student->created_at->format('M d, Y') }}')">
+                                    <button class="btn-action btn-view" title="View Profile" onclick="viewUserProfile('{{ $student->full_name }}', '{{ $student->school_id }}', '{{ $student->email }}', '{{ $student->profile_image ? asset('uploads/students/' . $student->profile_image) : asset('images/hack.png') }}', '{{ $student->created_at->format('M d, Y') }}', '{{ $student->course }}', '{{ $student->section }}')">
                                         <i class="fas fa-eye"></i>
                                     </button>
                                     <button class="btn-action btn-copy" title="Copy Info" onclick="copyUserInfo('{{ $student->full_name }}', '{{ $student->school_id }}', '{{ $student->email }}')">
                                         <i class="fas fa-copy"></i>
+                                    </button>
+                                    <button class="btn-action btn-edit" title="Edit Student" onclick="loadStudentData('{{ $student->id }}', '{{ $student->username }}', '{{ $student->email }}', '{{ $student->full_name }}', '{{ $student->school_id }}', '{{ $student->course }}', '{{ $student->year_level }}', '{{ $student->section }}', '{{ $student->profile_image ? asset('uploads/students/' . $student->profile_image) : asset('images/hack.png') }}', '{{ $student->student_status }}')">
+                                        <i class="fas fa-edit"></i>
                                     </button>
                                     <button class="btn-action btn-password" title="Change Password" onclick="openPasswordModal('{{ $student->id }}', '{{ $student->full_name }}')">
                                         <i class="fas fa-key"></i>
@@ -561,9 +570,13 @@
 
             <div style="display: flex; gap: 30px; align-items: flex-start;">
                 <!-- Big Image Box -->
-                <div style="flex: 0 0 200px;">
-                    <div style="width: 200px; height: 200px; border: 2px solid var(--accent-green); border-radius: 8px; overflow: hidden; box-shadow: 0 0 15px rgba(0,255,65,0.2);">
+                <div style="flex: 0 0 240px; text-align: center;">
+                    <div style="width: 240px; height: 240px; border: 2px solid var(--accent-green); border-radius: 8px; overflow: hidden; box-shadow: 0 0 20px rgba(0,255,65,0.3); margin-bottom: 15px;">
                         <img id="profilePreviewImg" src="" alt="Profile Large" style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+                    <div style="background: rgba(0, 255, 65, 0.1); padding: 8px; border: 1px solid var(--accent-green); border-radius: 4px;">
+                        <label style="color: var(--accent-green); font-size: 10px; display: block; margin-bottom: 2px; opacity: 0.7;">SCHOOL_ID_NUMBER</label>
+                        <div id="profileSchoolId" style="color: var(--text-light); font-size: 18px; font-weight: bold; letter-spacing: 1px;"></div>
                     </div>
                 </div>
 
@@ -571,19 +584,25 @@
                 <div style="flex: 1; font-family: 'Courier New', monospace;">
                     <div style="margin-bottom: 15px;">
                         <label style="color: var(--accent-green); font-size: 11px; display: block; margin-bottom: 2px; opacity: 0.7;">FULL_NAME</label>
-                        <div id="profileFullName" style="color: var(--text-light); font-size: 18px; font-weight: bold; text-shadow: 0 0 5px rgba(255,255,255,0.2);"></div>
-                    </div>
-                    <div style="margin-bottom: 15px;">
-                        <label style="color: var(--accent-green); font-size: 11px; display: block; margin-bottom: 2px; opacity: 0.7;">SCHOOL_ID</label>
-                        <div id="profileSchoolId" style="color: var(--accent-green-light); font-size: 16px;"></div>
+                        <div id="profileFullName" style="color: var(--text-light); font-size: 20px; font-weight: bold; text-shadow: 0 0 5px rgba(255,255,255,0.2);"></div>
                     </div>
                     <div style="margin-bottom: 15px;">
                         <label style="color: var(--accent-green); font-size: 11px; display: block; margin-bottom: 2px; opacity: 0.7;">EMAIL_ADDRESS</label>
                         <div id="profileEmail" style="color: var(--text-light); font-size: 14px;"></div>
                     </div>
+                    <div style="display: flex; gap: 20px; margin-bottom: 15px;">
+                        <div style="flex: 1;">
+                            <label style="color: var(--accent-green); font-size: 11px; display: block; margin-bottom: 2px; opacity: 0.7;">COURSE</label>
+                            <div id="profileCourse" style="color: var(--text-light); font-size: 14px; font-weight: bold;"></div>
+                        </div>
+                        <div style="flex: 1;">
+                            <label style="color: var(--accent-green); font-size: 11px; display: block; margin-bottom: 2px; opacity: 0.7;">SECTION</label>
+                            <div id="profileSection" style="color: var(--text-light); font-size: 14px; font-weight: bold;"></div>
+                        </div>
+                    </div>
                     <div style="margin-bottom: 15px;">
                         <label style="color: var(--accent-green); font-size: 11px; display: block; margin-bottom: 2px; opacity: 0.7;">DATE_JOINED</label>
-                        <div id="profileJoined" class="text-purple" style="font-size: 14px;"></div>
+                        <div id="profileJoined" style="color: var(--text-light); font-size: 14px;"></div>
                     </div>
                     <div style="margin-top: 30px; border-top: 1px solid var(--border-color); padding-top: 15px;">
                         <div style="color: var(--accent-green); font-size: 10px; font-style: italic;">
@@ -655,15 +674,121 @@
         </div>
     </div>
 
+    <!-- EDIT USER MODAL (Overlay) -->
+    <div id="editModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; backdrop-filter: blur(5px);">
+        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 500px; background: var(--secondary-dark); border: 2px solid var(--accent-green); border-radius: 8px; box-shadow: 0 0 30px rgba(0,255,65,0.3); padding: 25px; max-height: 90vh; overflow-y: auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+                <h6 style="color: var(--accent-green); margin: 0; letter-spacing: 1px;">
+                    <i class="fas fa-edit me-2"></i>EDIT USER DATA
+                </h6>
+            </div>
+            
+            <form id="editUserForm" method="POST" enctype="multipart/form-data" action="{{ route('superadmin.update-student') }}">
+                @csrf
+                <input type="hidden" name="student_id" id="editStudentId">
+                
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <div style="margin-bottom: 10px;">
+                        <img id="editImagePreview" src="{{ asset('images/hack.png') }}" alt="Preview" 
+                             style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent-green); background-color: #000;">
+                    </div>
+                    <label style="color: var(--accent-green); font-size: 11px; display: block; margin-bottom: 5px;">USER_PHOTO</label>
+                    <input type="file" name="image" id="editImage" accept="image/*" onchange="previewEditImage(this)"
+                           style="width: 100%; background: #000; border: 1px solid var(--accent-green); color: var(--accent-green); padding: 5px; border-radius: 4px; font-family: 'Courier New', monospace; font-size: 11px;">
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label style="color: var(--accent-green); font-size: 11px; display: block; margin-bottom: 5px;">USERNAME</label>
+                        <input type="text" name="username" id="editUsername" required 
+                               style="width: 100%; background: #000; border: 1px solid var(--accent-green); color: var(--accent-green); padding: 8px; border-radius: 4px; font-family: 'Courier New', monospace; font-size: 13px;">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label style="color: var(--accent-green); font-size: 11px; display: block; margin-bottom: 5px;">SCHOOL_ID</label>
+                        <input type="text" name="school_id" id="editSchoolId" required 
+                               style="width: 100%; background: #000; border: 1px solid var(--accent-green); color: var(--accent-green); padding: 8px; border-radius: 4px; font-family: 'Courier New', monospace; font-size: 13px;">
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label style="color: var(--accent-green); font-size: 11px; display: block; margin-bottom: 5px;">FULL_NAME</label>
+                    <input type="text" name="full_name" id="editFullName" required 
+                           style="width: 100%; background: #000; border: 1px solid var(--accent-green); color: var(--accent-green); padding: 8px; border-radius: 4px; font-family: 'Courier New', monospace; font-size: 13px;">
+                </div>
+
+                <div class="mb-3">
+                    <label style="color: var(--accent-green); font-size: 11px; display: block; margin-bottom: 5px;">EMAIL_ADDRESS</label>
+                    <input type="email" name="email" id="editEmail" required
+                           style="width: 100%; background: #000; border: 1px solid var(--accent-green); color: var(--accent-green); padding: 8px; border-radius: 4px; font-family: 'Courier New', monospace; font-size: 13px;">
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label style="color: var(--accent-green); font-size: 11px; display: block; margin-bottom: 5px;">COURSE</label>
+                        <select name="course" id="editCourse" required onchange="populateEditSections()"
+                                style="width: 100%; background: #000; border: 1px solid var(--accent-green); color: var(--accent-green); padding: 8px; border-radius: 4px; font-family: 'Courier New', monospace; font-size: 13px;">
+                            <option value="BSIT">BSIT</option>
+                            <option value="BSHM">BSHM</option>
+                            <option value="BSBA">BSBA</option>
+                            <option value="BSED">BSED</option>
+                            <option value="BEED">BEED</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label style="color: var(--accent-green); font-size: 11px; display: block; margin-bottom: 5px;">YEAR_LEVEL</label>
+                        <select name="year_level" id="editYearLevel" required onchange="populateEditSections()"
+                                style="width: 100%; background: #000; border: 1px solid var(--accent-green); color: var(--accent-green); padding: 8px; border-radius: 4px; font-family: 'Courier New', monospace; font-size: 13px;">
+                            <option value="1st Year">1st Year</option>
+                            <option value="2nd Year">2nd Year</option>
+                            <option value="3rd Year">3rd Year</option>
+                            <option value="4th Year">4th Year</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label style="color: var(--accent-green); font-size: 11px; display: block; margin-bottom: 5px;">SECTION</label>
+                        <select name="section" id="editSection" required
+                                style="width: 100%; background: #000; border: 1px solid var(--accent-green); color: var(--accent-green); padding: 8px; border-radius: 4px; font-family: 'Courier New', monospace; font-size: 13px;">
+                            <option value="">Select section...</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <label style="color: var(--accent-green); font-size: 11px; display: block; margin-bottom: 5px;">STUDENT_STATUS</label>
+                        <select name="student_status" id="editStudentStatus" required
+                                style="width: 100%; background: #000; border: 1px solid var(--accent-green); color: var(--accent-green); padding: 8px; border-radius: 4px; font-family: 'Courier New', monospace; font-size: 13px;">
+                            <option value="Regular">Regular</option>
+                            <option value="Irregular">Irregular</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 10px;">
+                    <button type="button" onclick="closeEditModal()" 
+                            style="flex: 1; background: transparent; border: 1px solid #6c757d; color: #6c757d; padding: 10px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; transition: var(--transition);">
+                        CANCEL
+                    </button>
+                    <button type="submit" 
+                            style="flex: 2; background: var(--accent-green); border: none; color: var(--primary-dark); padding: 10px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; transition: var(--transition); box-shadow: 0 0 10px rgba(0,255,65,0.4);">
+                        UPDATE_DATA
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
     <script>
         // Profile Modal Functionality
-        function viewUserProfile(name, id, email, imgSrc, joined) {
+        function viewUserProfile(name, id, email, imgSrc, joined, course, section) {
             document.getElementById('profileFullName').textContent = name;
             document.getElementById('profileSchoolId').textContent = id;
             document.getElementById('profileEmail').textContent = email;
             document.getElementById('profileJoined').textContent = joined;
+            document.getElementById('profileCourse').textContent = course;
+            document.getElementById('profileSection').textContent = section;
             document.getElementById('profilePreviewImg').src = imgSrc;
             document.getElementById('profileModal').style.display = 'block';
             document.body.style.overflow = 'hidden';
@@ -673,6 +798,243 @@
             document.getElementById('profileModal').style.display = 'none';
             document.body.style.overflow = 'auto';
         }
+
+        // Edit Modal Functionality
+        const sectionData = {
+            'BSIT': {
+                '1st Year': [
+                    { value: 'NORTH', label: 'NORTH' },
+                    { value: 'WEST', label: 'WEST' },
+                    { value: 'SOUTH', label: 'SOUTH' },
+                    { value: 'EAST', label: 'EAST' },
+                    { value: 'SOUTHWEST', label: 'SOUTHWEST' },
+                    { value: 'NORTHWEST', label: 'NORTHWEST' },
+                    { value: 'SOUTHEAST', label: 'SOUTHEAST' },
+                    { value: 'NORTHEAST', label: 'NORTHEAST' }
+                ],
+                '2nd Year': [
+                    { value: 'NORTH', label: 'NORTH' },
+                    { value: 'WEST', label: 'WEST' },
+                    { value: 'SOUTH', label: 'SOUTH' },
+                    { value: 'EAST', label: 'EAST' },
+                    { value: 'SOUTHWEST', label: 'SOUTHWEST' },
+                    { value: 'NORTHWEST', label: 'NORTHWEST' },
+                    { value: 'SOUTHEAST', label: 'SOUTHEAST' },
+                    { value: 'NORTHEAST', label: 'NORTHEAST' }
+                ],
+                '3rd Year': [
+                    { value: 'NORTH', label: 'NORTH' },
+                    { value: 'WEST', label: 'WEST' },
+                    { value: 'SOUTH', label: 'SOUTH' },
+                    { value: 'EAST', label: 'EAST' },
+                    { value: 'SOUTHWEST', label: 'SOUTHWEST' },
+                    { value: 'NORTHWEST', label: 'NORTHWEST' },
+                    { value: 'SOUTHEAST', label: 'SOUTHEAST' },
+                    { value: 'NORTHEAST', label: 'NORTHEAST' }
+                ],
+                '4th Year': [
+                    { value: 'NORTH', label: 'NORTH' },
+                    { value: 'WEST', label: 'WEST' },
+                    { value: 'SOUTH', label: 'SOUTH' },
+                    { value: 'EAST', label: 'EAST' },
+                    { value: 'SOUTHWEST', label: 'SOUTHWEST' },
+                    { value: 'NORTHWEST', label: 'NORTHWEST' },
+                    { value: 'SOUTHEAST', label: 'SOUTHEAST' },
+                    { value: 'NORTHEAST', label: 'NORTHEAST' }
+                ]
+            },
+            'BSHM': {
+                '1st Year': [
+                    { value: 'BSHM-1A', label: 'BSHM-1A' }, { value: 'BSHM-1B', label: 'BSHM-1B' }, { value: 'BSHM-1C', label: 'BSHM-1C' }, { value: 'BSHM-1D', label: 'BSHM-1D' },
+                    { value: 'BSHM-1E', label: 'BSHM-1E' }, { value: 'BSHM-1F', label: 'BSHM-1F' }, { value: 'BSHM-1G', label: 'BSHM-1G' }, { value: 'BSHM-1H', label: 'BSHM-1H' },
+                    { value: 'BSHM-1I', label: 'BSHM-1I' }, { value: 'BSHM-1J', label: 'BSHM-1J' }, { value: 'BSHM-1K', label: 'BSHM-1K' }, { value: 'BSHM-1L', label: 'BSHM-1L' }
+                ],
+                '2nd Year': [
+                    { value: 'BSHM-2A', label: 'BSHM-2A' }, { value: 'BSHM-2B', label: 'BSHM-2B' }, { value: 'BSHM-2C', label: 'BSHM-2C' }, { value: 'BSHM-2D', label: 'BSHM-2D' },
+                    { value: 'BSHM-2E', label: 'BSHM-2E' }, { value: 'BSHM-2F', label: 'BSHM-2F' }, { value: 'BSHM-2G', label: 'BSHM-2G' }, { value: 'BSHM-2H', label: 'BSHM-2H' },
+                    { value: 'BSHM-2I', label: 'BSHM-2I' }, { value: 'BSHM-2J', label: 'BSHM-2J' }, { value: 'BSHM-2K', label: 'BSHM-2K' }, { value: 'BSHM-2L', label: 'BSHM-2L' }
+                ],
+                '3rd Year': [
+                    { value: 'BSHM-3A', label: 'BSHM-3A' }, { value: 'BSHM-3B', label: 'BSHM-3B' }, { value: 'BSHM-3C', label: 'BSHM-3C' }, { value: 'BSHM-3D', label: 'BSHM-3D' },
+                    { value: 'BSHM-3E', label: 'BSHM-3E' }, { value: 'BSHM-3F', label: 'BSHM-3F' }, { value: 'BSHM-3G', label: 'BSHM-3G' }, { value: 'BSHM-3H', label: 'BSHM-3H' },
+                    { value: 'BSHM-3I', label: 'BSHM-3I' }, { value: 'BSHM-3J', label: 'BSHM-3J' }, { value: 'BSHM-3K', label: 'BSHM-3K' }, { value: 'BSHM-3L', label: 'BSHM-3L' }
+                ],
+                '4th Year': [
+                    { value: 'BSHM-4A', label: 'BSHM-4A' }, { value: 'BSHM-4B', label: 'BSHM-4B' }, { value: 'BSHM-4C', label: 'BSHM-4C' }, { value: 'BSHM-4D', label: 'BSHM-4D' },
+                    { value: 'BSHM-4E', label: 'BSHM-4E' }, { value: 'BSHM-4F', label: 'BSHM-4F' }, { value: 'BSHM-4G', label: 'BSHM-4G' }, { value: 'BSHM-4H', label: 'BSHM-4H' },
+                    { value: 'BSHM-4I', label: 'BSHM-4I' }, { value: 'BSHM-4J', label: 'BSHM-4J' }, { value: 'BSHM-4K', label: 'BSHM-4K' }, { value: 'BSHM-4L', label: 'BSHM-4L' }
+                ]
+            },
+            'BSBA': {
+                '1st Year': [
+                    { value: 'FM-1A', label: 'FM-1A' }, { value: 'FM-1B', label: 'FM-1B' }, { value: 'FM-1C', label: 'FM-1C' }, { value: 'FM-1D', label: 'FM-1D' },
+                    { value: 'FM-1E', label: 'FM-1E' }, { value: 'FM-1F', label: 'FM-1F' }, { value: 'FM-1G', label: 'FM-1G' }, { value: 'FM-1H', label: 'FM-1H' },
+                    { value: 'FM-1I', label: 'FM-1I' }, { value: 'FM-1J', label: 'FM-1J' }, { value: 'FM-1K', label: 'FM-1K' }
+                ],
+                '2nd Year': [
+                    { value: 'FM-2A', label: 'FM-2A' }, { value: 'FM-2B', label: 'FM-2B' }, { value: 'FM-2C', label: 'FM-2C' }, { value: 'FM-2D', label: 'FM-2D' },
+                    { value: 'FM-2E', label: 'FM-2E' }, { value: 'FM-2F', label: 'FM-2F' }, { value: 'FM-2G', label: 'FM-2G' }, { value: 'FM-2H', label: 'FM-2H' },
+                    { value: 'FM-2I', label: 'FM-2I' }, { value: 'FM-2J', label: 'FM-2J' }, { value: 'FM-2K', label: 'FM-2K' }
+                ],
+                '3rd Year': [
+                    { value: 'FM-3A', label: 'FM-3A' }, { value: 'FM-3B', label: 'FM-3B' }, { value: 'FM-3C', label: 'FM-3C' }, { value: 'FM-3D', label: 'FM-3D' },
+                    { value: 'FM-3E', label: 'FM-3E' }, { value: 'FM-3F', label: 'FM-3F' }, { value: 'FM-3G', label: 'FM-3G' }, { value: 'FM-3H', label: 'FM-3H' },
+                    { value: 'FM-3I', label: 'FM-3I' }, { value: 'FM-3J', label: 'FM-3J' }, { value: 'FM-3K', label: 'FM-3K' }
+                ],
+                '4th Year': [
+                    { value: 'FM-4A', label: 'FM-4A' }, { value: 'FM-4B', label: 'FM-4B' }, { value: 'FM-4C', label: 'FM-4C' }, { value: 'FM-4D', label: 'FM-4D' },
+                    { value: 'FM-4E', label: 'FM-4E' }, { value: 'FM-4F', label: 'FM-4F' }, { value: 'FM-4G', label: 'FM-4G' }, { value: 'FM-4H', label: 'FM-4H' },
+                    { value: 'FM-4I', label: 'FM-4I' }, { value: 'FM-4J', label: 'FM-4J' }, { value: 'FM-4K', label: 'FM-4K' }
+                ]
+            },
+            'BSED': {
+                '1st Year': [
+                    { value: '1-A', label: '1-A' }, { value: '1-B', label: '1-B' }, { value: '1-C', label: '1-C' }, { value: '1-M', label: '1-M' },
+                    { value: '1-N', label: '1-N' }, { value: '1-FR', label: '1-FR' }, { value: '1-SP', label: '1-SP' }, { value: '1-GERMAN', label: '1-GERMAN' }, { value: '1-TODDLER', label: '1-TODDLER' }
+                ],
+                '2nd Year': [
+                    { value: '2-A', label: '2-A' }, { value: '2-B', label: '2-B' }, { value: '2-C', label: '2-C' }, { value: '2-M', label: '2-M' },
+                    { value: '2-N', label: '2-N' }, { value: '2-FR', label: '2-FR' }, { value: '2-SP', label: '2-SP' }, { value: '2-GERMAN', label: '2-GERMAN' }, { value: '2-TODDLER', label: '2-TODDLER' }
+                ],
+                '3rd Year': [
+                    { value: '3-A', label: '3-A' }, { value: '3-B', label: '3-B' }, { value: '3-C', label: '3-C' }, { value: '3-M', label: '3-M' },
+                    { value: '3-N', label: '3-N' }, { value: '3-FR', label: '3-FR' }, { value: '3-SP', label: '3-SP' }, { value: '3-GERMAN', label: '3-GERMAN' }, { value: '3-TODDLER', label: '3-TODDLER' }
+                ],
+                '4th Year': [
+                    { value: '4-A', label: '4-A' }, { value: '4-B', label: '4-B' }, { value: '4-C', label: '4-C' }, { value: '4-M', label: '4-M' },
+                    { value: '4-N', label: '4-N' }, { value: '4-FR', label: '4-FR' }, { value: '4-SP', label: '4-SP' }, { value: '4-GERMAN', label: '4-GERMAN' }, { value: '4-TODDLER', label: '4-TODDLER' }
+                ]
+            },
+            'BEED': {
+                '1st Year': [
+                    { value: '1-A', label: '1-A' }, { value: '1-B', label: '1-B' }, { value: '1-C', label: '1-C' }, { value: '1-D', label: '1-D' },
+                    { value: '1-PRESCHOOLER', label: '1-PRESCHOOLER' }, { value: '1-TODDLER', label: '1-TODDLER' }, { value: '1-PR', label: '1-PR' }
+                ],
+                '2nd Year': [
+                    { value: '2-A', label: '2-A' }, { value: '2-B', label: '2-B' }, { value: '2-C', label: '2-C' }, { value: '2-D', label: '2-D' },
+                    { value: '2-PRESCHOOLER', label: '2-PRESCHOOLER' }, { value: '2-TODDLER', label: '2-TODDLER' }, { value: '2-PR', label: '2-PR' }
+                ],
+                '3rd Year': [
+                    { value: '3-A', label: '3-A' }, { value: '3-B', label: '3-B' }, { value: '3-C', label: '3-C' }, { value: '3-D', label: '3-D' },
+                    { value: '3-PRESCHOOLER', label: '3-PRESCHOOLER' }, { value: '3-TODDLER', label: '3-TODDLER' }, { value: '3-PR', label: '3-PR' }
+                ],
+                '4th Year': [
+                    { value: '4-A', label: '4-A' }, { value: '4-B', label: '4-B' }, { value: '4-C', label: '4-C' }, { value: '4-D', label: '4-D' },
+                    { value: '4-PRESCHOOLER', label: '4-PRESCHOOLER' }, { value: '4-TODDLER', label: '4-TODDLER' }, { value: '4-PR', label: '4-PR' }
+                ]
+            }
+        };
+
+        function populateEditSections(selectedSection = '') {
+            const course = document.getElementById('editCourse').value;
+            const yearLevel = document.getElementById('editYearLevel').value;
+            const sectionSelect = document.getElementById('editSection');
+            
+            sectionSelect.innerHTML = '<option value="">Select section...</option>';
+            
+            if (course && yearLevel && sectionData[course] && sectionData[course][yearLevel]) {
+                sectionData[course][yearLevel].forEach(section => {
+                    const option = document.createElement('option');
+                    option.value = section.value;
+                    option.textContent = section.label;
+                    if (section.value === selectedSection) option.selected = true;
+                    sectionSelect.appendChild(option);
+                });
+            }
+        }
+
+        function loadStudentData(id, username, email, fullName, schoolId, course, yearLevel, section, image, studentStatus) {
+            document.getElementById('editStudentId').value = id;
+            document.getElementById('editUsername').value = username;
+            document.getElementById('editEmail').value = email;
+            document.getElementById('editFullName').value = fullName;
+            document.getElementById('editSchoolId').value = schoolId;
+            document.getElementById('editCourse').value = course;
+            document.getElementById('editYearLevel').value = yearLevel;
+            document.getElementById('editStudentStatus').value = studentStatus || 'Regular';
+            document.getElementById('editImagePreview').src = image;
+            
+            populateEditSections(section);
+            
+            document.getElementById('editModal').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        function previewEditImage(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('editImagePreview').src = e.target.result;
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // Handle Edit User Form Submission
+        document.getElementById('editUserForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            Swal.fire({
+                title: 'PROCESS_INITIATED',
+                text: 'Updating user database record...',
+                icon: 'info',
+                background: 'var(--secondary-dark)',
+                color: 'var(--accent-green)',
+                showConfirmButton: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            
+            const formData = new FormData(this);
+            
+            fetch(this.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'DATA_SYNCHRONIZED',
+                        text: 'User information updated successfully.',
+                        background: 'var(--secondary-dark)',
+                        color: 'var(--accent-green)',
+                        timer: 2000,
+                        showConfirmButton: false
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'UPDATE_FAILED',
+                        text: data.message || 'Validation failed.',
+                        background: 'var(--secondary-dark)',
+                        color: '#ff4d4d'
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'TRANSMISSION_ERROR',
+                    text: 'Failed to update user information.',
+                    background: 'var(--secondary-dark)',
+                    color: '#ff4d4d'
+                });
+            });
+        });
 
         // Search Functionality
         document.getElementById('userSearch').addEventListener('keyup', function() {
@@ -728,11 +1090,15 @@
         window.addEventListener('click', function(event) {
             const passwordModal = document.getElementById('passwordModal');
             const profileModal = document.getElementById('profileModal');
+            const editModal = document.getElementById('editModal');
             if (event.target == passwordModal) {
                 closePasswordModal();
             }
             if (event.target == profileModal) {
                 closeProfileModal();
+            }
+            if (event.target == editModal) {
+                closeEditModal();
             }
         });
 
