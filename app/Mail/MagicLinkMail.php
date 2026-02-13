@@ -5,7 +5,6 @@ namespace App\Mail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
-use Illuminate\Mail\Mailables\Address;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
@@ -29,12 +28,8 @@ class MagicLinkMail extends Mailable
      */
     public function envelope(): Envelope
     {
-        $fromAddress = config('mail.mailers.gmail_student.from.address', config('mail.from.address'));
-        $fromName = config('mail.mailers.gmail_student.from.name', config('mail.from.name'));
-
         return new Envelope(
             subject: 'Your Magic Login Link',
-            from: new Address($fromAddress, $fromName),
         );
     }
 

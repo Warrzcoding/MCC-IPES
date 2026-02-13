@@ -7,11 +7,9 @@ use App\Mail\MagicLinkMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
-use Throwable;
 
 class MagicLinkController extends Controller
 {
@@ -41,19 +39,7 @@ class MagicLinkController extends Controller
         $url = route('magic.reset', ['token' => $token, 'email' => $email]);
 
         // Send email using Student Magic Link mailer
-        try {
-            Mail::mailer('gmail_student')->to($email)->send(new MagicLinkMail($url));
-        } catch (Throwable $exception) {
-            Log::error('Magic link email failed', [
-                'email' => $email,
-                'mailer' => 'gmail_student',
-                'exception' => $exception->getMessage(),
-            ]);
-
-            return back()
-                ->withInput()
-                ->with('error', 'Unable to send the magic link right now. Please try again in a few minutes.');
-        }
+        Mail::mailer('gmail_student')->to($email)->send(new MagicLinkMail($url));
 
         return back()->with('success', 'Reset link sent! Please check your email in outlook.');
     }
