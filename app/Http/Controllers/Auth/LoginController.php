@@ -759,41 +759,8 @@ public function login(Request $request)
      */
     private function getClientIp(Request $request): string
     {
-        // Try CloudFlare header first (most common in production)
-        if (!empty($_SERVER['HTTP_CF_CONNECTING_IP'])) {
-            return $_SERVER['HTTP_CF_CONNECTING_IP'];
-        }
-        
-        // Try standard proxy headers
-        if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-            // Take the first IP if multiple IPs
-            $ips = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
-            return trim($ips[0]);
-        }
-        
-        if (!empty($_SERVER['HTTP_X_FORWARDED'])) {
-            $ips = explode(',', $_SERVER['HTTP_X_FORWARDED']);
-            return trim($ips[0]);
-        }
-        
-        if (!empty($_SERVER['HTTP_FORWARDED_FOR'])) {
-            $ips = explode(',', $_SERVER['HTTP_FORWARDED_FOR']);
-            return trim($ips[0]);
-        }
-        
-        if (!empty($_SERVER['HTTP_FORWARDED'])) {
-            // Parse: Forwarded: for=192.0.2.60;proto=https
-            preg_match('/for=([^;,\s]+)/', $_SERVER['HTTP_FORWARDED'], $matches);
-            if (!empty($matches[1])) {
-                return trim($matches[1], '[]');
-            }
-        }
-        
-        if (!empty($_SERVER['REMOTE_ADDR'])) {
-            return $_SERVER['REMOTE_ADDR'];
-        }
-        
-        // Fallback to Laravel's built-in method
+        // $request->ip() is already handled by TrustProxies middleware which is configured to trust all '*'
+        // This is the most reliable way in Laravel to get the real user IP
         return $request->ip() ?? '0.0.0.0';
     }
 
@@ -837,9 +804,7 @@ public function login(Request $request)
                 }
             }
 
-            $latitude = 11.236531;
-            $longitude = 123.723192;
-            $location = 'Crosing Bunakan, Madridejos';
+
             
             \Log::info("LoginAttempt: Final geolocation data", [
                 'email' => $user?->email,
