@@ -2168,6 +2168,12 @@
                         if (isForcedAttempt && !errorNotified) {
                             errorNotified = true;
                             console.warn('Geolocation requires HTTPS or localhost.');
+                            Swal.fire({
+                                icon: 'warning',
+                                title: 'Location Accuracy Limited',
+                                text: 'For precise location capture, please ensure you are using a secure (HTTPS) connection and have granted location permissions.',
+                                confirmButtonColor: '#667eea'
+                            });
                         }
                         resolve(); // Resolve even if geolocation not available
                         return;
@@ -2228,6 +2234,14 @@
                                 // Show notifications based on error type
                                 if (error.code === 1) { // PERMISSION_DENIED
                                     console.warn('Geolocation permission denied');
+                                    if (isForcedAttempt) {
+                                        Swal.fire({
+                                            icon: 'info',
+                                            title: 'Location Permission Needed',
+                                            text: 'You denied location access. The system will use your IP address instead, which is less accurate. For better precision, please allow location access.',
+                                            confirmButtonColor: '#667eea'
+                                        });
+                                    }
                                 } else if (error.code === 3) { // TIMEOUT
                                     console.warn('Geolocation request timed out after retries');
                                 }
