@@ -1461,7 +1461,7 @@
                       <div id="adminErrorBox" class="alert alert-danger d-none" style="border-radius:12px; padding:10px; margin-bottom:15px; display: flex; align-items: center; justify-content: center; text-align: center; font-weight: 600;"></div>                 
                     <div class="mb-3">
                         <label for="admin_email" class="form-label">
-                            <i class="fas fa-envelope"></i> Email Adddress
+                            <i class="fas fa-envelope"></i> Email Address
                         </label>
                         <div class="input-group">
                             <span class="input-group-text">
@@ -1540,7 +1540,7 @@
                             <input type="password" class="form-control" id="staff_password" name="password"
                                    placeholder="Enter your password" required value="" autocomplete="new-password">
                         </div>
-                    </div>s
+                    </div>
 
                     <!-- reCAPTCHA for Staff -->
                     @if(isset($captchaType) && $captchaType === 'checkbox' && config('services.recaptcha.site_key_v2'))
@@ -1550,7 +1550,7 @@
                     @endif
 
                     <button type="submit" name="login" class="btn btn-primary">
-                        <i class="fas fa-sign-in-alt"></i> Login as CSvsss
+                        <i class="fas fa-sign-in-alt"></i> Login as Staff
                     </button>
                     <button type="button" class="btn-back-icon" onclick="resetForm()" aria-label="Back">
                         <i class="fas fa-arrow-left"></i>
@@ -1621,7 +1621,10 @@
                       <!--  <a href="{{ route('password.request') }}" class="forgot-link">
                             Forgot Password?
                         </a>-->
-                       <a href="{{ route('forgotpass') }}" class="forgot-link">
+                       <!--<a href="{{ route('forgotpass') }}" class="forgot-link">
+                            Forgot Password?
+                        </a>-->
+                        <a href="{{ route('forgotpass') }}" class="forgot-link">
                             Forgot Password?
                         </a>
                     </div>
