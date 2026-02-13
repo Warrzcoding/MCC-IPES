@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\SuperAdmin;
 use App\Models\User;
+use App\Models\Staff;
+use App\Models\Question;
+use App\Models\AcademicYear;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -107,7 +110,19 @@ class SuperAdminController extends Controller
             return redirect()->route('superadmin.login');
         }
 
-        return view('s_admin.superadminhome', ['superAdmin' => $superAdmin]);
+        // Fetch counts for dashboard
+        $instructorCount = Staff::where('staff_type', 'teaching')->count();
+        $studentCount = User::where('role', 'student')->count();
+        $questionCount = Question::count();
+        $nonTeachingCount = Staff::where('staff_type', 'non-teaching')->count();
+
+        return view('s_admin.superadminhome', [
+            'superAdmin' => $superAdmin,
+            'instructorCount' => $instructorCount,
+            'studentCount' => $studentCount,
+            'questionCount' => $questionCount,
+            'nonTeachingCount' => $nonTeachingCount
+        ]);
     }
 
     /**

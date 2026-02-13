@@ -609,29 +609,29 @@
                 <div class="col-md-3 col-sm-6 mb-3">
                     <div class="stat-box pulse">
                         <i class="fas fa-users fa-2x" style="color: var(--accent-green);"></i>
-                        <div class="stat-number">1,247</div>
+                        <div class="stat-number">{{ number_format($instructorCount) }}</div>
                         <div class="stat-label">INSTRUCTORS</div>
                     </div>
                 </div>
                 <div class="col-md-3 col-sm-6 mb-3">
                     <div class="stat-box pulse">
                         <i class="fas fa-graduation-cap fa-2x" style="color: var(--accent-green);"></i>
-                        <div class="stat-number">342</div>
+                        <div class="stat-number">{{ number_format($studentCount) }}</div>
                         <div class="stat-label">STUDENTS</div>
                     </div>
                 </div>
                 <div class="col-md-3 col-sm-6 mb-3">
                     <div class="stat-box pulse">
                         <i class="fas fa-chalkboard-user fa-2x" style="color: var(--accent-green);"></i>
-                        <div class="stat-number">89</div>
+                        <div class="stat-number">{{ number_format($questionCount) }}</div>
                         <div class="stat-label">QUESTIONS</div>
                     </div>
                 </div>
                 <div class="col-md-3 col-sm-6 mb-3">
                     <div class="stat-box pulse">
-                        <i class="fas fa-calendar-alt fa-2x" style="color: var(--accent-green);"></i>
-                        <div class="stat-number">5</div>
-                        <div class="stat-label">ACADEMIC YEAR</div>
+                        <i class="fas fa-user-tie fa-2x" style="color: var(--accent-green);"></i>
+                        <div class="stat-number">{{ number_format($nonTeachingCount) }}</div>
+                        <div class="stat-label">NON-TEACHING</div>
                     </div>
                 </div>
             </div>
