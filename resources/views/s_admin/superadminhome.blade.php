@@ -582,7 +582,7 @@
                 </a>
             </li>
             <li>
-                <a href="#">
+                <a href="{{ route('superadmin.activity-log') }}">
                     <i class="fas fa-history"></i>
                     <span>Activity Logs</span>
                 </a>

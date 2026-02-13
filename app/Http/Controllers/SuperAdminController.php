@@ -263,6 +263,62 @@ class SuperAdminController extends Controller
     }
 
     /**
+     * Display activity logs for login attempts.
+     */
+    public function activityLog()
+    {
+        if (!session()->has('super_admin_id')) {
+            return redirect()->route('superadmin.login');
+        }
+
+        $superAdmin = SuperAdmin::find(session('super_admin_id'));
+        
+        // Fetch all login attempts, sorted by time (newest first)
+        $loginAttempts = \App\Models\LoginAttempt::with('user')
+            ->orderBy('created_at', 'desc')
+            ->paginate(15);
+
+        return view('s_admin.activitylog', [
+            'superAdmin' => $superAdmin,
+            'loginAttempts' => $loginAttempts
+        ]);
+    }
+
+    /**
+     * Delete an activity log/login attempt.
+     */
+    public function deleteActivityLog($id)
+    {
+        if (!session()->has('super_admin_id')) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
+        }
+
+        try {
+            $attempt = \App\Models\LoginAttempt::find($id);
+            
+            if (!$attempt) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Login attempt not found.'
+                ], 404);
+            }
+
+            $email = $attempt->email;
+            $attempt->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => "Login attempt for {$email} has been deleted successfully."
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error deleting login attempt: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
      * Verify access code before showing login form.
      */
     public function verifyAccessCode(Request $request)

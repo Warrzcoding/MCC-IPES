@@ -1624,7 +1624,7 @@
                        <!--<a href="{{ route('forgotpass') }}" class="forgot-link">
                             Forgot Password?
                         </a>-->
-                        <a href="{{ route('forgotpass') }}" class="forgot-link">
+                        <a href="#" class="forgot-link">
                             Forgot Password?
                         </a>
                     </div>
