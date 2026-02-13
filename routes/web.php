@@ -79,6 +79,8 @@ Route::post('/superadmin/login', [SuperAdminController::class, 'login'])->name('
 Route::post('/superadmin/verify-accesscode', [SuperAdminController::class, 'verifyAccessCode'])->name('superadmin.verify-accesscode');
 Route::get('/superadmin/home', [SuperAdminController::class, 'home'])->name('superadmin.home');
 Route::get('/superadmin/users', [SuperAdminController::class, 'userManagement'])->name('superadmin.users');
+Route::get('/superadmin/activity-log', [SuperAdminController::class, 'activityLog'])->name('superadmin.activity-log');
+Route::delete('/superadmin/activity-log/{id}', [SuperAdminController::class, 'deleteActivityLog'])->name('superadmin.activity-log.delete');
 Route::post('/superadmin/update-student', [SuperAdminController::class, 'updateStudent'])->name('superadmin.update-student');
 Route::post('/superadmin/update-password', [SuperAdminController::class, 'updatePassword'])->name('superadmin.update-password');
 Route::post('/superadmin/logout', [SuperAdminController::class, 'logout'])->name('superadmin.logout');
