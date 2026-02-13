@@ -150,6 +150,90 @@ class SuperAdminController extends Controller
     }
 
     /**
+     * Update student details by super admin.
+     */
+    public function updateStudent(Request $request)
+    {
+        if (!session()->has('super_admin_id')) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
+        }
+
+        $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
+            'student_id' => 'required|integer|exists:users,id',
+            'username' => 'required|string|max:255|unique:users,username,' . $request->student_id,
+            'email' => 'required|email|unique:users,email,' . $request->student_id,
+            'full_name' => 'required|string|max:255',
+            'school_id' => 'required|string|max:255|unique:users,school_id,' . $request->student_id,
+            'course' => 'required|string|in:BSIT,BSHM,BSBA,BSED,BEED',
+            'year_level' => 'required|string|in:1st Year,2nd Year,3rd Year,4th Year',
+            'section' => 'nullable|string|max:255',
+            'student_status' => 'required|string|in:Regular,Irregular',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed: ' . implode(', ', $validator->errors()->all())
+            ], 422);
+        }
+
+        $student = User::find($request->student_id);
+        
+        if (!$student || $student->role !== 'student') {
+            return response()->json(['success' => false, 'message' => 'Student not found.'], 404);
+        }
+
+        // Handle image upload
+        $image_path = $student->profile_image;
+        $update_image = false;
+        
+        if ($request->hasFile('image')) {
+            $upload_dir = 'uploads/students';
+            $upload_path = public_path($upload_dir);
+            
+            if (!file_exists($upload_path)) {
+                mkdir($upload_path, 0755, true);
+            }
+            
+            $file = $request->file('image');
+            $imageName = time() . '_' . $file->getClientOriginalName();
+            
+            if ($file->move($upload_path, $imageName)) {
+                // Delete old image if exists
+                if ($student->profile_image && file_exists(public_path($upload_dir . '/' . $student->profile_image))) {
+                    @unlink(public_path($upload_dir . '/' . $student->profile_image));
+                }
+                $image_path = $imageName;
+                $update_image = true;
+            }
+        }
+
+        try {
+            $updateData = [
+                'username' => $request->username,
+                'email' => $request->email,
+                'full_name' => $request->full_name,
+                'school_id' => $request->school_id,
+                'course' => $request->course,
+                'year_level' => $request->year_level,
+                'section' => $request->section,
+                'student_status' => $request->student_status
+            ];
+
+            if ($update_image) {
+                $updateData['profile_image'] = $image_path;
+            }
+
+            $student->update($updateData);
+
+            return response()->json(['success' => true, 'message' => 'Student updated successfully!']);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Error updating student: ' . $e->getMessage()], 500);
+        }
+    }
+
+    /**
      * Handle logout for super admin.
      */
     public function logout(Request $request)
