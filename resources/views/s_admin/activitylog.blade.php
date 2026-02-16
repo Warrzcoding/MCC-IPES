@@ -343,6 +343,10 @@
             box-shadow: 0 0 10px #ff4d4d;
         }
 
+        .border-accent-green {
+            border-color: var(--accent-green) !important;
+        }
+
         /* Modal Styling */
         .modal-content {
             background: linear-gradient(135deg, var(--secondary-dark) 0%, var(--primary-dark) 100%);
@@ -515,8 +519,18 @@
                     <i class="fas fa-list me-2 text-accent-green"></i>
                     <span>Login History</span>
                 </div>
-                <div class="d-flex gap-2">
-                    <button class="btn-action btn-view" onclick="window.location.reload()">
+                <div class="d-flex gap-2 align-items-center">
+                    <form action="{{ route('superadmin.activity-log') }}" method="GET" class="d-flex gap-2">
+                        <div class="input-group" style="max-width: 300px;">
+                            <input type="text" name="search" class="form-control bg-transparent text-white border-accent-green" 
+                                placeholder="Search email, IP, status..." value="{{ $search ?? '' }}" 
+                                style="border: 1px solid var(--accent-green); font-size: 12px;">
+                            <button class="btn-action btn-view" type="submit">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </form>
+                    <button class="btn-action btn-view" onclick="window.location.href='{{ route('superadmin.activity-log') }}'">
                         <i class="fas fa-sync-alt me-1"></i> Refresh
                     </button>
                 </div>
@@ -594,7 +608,7 @@
                             Showing {{ $loginAttempts->firstItem() }} to {{ $loginAttempts->lastItem() }} of {{ $loginAttempts->total() }} entries
                         </div>
                         <div>
-                            {{ $loginAttempts->links('pagination::bootstrap-4') }}
+                            {{ $loginAttempts->appends(['search' => $search])->links('pagination::bootstrap-4') }}
                         </div>
                     </div>
                 </div>

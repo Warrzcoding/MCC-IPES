@@ -265,22 +265,36 @@ class SuperAdminController extends Controller
     /**
      * Display activity logs for login attempts.
      */
-    public function activityLog()
+    public function activityLog(Request $request)
     {
         if (!session()->has('super_admin_id')) {
             return redirect()->route('superadmin.login');
         }
 
         $superAdmin = SuperAdmin::find(session('super_admin_id'));
+        $search = $request->input('search');
         
         // Fetch all login attempts, sorted by time (newest first)
-        $loginAttempts = \App\Models\LoginAttempt::with('user')
-            ->orderBy('created_at', 'desc')
-            ->paginate(15);
+        $query = \App\Models\LoginAttempt::with('user');
+
+        if ($search) {
+            $query->where(function($q) use ($search) {
+                $q->where('email', 'like', "%{$search}%")
+                  ->orWhere('ip_address', 'like', "%{$search}%")
+                  ->orWhere('location', 'like', "%{$search}%")
+                  ->orWhere('status', 'like', "%{$search}%")
+                  ->orWhereHas('user', function($userQuery) use ($search) {
+                      $userQuery->where('full_name', 'like', "%{$search}%");
+                  });
+            });
+        }
+
+        $loginAttempts = $query->orderBy('created_at', 'desc')->paginate(15);
 
         return view('s_admin.activitylog', [
             'superAdmin' => $superAdmin,
-            'loginAttempts' => $loginAttempts
+            'loginAttempts' => $loginAttempts,
+            'search' => $search
         ]);
     }
 
