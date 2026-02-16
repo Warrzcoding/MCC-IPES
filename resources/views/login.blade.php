@@ -2582,14 +2582,24 @@ window.adminOtpOverlayEnabled = @json($adminOtpOverlayEnabled);
                                     btn.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Please allow location to continue';
                                     btn.style.background = 'linear-gradient(135deg, #ffc107 0%, #ff9800 100%)';
                                 }
+
+                                let title = 'Location Required';
+                                let text = 'Please allow location access to continue.';
+                                
+                                if (error.code === error.PERMISSION_DENIED) {
+                                    title = 'Location Blocked';
+                                    text = 'It seems location access is blocked. Please check your browser settings (click the lock icon in the address bar) to allow location and try again.';
+                                }
+
                                 Swal.fire({
-                                    title: 'Location Required',
-                                    text: 'Please allow location access to continue.',
+                                    title: title,
+                                    text: text,
                                     icon: 'warning',
                                     confirmButtonColor: '#28a745',
                                     width: '300px'
                                 });
-                            }
+                            },
+                            { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
                         );
                     } else {
                         Swal.fire({
