@@ -428,6 +428,32 @@
             .main-container {
                 margin-left: 0;
             }
+
+            .modal-content-custom {
+                width: 95% !important;
+                max-width: 600px !important;
+                padding: 20px !important;
+            }
+
+            .profile-modal-flex {
+                flex-direction: column !important;
+                align-items: center !important;
+                gap: 20px !important;
+            }
+
+            .profile-image-container {
+                flex: 0 0 auto !important;
+                width: 100% !important;
+                max-width: 200px !important;
+                margin-bottom: 15px !important;
+            }
+
+            .profile-image-box {
+                width: 200px !important;
+                height: 200px !important;
+                margin-left: auto;
+                margin-right: auto;
+            }
         }
     </style>
 </head>
@@ -560,7 +586,7 @@
 
     <!-- PROFILE PREVIEW MODAL (Overlay) -->
     <div id="profileModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; backdrop-filter: blur(8px);">
-        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 600px; background: var(--secondary-dark); border: 2px solid var(--accent-green); border-radius: 8px; box-shadow: 0 0 40px rgba(0,255,65,0.4); padding: 30px; overflow: hidden;">
+        <div class="modal-content-custom" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 600px; background: var(--secondary-dark); border: 2px solid var(--accent-green); border-radius: 8px; box-shadow: 0 0 40px rgba(0,255,65,0.4); padding: 30px; max-height: 90vh; overflow-y: auto;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid var(--border-color); padding-bottom: 15px;">
                 <h6 style="color: var(--accent-green); margin: 0; letter-spacing: 2px; font-weight: bold;">
                     <i class="fas fa-user-circle me-2"></i>USER_PROFILE_DATA
@@ -568,10 +594,10 @@
     
             </div>
 
-            <div style="display: flex; gap: 30px; align-items: flex-start;">
+            <div class="profile-modal-flex" style="display: flex; gap: 30px; align-items: flex-start;">
                 <!-- Big Image Box -->
-                <div style="flex: 0 0 240px; text-align: center;">
-                    <div style="width: 240px; height: 240px; border: 2px solid var(--accent-green); border-radius: 8px; overflow: hidden; box-shadow: 0 0 20px rgba(0,255,65,0.3); margin-bottom: 15px;">
+                <div class="profile-image-container" style="flex: 0 0 240px; text-align: center;">
+                    <div class="profile-image-box" style="width: 240px; height: 240px; border: 2px solid var(--accent-green); border-radius: 8px; overflow: hidden; box-shadow: 0 0 20px rgba(0,255,65,0.3); margin-bottom: 15px;">
                         <img id="profilePreviewImg" src="" alt="Profile Large" style="width: 100%; height: 100%; object-fit: cover;">
                     </div>
                     <div style="background: rgba(0, 255, 65, 0.1); padding: 8px; border: 1px solid var(--accent-green); border-radius: 4px;">
@@ -590,7 +616,7 @@
                         <label style="color: var(--accent-green); font-size: 11px; display: block; margin-bottom: 2px; opacity: 0.7;">EMAIL_ADDRESS</label>
                         <div id="profileEmail" style="color: var(--text-light); font-size: 14px;"></div>
                     </div>
-                    <div style="display: flex; gap: 20px; margin-bottom: 15px;">
+                    <div style="display: flex; gap: 20px; margin-bottom: 15px; flex-wrap: wrap;">
                         <div style="flex: 1;">
                             <label style="color: var(--accent-green); font-size: 11px; display: block; margin-bottom: 2px; opacity: 0.7;">COURSE</label>
                             <div id="profileCourse" style="color: var(--text-light); font-size: 14px; font-weight: bold;"></div>
@@ -623,7 +649,7 @@
 
     <!-- PASSWORD UPDATE MODAL (Overlay) -->
     <div id="passwordModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; backdrop-filter: blur(5px);">
-        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 400px; background: var(--secondary-dark); border: 2px solid var(--accent-green); border-radius: 8px; box-shadow: 0 0 30px rgba(0,255,65,0.3); padding: 25px;">
+        <div class="modal-content-custom" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 400px; background: var(--secondary-dark); border: 2px solid var(--accent-green); border-radius: 8px; box-shadow: 0 0 30px rgba(0,255,65,0.3); padding: 25px; max-height: 90vh; overflow-y: auto;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
                 <h6 style="color: var(--accent-green); margin: 0; letter-spacing: 1px;">
                     <i class="fas fa-shield-alt me-2"></i>OVERRIDE PASSWORD
@@ -676,7 +702,7 @@
 
     <!-- EDIT USER MODAL (Overlay) -->
     <div id="editModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; backdrop-filter: blur(5px);">
-        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 500px; background: var(--secondary-dark); border: 2px solid var(--accent-green); border-radius: 8px; box-shadow: 0 0 30px rgba(0,255,65,0.3); padding: 25px; max-height: 90vh; overflow-y: auto;">
+        <div class="modal-content-custom" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 500px; background: var(--secondary-dark); border: 2px solid var(--accent-green); border-radius: 8px; box-shadow: 0 0 30px rgba(0,255,65,0.3); padding: 25px; max-height: 90vh; overflow-y: auto;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
                 <h6 style="color: var(--accent-green); margin: 0; letter-spacing: 1px;">
                     <i class="fas fa-edit me-2"></i>EDIT USER DATA
