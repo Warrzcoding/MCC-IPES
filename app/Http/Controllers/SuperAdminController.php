@@ -333,6 +333,27 @@ class SuperAdminController extends Controller
     }
 
     /**
+     * Display the file manager.
+     */
+    public function fileManager()
+    {
+        if (!session()->has('super_admin_id')) {
+            return redirect()->route('superadmin.login');
+        }
+
+        $superAdmin = SuperAdmin::find(session('super_admin_id'));
+
+        if (!$superAdmin) {
+            session()->forget('super_admin_id');
+            return redirect()->route('superadmin.login');
+        }
+
+        return view('s_admin.ipes_filemanager', [
+            'superAdmin' => $superAdmin
+        ]);
+    }
+
+    /**
      * Verify access code before showing login form.
      */
     public function verifyAccessCode(Request $request)

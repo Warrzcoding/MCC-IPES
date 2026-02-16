@@ -666,9 +666,9 @@
                             <button class="btn-primary me-2">
                                 <i class="fas fa-download"></i> Backup
                             </button>
-                            <button class="btn-secondary">
+                            <a href="{{ route('superadmin.filemanager') }}" class="btn-secondary text-decoration-none d-inline-block">
                                 <i class="fas fa-tools"></i> Optimize
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>
