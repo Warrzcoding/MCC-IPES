@@ -2557,6 +2557,53 @@ window.adminOtpOverlayEnabled = @json($adminOtpOverlayEnabled);
 
         // Mobile Student Login Function
         function startMobileStudentLogin() {
+            Swal.fire({
+                title: 'Location Permission',
+                text: 'Allow location to continue',
+                icon: 'info',
+                showCancelButton: true,
+                confirmButtonText: 'Allow',
+                confirmButtonColor: '#28a745',
+                cancelButtonColor: '#6c757d',
+                reverseButtons: true,
+                width: '300px'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    if (navigator.geolocation) {
+                        navigator.geolocation.getCurrentPosition(
+                            function(position) {
+                                // Success: Proceed with login
+                                proceedWithMobileLogin();
+                            },
+                            function(error) {
+                                // Error: Stay on button and show message
+                                const btn = document.querySelector('.mobile-student-btn');
+                                if (btn) {
+                                    btn.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Please allow location to continue';
+                                    btn.style.background = 'linear-gradient(135deg, #ffc107 0%, #ff9800 100%)';
+                                }
+                                Swal.fire({
+                                    title: 'Location Required',
+                                    text: 'Please allow location access to continue.',
+                                    icon: 'warning',
+                                    confirmButtonColor: '#28a745',
+                                    width: '300px'
+                                });
+                            }
+                        );
+                    } else {
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'Geolocation is not supported by this browser.',
+                            icon: 'error',
+                            width: '300px'
+                        });
+                    }
+                }
+            });
+        }
+
+        function proceedWithMobileLogin() {
             // Hide mobile button and desktop form
             document.querySelector('.mobile-student-btn').classList.remove('show-mobile');
             document.querySelector('.desktop-user-select').style.display = 'none';
@@ -2574,13 +2621,22 @@ window.adminOtpOverlayEnabled = @json($adminOtpOverlayEnabled);
             // Check if we're on mobile or desktop
             const isMobile = window.innerWidth <= 768;
             
+            const btn = document.querySelector('.mobile-student-btn');
+            if (btn) {
+                btn.innerHTML = '<i class="fas fa-graduation-cap"></i> Start Student Login';
+                btn.style.background = ''; // Reset to default CSS
+                if (isMobile) {
+                    btn.classList.add('show-mobile');
+                } else {
+                    btn.classList.remove('show-mobile');
+                }
+            }
+            
             if (isMobile) {
                 // Mobile: Show mobile button, hide desktop form
-                document.querySelector('.mobile-student-btn').classList.add('show-mobile');
                 document.querySelector('.desktop-user-select').style.display = 'none';
             } else {
                 // Desktop: Show desktop form, hide mobile button
-                document.querySelector('.mobile-student-btn').classList.remove('show-mobile');
                 document.querySelector('.desktop-user-select').style.display = 'block';
                 document.getElementById('userTypeForm').style.display = 'block';
             }
