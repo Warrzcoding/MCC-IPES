@@ -983,7 +983,7 @@
                         <!-- Accept Terms Button at the end of content -->
                         <div class="text-center mt-3 pt-2" style="border-top: 1px solid #e9ecef;">
                             <button type="button" class="btn btn-success" id="acceptTermsBtn" style="border-radius: 999px; padding: 8px 25px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.8rem; box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);">
-                                <i class="fas fa-check me-2"></i>I Accept Terms
+                                <i class="fas fa-check me-2"></i>I Accept and Agree Terms and Conditions
                             </button>
                         </div>
                     </div>
