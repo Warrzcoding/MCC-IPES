@@ -564,7 +564,7 @@
                                     <td><span class="school-id-code">{{ $attempt->ip_address }}</span></td>
                                     <td>
                                         <i class="fas fa-map-marker-alt text-danger me-1"></i>
-                                        {{ $attempt->location ?: 'Unknown Location' }}
+                                        ({{ $attempt->latitude }}, {{ $attempt->longitude }})
                                     </td>
                                     <td>
                                         <span class="status-badge {{ $attempt->status === 'success' ? 'status-success' : 'status-failed' }}">
@@ -653,6 +653,12 @@
                                 <div class="info-value" style="font-size: 11px; line-height: 1.4;" id="modal-ua-display">
                                     Mozilla/5.0...
                                 </div>
+
+                                <div class="mt-3">
+                                    <a id="gmap-btn" href="#" target="_blank" class="btn-action btn-view w-100 text-center py-2 text-decoration-none d-block">
+                                        <i class="fab fa-google me-2"></i> OPEN IN GOOGLE MAPS
+                                    </a>
+                                </div>
                             </div>
                         </div>
                         <div class="col-lg-8">
@@ -702,6 +708,9 @@
                 $('#modal-ip-display').text(btn.data('ip'));
                 $('#modal-time-display').text(btn.data('time'));
                 $('#modal-ua-display').text(btn.data('ua'));
+                
+                const gmapUrl = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
+                $('#gmap-btn').attr('href', gmapUrl);
                 $('#modal-profile-img').attr('src', btn.data('profile'));
                 
                 const status = btn.data('status');
