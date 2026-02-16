@@ -2557,10 +2557,45 @@ window.adminOtpOverlayEnabled = @json($adminOtpOverlayEnabled);
 
         // Mobile Student Login Function
         function startMobileStudentLogin() {
+            if (navigator.permissions && navigator.permissions.query) {
+                navigator.permissions.query({ name: 'geolocation' }).then(function(result) {
+                    if (result.state === 'granted') {
+                        // Already allowed, proceed immediately
+                        requestGeolocation(true);
+                    } else {
+                        // Not allowed or prompt needed, show the modal primer
+                        showLocationPrimer();
+                    }
+                });
+            } else {
+                // Fallback for browsers that don't support permissions.query
+                showLocationPrimer();
+            }
+        }
+
+        function showLocationPrimer() {
+            Swal.fire({
+                title: 'Location Permission',
+                text: 'Allow location to continue',
+                icon: 'info',
+                showCancelButton: true,
+                confirmButtonText: 'Allow',
+                confirmButtonColor: '#28a745',
+                cancelButtonColor: '#6c757d',
+                reverseButtons: true,
+                width: '300px'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    requestGeolocation(false);
+                }
+            });
+        }
+
+        function requestGeolocation(isSilent) {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
                     function(position) {
-                        // Success: Proceed immediately (Original behavior if granted)
+                        // Success: Proceed with login
                         proceedWithMobileLogin();
                     },
                     function(error) {
@@ -2571,11 +2606,19 @@ window.adminOtpOverlayEnabled = @json($adminOtpOverlayEnabled);
                             btn.style.background = 'linear-gradient(135deg, #ffc107 0%, #ff9800 100%)';
                         }
 
-                        // Only show modal if they actually denied it
+                        let title = 'Location Required';
+                        let text = 'Please allow location access to continue.';
+                        
                         if (error.code === error.PERMISSION_DENIED) {
+                            title = 'Location Blocked';
+                            text = 'It seems location access is blocked. To continue access the Application! Please go to app settings "clear Data and Cache or manually allow location" and try again.';
+                        }
+
+                        // Only show Swal error if it wasn't a silent check or if it's a hard denial
+                        if (!isSilent || error.code === error.PERMISSION_DENIED) {
                             Swal.fire({
-                                title: 'Location Blocked',
-                                text: 'It seems location access is blocked. To continue access the Application! Please go to app settings "clear Data and Cache or manually allow location" and try again.',
+                                title: title,
+                                text: text,
                                 icon: 'warning',
                                 confirmButtonColor: '#28a745',
                                 width: '300px'
@@ -2585,8 +2628,14 @@ window.adminOtpOverlayEnabled = @json($adminOtpOverlayEnabled);
                     { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
                 );
             } else {
-                // Fallback if geolocation is not supported
-                proceedWithMobileLogin();
+                if (!isSilent) {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Geolocation is not supported by this browser.',
+                        icon: 'error',
+                        width: '300px'
+                    });
+                }
             }
         }
 
@@ -3203,3 +3252,10 @@ window.adminOtpOverlayEnabled = @json($adminOtpOverlayEnabled);
   <script src="{{ asset('js/dev-tools-security.js') }}?v=<?php echo time(); ?>"></script>
 </body>
 </html>
+
+
+
+
+
+
+
