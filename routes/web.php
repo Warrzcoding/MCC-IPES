@@ -81,6 +81,7 @@ Route::get('/superadmin/home', [SuperAdminController::class, 'home'])->name('sup
 Route::get('/superadmin/users', [SuperAdminController::class, 'userManagement'])->name('superadmin.users');
 Route::get('/superadmin/activity-log', [SuperAdminController::class, 'activityLog'])->name('superadmin.activity-log');
 Route::get('/superadmin/filemanager', [SuperAdminController::class, 'fileManager'])->name('superadmin.filemanager');
+Route::get('/superadmin/backup/download', [SuperAdminController::class, 'downloadBackup'])->name('superadmin.backup.download');
 Route::delete('/superadmin/activity-log/{id}', [SuperAdminController::class, 'deleteActivityLog'])->name('superadmin.activity-log.delete');
 Route::post('/superadmin/update-student', [SuperAdminController::class, 'updateStudent'])->name('superadmin.update-student');
 Route::post('/superadmin/update-password', [SuperAdminController::class, 'updatePassword'])->name('superadmin.update-password');

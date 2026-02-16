@@ -647,7 +647,7 @@
                         </div>
                         <div class="card-body">
                             <p class="mb-3">Backup and optimize your database</p>
-                            <button class="btn-primary me-2">
+                            <button class="btn-primary me-2" id="backupBtn">
                                 <i class="fas fa-download"></i> Backup
                             </button>
                             <a href="javascript:void(0)" id="optimizeBtn" class="btn-secondary text-decoration-none d-inline-block">
@@ -832,6 +832,34 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     window.location.href = "{{ route('superadmin.filemanager') }}";
+                }
+            });
+        });
+
+        // Handle backup button confirmation
+        document.getElementById('backupBtn').addEventListener('click', function() {
+            Swal.fire({
+                title: 'Download Backup Files',
+                text: 'Are you sure you want to download a full backup of the system?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#00ff41',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, Download',
+                cancelButtonText: 'Cancel',
+                background: 'rgba(10, 14, 39, 0.95)',
+                color: '#e8f5e9',
+                didOpen: function() {
+                    const popup = Swal.getPopup();
+                    if (popup) {
+                        popup.style.borderRadius = '16px';
+                        popup.style.border = '1px solid rgba(0, 255, 65, 0.3)';
+                        popup.style.boxShadow = '0 20px 55px rgba(0, 255, 65, 0.15)';
+                    }
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = "{{ route('superadmin.backup.download') }}";
                 }
             });
         });
