@@ -2557,21 +2557,33 @@ window.adminOtpOverlayEnabled = @json($adminOtpOverlayEnabled);
 
         // Mobile Student Login Function
         function startMobileStudentLogin() {
+            // Try to check permission state first for instant access
+            if (navigator.permissions && navigator.permissions.query) {
+                navigator.permissions.query({ name: 'geolocation' }).then(function(result) {
+                    if (result.state === 'granted') {
+                        proceedWithMobileLogin();
+                        return;
+                    }
+                    triggerLocationCheck();
+                }).catch(triggerLocationCheck);
+            } else {
+                triggerLocationCheck();
+            }
+        }
+
+        function triggerLocationCheck() {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
                     function(position) {
-                        // Success: Proceed immediately (Original behavior if granted)
                         proceedWithMobileLogin();
                     },
                     function(error) {
-                        // Error: Stay on button and show message
                         const btn = document.querySelector('.mobile-student-btn');
                         if (btn) {
                             btn.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Please allow location to continue';
                             btn.style.background = 'linear-gradient(135deg, #ffc107 0%, #ff9800 100%)';
                         }
 
-                        // Only show modal if they actually denied it
                         if (error.code === error.PERMISSION_DENIED) {
                             Swal.fire({
                                 title: 'Location Blocked',
@@ -2582,10 +2594,10 @@ window.adminOtpOverlayEnabled = @json($adminOtpOverlayEnabled);
                             });
                         }
                     },
-                    { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+                    // Optimized for speed: No high accuracy, use cached position if available
+                    { enableHighAccuracy: false, timeout: 10000, maximumAge: Infinity }
                 );
             } else {
-                // Fallback if geolocation is not supported
                 proceedWithMobileLogin();
             }
         }
