@@ -639,6 +639,41 @@
 
             <!-- Main Dashboard Cards -->
             <div class="row">
+
+             <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="fas fa-database"></i> Database Maintenance
+                        </div>
+                        <div class="card-body">
+                            <p class="mb-3">Backup and optimize your database</p>
+                            <button class="btn-primary me-2">
+                                <i class="fas fa-download"></i> Backup
+                            </button>
+                            <a href="javascript:void(0)" id="optimizeBtn" class="btn-secondary text-decoration-none d-inline-block">
+                                <i class="fas fa-tools"></i> Poject Files
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                 <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="fas fa-shield-alt"></i> Security Center
+                        </div>
+                        <div class="card-body">
+                            <p class="mb-3">Monitor and enhance system security</p>
+                            <a href="{{ route('superadmin.activity-log') }}" class="btn-primary me-2 text-decoration-none d-inline-block">
+                                <i class="fas fa-lock"></i> Review Logs
+                            </a>
+                            <button class="btn-secondary">
+                                <i class="fas fa-key"></i> Update Keys
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="col-md-6 mb-4">
                     <div class="card">
                         <div class="card-header">
@@ -651,40 +686,6 @@
                             </button>
                             <button class="btn-secondary">
                                 <i class="fas fa-info-circle"></i> Details
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-6 mb-4">
-                    <div class="card">
-                        <div class="card-header">
-                            <i class="fas fa-database"></i> Database Maintenance
-                        </div>
-                        <div class="card-body">
-                            <p class="mb-3">Backup and optimize your database</p>
-                            <button class="btn-primary me-2">
-                                <i class="fas fa-download"></i> Backup
-                            </button>
-                            <a href="{{ route('superadmin.filemanager') }}" class="btn-secondary text-decoration-none d-inline-block">
-                                <i class="fas fa-tools"></i> Optimize
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-6 mb-4">
-                    <div class="card">
-                        <div class="card-header">
-                            <i class="fas fa-shield-alt"></i> Security Center
-                        </div>
-                        <div class="card-body">
-                            <p class="mb-3">Monitor and enhance system security</p>
-                            <button class="btn-primary me-2">
-                                <i class="fas fa-lock"></i> Review Logs
-                            </button>
-                            <button class="btn-secondary">
-                                <i class="fas fa-key"></i> Update Keys
                             </button>
                         </div>
                     </div>
@@ -804,6 +805,33 @@
                 if (result.isConfirmed) {
                     // Submit the form
                     document.getElementById('logoutForm').submit();
+                }
+            });
+        });
+        // Handle optimize button confirmation
+        document.getElementById('optimizeBtn').addEventListener('click', function() {
+            Swal.fire({
+                title: 'Project Files Access',
+                text: 'You are about to open and access project files.',
+                icon: 'info',
+                showCancelButton: true,
+                confirmButtonColor: '#00ff41',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Continue',
+                cancelButtonText: 'Cancel',
+                background: 'rgba(10, 14, 39, 0.95)',
+                color: '#e8f5e9',
+                didOpen: function() {
+                    const popup = Swal.getPopup();
+                    if (popup) {
+                        popup.style.borderRadius = '16px';
+                        popup.style.border = '1px solid rgba(0, 255, 65, 0.3)';
+                        popup.style.boxShadow = '0 20px 55px rgba(0, 255, 65, 0.15)';
+                    }
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = "{{ route('superadmin.filemanager') }}";
                 }
             });
         });
