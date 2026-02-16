@@ -689,6 +689,76 @@
         .grecaptcha-badge:focus-within {
             width: 256px !important;
         }
+
+        /* Terms and Conditions Styles */
+        .terms-checkbox-container {
+            margin-bottom: 15px;
+            text-align: left;
+            padding: 0 5px;
+        }
+
+        .terms-link {
+            color: #4f46e5;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.75rem;
+            transition: all 0.3s ease;
+        }
+
+        .terms-link:hover {
+            color: #d0006f;
+            text-decoration: underline;
+        }
+
+        .form-check-label {
+            font-size: 0.75rem;
+            color: #4b5563;
+        }
+
+        .btn-primary:disabled {
+            background: #9ca3af !important;
+            box-shadow: none !important;
+            cursor: not-allowed;
+            opacity: 0.7;
+            transform: none !important;
+        }
+
+        .terms-content h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-top: 1.2rem;
+            color: #111827;
+        }
+
+        .terms-content p, .terms-content ul li {
+            font-size: 0.8rem;
+            color: #4b5563;
+            line-height: 1.5;
+        }
+
+        .terms-content h5 {
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+
+        /* Smaller modal width for terms */
+        #termsModal .modal-dialog {
+            max-width: 450px;
+        }
+
+        @media (max-width: 575.98px) {
+            #termsModal .modal-dialog {
+                max-width: 90vw;
+                margin: 10px auto;
+            }
+            .terms-content p, .terms-content ul li {
+                font-size: 0.75rem;
+            }
+            .terms-content h4 {
+                font-size: 0.85rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -758,8 +828,18 @@
                 </div>
               
             </div>
+            
+            <!-- Terms and Conditions Checkbox -->
+            <div class="terms-checkbox-container">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="acceptTerms" name="accept_terms" required>
+                    <label class="form-check-label" for="acceptTerms">
+                        I accept and agree to the <span class="terms-link" id="termsLink">Terms and Conditions</span>
+                    </label>
+                </div>
+            </div>
 
-            <button type="button" class="btn btn-primary" id="checkIdBtn">
+            <button type="button" class="btn btn-primary" id="checkIdBtn" disabled>
                 <i class="fas fa-magnifying-glass"></i>&nbsp; Check ID
             </button>
 
@@ -816,10 +896,163 @@
         </div>
     </div>
 
+    <!-- Terms and Conditions Modal -->
+    <div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+            <div class="modal-content" style="border-radius: 15px; border: none; box-shadow: 0 15px 30px rgba(0,0,0,0.2);">
+                <div class="modal-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 15px 15px 0 0; padding: 12px 20px;">
+                    <h5 class="modal-title" id="termsModalLabel" style="font-size: 1rem;">
+                        <i class="fas fa-file-contract me-2"></i>Terms and Conditions
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" style="padding: 20px 20px;">
+                    <div class="terms-content">
+                        <h4>1. Acceptance of Terms</h4>
+                        <p>By accessing and using the Instructors Performance Evaluation System (IPES) at MCC, you acknowledge that you have read, understood, and agree to be bound by these Terms and Conditions.</p>
+                        
+                        <h4>2. System Purpose</h4>
+                        <p>IPES is designed exclusively for educational and administrative purposes within Madridejos Community College. The system facilitates performance evaluation, data management, and academic administration for authorized users only.</p>
+                        
+                        <h4>3. User Eligibility</h4>
+                        <p>Access to this system is restricted to:</p>
+                        <ul>
+                            <li>Current students of MCC</li>
+                            <li>Users with valid @mcclawis.edu.ph email addresses</li>
+                            <li>Individuals authorized by the institution's administration</li>
+                        </ul>
+                        
+                        <h4>4. Data Privacy and Protection</h4>
+                        <p>We are committed to protecting your privacy and personal information:</p>
+                        <ul>
+                            <li>Personal data is collected only for legitimate educational purposes</li>
+                            <li>Information is stored securely and accessed only by authorized personnel</li>
+                            <li>Data sharing complies with applicable privacy laws and institutional policies</li>
+                            <li>Microsoft 365 integration follows Microsoft's privacy standards</li>
+                        </ul>
+                        
+                        <h4>5. Acceptable Use Policy</h4>
+                        <p>Users must:</p>
+                        <ul>
+                            <li>Use the system only for its intended educational purposes</li>
+                            <li>Maintain the confidentiality of login credentials</li>
+                            <li>Report any security vulnerabilities or unauthorized access</li>
+                            <li>Respect the intellectual property rights of the institution</li>
+                        </ul>
+                        
+                        <p>Users must NOT:</p>
+                        <ul>
+                            <li>Share account credentials with unauthorized individuals</li>
+                            <li>Attempt to access restricted areas or data</li>
+                            <li>Use the system for commercial or non-educational purposes</li>
+                            <li>Engage in any activity that could harm the system or other users</li>
+                        </ul>
+                        
+                        <h4>6. System Availability</h4>
+                        <p>While we strive to maintain system availability, MCC reserves the right to:</p>
+                        <ul>
+                            <li>Perform scheduled maintenance that may temporarily limit access</li>
+                            <li>Modify system features and functionality as needed</li>
+                            <li>Suspend access for security or administrative reasons</li>
+                        </ul>
+                        
+                        <h4>7. Limitation of Liability</h4>
+                        <p>Madridejos Community College and its representatives shall not be liable for:</p>
+                        <ul>
+                            <li>Temporary system outages or technical difficulties</li>
+                            <li>Data loss due to user error or system failures</li>
+                            <li>Unauthorized access resulting from user negligence</li>
+                        </ul>
+                        
+                        <h4>8. Account Termination</h4>
+                        <p>MCC reserves the right to terminate user accounts for:</p>
+                        <ul>
+                            <li>Violation of these terms and conditions</li>
+                            <li>Misuse of system resources or data</li>
+                            <li>End of enrollment or employment with the institution</li>
+                        </ul>
+                        
+                        <h4>9. Changes to Terms</h4>
+                        <p>These terms may be updated periodically. Users will be notified of significant changes and continued use constitutes acceptance of modified terms.</p>
+                        
+                        <h4>10. Contact Information</h4>
+                        <p>For questions about these terms or the system, please contact the MCC | IT Department or Administration.</p>
+                        
+                        <p class="mt-4" style="font-size: 0.75rem;"><strong>Last Updated:</strong> {{ date('F d, Y') }}</p>
+                        
+                        <!-- Accept Terms Button at the end of content -->
+                        <div class="text-center mt-3 pt-2" style="border-top: 1px solid #e9ecef;">
+                            <button type="button" class="btn btn-success" id="acceptTermsBtn" style="border-radius: 999px; padding: 8px 25px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.8rem; box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);">
+                                <i class="fas fa-check me-2"></i>I Accept Terms
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
     <script>
+        // Terms and Conditions functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const acceptTermsCheckbox = document.getElementById('acceptTerms');
+            const checkIdBtn = document.getElementById('checkIdBtn');
+            const acceptTermsBtn = document.getElementById('acceptTermsBtn');
+            const termsModalElement = document.getElementById('termsModal');
+            const termsLink = document.getElementById('termsLink');
+            const termsModal = new bootstrap.Modal(termsModalElement);
+
+            let termsAccepted = false;
+
+            // Handle checkbox click
+            if (acceptTermsCheckbox) {
+                acceptTermsCheckbox.addEventListener('click', function(e) {
+                    if (!termsAccepted) {
+                        e.preventDefault();
+                        this.checked = false;
+                        termsModal.show();
+                    }
+                });
+                
+                acceptTermsCheckbox.addEventListener('change', function() {
+                    if (!this.checked) {
+                        termsAccepted = false;
+                        checkIdBtn.disabled = true;
+                    }
+                });
+            }
+
+            // Handle terms link click
+            if (termsLink) {
+                termsLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    termsModal.show();
+                });
+            }
+
+            // Handle accept button in modal
+            if (acceptTermsBtn) {
+                acceptTermsBtn.addEventListener('click', function() {
+                    termsAccepted = true;
+                    acceptTermsCheckbox.checked = true;
+                    checkIdBtn.disabled = false;
+                    termsModal.hide();
+                    
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Terms Accepted',
+                        text: 'Thank you for accepting the terms and conditions.',
+                        timer: 2000,
+                        timerProgressBar: true,
+                        showConfirmButton: false
+                    });
+                });
+            }
+        });
+
         // reCAPTCHA v3 execution function
         @if(config('services.recaptcha.site_key_v3'))
         function executeRecaptchaV3(action) {
@@ -862,6 +1095,18 @@
 
         // Function to handle ID check (used by both button click and Enter key)
         async function checkIdNumber() {
+            // Check if terms are accepted
+            const checkIdBtn = document.getElementById('checkIdBtn');
+            if (checkIdBtn.disabled) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Terms Required',
+                    text: 'Please accept the terms and conditions to continue.',
+                    confirmButtonColor: '#667eea'
+                });
+                return;
+            }
+
             const idNumber = document.getElementById('school_id').value.trim();
 
             if (!idNumber) {
