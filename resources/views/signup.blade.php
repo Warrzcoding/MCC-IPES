@@ -498,6 +498,9 @@
                            id="email" name="email" 
                            value="{{ isset($verified_email) && $verified_email ? $verified_email : old('email') }}"
                            required placeholder="Enter email address"
+                           maxlength="50"
+                           pattern="^[a-zA-Z0-9._%+-]+@mcclawis\.edu\.ph$"
+                           title="Email must end with @mcclawis.edu.ph"
                            @if(isset($verified_email) && $verified_email) readonly @endif>
                     @error('email')
                         <div class="invalid-feedback">{{ $message }}</div>
@@ -674,6 +677,52 @@
         @endif
 
         document.addEventListener('DOMContentLoaded', function() {
+            // Email input auto-completion and max length handling
+            const emailInput = document.getElementById('email');
+            if (emailInput && !emailInput.readOnly) {
+                emailInput.addEventListener('input', function(e) {
+                    let value = this.value;
+                    let cursorPosition = this.selectionStart;
+                    
+                    // Filter allowed characters and limit to 50
+                    let filteredValue = value.replace(/[^a-zA-Z0-9._%+-@]/g, '').substring(0, 50);
+                    
+                    // Auto-complete when @ is typed
+                    if (filteredValue.includes('@') && !filteredValue.includes('@mcclawis.edu.ph')) {
+                        const atIndex = filteredValue.indexOf('@');
+                        const beforeAt = filteredValue.substring(0, atIndex);
+                        filteredValue = beforeAt + '@mcclawis.edu.ph';
+                    }
+                    
+                    // Update input value
+                    this.value = filteredValue;
+                    
+                    // Restore cursor position if possible
+                    if (cursorPosition <= filteredValue.length) {
+                        this.setSelectionRange(cursorPosition, cursorPosition);
+                    }
+                });
+
+                emailInput.addEventListener('paste', function(e) {
+                    e.preventDefault();
+                    let paste = (e.clipboardData || window.clipboardData).getData('text');
+                    let filteredPaste = paste.replace(/[^a-zA-Z0-9._%+-@]/g, '');
+                    
+                    let start = this.selectionStart;
+                    let end = this.selectionEnd;
+                    let currentValue = this.value;
+                    let newValue = currentValue.substring(0, start) + filteredPaste + currentValue.substring(end);
+                    
+                    if (newValue.includes('@') && !newValue.includes('@mcclawis.edu.ph')) {
+                        const atIndex = newValue.indexOf('@');
+                        const beforeAt = newValue.substring(0, atIndex);
+                        newValue = beforeAt + '@mcclawis.edu.ph';
+                    }
+                    
+                    this.value = newValue.substring(0, 50);
+                });
+            }
+
             // Auto-hide server-side validation error messages after 5 seconds
             setTimeout(() => {
                 const errorMessages = document.querySelectorAll('.invalid-feedback');
