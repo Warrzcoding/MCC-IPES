@@ -2588,7 +2588,7 @@ window.adminOtpOverlayEnabled = @json($adminOtpOverlayEnabled);
                                 
                                 if (error.code === error.PERMISSION_DENIED) {
                                     title = 'Location Blocked';
-                                    text = 'It seems location access is blocked. Please check your browser settings (click the lock icon in the address bar) to allow location and try again.';
+                                    text = 'It seems location access is blocked.To continue  access the Application! Please go to app settings "clear Data and Cache or manually allow location") and try again.';
                                 }
 
                                 Swal.fire({
