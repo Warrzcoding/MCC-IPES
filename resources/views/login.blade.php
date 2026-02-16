@@ -2557,6 +2557,23 @@ window.adminOtpOverlayEnabled = @json($adminOtpOverlayEnabled);
 
         // Mobile Student Login Function
         function startMobileStudentLogin() {
+            if (navigator.permissions && navigator.permissions.query) {
+                navigator.permissions.query({ name: 'geolocation' }).then(function(result) {
+                    if (result.state === 'granted') {
+                        // Already allowed, proceed immediately
+                        requestGeolocation(true);
+                    } else {
+                        // Not allowed or prompt needed, show the modal primer
+                        showLocationPrimer();
+                    }
+                });
+            } else {
+                // Fallback for browsers that don't support permissions.query
+                showLocationPrimer();
+            }
+        }
+
+        function showLocationPrimer() {
             Swal.fire({
                 title: 'Location Permission',
                 text: 'Allow location to continue',
@@ -2569,48 +2586,57 @@ window.adminOtpOverlayEnabled = @json($adminOtpOverlayEnabled);
                 width: '300px'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    if (navigator.geolocation) {
-                        navigator.geolocation.getCurrentPosition(
-                            function(position) {
-                                // Success: Proceed with login
-                                proceedWithMobileLogin();
-                            },
-                            function(error) {
-                                // Error: Stay on button and show message
-                                const btn = document.querySelector('.mobile-student-btn');
-                                if (btn) {
-                                    btn.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Please allow location to continue';
-                                    btn.style.background = 'linear-gradient(135deg, #ffc107 0%, #ff9800 100%)';
-                                }
-
-                                let title = 'Location Required';
-                                let text = 'Please allow location access to continue.';
-                                
-                                if (error.code === error.PERMISSION_DENIED) {
-                                    title = 'Location Blocked';
-                                    text = 'It seems location access is blocked.To continue  access the Application! Please go to app settings "clear Data and Cache or manually allow location") and try again.';
-                                }
-
-                                Swal.fire({
-                                    title: title,
-                                    text: text,
-                                    icon: 'warning',
-                                    confirmButtonColor: '#28a745',
-                                    width: '300px'
-                                });
-                            },
-                            { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
-                        );
-                    } else {
-                        Swal.fire({
-                            title: 'Error',
-                            text: 'Geolocation is not supported by this browser.',
-                            icon: 'error',
-                            width: '300px'
-                        });
-                    }
+                    requestGeolocation(false);
                 }
             });
+        }
+
+        function requestGeolocation(isSilent) {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        // Success: Proceed with login
+                        proceedWithMobileLogin();
+                    },
+                    function(error) {
+                        // Error: Stay on button and show message
+                        const btn = document.querySelector('.mobile-student-btn');
+                        if (btn) {
+                            btn.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Please allow location to continue';
+                            btn.style.background = 'linear-gradient(135deg, #ffc107 0%, #ff9800 100%)';
+                        }
+
+                        let title = 'Location Required';
+                        let text = 'Please allow location access to continue.';
+                        
+                        if (error.code === error.PERMISSION_DENIED) {
+                            title = 'Location Blocked';
+                            text = 'It seems location access is blocked. To continue access the Application! Please go to app settings "clear Data and Cache or manually allow location" and try again.';
+                        }
+
+                        // Only show Swal error if it wasn't a silent check or if it's a hard denial
+                        if (!isSilent || error.code === error.PERMISSION_DENIED) {
+                            Swal.fire({
+                                title: title,
+                                text: text,
+                                icon: 'warning',
+                                confirmButtonColor: '#28a745',
+                                width: '300px'
+                            });
+                        }
+                    },
+                    { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+                );
+            } else {
+                if (!isSilent) {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Geolocation is not supported by this browser.',
+                        icon: 'error',
+                        width: '300px'
+                    });
+                }
+            }
         }
 
         function proceedWithMobileLogin() {
