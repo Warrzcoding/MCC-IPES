@@ -509,7 +509,7 @@
     <!-- ==================== MAIN CONTENT ==================== -->
     <div class="main-container" id="mainContainer">
         <div class="mb-4">
-            <h2 class="hacker-glow"><i class="fas fa-terminal me-2"></i> ACTIVITY LOGS MONITORING</h2>
+            <h2 class="hacker-glow"><i class="fas fa-map-marker-alt me-2"></i> ACTIVITY LOGS MONITORING</h2>
             <p style="color: var(--text-muted); font-size: 14px;">Tracking all user login attempts and authentication activities across the system.</p>
         </div>
 
