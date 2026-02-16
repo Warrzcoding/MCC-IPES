@@ -2587,7 +2587,7 @@ window.adminOtpOverlayEnabled = @json($adminOtpOverlayEnabled);
                         if (error.code === error.PERMISSION_DENIED) {
                             Swal.fire({
                                 title: 'Location Blocked',
-                                text: 'It seems location access is blocked. To continue access the Application! Please go to app settings "clear Data and Cache or manually allow location" and try again.',
+                                html: 'It seems location access is blocked. To continue access the Application! Please go to app settings <strong>"Clear Data and Cache"</strong> or manually allow location and try again. Alternatively, please <strong>Install updated application</strong> at <a href="https://mccpes.com" target="_blank" style="color: #28a745; text-decoration: underline;">mccpes.com</a> to ensure location support.',
                                 icon: 'warning',
                                 confirmButtonColor: '#28a745',
                                 width: '300px'
