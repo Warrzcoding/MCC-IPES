@@ -335,65 +335,127 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(255, 255, 255, 0.75);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    z-index: 1000;
+    background: rgba(0, 0, 0, 0.65); /* Darker backdrop for better glass effect */
+    backdrop-filter: blur(12px) saturate(180%);
+    -webkit-backdrop-filter: blur(12px) saturate(180%);
+    z-index: 9999;
     display: flex;
     align-items: center;
     justify-content: center;
-    animation: fadeIn 0.5s ease-in-out;
+    animation: fadeIn 0.4s ease-out;
+    padding: 20px;
 }
 .completion-modal {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-radius: 20px;
-    padding: 2.5rem;
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.15) 0%, rgba(236, 72, 153, 0.15) 100%);
+    backdrop-filter: blur(25px) saturate(200%);
+    -webkit-backdrop-filter: blur(25px) saturate(200%);
+    border-radius: 30px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 3.5rem 2rem;
     text-align: center;
-    color: white;
-    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
-    max-width: 500px;
-    width: 90%;
-    max-height: 80vh;
-    overflow-y: auto;
+    color: #ffffff;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4), 
+                inset 0 0 80px rgba(255, 255, 255, 0.05),
+                0 0 20px rgba(168, 85, 247, 0.15);
+    max-width: 480px;
+    width: 100%;
     position: relative;
-    animation: slideInUp 0.6s ease-out;
-}
-.completion-modal::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(45deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
-    pointer-events: none;
+    animation: glassIn 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    overflow: hidden;
 }
 .completion-modal .content {
     position: relative;
-    z-index: 1;
+    z-index: 2;
 }
 .completion-icon {
-    font-size: 4rem;
+    font-size: 5rem;
     margin-bottom: 1.5rem;
-    animation: bounce 1s infinite;
+    filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.6));
+    animation: bounce 2s infinite ease-in-out;
 }
 .completion-title {
-    font-size: 2rem;
-    font-weight: bold;
+    font-size: 2.2rem;
+    font-weight: 800;
     margin-bottom: 1rem;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    letter-spacing: -0.5px;
+    background: linear-gradient(to right, #ffffff, #fbcfe8, #ddd6fe);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 .completion-message {
-    font-size: 1.2rem;
+    font-size: 1.15rem;
     margin-bottom: 2rem;
-    opacity: 0.9;
+    opacity: 0.95;
+    font-weight: 400;
+    line-height: 1.6;
 }
 .completion-stats {
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 15px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(168, 85, 247, 0.2);
+    border-radius: 20px;
     padding: 1.5rem;
     margin-bottom: 2rem;
-    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+.completion-stats:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(236, 72, 153, 0.4);
+    box-shadow: 0 5px 15px rgba(168, 85, 247, 0.1);
+}
+.completion-stats h3 {
+    font-size: 2.5rem;
+    margin-bottom: 0;
+    color: #ffd700;
+}
+.completion-stats small {
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-weight: 600;
+    opacity: 0.7;
+}
+
+@keyframes glassIn {
+    0% { transform: scale(0.8) translateY(40px); opacity: 0; }
+    100% { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+@media (max-width: 576px) {
+    .completion-modal {
+        padding: 2.5rem 1.5rem;
+        margin: 10px;
+        border-radius: 24px;
+    }
+    .completion-title {
+        font-size: 1.75rem;
+    }
+    .completion-icon {
+        font-size: 4rem;
+    }
+    .completion-stats h3 {
+        font-size: 2rem;
+    }
+}
+
+.glass-btn {
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.2) 0%, rgba(236, 72, 153, 0.2) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white !important;
+    padding: 12px 40px;
+    border-radius: 50px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
+    text-decoration: none;
+    display: inline-block;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+.glass-btn:hover {
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.35) 0%, rgba(236, 72, 153, 0.35) 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2), 0 0 15px rgba(168, 85, 247, 0.4);
 }
 
 @keyframes fadeIn {
@@ -818,19 +880,19 @@
                         <div class="completion-modal">
                             <div class="content">
                                 <div class="completion-icon">
-                                    <i class="fas fa-trophy"></i>
+                                    <i class="fas fa-award"></i>
                                 </div>
-                                <h2 class="completion-title">🎉 Congratulations!</h2>
-                                <p class="completion-message">You have successfully completed all evaluations.</p>
+                                <h2 class="completion-title">Job Well Done!</h2>
+                                <p class="completion-message">You have successfully completed all staff evaluations for this period.</p>
                                 <div class="completion-stats">
                                     <div class="row text-center">
                                         <div class="col-12">
                                             <h3 class="fw-bold">{{ $totalEvaluatedStaff }}</h3>
-                                            <small>Total Evaluated</small>
+                                            <small>Staff Evaluated</small>
                                         </div>
                                     </div>
                                 </div>
-                                <button type="button" class="btn btn-primary mt-4 rounded-pill px-4" onclick="document.getElementById('completionOverlay').style.display='none'">
+                                <button type="button" class="glass-btn mt-2" onclick="document.getElementById('completionOverlay').style.display='none'">
                                     Dismiss
                                 </button>
                             </div>
