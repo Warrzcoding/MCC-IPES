@@ -312,7 +312,7 @@
                                                                     @if($subjects->count() > 1 || strlen($subjectNames) > 25)
                                                                         <button type="button" class="btn btn-link btn-sm p-0 text-primary text-decoration-none ms-2" 
                                                                             onclick="event.stopPropagation(); showAllSubjects('{{ addslashes($instructorName) }}', '{{ addslashes($subjectNames) }}')">
-                                                                            <small class="fw-bold" style="font-size: 0.7rem;">See More</small>
+                                                                            <small class="fw-bold" style="font-size: 0.7rem;">More</small>
                                                                         </button>
                                                                     @endif
                                                                 </div>
