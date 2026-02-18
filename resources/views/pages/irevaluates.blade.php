@@ -94,8 +94,6 @@
     }
 
     .evaluations-page > [class*="col-"] {
-        padding-left: 0 !important;
-        padding-right: 0 !important;
         float: none !important;
         margin: 0 auto !important;
     }
@@ -222,8 +220,8 @@
 }
 </style>
 
-<div class="row page-full-width evaluations-page justify-content-center mx-0 px-0">
-     <div class="col-12 col-lg-10 col-xl-8 mx-auto px-0">
+<div class="row page-full-width evaluations-page justify-content-center">
+     <div class="col-12 col-lg-10 col-xl-8 mx-auto">
         <div class="card border-0 shadow-sm evaluation-card" style="position: relative;">
             <div class="card-header bg-transparent border-0 text-center">
                 <div class="text-center mb-3">
