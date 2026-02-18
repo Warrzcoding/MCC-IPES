@@ -666,9 +666,9 @@
                         <div class="alert alert-success d-flex align-items-center rounded-pill mb-4 shadow-sm mx-auto" style="max-width: 600px;">
                             <i class="fas fa-lock me-2 ms-2"></i>
                             <span>Your instructor selection is locked. You can now proceed with the evaluation.</span>
-                            <button type="button" class="btn btn-sm btn-outline-success rounded-pill ms-auto me-2" onclick="unlockSelection()">
+                            <!--<button type="button" class="btn btn-sm btn-outline-success rounded-pill ms-auto me-2" onclick="unlockSelection()">
                                 <i class="fas fa-unlock me-1"></i>Unlock
-                            </button>
+                            </button>-->
                         </div>
 
                         <div id="staffListSection">
@@ -693,12 +693,9 @@
                                                 <div class="card-body d-flex flex-column">
                                                     <div class="d-flex align-items-center mb-3">
                                                         <div class="flex-shrink-0 me-3">
-                                                            <div class="bg-light rounded-circle d-flex align-items-center justify-content-center border" style="width: 50px; height: 50px;">
-                                                                @if($staff->profile_image)
-                                                                    <img src="{{ asset('storage/' . $staff->profile_image) }}" class="rounded-circle" style="width: 100%; height: 100%; object-fit: cover;">
-                                                                @else
-                                                                    <i class="fas fa-user-tie text-primary fa-lg"></i>
-                                                                @endif
+                                                            <div class="bg-light rounded-circle d-flex align-items-center justify-content-center border overflow-hidden" style="width: 50px; height: 50px;">
+                                                                <img src="{{ $staff->profile_image ? asset('storage/' . $staff->profile_image) : 'https://ui-avatars.com/api/?name=' . urlencode($instructorName) . '&color=7F9CF5&background=EBF4FF' }}" 
+                                                                     class="rounded-circle" style="width: 100%; height: 100%; object-fit: cover;">
                                                             </div>
                                                         </div>
                                                         <div class="flex-grow-1">
@@ -742,12 +739,9 @@
                                                 <div class="card-body d-flex flex-column">
                                                     <div class="d-flex align-items-center mb-3">
                                                         <div class="flex-shrink-0 me-3">
-                                                            <div class="bg-light rounded-circle d-flex align-items-center justify-content-center border" style="width: 50px; height: 50px;">
-                                                                @if($staff->profile_image)
-                                                                    <img src="{{ asset('storage/' . $staff->profile_image) }}" class="rounded-circle" style="width: 100%; height: 100%; object-fit: cover;">
-                                                                @else
-                                                                    <i class="fas fa-user-cog text-success fa-lg"></i>
-                                                                @endif
+                                                            <div class="bg-light rounded-circle d-flex align-items-center justify-content-center border overflow-hidden" style="width: 50px; height: 50px;">
+                                                                <img src="{{ $staff->profile_image ? asset('storage/' . $staff->profile_image) : 'https://ui-avatars.com/api/?name=' . urlencode($staffName) . '&color=48BB78&background=F0FFF4' }}" 
+                                                                     class="rounded-circle" style="width: 100%; height: 100%; object-fit: cover;">
                                                             </div>
                                                         </div>
                                                         <div class="flex-grow-1">

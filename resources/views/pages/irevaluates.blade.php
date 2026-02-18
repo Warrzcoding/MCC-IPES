@@ -328,6 +328,12 @@
                                                                     <input class="form-check-input select-staff-checkbox" type="checkbox" {{ $evaluated || !$staffId ? 'disabled' : '' }}>
                                                                 </div>
                                                             </div>
+                                                            <div class="flex-shrink-0 me-3">
+                                                                <div class="bg-light rounded-circle d-flex align-items-center justify-content-center border overflow-hidden" style="width: 45px; height: 45px;">
+                                                                    <img src="{{ $staff && $staff->profile_image ? asset('storage/' . $staff->profile_image) : 'https://ui-avatars.com/api/?name=' . urlencode($instructorName) . '&color=7F9CF5&background=EBF4FF' }}" 
+                                                                         class="rounded-circle" style="width: 100%; height: 100%; object-fit: cover;">
+                                                                </div>
+                                                            </div>
                                                             <div class="flex-grow-1 min-width-0">
                                                                 <h6 class="mb-0 fw-bold text-dark text-truncate">{{ $instructorName }}</h6>
                                                                 <div class="d-flex align-items-center justify-content-between">
