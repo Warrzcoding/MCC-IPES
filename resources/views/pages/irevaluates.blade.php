@@ -221,6 +221,24 @@
         flex-direction: row !important;
     }
 }
+.staff-avatar-initials {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: white;
+    text-transform: uppercase;
+}
+.avatar-teaching {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    font-size: 1.1rem;
+}
+.avatar-non-teaching {
+    background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+    font-size: 1.1rem;
+}
 </style>
 
 <div class="row page-full-width evaluations-page justify-content-center">
@@ -329,8 +347,8 @@
                                                                 </div>
                                                             </div>
                                                             <div class="flex-shrink-0 me-3">
-                                                                <div class="bg-light rounded-circle d-flex align-items-center justify-content-center border overflow-hidden" style="width: 45px; height: 45px;">
-                                                                    <img src="{{ $staff && $staff->profile_image ? asset('storage/' . $staff->profile_image) : 'https://ui-avatars.com/api/?name=' . urlencode($instructorName) . '&color=7F9CF5&background=EBF4FF' }}" 
+                                                                <div class="bg-light rounded-circle d-flex align-items-center justify-content-center border overflow-hidden shadow-sm" style="width: 45px; height: 45px;">
+                                                                    <img src="{{ $staff && $staff->profile_image ? asset('storage/' . $staff->profile_image) : 'https://ui-avatars.com/api/?name=' . urlencode($instructorName) . '&color=FFFFFF&background=667eea&size=128&bold=true&uppercase=true' }}" 
                                                                          class="rounded-circle" style="width: 100%; height: 100%; object-fit: cover;">
                                                                 </div>
                                                             </div>
