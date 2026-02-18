@@ -54,7 +54,6 @@
     box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
     margin-bottom: 30px;
     position: relative;
-    overflow: hidden;
 }
 .custom-nav-tabs .nav-link {
     background: transparent;
@@ -77,6 +76,54 @@
     color: #4a5568;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
     transform: translateY(-3px) scale(1.02);
+}
+
+@media (max-width: 576px) {
+    .custom-nav-tabs {
+        padding: 4px;
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        border-radius: 10px;
+    }
+    .custom-nav-tabs::-webkit-scrollbar {
+        display: none;
+    }
+    .custom-nav-tabs .nav-item {
+        flex: 1 1 auto;
+    }
+    .custom-nav-tabs .nav-link {
+        padding: 8px 10px;
+        font-size: 0.75rem;
+        gap: 5px;
+        white-space: nowrap;
+        border-radius: 8px;
+    }
+    .custom-nav-tabs .nav-link i {
+        font-size: 0.85rem;
+        margin-right: 2px !important;
+    }
+    .staff-card .card-body {
+        padding: 12px;
+    }
+    .staff-card h6 {
+        font-size: 0.85rem;
+    }
+    .staff-card small {
+        font-size: 0.75rem;
+    }
+    .staff-card small.text-truncate {
+        max-width: 100px !important;
+    }
+    .staff-card button small {
+        font-size: 0.65rem !important;
+    }
+}
+
+.min-width-0 {
+    min-width: 0;
 }
 
 .tab-content {
@@ -258,9 +305,17 @@
                                                                     <input class="form-check-input select-staff-checkbox" type="checkbox" {{ $evaluated || !$staffId ? 'disabled' : '' }}>
                                                                 </div>
                                                             </div>
-                                                            <div class="flex-grow-1">
-                                                                <h6 class="mb-0 fw-bold text-dark">{{ $instructorName }}</h6>
-                                                                <small class="text-muted d-block text-truncate" style="max-width: 200px;">{{ $subjectNames }}</small>
+                                                            <div class="flex-grow-1 min-width-0">
+                                                                <h6 class="mb-0 fw-bold text-dark text-truncate">{{ $instructorName }}</h6>
+                                                                <div class="d-flex align-items-center justify-content-between">
+                                                                    <small class="text-muted d-block text-truncate flex-grow-1" style="max-width: 150px;">{{ $subjectNames }}</small>
+                                                                    @if($subjects->count() > 1 || strlen($subjectNames) > 25)
+                                                                        <button type="button" class="btn btn-link btn-sm p-0 text-primary text-decoration-none ms-2" 
+                                                                            onclick="event.stopPropagation(); showAllSubjects('{{ addslashes($instructorName) }}', '{{ addslashes($subjectNames) }}')">
+                                                                            <small class="fw-bold" style="font-size: 0.7rem;">See More</small>
+                                                                        </button>
+                                                                    @endif
+                                                                </div>
                                                                 @if($evaluated)
                                                                     <span class="badge bg-success-soft text-success rounded-pill mt-1">Evaluated</span>
                                                                 @endif
@@ -394,6 +449,22 @@ function handleStaffSelection(ev, cardElement, id, type, name, evaluated, subjec
         const doneBtn = currentStaffType === 'teaching' ? document.getElementById('doneSelectionBtn') : document.getElementById('doneNonTeachingBtn');
         if (doneBtn) doneBtn.disabled = selectedStaff.length === 0;
     }
+}
+
+function showAllSubjects(name, subjects) {
+    const subjectList = subjects.split(',').map(s => `<div class="p-2 mb-2 bg-light rounded border-start border-4 border-primary text-start">${s.trim()}</div>`).join('');
+    Swal.fire({
+        title: `<div class="fs-5 fw-bold text-dark mb-1">${name}</div><div class="fs-6 text-muted">Handled Subjects</div>`,
+        html: `<div class="mt-3" style="max-height: 300px; overflow-y: auto;">${subjectList}</div>`,
+        confirmButtonText: 'Close',
+        confirmButtonColor: '#667eea',
+        showCloseButton: true,
+        customClass: {
+            container: 'subject-overlay-container',
+            popup: 'rounded-4 shadow-lg border-0',
+            confirmButton: 'rounded-pill px-4'
+        }
+    });
 }
 
 function confirmSelection() {
