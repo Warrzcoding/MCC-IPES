@@ -172,6 +172,9 @@
     background-color: #f0f4ff;
     box-shadow: 0 0 0 2px #667eea;
 }
+.select-staff-checkbox {
+    pointer-events: none;
+}
 
 /* Status Badges */
 .enhanced-status-badge {
@@ -459,13 +462,20 @@ function handleStaffSelection(ev, cardElement, id, type, name, evaluated, subjec
 
     const checkbox = cardElement.querySelector('.select-staff-checkbox');
     if (checkbox && !checkbox.disabled) {
-        checkbox.checked = !checkbox.checked;
+        // Only toggle if the click wasn't directly on the checkbox
+        if (ev.target !== checkbox) {
+            checkbox.checked = !checkbox.checked;
+        }
+        
         cardElement.classList.toggle('selected', checkbox.checked);
+        
+        // Safety: Always filter out existing ID to prevent duplicates
+        selectedStaff = selectedStaff.filter(s => s.id !== id);
+        
         if (checkbox.checked) {
             selectedStaff.push({ id, type, name, subject });
-        } else {
-            selectedStaff = selectedStaff.filter(s => s.id !== id);
         }
+        
         const doneBtn = currentStaffType === 'teaching' ? document.getElementById('doneSelectionBtn') : document.getElementById('doneNonTeachingBtn');
         if (doneBtn) doneBtn.disabled = selectedStaff.length === 0;
     }
