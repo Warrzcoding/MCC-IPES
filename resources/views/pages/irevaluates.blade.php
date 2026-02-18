@@ -40,6 +40,7 @@
     font-size: 1.2rem;
 }
 .evaluation-card {
+    width: 100%;
     max-width: 920px;
     margin-left: auto;
     margin-right: auto;
@@ -79,11 +80,32 @@
 }
 
 @media (max-width: 576px) {
+    .evaluation-card {
+        width: 98% !important;
+        margin: 0 auto !important;
+    }
+
+    .evaluations-page {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        width: 100% !important;
+        display: flex !important;
+        justify-content: center !important;
+    }
+
+    .evaluations-page > [class*="col-"] {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        float: none !important;
+        margin: 0 auto !important;
+    }
+
     .custom-nav-tabs {
         padding: 4px;
         display: flex !important;
         flex-direction: row !important;
         flex-wrap: nowrap !important;
+        justify-content: center;
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
         border-radius: 10px;
@@ -200,8 +222,8 @@
 }
 </style>
 
-<div class="row page-full-width evaluations-page justify-content-center">
-     <div class="col-12 col-lg-10 col-xl-8">
+<div class="row page-full-width evaluations-page justify-content-center mx-0 px-0">
+     <div class="col-12 col-lg-10 col-xl-8 mx-auto px-0">
         <div class="card border-0 shadow-sm evaluation-card" style="position: relative;">
             <div class="card-header bg-transparent border-0 text-center">
                 <div class="text-center mb-3">
