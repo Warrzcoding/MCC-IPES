@@ -1171,9 +1171,23 @@
                 </a>-->
                 
                 @php
-                    $targetPage = (strtolower(Auth::user()->student_status) === 'irregular') ? 'irevaluates' : 'evaluates';
+                    $user = Auth::user();
+                    $targetPage = 'evaluates'; // Default for regular students
+                    
+                    if (strtolower(trim($user->student_status)) === 'irregular') {
+                        // For irregular students, we check if they have locked selections
+                        // Use a simple query here for the sidebar logic
+                        $currentAY = \App\Models\AcademicYear::where('is_active', 1)->orderBy('id', 'desc')->first();
+                        $hasLocked = \App\Models\InstructorSelection::where('user_id', $user->id)
+                            ->where('academic_year_id', $currentAY->id ?? null)
+                            ->where(function($q) {
+                                $q->where('is_locked', true)->orWhere('is_locked', 1)->orWhere('selection_stage', 'locked');
+                            })->exists();
+                        
+                        $targetPage = $hasLocked ? 'lockedcards' : 'irevaluates';
+                    }
                 @endphp
-                <a href="{{ route('dashboard', ['page' => $targetPage]) }}" class="nav-link {{ in_array($page, ['evaluates', 'irevaluates']) ? 'active' : '' }}">
+                <a href="{{ route('dashboard', ['page' => $targetPage]) }}" class="nav-link {{ in_array($page, ['evaluates', 'irevaluates', 'lockedcards']) ? 'active' : '' }}">
                     <i class="fas fa-clipboard-check"></i> Evaluation
                 </a>
             @endif
@@ -1198,7 +1212,7 @@
             @if(View::exists($page_file))
                 @if($page === 'questionnaires')
                     @include($page_file, ['questionnaires_data' => $questionnaires_data])
-                @elseif($page === 'evaluates' || $page === 'irevaluates')
+                @elseif($page === 'evaluates' || $page === 'irevaluates' || $page === 'lockedcards')
                     @include($page_file, [
                         'totalEvaluated' => $totalEvaluated ?? 0,
                         'teachingEvaluated' => $teachingEvaluated ?? 0,

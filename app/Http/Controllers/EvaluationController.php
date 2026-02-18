@@ -26,7 +26,11 @@ class EvaluationController extends Controller
     private function renderEvaluationView()
     {
         // Get the active academic year (where is_active = 1)
-        $currentAcademicYear = AcademicYear::where('is_active', 1)->first();
+        $userId = auth()->id();
+        $user = auth()->user();
+
+        // Get the active academic year (where is_active = 1)
+        $currentAcademicYear = AcademicYear::where('is_active', 1)->orderBy('id', 'desc')->first();
         $isOpen = false;
         $teachingQuestions = collect();
         $nonTeachingQuestions = collect();
@@ -35,9 +39,6 @@ class EvaluationController extends Controller
         $teachingEvaluatedStaff = collect();
         $nonTeachingEvaluatedStaff = collect();
         $totalEvaluated = 0;
-
-        $userId = auth()->id();
-        $user = auth()->user();
 
         if ($currentAcademicYear) {
             // Get all questions for the current active academic year that are open
@@ -137,9 +138,15 @@ class EvaluationController extends Controller
             'non-teaching' => $lockedSelectionsData['non-teaching'] ?? collect(),
         ];
         $hasLockedSelection = InstructorSelection::hasLockedSelection($userId, $currentAcademicYear->id ?? null);
-
-        // Determine which view to return based on user status
-        $viewName = (strtolower($user->student_status) === 'irregular') ? 'pages.irevaluates' : 'pages.evaluates';
+        
+        // Determine which view to return based on user status and locked selection
+        $viewName = 'pages.evaluates';
+        $studentStatus = strtolower(trim($user->student_status ?? ''));
+        $isIrregular = ($studentStatus === 'irregular');
+        
+        if ($isIrregular) {
+            $viewName = $hasLockedSelection ? 'pages.lockedcards' : 'pages.irevaluates';
+        }
 
         return view($viewName, compact(
             'isOpen',
@@ -156,7 +163,8 @@ class EvaluationController extends Controller
             'currentAcademicYear',
             'savedSelections',
             'lockedSelections',
-            'hasLockedSelection'
+            'hasLockedSelection',
+            'isIrregular'
         ));
     }
 
@@ -171,7 +179,7 @@ class EvaluationController extends Controller
         $staffIds = is_array($request->staff_id) ? $request->staff_id : explode(',', $request->staff_id);
 
         // Get the current active academic year
-        $activeAcademicYear = \App\Models\AcademicYear::where('is_active', 1)->first();
+        $activeAcademicYear = \App\Models\AcademicYear::where('is_active', 1)->orderBy('id', 'desc')->first();
         $academicYearId = $activeAcademicYear ? $activeAcademicYear->id : null;
 
         if (!$academicYearId) {
@@ -288,7 +296,7 @@ class EvaluationController extends Controller
 
         try {
             $userId = auth()->id();
-            $activeAcademicYear = AcademicYear::where('is_active', 1)->first();
+            $activeAcademicYear = AcademicYear::where('is_active', 1)->orderBy('id', 'desc')->first();
             $academicYearId = $activeAcademicYear ? $activeAcademicYear->id : null;
 
             if (!$academicYearId) {
@@ -327,7 +335,7 @@ class EvaluationController extends Controller
     {
         try {
             $userId = auth()->id();
-            $activeAcademicYear = AcademicYear::where('is_active', 1)->first();
+            $activeAcademicYear = AcademicYear::where('is_active', 1)->orderBy('id', 'desc')->first();
             $academicYearId = $activeAcademicYear ? $activeAcademicYear->id : null;
 
             if (!$academicYearId) {
@@ -478,7 +486,7 @@ class EvaluationController extends Controller
             DB::table('instructor_selections')->delete();
 
             // Set current academic year as used and inactive
-            $currentAcademicYear = \App\Models\AcademicYear::where('is_active', 1)->first();
+            $currentAcademicYear = \App\Models\AcademicYear::where('is_active', 1)->orderBy('id', 'desc')->first();
             if ($currentAcademicYear) {
                 $currentAcademicYear->used = 1;
                 $currentAcademicYear->is_active = 0;
@@ -502,7 +510,7 @@ class EvaluationController extends Controller
         ]);
 
         $userId = auth()->id();
-        $academicYear = AcademicYear::where('is_active', 1)->first();
+        $academicYear = AcademicYear::where('is_active', 1)->orderBy('id', 'desc')->first();
 
         if (!$academicYear) {
             return response()->json(['success' => false, 'message' => 'No active academic year found.'], 404);
@@ -556,7 +564,7 @@ class EvaluationController extends Controller
         ]);
 
         $userId = auth()->id();
-        $academicYear = AcademicYear::where('is_active', 1)->first();
+        $academicYear = AcademicYear::where('is_active', 1)->orderBy('id', 'desc')->first();
 
         if (!$academicYear) {
             return response()->json(['success' => false, 'message' => 'No active academic year found.'], 404);
@@ -582,7 +590,7 @@ class EvaluationController extends Controller
         ]);
 
         $userId = auth()->id();
-        $academicYear = AcademicYear::where('is_active', 1)->first();
+        $academicYear = AcademicYear::where('is_active', 1)->orderBy('id', 'desc')->first();
 
         if (!$academicYear) {
             return response()->json(['success' => false, 'message' => 'No active academic year found.'], 404);

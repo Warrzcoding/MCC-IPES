@@ -40,28 +40,23 @@ class InstructorSelection extends Model
      */
     public static function saveSelection($userId, $academicYearId, $staffIds, $staffType, $isLocked = false)
     {
-        // Clear existing selections for this user and academic year if saving new ones
-        if (!$isLocked) {
-            self::where('user_id', $userId)
-                ->where('academic_year_id', $academicYearId)
-                ->where('staff_type', $staffType)
-                ->delete();
-        }
+        // Clear existing selections for this user and academic year if saving new ones or locking
+        // If locking, we want to replace whatever was there before to avoid duplicates or orphans
+        self::where('user_id', $userId)
+            ->where('academic_year_id', $academicYearId)
+            ->where('staff_type', $staffType)
+            ->delete();
 
         // Create new records for each staff
         foreach ($staffIds as $staffId) {
-            self::updateOrCreate(
-                [
-                    'user_id' => $userId,
-                    'staff_id' => $staffId,
-                    'academic_year_id' => $academicYearId,
-                ],
-                [
-                    'staff_type' => $staffType,
-                    'selection_stage' => $isLocked ? 'locked' : 'selection',
-                    'is_locked' => $isLocked,
-                ]
-            );
+            self::create([
+                'user_id' => $userId,
+                'staff_id' => $staffId,
+                'academic_year_id' => $academicYearId,
+                'staff_type' => $staffType,
+                'selection_stage' => $isLocked ? 'locked' : 'selection',
+                'is_locked' => $isLocked,
+            ]);
         }
     }
 
@@ -72,7 +67,11 @@ class InstructorSelection extends Model
     {
         return self::where('user_id', $userId)
             ->where('academic_year_id', $academicYearId)
-            ->where('is_locked', true)
+            ->where(function($q) {
+                $q->where('is_locked', true)
+                  ->orWhere('is_locked', 1)
+                  ->orWhere('selection_stage', 'locked');
+            })
             ->with('staff')
             ->get();
     }
@@ -82,9 +81,24 @@ class InstructorSelection extends Model
      */
     public static function hasLockedSelection($userId, $academicYearId)
     {
+        if (!$academicYearId) {
+            // If no AY provided, check if ANY locked selection exists for this user
+            return self::where('user_id', $userId)
+                ->where(function($q) {
+                    $q->where('is_locked', true)
+                      ->orWhere('is_locked', 1)
+                      ->orWhere('selection_stage', 'locked');
+                })
+                ->exists();
+        }
+
         return self::where('user_id', $userId)
             ->where('academic_year_id', $academicYearId)
-            ->where('is_locked', true)
+            ->where(function($q) {
+                $q->where('is_locked', true)
+                  ->orWhere('is_locked', 1)
+                  ->orWhere('selection_stage', 'locked');
+            })
             ->exists();
     }
 

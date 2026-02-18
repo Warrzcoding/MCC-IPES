@@ -28,7 +28,7 @@ class DashboardController extends Controller
         $allowed_pages = [
             'dashboard', 'add-students', 'add-staff', 'subject-management', 'academicyear',
             'questionnaires', 'staff-ratings', 'department-ratings', 'overall-ratings', 'profile', 'staff-list',
-            'evaluates', 'irevaluates', 'pending-requests', 'rejected-requests', 'login-monitor', // <-- Ensure this is included
+            'evaluates', 'irevaluates', 'lockedcards', 'pending-requests', 'rejected-requests', 'login-monitor', // <-- Ensure this is included
             'regularbackup'
         ];
 
@@ -51,7 +51,7 @@ class DashboardController extends Controller
 
         // --- Analytics Data for Dashboard Charts (always set for admin) ---
         if ($user->isAdmin()) {
-            $currentAcademicYear = \App\Models\AcademicYear::where('is_active', 1)->first();
+            $currentAcademicYear = \App\Models\AcademicYear::where('is_active', 1)->orderBy('id', 'desc')->first();
 
             $studentsPerCourse = \App\Models\User::where('role', 'student')
                 ->select('course', \DB::raw('count(*) as total'))
@@ -180,15 +180,21 @@ class DashboardController extends Controller
             $staffPerformanceStatsPerSemester = collect();
         }
         
-        // Students can only access: dashboard, staff-list, evaluates, irevaluates, profile
+        // Students can only access: dashboard, staff-list, evaluates, irevaluates, lockedcards, profile
         if ($user->isStudent()) {
-            $student_pages = ['dashboard', 'staff-list', 'evaluates', 'irevaluates', 'profile'];
+            $student_pages = ['dashboard', 'staff-list', 'evaluates', 'irevaluates', 'lockedcards', 'profile'];
             
-            // Auto-correct page based on student status
-            if ($page === 'evaluates' && strtolower($user->student_status) === 'irregular') {
-                $page = 'irevaluates';
-            } elseif ($page === 'irevaluates' && strtolower($user->student_status) !== 'irregular') {
-                $page = 'evaluates';
+            // Auto-correct page based on student status and locked selections
+            if (in_array($page, ['evaluates', 'irevaluates', 'lockedcards'])) {
+                if (strtolower(trim($user->student_status)) === 'irregular') {
+                    // For irregular students, check if they have locked selections
+                    $currentAY = AcademicYear::where('is_active', 1)->orderBy('id', 'desc')->first();
+                    $hasLocked = InstructorSelection::hasLockedSelection($user->id, $currentAY->id ?? null);
+                    $page = $hasLocked ? 'lockedcards' : 'irevaluates';
+                } else {
+                    // Regular students always go to evaluates
+                    $page = 'evaluates';
+                }
             }
 
             if (!in_array($page, $student_pages)) {
@@ -214,8 +220,9 @@ class DashboardController extends Controller
             'overall-ratings' => 'Overall Ratings',
             'profile' => 'Profile',
             'staff-list' => 'Staff List',
-            'evaluates' => 'Regular Student',
-            'irevaluates' => 'Irregular Student',
+            'evaluates' => 'Regular Student Evaluation',
+            'irevaluates' => 'Irregular Student Selection',
+            'lockedcards' => 'Irregular Student Evaluation',
             'pending-requests' => 'Pending Requests',
             'rejected-requests' => 'Rejected Requests',
             'login-monitor' => 'Login Monitor',
@@ -296,7 +303,7 @@ class DashboardController extends Controller
         
         if ($page === 'add-students') {
             // Get the active academic year (where is_active = 1)
-            $currentAcademicYear = AcademicYear::where('is_active', 1)->first();
+            $currentAcademicYear = AcademicYear::where('is_active', 1)->orderBy('id', 'desc')->first();
 
             // OPTIMIZATION: Get teaching and non-teaching staff counts ONCE (not in loop)
             $totalTeachingStaffCount = \App\Models\Staff::where('staff_type', 'teaching')->count();
@@ -466,9 +473,9 @@ class DashboardController extends Controller
             $admins = User::where('role', 'admin')->orderBy('full_name')->get();
         }
 
-        if ($page === 'evaluates' || $page === 'irevaluates') {
+        if ($page === 'evaluates' || $page === 'irevaluates' || $page === 'lockedcards') {
             // Get the active academic year (where is_active = 1)
-            $currentAcademicYear = \App\Models\AcademicYear::where('is_active', 1)->first();
+            $currentAcademicYear = \App\Models\AcademicYear::where('is_active', 1)->orderBy('id', 'desc')->first();
             $isOpen = false;
             $teachingQuestions = collect();
             $nonTeachingQuestions = collect();
@@ -493,7 +500,7 @@ class DashboardController extends Controller
             $activeSemester = $currentAcademicYear ? (string) $currentAcademicYear->semester : null;
             $instructorNames = [];
             
-            if ($isIrregular && $page === 'irevaluates') {
+            if ($isIrregular && ($page === 'irevaluates' || $page === 'lockedcards')) {
                 // For irregular students, fetch distinct subjects and instructors matching their course and current semester
                 $studentSubjects = \App\Models\Subject::whereRaw('LOWER(TRIM(sub_department)) = ?', [strtolower(trim($studentCourse))])
                     ->when($activeSemester, function ($q) use ($activeSemester) {
@@ -623,7 +630,7 @@ class DashboardController extends Controller
 
         if ($page === 'staff-ratings' || $page === 'department-ratings') {
             // Get the active academic year (where is_active = 1)
-            $currentAcademicYear = AcademicYear::where('is_active', 1)->first();
+            $currentAcademicYear = AcademicYear::where('is_active', 1)->orderBy('id', 'desc')->first();
             
             // Fetch ALL staff members WITH evaluations (both teaching and non-teaching)
             // Use INNER JOIN to exclude staff without evaluations
@@ -701,7 +708,7 @@ class DashboardController extends Controller
 
         if ($page === 'overall-ratings') {
             // Get the active academic year (where is_active = 1)
-            $currentAcademicYear = \App\Models\AcademicYear::where('is_active', 1)->first();
+            $currentAcademicYear = \App\Models\AcademicYear::where('is_active', 1)->orderBy('id', 'desc')->first();
 
             // Fetch TEACHING staff members WITH evaluations, sorted by rating (highest to lowest)
             $teachingStaffRatings = \App\Models\Staff::select(
