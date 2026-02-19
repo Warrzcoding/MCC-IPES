@@ -10,6 +10,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 
     <!-- reCAPTCHA v3 Scripts -->
     @if(config('services.recaptcha.site_key_v3'))
@@ -399,6 +400,11 @@
 
         .password-match-indicator.hidden {
             display: none;
+        }
+
+        /* Ensure SweetAlert2 modal is centered */
+        .registration-summary-popup {
+            margin: auto !important;
         }
     </style>
 </head>
@@ -1373,32 +1379,122 @@
                     return false;
                 }
 
-                // Show loading state
-                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating Account...';
-                submitBtn.disabled = true;
+                // Get select labels for summary
+                const studentStatus = document.getElementById('student_status').value;
+                const courseText = document.getElementById('course').options[document.getElementById('course').selectedIndex].text;
+                const yearText = document.getElementById('year_level').options[document.getElementById('year_level').selectedIndex].text;
+                const sectionText = document.getElementById('section').options[document.getElementById('section').selectedIndex] ? 
+                                    document.getElementById('section').options[document.getElementById('section').selectedIndex].text : '';
 
-                // Execute reCAPTCHA if available
-                @if(config('services.recaptcha.site_key_v3'))
-                executeRecaptchaV3(signupForm, 'signup')
-                    .then(() => {
-                        signupForm.submit();
-                    })
-                    .catch((error) => {
-                        console.error('reCAPTCHA verification failed:', error);
-                        submitBtn.innerHTML = '<i class="fas fa-user-plus"></i> Create Account';
-                        submitBtn.disabled = false;
+                // Summary HTML for SweetAlert and Screenshot (Semi-Glassmorphism)
+                const summaryHtml = `
+                    <div id="registrationSummary" style="padding: 12px; text-align: left; background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 12px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #333; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+                        <div style="text-align: center; margin-bottom: 10px; border-bottom: 1.5px solid #667eea; padding-bottom: 8px;">
+                            <h6 style="margin: 0; color: #667eea; font-weight: bold; font-size: 0.9rem; letter-spacing: 0.5px;">ACCOUNT SUMMARY</h6>
+                        </div>
+                        <div style="font-size: 0.75rem; line-height: 1.4;">
+                            <div style="margin-bottom: 6px; display: flex; justify-content: space-between;"><strong style="color: #666;">Name:</strong> <span style="font-weight: 600; text-align: right; margin-left: 10px;">${fullName}</span></div>
+                            <div style="margin-bottom: 6px; display: flex; justify-content: space-between;"><strong style="color: #666;">User:</strong> <span style="font-weight: 600; text-align: right; margin-left: 10px;">${username}</span></div>
+                            <div style="margin-bottom: 6px; display: flex; justify-content: space-between;"><strong style="color: #666;">Email:</strong> <span style="font-weight: 600; text-align: right; margin-left: 10px;">${email}</span></div>
+                            <div style="margin-bottom: 6px; display: flex; justify-content: space-between;"><strong style="color: #666;">ID No:</strong> <span style="font-weight: 600; text-align: right; margin-left: 10px;">${schoolId}</span></div>
+                            <div style="margin-bottom: 6px; display: flex; justify-content: space-between;"><strong style="color: #666;">Course:</strong> <span style="font-weight: 600; text-align: right; margin-left: 10px;">${courseText}</span></div>
+                            <div style="margin-bottom: 6px; display: flex; justify-content: space-between;"><strong style="color: #666;">Year:</strong> <span style="font-weight: 600; text-align: right; margin-left: 10px;">${yearText}</span></div>
+                            <div style="margin-bottom: 6px; display: flex; justify-content: space-between;"><strong style="color: #666;">Section:</strong> <span style="font-weight: 600; text-align: right; margin-left: 10px;">${sectionText}</span></div>
+                            
+                            <div style="margin-top: 10px; padding: 10px; background: rgba(208, 0, 111, 0.05); border-radius: 8px; border: 1px dashed rgba(208, 0, 111, 0.3); text-align: center;">
+                                <strong style="display: block; color: #d0006f; margin-bottom: 4px; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1px;">Plain Password</strong>
+                                <code style="color: #d0006f; font-size: 1rem; font-weight: bold; letter-spacing: 1px; background: none;">${password}</code>
+                            </div>
+                        </div>
+                        <div style="margin-top: 10px; text-align: center; font-size: 0.6rem; color: #888;">
+                            <p style="margin: 0;">${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</p>
+                            <p style="margin: 4px 0 0 0; font-weight: 600; color: #667eea; text-transform: uppercase;">Save this screenshot</p>
+                        </div>
+                    </div>
+                `;
+
+                // Show Summary Modal
+                Swal.fire({
+                    position: 'center',
+                    title: '<span style="font-size: 1.1rem; font-weight: bold;">Confirm Registration</span>',
+                    html: summaryHtml,
+                    showCancelButton: true,
+                    confirmButtonText: '<i class="fas fa-camera"></i> Save & Submit',
+                    cancelButtonText: 'Edit',
+                    confirmButtonColor: '#667eea',
+                    cancelButtonColor: '#6c757d',
+                    width: '320px',
+                    padding: '1rem',
+                    allowOutsideClick: false,
+                    customClass: {
+                        popup: 'registration-summary-popup',
+                        confirmButton: 'btn-sm py-1 px-3 fs-7',
+                        cancelButton: 'btn-sm py-1 px-3 fs-7'
+                    },
+                    background: 'rgba(255, 255, 255, 0.9)',
+                    backdrop: `rgba(0,0,0,0.4) blur(4px)`
+                }).then(async (result) => {
+                    if (result.isConfirmed) {
+                        try {
+                            // Show minor loading while capturing
+                            Swal.showLoading();
+                            
+                            // Target the summary div inside Swal
+                            const summaryDiv = document.getElementById('registrationSummary');
+                            
+                            // Capture screenshot
+                            const canvas = await html2canvas(summaryDiv, {
+                                backgroundColor: '#ffffff',
+                                scale: 2, // Better quality
+                                logging: false
+                            });
+                            
+                            // Create download link
+                            const link = document.createElement('a');
+                            link.download = `MCCIPES_Registration_${username}.png`;
+                            link.href = canvas.toDataURL('image/png');
+                            link.click();
+                            
+                            // Short delay to ensure download starts
+                            setTimeout(() => {
+                                // Show final loading state
+                                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating Account...';
+                                submitBtn.disabled = true;
+
+                                // Execute reCAPTCHA if available
+                                @if(config('services.recaptcha.site_key_v3'))
+                                executeRecaptchaV3(signupForm, 'signup')
+                                    .then(() => {
+                                        signupForm.submit();
+                                    })
+                                    .catch((error) => {
+                                        console.error('reCAPTCHA verification failed:', error);
+                                        submitBtn.innerHTML = '<i class="fas fa-user-plus"></i> Submit Request';
+                                        submitBtn.disabled = false;
+                                        isSubmitting = false;
+
+                                        Swal.fire({
+                                            icon: 'error',
+                                            title: 'Verification Failed',
+                                            text: 'Please try again.',
+                                            confirmButtonColor: '#667eea',
+                                        });
+                                    });
+                                @else
+                                signupForm.submit();
+                                @endif
+                            }, 1000);
+                            
+                        } catch (error) {
+                            console.error('Screenshot capture failed:', error);
+                            // Proceed anyway if screenshot fails
+                            signupForm.submit();
+                        }
+                    } else {
+                        // User clicked "Edit Details" or Cancel
                         isSubmitting = false;
-
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Verification Failed',
-                            text: 'Please try again.',
-                            confirmButtonColor: '#667eea',
-                        });
-                    });
-                @else
-                signupForm.submit();
-                @endif
+                    }
+                });
             });
         });
 
