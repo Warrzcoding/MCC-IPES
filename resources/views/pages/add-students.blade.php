@@ -1206,6 +1206,37 @@
 <!--<a href="{{ route('dashboard', ['page' => 'regularbackup']) }}" class="btn btn-warning me-2" id="regularBackupBtn" type="button" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-placement="top-end" data-bs-custom-class="popover-sm" data-bs-content="Regular Backup">
     <i class="fas fa-database"></i>
 </a>-->
+<!--ADD BUTT TO AUTO MOVE YEAR LEVEL-->
+@php
+    $currentAY = \App\Models\AcademicYear::where('is_active', 1)->first();
+    $showMoveBtn = $currentAY && (int)$currentAY->semester === 2;
+@endphp
+
+@if($showMoveBtn)
+<div class="dropdown d-inline-block me-2">
+    <button class="btn btn-primary" id="moveYearLevelDropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside" title="Auto Move Year Level">
+        <i class="fas fa-graduation-cap"></i>
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end shadow border-0 animate__animated animate__fadeIn" aria-labelledby="moveYearLevelDropdown" style="min-width: 180px; padding: 0.5rem;">
+        <li>
+            <h6 class="dropdown-header px-2 py-1 text-primary fw-bold" style="font-size: 0.7rem;">Move Year Level</h6>
+        </li>
+        <li><hr class="dropdown-divider my-1"></li>
+        <li>
+            <button class="dropdown-item d-flex align-items-center gap-2 rounded px-2 py-1 mb-1" id="moveForwardBtn" type="button">
+                <i class="fas fa-chevron-right text-success" style="width: 15px;"></i>
+                <span style="font-size: 0.75rem;">Move Forward</span>
+            </button>
+        </li>
+        <li>
+            <button class="dropdown-item d-flex align-items-center gap-2 rounded px-2 py-1" id="moveBackwardBtn" type="button">
+                <i class="fas fa-chevron-left text-warning" style="width: 15px;"></i>
+                <span style="font-size: 0.75rem;">Move Backward</span>
+            </button>
+        </li>
+    </ul>
+</div>
+@endif
 <style>
 /* Small modal-style bubble for popovers */
 .popover.popover-sm {
@@ -2353,6 +2384,63 @@ document.addEventListener('DOMContentLoaded', function() {
                     confirmButtonText: 'OK'
                 });
             });
+        });
+    }
+
+    // Handle move year level dropdown actions
+    const moveForwardBtn = document.getElementById('moveForwardBtn');
+    const moveBackwardBtn = document.getElementById('moveBackwardBtn');
+
+    function confirmMove(direction) {
+        const isForward = direction === 'forward';
+        const title = isForward ? 'Move Forward?' : 'Move Backward?';
+        const text = isForward 
+            ? "You are about to increment students year level. This will move all current students to the next level and 4th years to temporary storage."
+            : "You are about to decrement students year level. This will move all current students to the previous level.";
+
+        Swal.fire({
+            title: title,
+            text: text,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: isForward ? '#28a745' : '#ffc107',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes',
+            cancelButtonText: 'No',
+            customClass: {
+                confirmButton: 'btn btn-primary btn-sm px-4 mx-2',
+                cancelButton: 'btn btn-danger btn-sm px-4 mx-2',
+                actions: 'd-flex justify-content-center w-100'
+            },
+            buttonsStyling: false
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title: 'Processing...',
+                    text: 'Updating student year levels. Please wait.',
+                    icon: 'info',
+                    allowOutsideClick: false,
+                    showConfirmButton: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+                
+                // Logic for backend call will go here
+                // console.log('Moving students ' + direction);
+            }
+        });
+    }
+
+    if (moveForwardBtn) {
+        moveForwardBtn.addEventListener('click', function() {
+            confirmMove('forward');
+        });
+    }
+
+    if (moveBackwardBtn) {
+        moveBackwardBtn.addEventListener('click', function() {
+            confirmMove('backward');
         });
     }
 });
