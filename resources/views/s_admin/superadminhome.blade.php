@@ -12,6 +12,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <style>
         :root {
@@ -636,6 +637,59 @@
                 </div>
             </div>
 
+            <!-- Modern Student Analytics Section -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card shadow-lg" style="background: rgba(10, 14, 39, 0.95); border: 1px solid var(--accent-green);">
+                        <div class="card-header d-flex justify-content-between align-items-center" style="border-bottom: 1px solid var(--accent-green);">
+                            <span style="color: var(--accent-green); font-weight: bold; letter-spacing: 1px;">
+                                <i class="fas fa-chart-column me-2"></i> STUDENT EVALUATION STATISTICS BY DEPARTMENT
+                            </span>
+                            <span class="badge" style="background: rgba(0, 255, 65, 0.2); color: var(--accent-green); border: 1px solid var(--accent-green);">
+                                <i class="fas fa-circle me-1" style="font-size: 8px;"></i> LIVE ANALYTICS
+                            </span>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="row align-items-center">
+                                <div class="col-lg-8">
+                                    <div style="height: 350px; position: relative;">
+                                        <canvas id="departmentStatsChart"></canvas>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="p-3 rounded" style="background: rgba(0, 255, 65, 0.05); border: 1px solid rgba(0, 255, 65, 0.1);">
+                                        <h6 class="mb-3" style="color: var(--accent-green); border-bottom: 1px solid rgba(0, 255, 65, 0.1); padding-bottom: 10px;">
+                                            <i class="fas fa-info-circle me-2"></i> Statistics Insight
+                                        </h6>
+                                        <div class="mb-3">
+                                            @php
+                                                $totalEvaluated = collect($departmentStats)->sum('evaluated');
+                                            @endphp
+                                            <div class="d-flex justify-content-between mb-1">
+                                                <small class="text-muted">OVERALL PROGRESS</small>
+                                                <small class="text-success">{{ $studentCount > 0 ? round(($totalEvaluated / $studentCount) * 100, 1) : 0 }}%</small>
+                                            </div>
+                                            <div class="progress" style="height: 6px; background: rgba(255,255,255,0.1);">
+                                                <div class="progress-bar" role="progressbar" 
+                                                    style="width: {{ $studentCount > 0 ? ($totalEvaluated / $studentCount) * 100 : 0 }}%; background: var(--accent-green); box-shadow: 0 0 10px var(--accent-green);"></div>
+                                            </div>
+                                        </div>
+                                        <ul class="list-unstyled mb-0" style="font-size: 0.85rem;">
+                                            @foreach($departmentStats as $stat)
+                                            <li class="mb-2 d-flex justify-content-between align-items-center">
+                                                <span>{{ $stat['name'] }}</span>
+                                                <span class="text-success">{{ $stat['evaluated'] }} / {{ $stat['total'] }}</span>
+                                            </li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
 
             <!-- Main Dashboard Cards -->
             <div class="row">
@@ -674,7 +728,7 @@
                     </div>
                 </div>
 
-                <div class="col-md-6 mb-4">
+               <!-- <div class="col-md-6 mb-4">
                     <div class="card">
                         <div class="card-header">
                             <i class="fas fa-cog"></i> System Management
@@ -706,7 +760,7 @@
                             </button>
                         </div>
                     </div>
-                </div>
+                </div>-->
             </div>
         </div>
 
@@ -1039,6 +1093,118 @@
                             color: '#e8f5e9'
                         });
                     });
+                }
+            });
+        });
+
+        // Initialize Department Stats Chart
+        document.addEventListener('DOMContentLoaded', function() {
+            const ctx = document.getElementById('departmentStatsChart').getContext('2d');
+            const departmentStats = @json($departmentStats);
+            
+            const labels = departmentStats.map(stat => stat.name);
+            const totalData = departmentStats.map(stat => stat.total);
+            const evaluatedData = departmentStats.map(stat => stat.evaluated);
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Overall Total',
+                            data: totalData,
+                            backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                            borderColor: 'rgba(255, 255, 255, 0.5)',
+                            borderWidth: 1,
+                            borderRadius: 4,
+                            barPercentage: 0.6,
+                            categoryPercentage: 0.7
+                        },
+                        {
+                            label: 'Done Evaluated',
+                            data: evaluatedData,
+                            backgroundColor: 'rgba(0, 255, 65, 0.6)',
+                            borderColor: 'var(--accent-green)',
+                            borderWidth: 1,
+                            borderRadius: 4,
+                            barPercentage: 0.6,
+                            categoryPercentage: 0.7,
+                            boxShadow: '0 0 10px rgba(0, 255, 65, 0.5)'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                color: '#e8f5e9',
+                                font: {
+                                    family: "'Courier New', monospace",
+                                    size: 11
+                                },
+                                usePointStyle: true,
+                                padding: 20
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(10, 14, 39, 0.95)',
+                            titleColor: 'var(--accent-green)',
+                            bodyColor: '#e8f5e9',
+                            borderColor: 'rgba(0, 255, 65, 0.3)',
+                            borderWidth: 1,
+                            padding: 12,
+                            displayColors: true,
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.y !== null) {
+                                        label += context.parsed.y + ' students';
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0, 255, 65, 0.1)',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                color: '#90ee90',
+                                font: {
+                                    family: "'Courier New', monospace",
+                                    size: 10
+                                },
+                                stepSize: 1
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                color: '#90ee90',
+                                font: {
+                                    family: "'Courier New', monospace",
+                                    size: 11
+                                }
+                            }
+                        }
+                    },
+                    animation: {
+                        duration: 2000,
+                        easing: 'easeOutQuart'
+                    }
                 }
             });
         });

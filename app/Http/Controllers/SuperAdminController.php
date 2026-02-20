@@ -9,6 +9,7 @@ use App\Models\Question;
 use App\Models\AcademicYear;
 use App\Models\BackupLog;
 use App\Models\IdChecker;
+use App\Models\Evaluation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -117,13 +118,42 @@ class SuperAdminController extends Controller
         $studentCount = User::where('role', 'student')->count();
         $questionCount = Question::count();
         $nonTeachingCount = Staff::where('staff_type', 'non-teaching')->count();
+        
+        // Fetch current academic year
+        $currentAY = AcademicYear::where('is_active', 1)->orderBy('id', 'desc')->first();
+
+        // Departments/Courses to track
+        $departments = ['BSIT', 'BSHM', 'BSBA', 'BSED', 'BEED'];
+        
+        $departmentStats = [];
+        foreach ($departments as $dept) {
+            $totalStudents = User::where('role', 'student')
+                ->where('course', $dept)
+                ->count();
+                
+            $evaluatedStudents = Evaluation::join('users', 'evaluations.user_id', '=', 'users.id')
+                ->where('users.role', 'student')
+                ->where('users.course', $dept)
+                ->when($currentAY, function($query) use ($currentAY) {
+                    return $query->where('evaluations.academic_year_id', $currentAY->id);
+                })
+                ->distinct('evaluations.user_id')
+                ->count('evaluations.user_id');
+                
+            $departmentStats[] = [
+                'name' => $dept,
+                'total' => $totalStudents,
+                'evaluated' => $evaluatedStudents
+            ];
+        }
 
         return view('s_admin.superadminhome', [
             'superAdmin' => $superAdmin,
             'instructorCount' => $instructorCount,
             'studentCount' => $studentCount,
             'questionCount' => $questionCount,
-            'nonTeachingCount' => $nonTeachingCount
+            'nonTeachingCount' => $nonTeachingCount,
+            'departmentStats' => $departmentStats
         ]);
     }
 
