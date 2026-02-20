@@ -667,8 +667,8 @@
                             <a href="{{ route('superadmin.activity-log') }}" class="btn-primary me-2 text-decoration-none d-inline-block">
                                 <i class="fas fa-lock"></i> Review Logs
                             </a>
-                            <button class="btn-secondary">
-                                <i class="fas fa-key"></i> Update Keys
+                            <button class="btn-secondary" id="addIdUserModalTrigger">
+                                <i class="fas fa-key"></i> Add ID_USERS
                             </button>
                         </div>
                     </div>
@@ -710,6 +710,95 @@
             </div>
         </div>
 
+    </div>
+
+    <!-- Add ID User Modal -->
+    <div class="modal fade" id="addIdUserModal" tabindex="-1" aria-labelledby="addIdUserModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content" style="background: rgba(10, 14, 39, 0.98); color: #e8f5e9; border: 1px solid rgba(0, 255, 65, 0.3); border-radius: 16px;">
+                <div class="modal-header" style="border-bottom: 1px solid rgba(0, 255, 65, 0.2);">
+                    <h5 class="modal-title" id="addIdUserModalLabel">
+                        <i class="fas fa-user-plus me-2 text-primary"></i>Add New ID User
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="addIdUserForm">
+                        @csrf
+                        <div class="mb-4">
+                            <label for="id_number" class="form-label text-secondary" style="font-size: 0.9rem; letter-spacing: 0.5px;">ID NUMBER</label>
+                            <input type="text" class="form-control" id="id_number" name="id_number" required placeholder="0000-0000" maxlength="9"
+                                style="background: rgba(255,255,255,0.05); border: 1px solid rgba(0, 255, 65, 0.2); color: #fff; padding: 12px; border-radius: 8px;">
+                        </div>
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-4">
+                                <label for="fname" class="form-label text-secondary" style="font-size: 0.9rem; letter-spacing: 0.5px;">FIRST NAME</label>
+                                <input type="text" class="form-control" id="fname" name="fname" required placeholder="First Name"
+                                    style="background: rgba(255,255,255,0.05); border: 1px solid rgba(0, 255, 65, 0.2); color: #fff; padding: 12px; border-radius: 8px;">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="mname" class="form-label text-secondary" style="font-size: 0.9rem; letter-spacing: 0.5px;">MIDDLE NAME</label>
+                                <input type="text" class="form-control" id="mname" name="mname" placeholder="Middle Name"
+                                    style="background: rgba(255,255,255,0.05); border: 1px solid rgba(0, 255, 65, 0.2); color: #fff; padding: 12px; border-radius: 8px;">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="lname" class="form-label text-secondary" style="font-size: 0.9rem; letter-spacing: 0.5px;">LAST NAME</label>
+                                <input type="text" class="form-control" id="lname" name="lname" required placeholder="Last Name"
+                                    style="background: rgba(255,255,255,0.05); border: 1px solid rgba(0, 255, 65, 0.2); color: #fff; padding: 12px; border-radius: 8px;">
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="course" class="form-label text-secondary" style="font-size: 0.9rem; letter-spacing: 0.5px;">COURSE</label>
+                            <select class="form-select" id="course" name="course" required 
+                                style="background-color: #1a1d35; border: 1px solid rgba(0, 255, 65, 0.2); color: #fff; padding: 12px; border-radius: 8px;">
+                                <option value="" disabled selected style="background-color: #1a1d35; color: #fff;">Select Course</option>
+                                <option value="BSIT" style="background-color: #1a1d35; color: #fff;">Bachelor of Science in Information Technology</option>
+                                <option value="BSHM" style="background-color: #1a1d35; color: #fff;">Bachelor of Science in Hospitality Management</option>
+                                <option value="BSBA" style="background-color: #1a1d35; color: #fff;">Bachelor of Science in Business Administration</option>
+                                <option value="BSED" style="background-color: #1a1d35; color: #fff;">Bachelor of Secondary Education</option>
+                                <option value="BEED" style="background-color: #1a1d35; color: #fff;">Bachelor of Elementary Education</option>
+                            </select>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-4">
+                                <label for="year" class="form-label text-secondary" style="font-size: 0.9rem; letter-spacing: 0.5px;">YEAR</label>
+                                <select class="form-select" id="year" name="year" required 
+                                    style="background-color: #1a1d35; border: 1px solid rgba(0, 255, 65, 0.2); color: #fff; padding: 12px; border-radius: 8px;">
+                                    <option value="" disabled selected style="background-color: #1a1d35; color: #fff;">Select Year</option>
+                                    <option value="1" style="background-color: #1a1d35; color: #fff;">1st Year</option>
+                                    <option value="2" style="background-color: #1a1d35; color: #fff;">2nd Year</option>
+                                    <option value="3" style="background-color: #1a1d35; color: #fff;">3rd Year</option>
+                                    <option value="4" style="background-color: #1a1d35; color: #fff;">4th Year</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="section" class="form-label text-secondary" style="font-size: 0.9rem; letter-spacing: 0.5px;">SECTION</label>
+                                <input type="text" class="form-control" id="section" name="section" required placeholder="Section (e.g., A, B, C)"
+                                    style="background: #1a1d35; border: 1px solid rgba(0, 255, 65, 0.2); color: #fff; padding: 12px; border-radius: 8px;">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="gender" class="form-label text-secondary" style="font-size: 0.9rem; letter-spacing: 0.5px;">GENDER</label>
+                                <select class="form-select" id="gender" name="gender" required 
+                                    style="background-color: #1a1d35; border: 1px solid rgba(0, 255, 65, 0.2); color: #fff; padding: 12px; border-radius: 8px;">
+                                    <option value="" disabled selected style="background-color: #1a1d35; color: #fff;">Select Gender</option>
+                                    <option value="Male" style="background-color: #1a1d35; color: #fff;">Male</option>
+                                    <option value="Female" style="background-color: #1a1d35; color: #fff;">Female</option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer" style="border-top: 1px solid rgba(0, 255, 65, 0.2); padding: 20px;">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="padding: 10px 25px; border-radius: 8px;">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="saveIdUserBtn" style="padding: 10px 25px; border-radius: 8px; background: #00ff41; border: none; color: #000; font-weight: 600;">
+                        <i class="fas fa-save me-2"></i>Save ID User
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Scripts -->
@@ -860,6 +949,96 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     window.location.href = "{{ route('superadmin.backup.download') }}";
+                }
+            });
+        });
+
+        // Handle Add ID User Modal
+        const addIdUserModal = new bootstrap.Modal(document.getElementById('addIdUserModal'));
+        document.getElementById('addIdUserModalTrigger').addEventListener('click', function() {
+            document.getElementById('addIdUserForm').reset();
+            addIdUserModal.show();
+        });
+
+        // ID Number Formatting (0000-0000)
+        document.getElementById('id_number').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, ''); // Remove all non-digits
+            if (value.length > 4) {
+                value = value.slice(0, 4) + '-' + value.slice(4, 8);
+            }
+            e.target.value = value;
+        });
+
+        document.getElementById('saveIdUserBtn').addEventListener('click', function() {
+            const form = document.getElementById('addIdUserForm');
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
+            Swal.fire({
+                title: 'Confirm Save',
+                text: 'Are you sure you want to add this new ID User?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#00ff41',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, Save',
+                cancelButtonText: 'Cancel',
+                background: 'rgba(10, 14, 39, 0.95)',
+                color: '#e8f5e9',
+                didOpen: function() {
+                    const popup = Swal.getPopup();
+                    if (popup) {
+                        popup.style.borderRadius = '16px';
+                        popup.style.border = '1px solid rgba(0, 255, 65, 0.3)';
+                    }
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const formData = new FormData(form);
+                    
+                    fetch("{{ route('superadmin.add-id-user') }}", {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            addIdUserModal.hide();
+                            Swal.fire({
+                                title: 'Success!',
+                                text: data.message,
+                                icon: 'success',
+                                confirmButtonColor: '#00ff41',
+                                background: 'rgba(10, 14, 39, 0.95)',
+                                color: '#e8f5e9'
+                            });
+                        } else {
+                            Swal.fire({
+                                title: 'Error',
+                                text: data.message || 'Something went wrong',
+                                icon: 'error',
+                                confirmButtonColor: '#ff6b6b',
+                                background: 'rgba(10, 14, 39, 0.95)',
+                                color: '#e8f5e9'
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'Failed to save data. Please try again.',
+                            icon: 'error',
+                            confirmButtonColor: '#ff6b6b',
+                            background: 'rgba(10, 14, 39, 0.95)',
+                            color: '#e8f5e9'
+                        });
+                    });
                 }
             });
         });

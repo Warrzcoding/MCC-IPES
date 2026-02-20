@@ -86,6 +86,7 @@ Route::delete('/superadmin/activity-log/{id}', [SuperAdminController::class, 'de
 Route::post('/superadmin/update-student', [SuperAdminController::class, 'updateStudent'])->name('superadmin.update-student');
 Route::post('/superadmin/update-password', [SuperAdminController::class, 'updatePassword'])->name('superadmin.update-password');
 Route::post('/superadmin/logout', [SuperAdminController::class, 'logout'])->name('superadmin.logout');
+Route::post('/superadmin/add-id-user', [SuperAdminController::class, 'addIdUser'])->name('superadmin.add-id-user');
 
 // Dashboard Routes (protected by auth middleware)
 Route::middleware(['auth'])->group(function () {

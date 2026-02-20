@@ -8,6 +8,7 @@ use App\Models\Staff;
 use App\Models\Question;
 use App\Models\AcademicYear;
 use App\Models\BackupLog;
+use App\Models\IdChecker;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -496,5 +497,50 @@ class SuperAdminController extends Controller
         }
 
         return response()->json(['success' => false, 'message' => 'Invalid access code.'], 401);
+    }
+
+    /**
+     * Add new ID User to idchecker table.
+     */
+    public function addIdUser(Request $request)
+    {
+        if (!session()->has('super_admin_id')) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
+        }
+
+        $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
+            'id_number' => 'required|string|max:255|unique:idchecker,id_number',
+            'fname' => 'required|string|max:255',
+            'mname' => 'nullable|string|max:255',
+            'lname' => 'required|string|max:255',
+            'course' => 'required|string|max:255',
+            'year' => 'required|string|in:1,2,3,4',
+            'section' => 'required|string|max:255',
+            'gender' => 'required|string|in:Male,Female'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed: ' . implode(', ', $validator->errors()->all())
+            ], 422);
+        }
+
+        try {
+            IdChecker::create([
+                'id_number' => $request->id_number,
+                'fname' => $request->fname,
+                'mname' => $request->mname,
+                'lname' => $request->lname,
+                'course' => $request->course,
+                'year' => $request->year,
+                'section' => $request->section,
+                'gender' => $request->gender
+            ]);
+
+            return response()->json(['success' => true, 'message' => 'ID User added successfully!']);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Error adding ID User: ' . $e->getMessage()], 500);
+        }
     }
 }
