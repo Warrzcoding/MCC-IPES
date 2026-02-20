@@ -1196,8 +1196,8 @@
                             borderColor: labels.map(label => (deptColors[label] || {solid: '#fff'}).light),
                             borderWidth: 1,
                             borderRadius: 4,
-                            barPercentage: 0.6,
-                            categoryPercentage: 0.7,
+                            barPercentage: 0.9, // Thicker
+                            categoryPercentage: 0.8,
                             hoverOffset: 8,
                             hoverBorderWidth: 2
                         },
@@ -1208,8 +1208,8 @@
                             borderColor: '#39ff14',
                             borderWidth: 1,
                             borderRadius: 4,
-                            barPercentage: 0.6,
-                            categoryPercentage: 0.7,
+                            barPercentage: 0.4, // Thinner
+                            categoryPercentage: 0.8,
                             hoverOffset: 8,
                             hoverBorderWidth: 2
                         }
