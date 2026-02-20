@@ -501,6 +501,19 @@
             animation: matrix 5s infinite;
         }
 
+        /* Flaming/Glowing animation for Legend Dots */
+        @keyframes flame-pulse {
+            0% { transform: scale(1); filter: brightness(1) drop-shadow(0 0 2px currentColor); opacity: 0.8; }
+            50% { transform: scale(1.2); filter: brightness(1.8) drop-shadow(0 0 10px currentColor); opacity: 1; }
+            100% { transform: scale(1); filter: brightness(1) drop-shadow(0 0 2px currentColor); opacity: 0.8; }
+        }
+
+        .flame-dot {
+            animation: flame-pulse 1.5s infinite ease-in-out;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
         /* ==================== SWEETALERT SIZING ==================== */
         .swal2-popup {
             width: 320px !important;
@@ -661,23 +674,34 @@
                                         <h6 class="mb-3" style="color: var(--accent-green); border-bottom: 1px solid rgba(0, 255, 65, 0.1); padding-bottom: 10px;">
                                             <i class="fas fa-info-circle me-2"></i> Statistics Insight
                                         </h6>
-                                        <div class="mb-3">
-                                            @php
-                                                $totalEvaluated = collect($departmentStats)->sum('evaluated');
-                                            @endphp
-                                            <div class="d-flex justify-content-between mb-1">
-                                                <small class="text-muted">OVERALL PROGRESS</small>
-                                                <small class="text-success">{{ $studentCount > 0 ? round(($totalEvaluated / $studentCount) * 100, 1) : 0 }}%</small>
+                                        @php
+                                            $totalEvaluated = collect($departmentStats)->sum('evaluated');
+                                        @endphp
+                                        <div class="mb-4">
+                                            <div class="d-flex align-items-center mb-2" style="font-size: 0.8rem; color: #39ff14;">
+                                                <span class="flame-dot me-2" style="width: 12px; height: 12px; background: #39ff14; border-radius: 50%; box-shadow: 0 0 10px #39ff14; color: #39ff14;"></span>
+                                                <strong>DONE EVALUATED (COMPLETED)</strong>
                                             </div>
-                                            <div class="progress" style="height: 6px; background: rgba(255,255,255,0.1);">
+                                            <div class="d-flex align-items-center mb-3" style="font-size: 0.75rem; color: var(--text-muted); padding-left: 20px;">
+                                                <span>Overall progress of evaluations</span>
+                                            </div>
+                                            <div class="d-flex justify-content-between mb-1" style="padding-left: 20px;">
+                                                <small class="text-muted">TOTAL PROGRESS</small>
+                                                <small style="color: #39ff14;">{{ $studentCount > 0 ? round(($totalEvaluated / $studentCount) * 100, 1) : 0 }}%</small>
+                                            </div>
+                                            <div class="progress ms-3" style="height: 6px; background: rgba(255,255,255,0.1);">
                                                 <div class="progress-bar" role="progressbar" 
-                                                    style="width: {{ $studentCount > 0 ? ($totalEvaluated / $studentCount) * 100 : 0 }}%; background: var(--accent-green); box-shadow: 0 0 10px var(--accent-green);"></div>
+                                                    style="width: {{ $studentCount > 0 ? ($totalEvaluated / $studentCount) * 100 : 0 }}%; background: #39ff14; box-shadow: 0 0 15px #39ff14;"></div>
                                             </div>
                                         </div>
+
+                                        <h6 class="mb-3 mt-4" style="color: var(--accent-green); border-bottom: 1px solid rgba(0, 255, 65, 0.1); padding-bottom: 10px;">
+                                            <i class="fas fa-building me-2"></i> Department Overall Totals
+                                        </h6>
                                         <ul class="list-unstyled mb-0" style="font-size: 0.85rem;">
                                             @php
                                                 $deptColorMap = [
-                                                    'BSIT' => '#000000',
+                                                    'BSIT' => '#1a1a1a',
                                                     'BSHM' => '#800000',
                                                     'BSBA' => '#008000',
                                                     'BSED' => '#000080',
@@ -687,10 +711,10 @@
                                             @foreach($departmentStats as $stat)
                                             <li class="mb-2 d-flex justify-content-between align-items-center">
                                                 <div class="d-flex align-items-center">
-                                                    <span class="me-2" style="width: 10px; height: 10px; background: {{ $deptColorMap[$stat['name']] ?? 'var(--accent-green)' }}; border-radius: 2px; box-shadow: 0 0 5px {{ $deptColorMap[$stat['name']] ?? 'var(--accent-green)' }};"></span>
+                                                    <span class="flame-dot me-2" style="width: 10px; height: 10px; background: {{ $deptColorMap[$stat['name']] ?? 'var(--accent-green)' }}; border-radius: 2px; box-shadow: 0 0 5px {{ $deptColorMap[$stat['name']] ?? 'var(--accent-green)' }}; color: {{ $deptColorMap[$stat['name']] ?? 'var(--accent-green)' }};"></span>
                                                     <span>{{ $stat['name'] }}</span>
                                                 </div>
-                                                <span class="text-success">{{ $stat['evaluated'] }} / {{ $stat['total'] }}</span>
+                                                <span class="text-muted">{{ $stat['total'] }} Students</span>
                                             </li>
                                             @endforeach
                                         </ul>
@@ -1114,31 +1138,36 @@
             const ctx = document.getElementById('departmentStatsChart').getContext('2d');
             const departmentStats = @json($departmentStats);
             
-            // Department Color Mapping
+            // Department Color Mapping for "Overall Total" (Vivid/Flaming base)
             const deptColors = {
-                'BSIT': { solid: '#000000', light: 'rgba(0, 0, 0, 0.4)', glow: 'rgba(0, 0, 0, 0.8)' },
-                'BSHM': { solid: '#800000', light: 'rgba(128, 0, 0, 0.4)', glow: 'rgba(128, 0, 0, 0.8)' },
-                'BSBA': { solid: '#008000', light: 'rgba(0, 128, 0, 0.4)', glow: 'rgba(0, 128, 0, 0.8)' },
-                'BSED': { solid: '#000080', light: 'rgba(0, 0, 128, 0.4)', glow: 'rgba(0, 0, 128, 0.8)' },
-                'BEED': { solid: '#ADD8E6', light: 'rgba(173, 216, 230, 0.4)', glow: 'rgba(173, 216, 230, 0.8)' }
+                'BSIT': { solid: '#1a1a1a', light: '#4d4d4d', flame: '#000000' },
+                'BSHM': { solid: '#800000', light: '#ff4d4d', flame: '#4d0000' },
+                'BSBA': { solid: '#008000', light: '#32cd32', flame: '#004d00' },
+                'BSED': { solid: '#000080', light: '#1e90ff', flame: '#00004d' },
+                'BEED': { solid: '#ADD8E6', light: '#f0f8ff', flame: '#87ceeb' }
             };
 
             const labels = departmentStats.map(stat => stat.name);
             const totalData = departmentStats.map(stat => stat.total);
             const evaluatedData = departmentStats.map(stat => stat.evaluated);
 
-            // Create Gradients
-            const createGradient = (color) => {
-                const gradient = ctx.createLinearGradient(0, 0, 0, 400);
-                gradient.addColorStop(0, color.solid);
+            // Create Animated Flaming Gradient for Overall Total
+            let offset = 0;
+            const createFlamingGradient = (color, chartArea) => {
+                if (!chartArea) return color.solid;
+                const gradient = ctx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
+                gradient.addColorStop(0, color.flame);
+                gradient.addColorStop(Math.max(0, Math.min(1, 0.5 + Math.sin(offset) * 0.1)), color.solid);
                 gradient.addColorStop(1, color.light);
                 return gradient;
             };
 
-            const evaluatedBackgrounds = labels.map(label => createGradient(deptColors[label] || {solid: '#00ff41', light: 'rgba(0, 255, 65, 0.2)'}));
-            const evaluatedBorders = labels.map(label => (deptColors[label] || {solid: '#00ff41'}).solid);
+            // Static Light Green for Done Evaluated
+            const lightGreenGradient = ctx.createLinearGradient(0, 0, 0, 400);
+            lightGreenGradient.addColorStop(0, '#39ff14');
+            lightGreenGradient.addColorStop(1, 'rgba(57, 255, 20, 0.2)');
 
-            new Chart(ctx, {
+            const chart = new Chart(ctx, {
                 type: 'bar',
                 data: {
                     labels: labels,
@@ -1146,8 +1175,8 @@
                         {
                             label: 'Overall Total',
                             data: totalData,
-                            backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                            borderColor: 'rgba(255, 255, 255, 0.2)',
+                            backgroundColor: labels.map(label => (deptColors[label] || {solid: '#fff'}).solid),
+                            borderColor: labels.map(label => (deptColors[label] || {solid: '#fff'}).light),
                             borderWidth: 1,
                             borderRadius: 4,
                             barPercentage: 0.6,
@@ -1156,12 +1185,13 @@
                         {
                             label: 'Done Evaluated',
                             data: evaluatedData,
-                            backgroundColor: evaluatedBackgrounds,
-                            borderColor: evaluatedBorders,
+                            backgroundColor: lightGreenGradient,
+                            borderColor: '#39ff14',
                             borderWidth: 1,
                             borderRadius: 4,
                             barPercentage: 0.6,
                             categoryPercentage: 0.7,
+                            boxShadow: '0 0 15px rgba(57, 255, 20, 0.5)'
                         }
                     ]
                 },
@@ -1188,19 +1218,7 @@
                             borderColor: 'rgba(0, 255, 65, 0.3)',
                             borderWidth: 1,
                             padding: 12,
-                            displayColors: true,
-                            callbacks: {
-                                label: function(context) {
-                                    let label = context.dataset.label || '';
-                                    if (label) {
-                                        label += ': ';
-                                    }
-                                    if (context.parsed.y !== null) {
-                                        label += context.parsed.y + ' students';
-                                    }
-                                    return label;
-                                }
-                            }
+                            displayColors: true
                         }
                     },
                     scales: {
@@ -1215,14 +1233,11 @@
                                 font: {
                                     family: "'Courier New', monospace",
                                     size: 10
-                                },
-                                stepSize: 1
+                                }
                             }
                         },
                         x: {
-                            grid: {
-                                display: false
-                            },
+                            grid: { display: false },
                             ticks: {
                                 color: '#90ee90',
                                 font: {
@@ -1234,26 +1249,24 @@
                     },
                     animation: {
                         duration: 2000,
-                        easing: 'easeOutQuart',
-                        onComplete: function(animation) {
-                            const chart = animation.chart;
-                            const dataset = chart.data.datasets[1];
-                            
-                            // Simple pulsing effect loop
-                            let increasing = true;
-                            setInterval(() => {
-                                if (increasing) {
-                                    dataset.borderWidth = 2;
-                                } else {
-                                    dataset.borderWidth = 1;
-                                }
-                                increasing = !increasing;
-                                chart.update('none');
-                            }, 1000);
-                        }
+                        easing: 'easeOutQuart'
                     }
                 }
             });
+
+            // Flaming/Glowing Animation Loop
+            function animate() {
+                offset += 0.05;
+                const chartArea = chart.chartArea;
+                if (chartArea) {
+                    chart.data.datasets[0].backgroundColor = labels.map(label => 
+                        createFlamingGradient(deptColors[label] || {solid: '#fff', light: '#fff', flame: '#fff'}, chartArea)
+                    );
+                    chart.update('none');
+                }
+                requestAnimationFrame(animate);
+            }
+            animate();
         });
     </script>
 </body>
