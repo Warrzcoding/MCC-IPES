@@ -404,6 +404,23 @@ if (Auth::user()->isAdmin()) {
                         </div>
                     </div>
 
+                     <!-- Categorical Distributions Analysis (Instructor Ratings) -->
+                    <div class="col-12 mb-4 d-flex align-items-stretch">
+                        <div class="card shadow-lg w-100 h-100 border-0 analytics-card" style="min-height: 340px; max-height: 400px; border-radius: 18px; transition: box-shadow 0.3s; ">
+                            <div class="card-header py-2 bg-white border-0 d-flex justify-content-between align-items-center" style="border-radius: 18px 18px 0 0;">
+                                <h6 class="m-0 font-weight-bold text-primary">Categorical Distributions Analysis (Instructor Ratings)</h6>
+                                <div class="badge badge-info px-3 py-2" style="border-radius: 12px;">
+                                    <i class="fas fa-users mr-1"></i> Total Instructors: {{ array_sum($instructorRatingDistribution) }}
+                                </div>
+                            </div>
+                            <div class="card-body d-flex flex-column justify-content-center p-3" style="height: 250px;">
+                                <div style="height: 220px; width: 100%;">
+                                    <canvas id="instructorRatingDistributionChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                    <!-- Staff Performance Improvement per Academic Year/Semester (Enhanced Line Chart) -->
                    <div class="col-12 mb-4 d-flex align-items-stretch">
                         <div class="card shadow-lg w-100 h-100 border-0 analytics-card" style="min-height: 340px; max-height: 400px; border-radius: 18px; transition: box-shadow 0.3s; ">
@@ -424,22 +441,7 @@ if (Auth::user()->isAdmin()) {
                         </div>
                     </div>
 
-                    <!-- Categorical Distributions Analysis (Instructor Ratings) -->
-                    <div class="col-12 mb-4 d-flex align-items-stretch">
-                        <div class="card shadow-lg w-100 h-100 border-0 analytics-card" style="min-height: 340px; max-height: 400px; border-radius: 18px; transition: box-shadow 0.3s; ">
-                            <div class="card-header py-2 bg-white border-0 d-flex justify-content-between align-items-center" style="border-radius: 18px 18px 0 0;">
-                                <h6 class="m-0 font-weight-bold text-primary">Categorical Distributions Analysis (Instructor Ratings)</h6>
-                                <div class="badge badge-info px-3 py-2" style="border-radius: 12px;">
-                                    <i class="fas fa-users mr-1"></i> Total Instructors: {{ array_sum($instructorRatingDistribution) }}
-                                </div>
-                            </div>
-                            <div class="card-body d-flex flex-column justify-content-center p-3" style="height: 250px;">
-                                <div style="height: 220px; width: 100%;">
-                                    <canvas id="instructorRatingDistributionChart"></canvas>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                   
                 </div>
             </div>
         </div>
