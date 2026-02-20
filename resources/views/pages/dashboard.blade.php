@@ -423,6 +423,23 @@ if (Auth::user()->isAdmin()) {
                             </div>
                         </div>
                     </div>
+
+                    <!-- Categorical Distributions Analysis (Instructor Ratings) -->
+                    <div class="col-12 mb-4 d-flex align-items-stretch">
+                        <div class="card shadow-lg w-100 h-100 border-0 analytics-card" style="min-height: 340px; max-height: 400px; border-radius: 18px; transition: box-shadow 0.3s; ">
+                            <div class="card-header py-2 bg-white border-0 d-flex justify-content-between align-items-center" style="border-radius: 18px 18px 0 0;">
+                                <h6 class="m-0 font-weight-bold text-primary">Categorical Distributions Analysis (Instructor Ratings)</h6>
+                                <div class="badge badge-info px-3 py-2" style="border-radius: 12px;">
+                                    <i class="fas fa-users mr-1"></i> Total Instructors: {{ array_sum($instructorRatingDistribution) }}
+                                </div>
+                            </div>
+                            <div class="card-body d-flex flex-column justify-content-center p-3" style="height: 250px;">
+                                <div style="height: 220px; width: 100%;">
+                                    <canvas id="instructorRatingDistributionChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1145,5 +1162,77 @@ function toggleStaffPerformanceView(viewType) {
 
 // Initialize the chart when page loads
 initStaffPerformanceChart();
+
+// Instructor Rating Distribution Chart
+const distData = {!! json_encode($instructorRatingDistribution) !!};
+const distLabels = Object.keys(distData);
+const distValues = Object.values(distData);
+const totalInstructorsCount = distValues.reduce((a, b) => a + b, 0);
+
+const distColors = {
+    'Outstanding': '#28a745',
+    'Very Satisfactory': '#17a2b8',
+    'Satisfactory': '#ffc107',
+    'Unsatisfactory': '#fd7e14',
+    'Poor': '#dc3545'
+};
+
+new Chart(document.getElementById('instructorRatingDistributionChart').getContext('2d'), {
+    type: 'bar',
+    data: {
+        labels: distLabels,
+        datasets: [{
+            label: 'Number of Instructors',
+            data: distValues,
+            backgroundColor: distLabels.map(label => distColors[label] || '#888'),
+            borderRadius: 8,
+            barPercentage: 0.6
+        }]
+    },
+    options: {
+        indexAxis: 'y', // Horizontal bar chart
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: { display: false },
+            datalabels: {
+                color: '#444',
+                anchor: 'end',
+                align: 'right',
+                offset: 5,
+                font: { weight: 'bold', size: 11 },
+                formatter: function(value, context) {
+                    if (value === 0) return '';
+                    const percentage = totalInstructorsCount > 0 ? ((value / totalInstructorsCount) * 100).toFixed(1) : 0;
+                    return `${value} (${percentage}%)`;
+                }
+            },
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        const value = context.parsed.x;
+                        const percentage = totalInstructorsCount > 0 ? ((value / totalInstructorsCount) * 100).toFixed(1) : 0;
+                        return `${value} Instructors (${percentage}%)`;
+                    }
+                }
+            }
+        },
+        layout: {
+            padding: {
+                right: 70 // extra space for data labels
+            }
+        },
+        scales: {
+            x: {
+                beginAtZero: true,
+                ticks: { 
+                    precision: 0,
+                    stepSize: 1
+                }
+            }
+        }
+    },
+    plugins: [ChartDataLabels]
+});
 </script>
 @endif

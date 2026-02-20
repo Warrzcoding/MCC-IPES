@@ -171,6 +171,60 @@ class DashboardController extends Controller
             \Log::info('Debug Evaluation Data:', $debugEvaluationData->toArray());
             \Log::info('Staff Performance Stats Per Year:', $staffPerformanceStatsPerYear->toArray());
             \Log::info('Staff Performance Stats Per Semester:', $staffPerformanceStatsPerSemester->toArray());
+
+            // Categorical Distributions Analysis - Calculate counts based on ratings
+            $activeAY = \App\Models\AcademicYear::where('is_active', 1)->first();
+            
+            // Get all staff who have evaluations in the active academic year
+            $staffRatingsForDistribution = \App\Models\Staff::select('staff.id', 'staff.staff_type')
+                ->join('evaluations', 'staff.id', '=', 'evaluations.staff_id')
+                ->when($activeAY, function($q) use ($activeAY) {
+                    return $q->where('evaluations.academic_year_id', $activeAY->id);
+                })
+                ->groupBy('staff.id', 'staff.staff_type')
+                ->get();
+
+            // Fetch all category averages in bulk to match overall-ratings logic
+            $allCategoryAverages = \DB::table('evaluations')
+                ->join('questions', 'evaluations.question_id', '=', 'questions.id')
+                ->when($activeAY, function($q) use ($activeAY) {
+                    return $q->where('questions.academic_year_id', $activeAY->id);
+                })
+                ->select('evaluations.staff_id', 'questions.title', \DB::raw('AVG(evaluations.response_score) as category_avg'))
+                ->groupBy('evaluations.staff_id', 'questions.title')
+                ->get()
+                ->groupBy('staff_id');
+
+            // Category counts for each staff type
+            $categoryCounts = \App\Models\Question::when($activeAY, function($q) use ($activeAY) {
+                    return $q->where('academic_year_id', $activeAY->id);
+                })
+                ->select('staff_type', \DB::raw('COUNT(DISTINCT title) as count'))
+                ->groupBy('staff_type')
+                ->pluck('count', 'staff_type');
+
+            $instructorRatingDistribution = [
+                'Outstanding' => 0,
+                'Very Satisfactory' => 0,
+                'Satisfactory' => 0,
+                'Unsatisfactory' => 0,
+            ];
+
+            foreach ($staffRatingsForDistribution as $s) {
+                $staffAvgs = $allCategoryAverages->get($s->id);
+                $totalCategories = $categoryCounts->get($s->staff_type, 0);
+
+                if ($staffAvgs && $totalCategories > 0) {
+                    $average_rating = $staffAvgs->sum('category_avg') / $totalCategories;
+                } else {
+                    $average_rating = 0;
+                }
+
+                if ($average_rating >= 4.51) $instructorRatingDistribution['Outstanding']++;
+                elseif ($average_rating >= 3.51) $instructorRatingDistribution['Very Satisfactory']++;
+                elseif ($average_rating >= 2.51) $instructorRatingDistribution['Satisfactory']++;
+                elseif ($average_rating >= 1.51) $instructorRatingDistribution['Unsatisfactory']++;
+            }
         } else {
             $studentsPerCourse = collect();
             $evaluatedStudentsPerCourse = collect();
@@ -178,6 +232,12 @@ class DashboardController extends Controller
             $avgScorePerYear = collect();
             $staffPerformanceStatsPerYear = collect();
             $staffPerformanceStatsPerSemester = collect();
+            $instructorRatingDistribution = [
+                'Outstanding' => 0,
+                'Very Satisfactory' => 0,
+                'Satisfactory' => 0,
+                'Unsatisfactory' => 0,
+            ];
         }
         
         // Students can only access: dashboard, staff-list, evaluates, irevaluates, lockedcards, profile
@@ -818,6 +878,7 @@ class DashboardController extends Controller
                 'evaluatedStudentsPerCourse',
                 'staffByType',
                 'avgScorePerYear',
+                'instructorRatingDistribution',
                 'backupLogs'
             ));
         }
@@ -865,6 +926,7 @@ class DashboardController extends Controller
             'avgScorePerYear',
             'staffPerformanceStatsPerYear', // pass to view
             'staffPerformanceStatsPerSemester', // pass semester data to view
+            'instructorRatingDistribution',
             'pendingRequestsCount',
             'pendingRequests',
             'rejectedRequests', // Always include this
