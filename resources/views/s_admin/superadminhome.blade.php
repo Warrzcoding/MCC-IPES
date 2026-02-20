@@ -665,8 +665,8 @@
                         <div class="card-body p-4">
                             <div class="row align-items-center">
                                 <div class="col-lg-8">
-                                    <div style="height: 350px; position: relative; z-index: 10; overflow: visible;">
-                                        <canvas id="departmentStatsChart" style="z-index: 20; position: relative;"></canvas>
+                                    <div style="height: 380px; position: relative; z-index: 99; background: transparent;">
+                                        <canvas id="departmentStatsChart"></canvas>
                                     </div>
                                 </div>
                                 <div class="col-lg-4">
@@ -679,7 +679,7 @@
                                         @endphp
                                         <div class="mb-4">
                                             <div class="d-flex align-items-center mb-2" style="font-size: 0.8rem; color: #39ff14;">
-                                                <span class="flame-dot me-2" style="width: 12px; height: 12px; background: #39ff14; border-radius: 50%; box-shadow: 0 0 10px #39ff14; color: #39ff14;"></span>
+                                                <span class="me-2" style="width: 12px; height: 12px; background: #39ff14; border-radius: 50%; display: inline-block;"></span>
                                                 <strong>DONE EVALUATED (COMPLETED)</strong>
                                             </div>
                                             <div class="d-flex align-items-center mb-3" style="font-size: 0.75rem; color: var(--text-muted); padding-left: 20px;">
@@ -711,10 +711,10 @@
                                             @foreach($departmentStats as $stat)
                                             <li class="mb-2 d-flex justify-content-between align-items-center">
                                                 <div class="d-flex align-items-center">
-                                                    <span class="flame-dot me-2" style="width: 10px; height: 10px; background: {{ $deptColorMap[$stat['name']] ?? 'var(--accent-green)' }}; border-radius: 2px; box-shadow: 0 0 5px {{ $deptColorMap[$stat['name']] ?? 'var(--accent-green)' }}; color: {{ $deptColorMap[$stat['name']] ?? 'var(--accent-green)' }};"></span>
+                                                    <span class="me-2" style="width: 10px; height: 10px; background: {{ $deptColorMap[$stat['name']] ?? 'var(--accent-green)' }}; border-radius: 2px; display: inline-block; border: 1px solid rgba(255,255,255,0.1);"></span>
                                                     <span>{{ $stat['name'] }}</span>
                                                 </div>
-                                                <span class="text-muted">{{ $stat['total'] }} Students</span>
+                                                <span style="color: #cbd5e0;">{{ $stat['total'] }} Students</span>
                                             </li>
                                             @endforeach
                                         </ul>
@@ -1167,8 +1167,25 @@
             lightGreenGradient.addColorStop(0, '#39ff14');
             lightGreenGradient.addColorStop(1, 'rgba(57, 255, 20, 0.2)');
 
+            // Zoom Correction Plugin for Desktop (fix for body { zoom: 0.8 })
+            const zoomCorrectionPlugin = {
+                id: 'zoomCorrection',
+                beforeEvent(chart, args) {
+                    // Check if zoom or scale is likely active (Desktop view)
+                    if (window.innerWidth > 992) {
+                        const isZoomed = document.body.style.zoom === '0.8' || getComputedStyle(document.body).zoom === '0.8';
+                        if (isZoomed && !args.event.native.isZoomedFixed) {
+                            args.event.x /= 0.8;
+                            args.event.y /= 0.8;
+                            args.event.native.isZoomedFixed = true;
+                        }
+                    }
+                }
+            };
+
             const chart = new Chart(ctx, {
                 type: 'bar',
+                plugins: [zoomCorrectionPlugin],
                 data: {
                     labels: labels,
                     datasets: [
@@ -1201,10 +1218,14 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    events: ['mousemove', 'mouseout', 'click', 'touchstart', 'touchmove'],
+                    onHover: (event, chartElement) => {
+                        isHovering = chartElement.length > 0;
+                    },
                     interaction: {
                         mode: 'index',
-                        intersect: false,
-                        axis: 'x'
+                        axis: 'x',
+                        intersect: false
                     },
                     plugins: {
                         legend: {
@@ -1221,46 +1242,34 @@
                         },
                         tooltip: {
                             enabled: true,
-                            position: 'nearest',
-                            backgroundColor: 'rgba(10, 14, 39, 1.0)', // Opaque to ensure visibility
+                            backgroundColor: 'rgba(10, 14, 39, 0.95)',
                             titleColor: '#39ff14',
                             titleAlign: 'center',
                             titleFont: {
                                 family: "'Courier New', monospace",
-                                size: 16,
+                                size: 14,
                                 weight: 'bold'
                             },
                             bodyColor: '#e8f5e9',
-                            bodyAlign: 'left',
+                            bodyAlign: 'center',
                             bodyFont: {
                                 family: "'Courier New', monospace",
-                                size: 13
+                                size: 12
                             },
                             borderColor: '#39ff14',
-                            borderWidth: 2, // Thicker border to pop
-                            padding: 15,
-                            displayColors: true,
-                            boxPadding: 8,
-                            usePointStyle: true,
-                            caretSize: 10,
-                            caretPadding: 15,
-                            cornerRadius: 8,
-                            animation: {
-                                duration: 150
-                            },
+                            borderWidth: 1,
+                            padding: 10,
+                            displayColors: false,
+                            boxPadding: 0,
+                            caretSize: 6,
+                            caretPadding: 10,
+                            cornerRadius: 4,
                             callbacks: {
                                 title: function(context) {
-                                    return 'DEPARTMENT: ' + context[0].label;
+                                    return context[0].label;
                                 },
                                 label: function(context) {
-                                    let label = context.dataset.label || '';
-                                    if (label) {
-                                        label += ': ';
-                                    }
-                                    if (context.parsed.y !== null) {
-                                        label += context.parsed.y + ' Students';
-                                    }
-                                    return '  ' + label; // Add some spacing
+                                    return context.dataset.label + ': ' + context.parsed.y;
                                 }
                             }
                         }
@@ -1300,22 +1309,24 @@
 
             // Flaming/Glowing Animation Loop
             let isHovering = false;
-            ctx.canvas.addEventListener('mouseenter', () => isHovering = true);
-            ctx.canvas.addEventListener('mouseleave', () => isHovering = false);
 
             function animate() {
+                // Check isHovering to pause background updates when interacting
+                // This prevents the "shifting" or "flickering" of tooltips
                 if (isHovering) {
                     requestAnimationFrame(animate);
-                    return; // Pause animation redraw while hovering to fix tooltip flickering/layering
+                    return;
                 }
                 
                 offset += 0.05;
                 const chartArea = chart.chartArea;
                 if (chartArea) {
-                    chart.data.datasets[0].backgroundColor = labels.map(label => 
-                        createFlamingGradient(deptColors[label] || {solid: '#fff', light: '#fff', flame: '#fff'}, chartArea)
-                    );
-                    chart.update('none');
+                    try {
+                        chart.data.datasets[0].backgroundColor = labels.map(label => 
+                            createFlamingGradient(deptColors[label] || {solid: '#fff', light: '#fff', flame: '#fff'}, chartArea)
+                        );
+                        chart.update('none');
+                    } catch (e) {}
                 }
                 requestAnimationFrame(animate);
             }
