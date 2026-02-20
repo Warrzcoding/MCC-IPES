@@ -686,7 +686,7 @@
                                                 <span>Overall progress of evaluations</span>
                                             </div>
                                             <div class="d-flex justify-content-between mb-1" style="padding-left: 20px;">
-                                                <small class="text-muted">TOTAL PROGRESS</small>
+                                                <small  style="color: #fff200;">TOTAL PROGRESS</small>
                                                 <small style="color: #39ff14;">{{ $studentCount > 0 ? round(($totalEvaluated / $studentCount) * 100, 1) : 0 }}%</small>
                                             </div>
                                             <div class="progress ms-3" style="height: 6px; background: rgba(255,255,255,0.1);">
