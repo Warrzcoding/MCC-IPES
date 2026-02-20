@@ -665,8 +665,8 @@
                         <div class="card-body p-4">
                             <div class="row align-items-center">
                                 <div class="col-lg-8">
-                                    <div style="height: 350px; position: relative;">
-                                        <canvas id="departmentStatsChart"></canvas>
+                                    <div style="height: 350px; position: relative; z-index: 10; overflow: visible;">
+                                        <canvas id="departmentStatsChart" style="z-index: 20; position: relative;"></canvas>
                                     </div>
                                 </div>
                                 <div class="col-lg-4">
@@ -1180,7 +1180,9 @@
                             borderWidth: 1,
                             borderRadius: 4,
                             barPercentage: 0.6,
-                            categoryPercentage: 0.7
+                            categoryPercentage: 0.7,
+                            hoverOffset: 8,
+                            hoverBorderWidth: 2
                         },
                         {
                             label: 'Done Evaluated',
@@ -1191,13 +1193,19 @@
                             borderRadius: 4,
                             barPercentage: 0.6,
                             categoryPercentage: 0.7,
-                            boxShadow: '0 0 15px rgba(57, 255, 20, 0.5)'
+                            hoverOffset: 8,
+                            hoverBorderWidth: 2
                         }
                     ]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                        axis: 'x'
+                    },
                     plugins: {
                         legend: {
                             position: 'top',
@@ -1212,13 +1220,49 @@
                             }
                         },
                         tooltip: {
-                            backgroundColor: 'rgba(10, 14, 39, 0.95)',
-                            titleColor: 'var(--accent-green)',
+                            enabled: true,
+                            position: 'nearest',
+                            backgroundColor: 'rgba(10, 14, 39, 1.0)', // Opaque to ensure visibility
+                            titleColor: '#39ff14',
+                            titleAlign: 'center',
+                            titleFont: {
+                                family: "'Courier New', monospace",
+                                size: 16,
+                                weight: 'bold'
+                            },
                             bodyColor: '#e8f5e9',
-                            borderColor: 'rgba(0, 255, 65, 0.3)',
-                            borderWidth: 1,
-                            padding: 12,
-                            displayColors: true
+                            bodyAlign: 'left',
+                            bodyFont: {
+                                family: "'Courier New', monospace",
+                                size: 13
+                            },
+                            borderColor: '#39ff14',
+                            borderWidth: 2, // Thicker border to pop
+                            padding: 15,
+                            displayColors: true,
+                            boxPadding: 8,
+                            usePointStyle: true,
+                            caretSize: 10,
+                            caretPadding: 15,
+                            cornerRadius: 8,
+                            animation: {
+                                duration: 150
+                            },
+                            callbacks: {
+                                title: function(context) {
+                                    return 'DEPARTMENT: ' + context[0].label;
+                                },
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.y !== null) {
+                                        label += context.parsed.y + ' Students';
+                                    }
+                                    return '  ' + label; // Add some spacing
+                                }
+                            }
                         }
                     },
                     scales: {
@@ -1255,7 +1299,16 @@
             });
 
             // Flaming/Glowing Animation Loop
+            let isHovering = false;
+            ctx.canvas.addEventListener('mouseenter', () => isHovering = true);
+            ctx.canvas.addEventListener('mouseleave', () => isHovering = false);
+
             function animate() {
+                if (isHovering) {
+                    requestAnimationFrame(animate);
+                    return; // Pause animation redraw while hovering to fix tooltip flickering/layering
+                }
+                
                 offset += 0.05;
                 const chartArea = chart.chartArea;
                 if (chartArea) {
