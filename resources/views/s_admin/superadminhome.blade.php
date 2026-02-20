@@ -675,9 +675,21 @@
                                             </div>
                                         </div>
                                         <ul class="list-unstyled mb-0" style="font-size: 0.85rem;">
+                                            @php
+                                                $deptColorMap = [
+                                                    'BSIT' => '#000000',
+                                                    'BSHM' => '#800000',
+                                                    'BSBA' => '#008000',
+                                                    'BSED' => '#000080',
+                                                    'BEED' => '#ADD8E6'
+                                                ];
+                                            @endphp
                                             @foreach($departmentStats as $stat)
                                             <li class="mb-2 d-flex justify-content-between align-items-center">
-                                                <span>{{ $stat['name'] }}</span>
+                                                <div class="d-flex align-items-center">
+                                                    <span class="me-2" style="width: 10px; height: 10px; background: {{ $deptColorMap[$stat['name']] ?? 'var(--accent-green)' }}; border-radius: 2px; box-shadow: 0 0 5px {{ $deptColorMap[$stat['name']] ?? 'var(--accent-green)' }};"></span>
+                                                    <span>{{ $stat['name'] }}</span>
+                                                </div>
                                                 <span class="text-success">{{ $stat['evaluated'] }} / {{ $stat['total'] }}</span>
                                             </li>
                                             @endforeach
@@ -1102,9 +1114,29 @@
             const ctx = document.getElementById('departmentStatsChart').getContext('2d');
             const departmentStats = @json($departmentStats);
             
+            // Department Color Mapping
+            const deptColors = {
+                'BSIT': { solid: '#000000', light: 'rgba(0, 0, 0, 0.4)', glow: 'rgba(0, 0, 0, 0.8)' },
+                'BSHM': { solid: '#800000', light: 'rgba(128, 0, 0, 0.4)', glow: 'rgba(128, 0, 0, 0.8)' },
+                'BSBA': { solid: '#008000', light: 'rgba(0, 128, 0, 0.4)', glow: 'rgba(0, 128, 0, 0.8)' },
+                'BSED': { solid: '#000080', light: 'rgba(0, 0, 128, 0.4)', glow: 'rgba(0, 0, 128, 0.8)' },
+                'BEED': { solid: '#ADD8E6', light: 'rgba(173, 216, 230, 0.4)', glow: 'rgba(173, 216, 230, 0.8)' }
+            };
+
             const labels = departmentStats.map(stat => stat.name);
             const totalData = departmentStats.map(stat => stat.total);
             const evaluatedData = departmentStats.map(stat => stat.evaluated);
+
+            // Create Gradients
+            const createGradient = (color) => {
+                const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+                gradient.addColorStop(0, color.solid);
+                gradient.addColorStop(1, color.light);
+                return gradient;
+            };
+
+            const evaluatedBackgrounds = labels.map(label => createGradient(deptColors[label] || {solid: '#00ff41', light: 'rgba(0, 255, 65, 0.2)'}));
+            const evaluatedBorders = labels.map(label => (deptColors[label] || {solid: '#00ff41'}).solid);
 
             new Chart(ctx, {
                 type: 'bar',
@@ -1114,8 +1146,8 @@
                         {
                             label: 'Overall Total',
                             data: totalData,
-                            backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                            borderColor: 'rgba(255, 255, 255, 0.5)',
+                            backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                            borderColor: 'rgba(255, 255, 255, 0.2)',
                             borderWidth: 1,
                             borderRadius: 4,
                             barPercentage: 0.6,
@@ -1124,13 +1156,12 @@
                         {
                             label: 'Done Evaluated',
                             data: evaluatedData,
-                            backgroundColor: 'rgba(0, 255, 65, 0.6)',
-                            borderColor: 'var(--accent-green)',
+                            backgroundColor: evaluatedBackgrounds,
+                            borderColor: evaluatedBorders,
                             borderWidth: 1,
                             borderRadius: 4,
                             barPercentage: 0.6,
                             categoryPercentage: 0.7,
-                            boxShadow: '0 0 10px rgba(0, 255, 65, 0.5)'
                         }
                     ]
                 },
@@ -1203,7 +1234,23 @@
                     },
                     animation: {
                         duration: 2000,
-                        easing: 'easeOutQuart'
+                        easing: 'easeOutQuart',
+                        onComplete: function(animation) {
+                            const chart = animation.chart;
+                            const dataset = chart.data.datasets[1];
+                            
+                            // Simple pulsing effect loop
+                            let increasing = true;
+                            setInterval(() => {
+                                if (increasing) {
+                                    dataset.borderWidth = 2;
+                                } else {
+                                    dataset.borderWidth = 1;
+                                }
+                                increasing = !increasing;
+                                chart.update('none');
+                            }, 1000);
+                        }
                     }
                 }
             });
