@@ -7,7 +7,7 @@ function getRatingStatus($rating) {
     if ($rating >= 3.51) return ['status' => 'Very Satisfactory', 'color' => '#17a2b8', 'bg' => '#d1ecf1'];
     if ($rating >= 2.51) return ['status' => 'Satisfactory', 'color' => '#ffc107', 'bg' => '#fff3cd'];
     if ($rating >= 1.51) return ['status' => 'Unsatisfactory', 'color' => '#fd7e14', 'bg' => '#ffeaa7'];
-    return ['status' => 'Poor', 'color' => '#dc3545', 'bg' => '#f8d7da'];
+    return ['status' => 'Poor', 'color' => '#dc3545', 'bg' => '#e3e8ea'];
 }
 
 // Function to get adjectival descriptive rating
@@ -727,6 +727,13 @@ function printOverallReport(staffData, type) {
     const adjectivalLabel = type === 'teaching' ? 'ADJECTIVAL DESCRIPTIVE' : 'ADJECTIVAL DESCRIPTION';
     
     let html = `
+        <style>
+            @media print {
+                body > *:not(#customPrintArea) { display: none !important; }
+                #customPrintArea { display: block !important; }
+                .print-row { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            }
+        </style>
         <div style="padding: 0.5in 0.5in 0.5in 0.5in; font-family: Arial, sans-serif; font-size:10pt; max-width: 1000px; margin: 0 auto; line-height: 1.15;">
             <div class='header-section' style='text-align:center; margin-top:0; margin-bottom:0.2em; padding-bottom:0;'>
                 <div style='display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:2.15em;'>
@@ -774,10 +781,17 @@ function printOverallReport(staffData, type) {
     `;
 
     staffData.forEach((staff, index) => {
-        const rowColor = index % 2 === 0 ? '#ffffff' : '#f8f9fa';
         const adjective = adjectivalFromLegend(staff.rating);
+        let rowColor = index % 2 === 0 ? '#ffffff' : '#f8f9fa';
+        
+        if (adjective.toUpperCase() === 'OUTSTANDING') {
+            rowColor = 'lightgreen';
+        } else if (adjective.toUpperCase() === 'SATISFACTORY') {
+            rowColor = '#ffcccc'; // light red
+        }
+
         html += `
-            <tr style="background-color: ${rowColor};">
+            <tr class="print-row" style="background-color: ${rowColor};">
                 <td style="border: 1px solid #ddd; padding: 4px 6px; text-align: left; font-size: 9.5pt; font-family: 'Century Gothic', sans-serif; text-transform: uppercase;">${staff.name}</td>
                 <td style="border: 1px solid #ddd; padding: 4px 6px; text-align: center; font-weight: bold; color: #232527; font-size: 9.5pt; font-family: 'Century Gothic', sans-serif; text-transform: uppercase;">${staff.rating.toFixed(2)}</td>
                 <td style="border: 1px solid #ddd; padding: 4px 6px; text-align: center; font-weight: bold; color: #080908; font-size: 9.5pt; font-family: 'Century Gothic', sans-serif; text-transform: uppercase;">${adjective}</td>

@@ -419,7 +419,7 @@ if (Auth::user()->isAdmin()) {
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> 
 
                    <!-- Staff Performance Improvement per Academic Year/Semester (Enhanced Line Chart) -->
                    <div class="col-12 mb-4 d-flex align-items-stretch">
