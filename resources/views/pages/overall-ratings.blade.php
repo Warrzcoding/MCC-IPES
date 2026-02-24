@@ -779,13 +779,13 @@ function printOverallReport(staffData, type) {
                     </thead>
                     <tbody>
     `;
-
+    
     staffData.forEach((staff, index) => {
         const adjective = adjectivalFromLegend(staff.rating);
         let rowColor = index % 2 === 0 ? '#ffffff' : '#f8f9fa';
         
         if (adjective.toUpperCase() === 'OUTSTANDING') {
-            rowColor = 'lightgreen';
+            rowColor = '#d2f4ddec';
         } else if (adjective.toUpperCase() === 'SATISFACTORY') {
             rowColor = '#ffcccc'; // light red
         }
