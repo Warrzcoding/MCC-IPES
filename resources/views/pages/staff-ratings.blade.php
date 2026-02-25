@@ -581,6 +581,18 @@ function getAdjectivalRating($rating) {
                                            placeholder="Search teaching staff..." 
                                            class="form-control compact-search">
                                 </div>
+                                <select id="deptFilterTeaching" onchange="searchStaff('teaching')" class="form-select form-select-sm" style="width: auto; border-radius: 999px; height: 32px; font-size: 0.7rem; border-color: #d7dff1; padding-left: 15px; padding-right: 30px; cursor: pointer;">
+                                    <option value="">All Departments</option>
+                                    <option value="EDUC">EDUC</option>
+                                    <option value="BSIT">BSIT</option>
+                                    <option value="BSHM">BSHM</option>
+                                    <option value="BSBA">BSBA</option>
+                                    <option value="GEC">GEC</option>
+                                </select>
+                                <button type="button" id="printFilteredBtn" class="btn btn-success shadow-sm d-none align-items-center gap-2 refresh-btn-enhanced" 
+                                        onclick="printFilteredInstructors()" style="background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);">
+                                    <i class="fas fa-print"></i> <span>Print Filtered</span>
+                                </button>
                                 <button type="button" class="btn btn-primary shadow-sm d-flex align-items-center gap-2 refresh-btn-enhanced"
                                         onclick="location.reload();">
                                     <i class="fas fa-sync-alt"></i> <span>Refresh</span>
@@ -606,7 +618,7 @@ function getAdjectivalRating($rating) {
                                         $ratingInfo = getRatingStatus($staff->average_rating);
                                         $starRating = round($staff->average_rating);
                                     @endphp
-                                    <tr class="rating-card">
+                                    <tr class="rating-card" data-staff-id="{{ $staff->id }}">
                                         <td class="text-center align-middle">
                                             @if(!empty($staff->image_path) && file_exists(public_path($staff->image_path)))
                                                 <img src="{{ asset($staff->image_path) }}" 
@@ -735,7 +747,7 @@ function getAdjectivalRating($rating) {
                                                 $ratingInfo = getRatingStatus($staff->average_rating);
                                                 $starRating = round($staff->average_rating);
                                             @endphp
-                                            <tr class="rating-card">
+                                            <tr class="rating-card" data-staff-id="{{ $staff->id }}">
                                                 <td class="text-center align-middle">
                                                     @if(!empty($staff->image_path) && file_exists(public_path($staff->image_path)))
                                                         <img src="{{ asset($staff->image_path) }}" 
@@ -949,11 +961,13 @@ function getAdjectivalRating($rating) {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script>
     function searchStaff(staffType) {
-        let inputId, tableId;
+        let inputId, tableId, deptFilterId, printBtnId;
         
         if (staffType === 'teaching') {
             inputId = 'searchInputTeaching';
             tableId = 'teachingStaffTable';
+            deptFilterId = 'deptFilterTeaching';
+            printBtnId = 'printFilteredBtn';
         } else if (staffType === 'non-teaching') {
             inputId = 'searchInputNonTeaching';
             tableId = 'nonTeachingStaffTable';
@@ -968,6 +982,7 @@ function getAdjectivalRating($rating) {
         }
         
         const input = document.getElementById(inputId).value.toLowerCase();
+        const deptFilter = deptFilterId ? document.getElementById(deptFilterId).value : '';
         const rows = document.querySelectorAll(`#${tableId} tbody tr`);
         
         rows.forEach(row => {
@@ -977,9 +992,27 @@ function getAdjectivalRating($rating) {
                 return;
             }
             const staffDetails = row.cells[1].textContent.toLowerCase();
+            const deptBadge = row.querySelector('.staff-badge').textContent;
+            
             const matchesSearch = staffDetails.includes(input);
-            row.style.display = matchesSearch ? '' : 'none';
+            const matchesDept = deptFilter === '' || deptBadge.includes(deptFilter);
+            
+            row.style.display = (matchesSearch && matchesDept) ? '' : 'none';
         });
+        
+        // Show/hide Print Filtered button for teaching staff
+        if (printBtnId) {
+            const printBtn = document.getElementById(printBtnId);
+            if (printBtn) {
+                if (input !== '' || deptFilter !== '') {
+                    printBtn.classList.remove('d-none');
+                    printBtn.classList.add('d-flex');
+                } else {
+                    printBtn.classList.add('d-none');
+                    printBtn.classList.remove('d-flex');
+                }
+            }
+        }
         
         // Show empty state if all rows are hidden
         const visibleRows = Array.from(rows).filter(row => row.style.display !== 'none' && !row.querySelector('td[colspan]'));
@@ -1212,12 +1245,335 @@ function getAdjectivalRating($rating) {
         });
     }
 
+    const toRoman = (num) => {
+        const roman = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII", "XIII", "XIV", "XV"];
+        return roman[num] || num;
+    };
+
+    function generateReportHtmlContent(staff, evaluations) {
+        // Determine Department Head
+        let deptHead = '';
+        const dept = (staff.department || '').toUpperCase();
+        if (dept === 'BSIT') {
+            deptHead = 'DR. DINO L. ILUSTRISIMO';
+        } else if (dept === 'EDUC') {
+            deptHead = 'DR. PRISCILLA F. CANOY';
+        } else if (dept === 'BSBA') {
+            deptHead = 'DR. ISRAEL N. ABBARATIGUE';
+        } else if (dept === 'BSHM') {
+            deptHead = 'DR. ISRAEL N. ABARRATIGUE';
+        } else if (dept === 'GEC') {
+            deptHead = 'DR. ISRAEL N. ABARRATIGUE';
+        }
+        
+        // Build the detailed report HTML
+        let html = `
+            <div class="report-container" style="padding:8px;font-family: Arial, sans-serif; font-size:10pt; max-width: 900px; margin: 0 auto; line-height: 1.15;">
+                <div class='header-section' style='text-align:center;margin-bottom:0.2em;padding-bottom:0;'>
+                    <div style='display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:2.15em;'>
+                        <img src='/images/cgs.jpg' alt='Left Logo' style='width:80px;height:80px;flex-shrink:0;margin-right:5px;' onerror='this.style.display="none"'>
+                        <div style='text-align:center; flex:0 0 auto;'>   
+                            <strong style='font-size:11pt; font-family: "Arial Black", Gadget, sans-serif;'>MADRIDEJOS COMMUNITY COLLEGE</strong><br>                                   
+                            <strong style='font-size:10.5pt; font-family: "Century Gothic", CenturyGothic, AppleGothic, sans-serif;'>CENTER FOR GUIDANCE SERVICES</strong><br>
+                            <span style='font-size:10pt;'>Crossing Bunakan, Madridejos, Cebu</span><br>
+                            <span style='font-size:8pt; color: blue; text-decoration: none; font-family: "Century Gothic", sans-serif; font-weight: 300;'>
+                             <i class='fas fa-envelope'></i> mcc.cgsofficial@gmail.com<br>
+                             <i class='fab fa-facebook'></i> fb.com/MCCCenterforGuidanceService 
+                            </span><br><br>
+                             <strong style='font-size:11pt; font-family: "Century Gothic", sans-serif;'>MCC Instructor's Performance Evaluation Results</strong><br>
+                           <span style='font-size:10pt; font-family: "Century Gothic", sans-serif; font-weight: normal;'>S.Y {{ $currentAcademicYear?->year }} - {{ $currentAcademicYear?->semester == 1 ? 'First' : ($currentAcademicYear?->semester == 2 ? 'Second' : $currentAcademicYear?->semester) }} Semester </span>
+                        </div>
+                        <img src='/images/logo.png' alt='Right Logo' style='width:100px;height:100px;flex-shrink:0;margin-left:5px;' onerror='this.style.display="none"'>
+                    </div>
+                </div>
+
+                
+                <!-- Instructor Information Line -->
+                <div class='instructor-info' style='margin-bottom:0.5em; font-size:10pt; display:grid; grid-template-columns: 1fr auto 1fr; align-items:center;'>
+                    <div style='text-align:left;'><strong>Name of Instructor:</strong></div>
+                    <div style='text-align:center; font-size:14pt; color:#007bff; font-weight:bold; padding: 0 10px; font-family: "Century Gothic", AppleGothic, sans-serif; text-transform: uppercase;'>${staff.full_name}</div>
+                    <div style='text-align:right;'><strong>Department:</strong> ${staff.department}</div>
+                </div>
+
+                <!-- Questions and Ratings Table -->
+                <table class='questions-table' style='width:100%;border-collapse:collapse;margin-bottom:0.4em;border:1px solid #333; font-size:10pt;'>
+                    <thead>
+                        <tr style='background:#f8f9fa;page-break-inside:avoid;page-break-after:avoid; height:16px;'>
+                            <th style='border:1px solid #333;padding:2px 3px;text-align:left;font-weight:bold;width:70%; overflow:hidden; white-space:nowrap;'>Questionnaires</th>
+                            <th style='border:1px solid #333;padding:2px 3px;text-align:center;font-weight:bold;width:30%; height:16px;'>Rating</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+        `;
+
+        if (evaluations && evaluations.length > 0) {
+            // Group evaluations by category while preserving order
+            const categories = {};
+            const categoryOrder = [];
+            evaluations.forEach(eval => {
+                if (!categories[eval.category]) {
+                    categories[eval.category] = [];
+                    categoryOrder.push(eval.category);
+                }
+                categories[eval.category].push(eval);
+            });
+
+            // Display each category with its questions in the order they were encountered
+            categoryOrder.forEach((categoryName, index) => {
+                const categoryEvals = categories[categoryName];
+                const romanNumber = toRoman(index + 1);
+                
+                // Add category header row
+                html += `
+                    <tr style='height:14px;'>
+                        <td colspan="2" style='border:1px solid #333;padding:2px 3px;background:#e3f2fd;font-weight:bold;color:#007bff; font-size:9pt;'>
+                            ${romanNumber}. ${categoryName}
+                        </td>
+                    </tr>
+                `;
+                
+                // Add questions for this category
+                categoryEvals.forEach(eval => {
+                    const rating = parseFloat(eval.average_rating || 0);
+                    
+                    html += `
+                        <tr style='height:18px;'>
+                            <td style='border:1px solid #333;padding:2px 3px;text-align:left;vertical-align:middle; word-wrap:break-word; font-size:9.5pt;'>${eval.question_text}</td>
+                            <td style='border:1px solid #333;padding:2px 3px;text-align:center;font-weight:bold; height:18px; font-size:9.5pt;'>${rating.toFixed(2)}</td>
+                        </tr>
+                    `;
+                });
+            });
+        } else {
+            html += `
+                <tr>
+                    <td colspan="2" style='border:1px solid #333;padding:2em;text-align:center;color:#666;'>
+                        <strong>No Evaluation Data Available</strong><br>
+                        This instructor member has not been evaluated yet.
+                    </td>
+                </tr>
+            `;
+        }
+
+        html += `
+                    </tbody>
+                </table>
+                
+                <!-- Summary Evaluation Table - Start on New Page -->
+                <div style='page-break-before:always; margin-top:2em; margin-bottom:0.5em;'>
+                    <h3 style='font-size:11pt;font-weight:bold;margin-bottom:0.4em;margin-top:0;color:#333;border-bottom:1px solid #ffffff;padding-bottom:0.2em; text-align:center;'>Summary of Evaluation Scores</h3>
+                    <table style='width:100%;border-collapse:collapse;border:1px solid #333; font-size:10pt;'>
+                        <thead>
+                            <tr style='background:#f8f9fa; height:16px;'>
+                                <th style='border:1px solid #333;padding:2px 3px;text-align:left;font-weight:bold;width:25%;'>Criteria</th>
+                                <th style='border:1px solid #333;padding:2px 3px;text-align:center;font-weight:bold;width:12%;'>Scores</th>
+                                <th style='border:1px solid #333;padding:2px 3px;text-align:center;font-weight:bold;width:18%;'>Verbal Interpretation</th>
+                                <th style='border:1px solid #333;padding:2px 3px;text-align:center;font-weight:bold;width:45%;'>Descriptive Explanation</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+        `;
+
+        // Calculate category averages for Summary Evaluation
+        if (evaluations && evaluations.length > 0) {
+            const categories = {};
+            const categoryTotals = {};
+            const categoryCounts = {};
+            
+            evaluations.forEach(eval => {
+                const categoryName = eval.category;
+                const rating = parseFloat(eval.average_rating || 0);
+                
+                if (!categoryTotals[categoryName]) {
+                    categoryTotals[categoryName] = 0;
+                    categoryCounts[categoryName] = 0;
+                }
+                
+                categoryTotals[categoryName] += rating;
+                categoryCounts[categoryName]++;
+            });
+            
+            // Generate summary rows for each category
+            let totalSum = 0;
+            let totalCount = 0;
+            
+            Object.keys(categoryTotals).forEach((categoryName, index) => {
+                const average = categoryTotals[categoryName] / categoryCounts[categoryName];
+                const verbalInterpretation = getAdjectivalRating(average);
+                const descriptiveExplanation = getDescriptiveExplanation(verbalInterpretation);
+                const romanNumber = toRoman(index + 1);
+                
+                // Add to total calculation
+                totalSum += average;
+                totalCount++;
+                
+                html += `
+                    <tr style='height:16px;'>
+                        <td style='border:1px solid #333;padding:2px 3px;text-align:left;vertical-align:middle;'>${romanNumber}. ${categoryName}</td>
+                        <td style='border:1px solid #333;padding:2px 3px;text-align:center;font-weight:bold;vertical-align:middle;'>${average.toFixed(2)}</td>
+                        <td style='border:1px solid #333;padding:2px 3px;text-align:center;font-weight:bold;vertical-align:middle;'>${verbalInterpretation}</td>
+                        <td style='border:1px solid #333;padding:2px 3px;text-align:left;font-style:italic;vertical-align:middle;line-height:1.2;'>${descriptiveExplanation}</td>
+                    </tr>
+                `;
+            });
+            
+            // Add Total row
+            if (totalCount > 0) {
+                const overallAverage = totalSum / totalCount;
+                const overallVerbalInterpretation = getAdjectivalRating(overallAverage);
+                const overallDescriptiveExplanation = getDescriptiveExplanation(overallVerbalInterpretation);
+                
+                html += `
+                    <tr style='background:#f0f8ff; height:16px;'>
+                        <td style='border:1px solid #333;padding:2px 3px;text-align:left;vertical-align:middle;font-weight:bold;'>Total</td>
+                        <td style='border:1px solid #333;padding:2px 3px;text-align:center;font-weight:bold;vertical-align:middle;'>${overallAverage.toFixed(2)}</td>
+                        <td style='border:1px solid #333;padding:2px 3px;text-align:center;font-weight:bold;vertical-align:middle;'>${overallVerbalInterpretation}</td>
+                        <td style='border:1px solid #333;padding:2px 3px;text-align:left;font-weight:bold;vertical-align:middle;line-height:1.2;'>${overallDescriptiveExplanation}</td>
+                    </tr>
+                `;
+            }
+        } else {
+            html += `
+                <tr>
+                    <td colspan="4" style='border:1px solid #333;padding:2em;text-align:center;color:#666;'>
+                        <strong>No Evaluation Data Available</strong>
+                    </td>
+                </tr>
+            `;
+        }
+
+        html += `
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Signature Section -->
+                <div style='margin-top:4em;margin-bottom:0em;text-align:left; font-size:10pt; line-height:1.3; padding-left:0;'>
+                    <div style='margin-bottom:1em;'>
+                        Prepared by:
+                    </div>
+                    <div style='margin-bottom:0.1em;'>
+                        <strong>DHINA B. DALISAY</strong>
+                    </div>
+                    <div style='margin-bottom:2em;'>
+                        Guidance Advocate
+                    </div>
+
+                    <div style='display:flex; justify-content:space-between; align-items:flex-end;'>
+                        <div style='text-align:left;'>
+                            <div style='margin-bottom:1em;'>
+                                Reviewed and Noted by:
+                            </div>
+                            <div style='margin-bottom:0.1em;'>
+                                <strong>DR. LIZA D. GARCIA, RGC</strong>
+                            </div>
+                            <div>
+                                Guidance Counselor
+                            </div>
+                        </div>
+                       
+                    </div>
+                </div>
+            </div>
+        `;
+        return html;
+    }
+
+    async function printFilteredInstructors() {
+        const visibleRows = Array.from(document.querySelectorAll('#teachingStaffTable tbody tr')).filter(row => row.style.display !== 'none' && !row.querySelector('td[colspan]'));
+        
+        if (visibleRows.length === 0) {
+            Swal.fire('No Results', 'There are no instructors to print.', 'info');
+            return;
+        }
+
+        const result = await Swal.fire({
+            title: 'Confirm Bulk Print',
+            text: `Are you sure you want to print reports for all ${visibleRows.length} filtered instructors?`,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#28a745',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Yes, Print All',
+            cancelButtonText: 'Cancel',
+            reverseButtons: true
+        });
+
+        if (!result.isConfirmed) return;
+
+        Swal.fire({
+            title: 'Generating Reports...',
+            text: 'Please wait while we prepare all filtered reports.',
+            icon: 'info',
+            allowOutsideClick: false,
+            showConfirmButton: false,
+            didOpen: () => { Swal.showLoading(); }
+        });
+
+        const staffIds = visibleRows.map(row => row.getAttribute('data-staff-id'));
+        let combinedHtml = `
+            <style>
+                @media print {
+                    tr { page-break-inside: avoid !important; }
+                    td { page-break-after: avoid !important; }
+                    .header-section { page-break-after: avoid !important; }
+                    .instructor-info { page-break-after: avoid !important; }
+                    .questions-table { page-break-before: avoid !important; }
+                    thead { display: table-header-group !important; }
+                    .report-wrapper { page-break-after: always !important; }
+                    .report-wrapper:last-child { page-break-after: auto !important; }
+                }
+            </style>
+        `;
+
+        try {
+            for (const staffId of staffIds) {
+                const response = await fetch(`{{ url('/staff/detailed-evaluations') }}/${staffId}`);
+                const data = await response.json();
+                if (data.success) {
+                    combinedHtml += `<div class="report-wrapper">${generateReportHtmlContent(data.staff, data.evaluations)}</div>`;
+                }
+            }
+            
+            Swal.close();
+            
+            const existingArea = document.getElementById('customPrintArea');
+            if (existingArea) existingArea.remove();
+            
+            const printArea = document.createElement('div');
+            printArea.id = 'customPrintArea';
+            printArea.innerHTML = combinedHtml;
+            document.body.appendChild(printArea);
+
+            const originalTitle = document.title;
+            document.title = '';
+
+            const onAfterPrint = () => {
+                window.removeEventListener('afterprint', onAfterPrint);
+                const pa = document.getElementById('customPrintArea');
+                if (pa) pa.remove();
+                document.title = originalTitle;
+                
+                Swal.fire({
+                    title: 'Reports Printed Successfully!',
+                    text: 'All filtered evaluation reports have been sent to the printer.',
+                    icon: 'success',
+                    timer: 3000
+                });
+            };
+            
+            window.addEventListener('afterprint', onAfterPrint);
+            setTimeout(() => { window.print(); }, 500);
+            
+        } catch (error) {
+            Swal.close();
+            console.error('Error generating bulk reports:', error);
+            Swal.fire('Error', 'An error occurred while generating bulk reports.', 'error');
+        }
+    }
+
     function printStaffReport(staffId) {
         
-        const toRoman = (num) => {
-            const roman = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII", "XIII", "XIV", "XV"];
-            return roman[num] || num;
-        };
         // Show loading state
         Swal.fire({
             title: 'Generating Report...',
@@ -1236,26 +1592,7 @@ function getAdjectivalRating($rating) {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    const staff = data.staff;
-                    const evaluations = data.evaluations;
-                    
-                    // Determine Department Head
-                    let deptHead = '';
-                    const dept = (staff.department || '').toUpperCase();
-                    if (dept === 'BSIT') {
-                        deptHead = 'DR. DINO L. ILUSTRISIMO';
-                    } else if (dept === 'EDUC') {
-                        deptHead = 'DR. PRISCILLA F. CANOY';
-                    } else if (dept === 'BSBA') {
-                        deptHead = 'DR. ISRAEL N. ABBARATIGUE';
-                    } else if (dept === 'BSHM') {
-                        deptHead = 'DR. ISRAEL N. ABARRATIGUE';
-                    } else if (dept === 'GEC') {
-                        deptHead = 'DR. ISRAEL N. ABARRATIGUE';
-                    }
-                    
-                    // Build the detailed report HTML
-                    let html = `
+                    const html = `
                         <style>
                             @media print {
                                 tr { page-break-inside: avoid !important; }
@@ -1266,213 +1603,7 @@ function getAdjectivalRating($rating) {
                                 thead { display: table-header-group !important; }
                             }
                         </style>
-                        <div style="padding:8px;font-family: Arial, sans-serif; font-size:10pt; max-width: 900px; margin: 0 auto; line-height: 1.15;">
-                            <div class='header-section' style='text-align:center;margin-bottom:0.2em;padding-bottom:0;'>
-                                <div style='display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:2.15em;'>
-                                    <img src='/images/cgs.jpg' alt='Left Logo' style='width:80px;height:80px;flex-shrink:0;margin-right:5px;' onerror='this.style.display="none"'>
-                                    <div style='text-align:center; flex:0 0 auto;'>   
-                                        <strong style='font-size:11pt; font-family: "Arial Black", Gadget, sans-serif;'>MADRIDEJOS COMMUNITY COLLEGE</strong><br>                                   
-                                        <strong style='font-size:10.5pt; font-family: "Century Gothic", CenturyGothic, AppleGothic, sans-serif;'>CENTER FOR GUIDANCE SERVICES</strong><br>
-                                        <span style='font-size:10pt;'>Crossing Bunakan, Madridejos, Cebu</span><br>
-                                        <span style='font-size:8pt; color: blue; text-decoration: none; font-family: "Century Gothic", sans-serif; font-weight: 300;'>
-                                         <i class='fas fa-envelope'></i> mcc.cgsofficial@gmail.com<br>
-                                         <i class='fab fa-facebook'></i> fb.com/MCCCenterforGuidanceService 
-                                        </span><br><br>
-                                         <strong style='font-size:11pt; font-family: "Century Gothic", sans-serif;'>MCC Instructor's Performance Evaluation Results</strong><br>
-                                       <span style='font-size:10pt; font-family: "Century Gothic", sans-serif; font-weight: normal;'>S.Y {{ $currentAcademicYear?->year }} - {{ $currentAcademicYear?->semester == 1 ? 'First' : ($currentAcademicYear?->semester == 2 ? 'Second' : $currentAcademicYear?->semester) }} Semester </span>
-                                    </div>
-                                    <img src='/images/logo.png' alt='Right Logo' style='width:100px;height:100px;flex-shrink:0;margin-left:5px;' onerror='this.style.display="none"'>
-                                </div>
-                            </div>
-
-                            
-                            <!-- Instructor Information Line -->
-                            <div class='instructor-info' style='margin-bottom:0.5em; font-size:10pt; display:grid; grid-template-columns: 1fr auto 1fr; align-items:center;'>
-                                <div style='text-align:left;'><strong>Name of Instructor:</strong></div>
-                                <div style='text-align:center; font-size:14pt; color:#007bff; font-weight:bold; padding: 0 10px; font-family: "Century Gothic", AppleGothic, sans-serif; text-transform: uppercase;'>${staff.full_name}</div>
-                                <div style='text-align:right;'><strong>Department:</strong> ${staff.department}</div>
-                            </div>
-
-                            <!-- Questions and Ratings Table -->
-                            <table class='questions-table' style='width:100%;border-collapse:collapse;margin-bottom:0.4em;border:1px solid #333; font-size:10pt;'>
-                                <thead>
-                                    <tr style='background:#f8f9fa;page-break-inside:avoid;page-break-after:avoid; height:16px;'>
-                                        <th style='border:1px solid #333;padding:2px 3px;text-align:left;font-weight:bold;width:70%; overflow:hidden; white-space:nowrap;'>Questionnaires</th>
-                                        <th style='border:1px solid #333;padding:2px 3px;text-align:center;font-weight:bold;width:30%; height:16px;'>Rating</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                    `;
-
-                    if (evaluations && evaluations.length > 0) {
-                        // Group evaluations by category while preserving order
-                        const categories = {};
-                        const categoryOrder = [];
-                        evaluations.forEach(eval => {
-                            if (!categories[eval.category]) {
-                                categories[eval.category] = [];
-                                categoryOrder.push(eval.category);
-                            }
-                            categories[eval.category].push(eval);
-                        });
-
-                        // Display each category with its questions in the order they were encountered
-                        categoryOrder.forEach((categoryName, index) => {
-                            const categoryEvals = categories[categoryName];
-                            const romanNumber = toRoman(index + 1);
-                            
-                            // Add category header row
-                            html += `
-                                <tr style='height:14px;'>
-                                    <td colspan="2" style='border:1px solid #333;padding:2px 3px;background:#e3f2fd;font-weight:bold;color:#007bff; font-size:9pt;'>
-                                        ${romanNumber}. ${categoryName}
-                                    </td>
-                                </tr>
-                            `;
-                            
-                            // Add questions for this category
-                            categoryEvals.forEach(eval => {
-                                const rating = parseFloat(eval.average_rating || 0);
-                                
-                                html += `
-                                    <tr style='height:18px;'>
-                                        <td style='border:1px solid #333;padding:2px 3px;text-align:left;vertical-align:middle; word-wrap:break-word; font-size:9.5pt;'>${eval.question_text}</td>
-                                        <td style='border:1px solid #333;padding:2px 3px;text-align:center;font-weight:bold; height:18px; font-size:9.5pt;'>${rating.toFixed(2)}</td>
-                                    </tr>
-                                `;
-                            });
-                        });
-                    } else {
-                        html += `
-                            <tr>
-                                <td colspan="2" style='border:1px solid #333;padding:2em;text-align:center;color:#666;'>
-                                    <strong>No Evaluation Data Available</strong><br>
-                                    This instructor member has not been evaluated yet.
-                                </td>
-                            </tr>
-                        `;
-                    }
-
-                    html += `
-                                </tbody>
-                            </table>
-                            
-                            <!-- Summary Evaluation Table - Start on New Page -->
-                            <div style='page-break-before:always; margin-top:2em; margin-bottom:0.5em;'>
-                                <h3 style='font-size:11pt;font-weight:bold;margin-bottom:0.4em;margin-top:0;color:#333;border-bottom:1px solid #ffffff;padding-bottom:0.2em; text-align:center;'>Summary of Evaluation Scores</h3>
-                                <table style='width:100%;border-collapse:collapse;border:1px solid #333; font-size:10pt;'>
-                                    <thead>
-                                        <tr style='background:#f8f9fa; height:16px;'>
-                                            <th style='border:1px solid #333;padding:2px 3px;text-align:left;font-weight:bold;width:25%;'>Criteria</th>
-                                            <th style='border:1px solid #333;padding:2px 3px;text-align:center;font-weight:bold;width:12%;'>Scores</th>
-                                            <th style='border:1px solid #333;padding:2px 3px;text-align:center;font-weight:bold;width:18%;'>Verbal Interpretation</th>
-                                            <th style='border:1px solid #333;padding:2px 3px;text-align:center;font-weight:bold;width:45%;'>Descriptive Explanation</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                    `;
-
-                    // Calculate category averages for Summary Evaluation
-                    if (evaluations && evaluations.length > 0) {
-                        const categories = {};
-                        const categoryTotals = {};
-                        const categoryCounts = {};
-                        
-                        evaluations.forEach(eval => {
-                            const categoryName = eval.category;
-                            const rating = parseFloat(eval.average_rating || 0);
-                            
-                            if (!categoryTotals[categoryName]) {
-                                categoryTotals[categoryName] = 0;
-                                categoryCounts[categoryName] = 0;
-                            }
-                            
-                            categoryTotals[categoryName] += rating;
-                            categoryCounts[categoryName]++;
-                        });
-                        
-                        // Generate summary rows for each category
-                        let totalSum = 0;
-                        let totalCount = 0;
-                        
-                        Object.keys(categoryTotals).forEach((categoryName, index) => {
-                            const average = categoryTotals[categoryName] / categoryCounts[categoryName];
-                            const verbalInterpretation = getAdjectivalRating(average);
-                            const descriptiveExplanation = getDescriptiveExplanation(verbalInterpretation);
-                            const romanNumber = toRoman(index + 1);
-                            
-                            // Add to total calculation
-                            totalSum += average;
-                            totalCount++;
-                            
-                            html += `
-                                <tr style='height:16px;'>
-                                    <td style='border:1px solid #333;padding:2px 3px;text-align:left;vertical-align:middle;'>${romanNumber}. ${categoryName}</td>
-                                    <td style='border:1px solid #333;padding:2px 3px;text-align:center;font-weight:bold;vertical-align:middle;'>${average.toFixed(2)}</td>
-                                    <td style='border:1px solid #333;padding:2px 3px;text-align:center;font-weight:bold;vertical-align:middle;'>${verbalInterpretation}</td>
-                                    <td style='border:1px solid #333;padding:2px 3px;text-align:left;font-style:italic;vertical-align:middle;line-height:1.2;'>${descriptiveExplanation}</td>
-                                </tr>
-                            `;
-                        });
-                        
-                        // Add Total row
-                        if (totalCount > 0) {
-                            const overallAverage = totalSum / totalCount;
-                            const overallVerbalInterpretation = getAdjectivalRating(overallAverage);
-                            const overallDescriptiveExplanation = getDescriptiveExplanation(overallVerbalInterpretation);
-                            
-                            html += `
-                                <tr style='background:#f0f8ff; height:16px;'>
-                                    <td style='border:1px solid #333;padding:2px 3px;text-align:left;vertical-align:middle;font-weight:bold;'>Total</td>
-                                    <td style='border:1px solid #333;padding:2px 3px;text-align:center;font-weight:bold;vertical-align:middle;'>${overallAverage.toFixed(2)}</td>
-                                    <td style='border:1px solid #333;padding:2px 3px;text-align:center;font-weight:bold;vertical-align:middle;'>${overallVerbalInterpretation}</td>
-                                    <td style='border:1px solid #333;padding:2px 3px;text-align:left;font-weight:bold;vertical-align:middle;line-height:1.2;'>${overallDescriptiveExplanation}</td>
-                                </tr>
-                            `;
-                        }
-                    } else {
-                        html += `
-                            <tr>
-                                <td colspan="4" style='border:1px solid #333;padding:2em;text-align:center;color:#666;'>
-                                    <strong>No Evaluation Data Available</strong>
-                                </td>
-                            </tr>
-                        `;
-                    }
-
-                    html += `
-                                    </tbody>
-                                </table>
-                            </div>
-                            
-                            <!-- Signature Section -->
-                            <div style='margin-top:4em;margin-bottom:0em;text-align:left; font-size:10pt; line-height:1.3; padding-left:0;'>
-                                <div style='margin-bottom:1em;'>
-                                    Prepared by:
-                                </div>
-                                <div style='margin-bottom:0.1em;'>
-                                    <strong>DHINA B. DALISAY</strong>
-                                </div>
-                                <div style='margin-bottom:2em;'>
-                                    Guidance Advocate
-                                </div>
-
-                                <div style='display:flex; justify-content:space-between; align-items:flex-end;'>
-                                    <div style='text-align:left;'>
-                                        <div style='margin-bottom:1em;'>
-                                            Reviewed and Noted by:
-                                        </div>
-                                        <div style='margin-bottom:0.1em;'>
-                                            <strong>DR. LIZA D. GARCIA, RGC</strong>
-                                        </div>
-                                        <div>
-                                            Guidance Counselor
-                                        </div>
-                                    </div>
-                                   
-                                </div>
-                            </div>
-                        </div>
+                        ${generateReportHtmlContent(data.staff, data.evaluations)}
                     `;
 
                     // Close loading dialog
