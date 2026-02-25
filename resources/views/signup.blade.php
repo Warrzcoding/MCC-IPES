@@ -1388,27 +1388,52 @@
 
                 // Summary HTML for SweetAlert and Screenshot (Semi-Glassmorphism)
                 const summaryHtml = `
-                    <div id="registrationSummary" style="padding: 12px; text-align: left; background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 12px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #333; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
-                        <div style="text-align: center; margin-bottom: 10px; border-bottom: 1.5px solid #667eea; padding-bottom: 8px;">
-                            <h6 style="margin: 0; color: #667eea; font-weight: bold; font-size: 0.9rem; letter-spacing: 0.5px;">ACCOUNT SUMMARY</h6>
+                    <div id="registrationSummary" style="padding: 16px; text-align: left; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 12px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #333; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+                        <div style="text-align: center; margin-bottom: 12px; border-bottom: 2px solid #667eea; padding-bottom: 8px;">
+                            <h6 style="margin: 0; color: #667eea; font-weight: bold; font-size: 1rem; letter-spacing: 0.5px;">ACCOUNT SUMMARY</h6>
                         </div>
-                        <div style="font-size: 0.75rem; line-height: 1.4;">
-                            <div style="margin-bottom: 6px; display: flex; justify-content: space-between;"><strong style="color: #666;">Name:</strong> <span style="font-weight: 600; text-align: right; margin-left: 10px;">${fullName}</span></div>
-                            <div style="margin-bottom: 6px; display: flex; justify-content: space-between;"><strong style="color: #666;">User:</strong> <span style="font-weight: 600; text-align: right; margin-left: 10px;">${username}</span></div>
-                            <div style="margin-bottom: 6px; display: flex; justify-content: space-between;"><strong style="color: #666;">Email:</strong> <span style="font-weight: 600; text-align: right; margin-left: 10px;">${email}</span></div>
-                            <div style="margin-bottom: 6px; display: flex; justify-content: space-between;"><strong style="color: #666;">ID No:</strong> <span style="font-weight: 600; text-align: right; margin-left: 10px;">${schoolId}</span></div>
-                            <div style="margin-bottom: 6px; display: flex; justify-content: space-between;"><strong style="color: #666;">Course:</strong> <span style="font-weight: 600; text-align: right; margin-left: 10px;">${courseText}</span></div>
-                            <div style="margin-bottom: 6px; display: flex; justify-content: space-between;"><strong style="color: #666;">Year:</strong> <span style="font-weight: 600; text-align: right; margin-left: 10px;">${yearText}</span></div>
-                            <div style="margin-bottom: 6px; display: flex; justify-content: space-between;"><strong style="color: #666;">Section:</strong> <span style="font-weight: 600; text-align: right; margin-left: 10px;">${sectionText}</span></div>
+                        <div style="font-size: 0.85rem; line-height: 1.5;">
+                            <div style="margin-bottom: 8px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; border-bottom: 1px solid #f0f0f0; padding-bottom: 4px;">
+                                <strong style="color: #666; margin-right: 8px;">Name:</strong> 
+                                <span style="font-weight: 600; text-align: right; flex: 1; min-width: 150px; word-break: break-word;">${fullName}</span>
+                            </div>
+                            <div style="margin-bottom: 8px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; border-bottom: 1px solid #f0f0f0; padding-bottom: 4px;">
+                                <strong style="color: #666; margin-right: 8px;">Username:</strong> 
+                                <span style="font-weight: 600; text-align: right; flex: 1; min-width: 150px; word-break: break-word;">${username}</span>
+                            </div>
+                            <div style="margin-bottom: 8px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; border-bottom: 1px solid #f0f0f0; padding-bottom: 4px;">
+                                <strong style="color: #666; margin-right: 8px;">Email:</strong> 
+                                <span style="font-weight: 600; text-align: right; flex: 1; min-width: 150px; word-break: break-all;">${email}</span>
+                            </div>
+                            <div style="margin-bottom: 8px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; border-bottom: 1px solid #f0f0f0; padding-bottom: 4px;">
+                                <strong style="color: #666; margin-right: 8px;">ID No:</strong> 
+                                <span style="font-weight: 600; text-align: right; flex: 1; min-width: 150px;">${schoolId}</span>
+                            </div>
+                            <div style="margin-bottom: 8px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; border-bottom: 1px solid #f0f0f0; padding-bottom: 4px;">
+                                <strong style="color: #666; margin-right: 8px;">Status:</strong> 
+                                <span style="font-weight: 600; text-align: right; flex: 1; min-width: 150px; text-transform: capitalize;">${studentStatus}</span>
+                            </div>
+                            <div style="margin-bottom: 8px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; border-bottom: 1px solid #f0f0f0; padding-bottom: 4px;">
+                                <strong style="color: #666; margin-right: 8px;">Course:</strong> 
+                                <span style="font-weight: 600; text-align: right; flex: 1; min-width: 150px;">${courseText}</span>
+                            </div>
+                            <div style="margin-bottom: 8px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; border-bottom: 1px solid #f0f0f0; padding-bottom: 4px;">
+                                <strong style="color: #666; margin-right: 8px;">Year:</strong> 
+                                <span style="font-weight: 600; text-align: right; flex: 1; min-width: 150px;">${yearText}</span>
+                            </div>
+                            <div style="margin-bottom: 8px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; border-bottom: 1px solid #f0f0f0; padding-bottom: 4px;">
+                                <strong style="color: #666; margin-right: 8px;">Section:</strong> 
+                                <span style="font-weight: 600; text-align: right; flex: 1; min-width: 150px;">${sectionText}</span>
+                            </div>
                             
-                            <div style="margin-top: 10px; padding: 10px; background: rgba(208, 0, 111, 0.05); border-radius: 8px; border: 1px dashed rgba(208, 0, 111, 0.3); text-align: center;">
-                                <strong style="display: block; color: #d0006f; margin-bottom: 4px; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1px;">Plain Password</strong>
-                                <code style="color: #d0006f; font-size: 1rem; font-weight: bold; letter-spacing: 1px; background: none;">${password}</code>
+                            <div style="margin-top: 15px; padding: 12px; background: rgba(208, 0, 111, 0.05); border-radius: 8px; border: 1px dashed rgba(208, 0, 111, 0.3); text-align: center;">
+                                <strong style="display: block; color: #d0006f; margin-bottom: 6px; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px;">Plain Password</strong>
+                                <code style="color: #d0006f; font-size: 1.1rem; font-weight: bold; letter-spacing: 1.5px; background: none;">${password}</code>
                             </div>
                         </div>
-                        <div style="margin-top: 10px; text-align: center; font-size: 0.6rem; color: #888;">
-                            <p style="margin: 0;">${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</p>
-                            <p style="margin: 4px 0 0 0; font-weight: 600; color: #667eea; text-transform: uppercase;">Save this screenshot</p>
+                        <div style="margin-top: 12px; text-align: center; font-size: 0.65rem; color: #888;">
+                            <p style="margin: 0;">Captured: ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</p>
+                            <p style="margin: 4px 0 0 0; font-weight: 600; color: #667eea; text-transform: uppercase; letter-spacing: 0.5px;">Please save this information</p>
                         </div>
                     </div>
                 `;
@@ -1416,15 +1441,15 @@
                 // Show Summary Modal
                 Swal.fire({
                     position: 'center',
-                    title: '<span style="font-size: 1.1rem; font-weight: bold;">Confirm Registration</span>',
+                    title: '<span style="font-size: 1.2rem; font-weight: bold; color: #333;">Confirm Your Registration</span>',
                     html: summaryHtml,
                     showCancelButton: true,
                     confirmButtonText: '<i class="fas fa-camera"></i> Save & Submit',
-                    cancelButtonText: 'Edit',
+                    cancelButtonText: 'Edit Details',
                     confirmButtonColor: '#667eea',
                     cancelButtonColor: '#6c757d',
-                    width: '320px',
-                    padding: '1rem',
+                    width: '380px',
+                    padding: '1.25rem',
                     allowOutsideClick: false,
                     customClass: {
                         popup: 'registration-summary-popup',
