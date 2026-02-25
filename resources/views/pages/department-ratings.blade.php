@@ -1187,7 +1187,7 @@ function getAdjectivalRating($rating) {
             recipientName = 'DR. DINO L. ILUSTRISIMO';
             programHead = 'Program Head - BSIT';
         } else if (department === 'EDUC') {
-            recipientName = 'DR. PRISCILLA CANOY';
+            recipientName = 'DR. PRISCILLA F. CANOY';
             programHead = 'Dean - College of Education';
         } else if (department === 'BSBA') {
             recipientName = 'DR. ISRAEL N. ABARRATIGUE';
