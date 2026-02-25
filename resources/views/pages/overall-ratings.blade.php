@@ -761,7 +761,7 @@ function printOverallReport(staffData, type) {
                 
                <p style="margin-bottom: 1em;">Greetings of Peace!</p>
      
-                <p style="margin-bottom: 0.7em;">I am writing to formally endorse the Results Summary of Performance Evaluation Results of all MCC ${title} for Academic Year {{ $currentAcademicYear?->year }} - {{ $currentAcademicYear?->semester == 1 ? 'First' : ($currentAcademicYear?->semester == 2 ? 'Second' : $currentAcademicYear?->semester) }} Semester.</p>
+                <p style="margin-bottom: 0.7em;">I am writing to formally endorse the Results of the Performance Evaluation of all MCC ${title} for Academic Year {{ $currentAcademicYear?->year }} - {{ $currentAcademicYear?->semester == 1 ? 'First' : ($currentAcademicYear?->semester == 2 ? 'Second' : $currentAcademicYear?->semester) }} Semester.</p>
                 
                 <p style="margin-bottom: 0.7em;">Please be advised that the following ${title.toLowerCase()} were evaluated by all MCC Students.</p>
             </div>
