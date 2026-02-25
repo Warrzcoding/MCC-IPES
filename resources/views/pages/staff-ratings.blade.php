@@ -1527,13 +1527,19 @@ function getAdjectivalRating($rating) {
         `;
 
         try {
-            for (const staffId of staffIds) {
-                const response = await fetch(`{{ url('/staff/detailed-evaluations') }}/${staffId}`);
-                const data = await response.json();
+            // Fetch all staff data in parallel
+            const fetchPromises = staffIds.map(staffId => 
+                fetch(`{{ url('/staff/detailed-evaluations') }}/${staffId}`)
+                    .then(response => response.json())
+            );
+
+            const results = await Promise.all(fetchPromises);
+            
+            results.forEach(data => {
                 if (data.success) {
                     combinedHtml += `<div class="report-wrapper">${generateReportHtmlContent(data.staff, data.evaluations)}</div>`;
                 }
-            }
+            });
             
             Swal.close();
             
