@@ -561,7 +561,7 @@
                                 confirmButtonColor: '#667eea',
                                 confirmButtonText: 'OK'
                             }).then(() => {
-                                window.location.href = response.url || window.location.href;
+                                window.location.reload();
                             });
                         } else {
                             Swal.fire({
@@ -946,6 +946,7 @@
 </div>
 @endif
 
+@push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const featureConfigElement = document.getElementById('sidebarFeatureConfig');
@@ -992,6 +993,7 @@ document.addEventListener('DOMContentLoaded', function() {
             headers: {
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
                 'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
                 'Content-Type': 'application/json'
             }
         })
@@ -1015,6 +1017,7 @@ document.addEventListener('DOMContentLoaded', function() {
             headers: {
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
                 'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
@@ -1096,11 +1099,17 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Initialize settings on page load
-    loadStoredKeys().then(keys => {
-        currentKeys = keys;
-        updateCheckboxes(currentKeys);
-        applyVisibility(currentKeys);
-    });
+    if (isAdminRole && isMainAdmin) {
+        loadStoredKeys().then(keys => {
+            currentKeys = keys;
+            updateCheckboxes(currentKeys);
+            applyVisibility(currentKeys);
+        });
+    } else if (isAdminRole) {
+        // For non-main admins, we don't load from server but we might still apply visibility 
+        // if they are in the session (though better to just rely on PHP filter)
+    }
+
     if (featureDropdown) {
         featureDropdown.addEventListener('show.bs.dropdown', function() {
             updateCheckboxes(currentKeys);
@@ -1287,64 +1296,65 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-});
 
-function loadAdminData(id, fullName, username, email, course) {
-    document.getElementById('editAdminId').value = id;
-    document.getElementById('editAdminFullName').value = fullName;
-    document.getElementById('editAdminUsername').value = username;
-    document.getElementById('editAdminEmail').value = email;
-    document.getElementById('editAdminCourse').value = course;
+    // Export global functions for onclick handlers
+    window.loadAdminData = function(id, fullName, username, email, course) {
+        document.getElementById('editAdminId').value = id;
+        document.getElementById('editAdminFullName').value = fullName;
+        document.getElementById('editAdminUsername').value = username;
+        document.getElementById('editAdminEmail').value = email;
+        document.getElementById('editAdminCourse').value = course;
 
-    // Set the profile image preview for edit modal
-    let editAdminImagePreview = document.getElementById('editAdminImagePreview');
-    let editAdminPreviewImg = document.getElementById('editAdminPreviewImg');
-    if (editAdminImagePreview && editAdminPreviewImg) {
-        // Try to get the image from the admins table row (if available)
-        // Fallback to avatar if not found
-        let row = document.querySelector(`#adminsTable tr td button[onclick*='${id}']`);
-        let imgSrc = '';
-        if (row) {
-            let img = row.closest('tr').querySelector('img');
-            if (img) {
-                imgSrc = img.src;
+        // Set the profile image preview for edit modal
+        let editAdminImagePreview = document.getElementById('editAdminImagePreview');
+        let editAdminPreviewImg = document.getElementById('editAdminPreviewImg');
+        if (editAdminImagePreview && editAdminPreviewImg) {
+            // Try to get the image from the admins table row (if available)
+            let row = document.querySelector(`#adminsTable tr td button[onclick*='${id}']`);
+            let imgSrc = '';
+            if (row) {
+                let img = row.closest('tr').querySelector('img');
+                if (img) {
+                    imgSrc = img.src;
+                }
             }
+            if (!imgSrc) {
+                // fallback avatar
+                imgSrc = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(fullName) + '&background=667eea&color=fff&size=200';
+            }
+            editAdminPreviewImg.src = imgSrc;
+            editAdminImagePreview.style.display = 'block';
         }
-        if (!imgSrc) {
-            // fallback avatar
-            imgSrc = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(fullName) + '&background=667eea&color=fff&size=200';
+        // Reset file input
+        let editAdminImageInput = document.getElementById('editAdminImageInput');
+        if (editAdminImageInput) {
+            editAdminImageInput.value = '';
         }
-        editAdminPreviewImg.src = imgSrc;
-        editAdminImagePreview.style.display = 'block';
-    }
-    // Reset file input
-    let editAdminImageInput = document.getElementById('editAdminImageInput');
-    if (editAdminImageInput) {
-        editAdminImageInput.value = '';
-    }
-}
+    };
 
-function deleteAdmin(id, name) {
-    document.getElementById('deleteAdminId').value = id;
-    document.getElementById('adminName').textContent = name;
-}
+    window.deleteAdmin = function(id, name) {
+        document.getElementById('deleteAdminId').value = id;
+        document.getElementById('adminName').textContent = name;
+    };
 
-document.querySelectorAll('.school-id-input').forEach(function(input) {
-    input.addEventListener('input', function(e) {
-        // Only allow numbers and a single dash at the 5th position
-        let value = this.value.replace(/[^0-9-]/g, '');
+    document.querySelectorAll('.school-id-input').forEach(function(input) {
+        input.addEventListener('input', function(e) {
+            // Only allow numbers and a single dash at the 5th position
+            let value = this.value.replace(/[^0-9-]/g, '');
 
-        // Enforce format: 0000-0000
-        if (value.length > 9) value = value.slice(0, 9);
+            // Enforce format: 0000-0000
+            if (value.length > 9) value = value.slice(0, 9);
 
-        // Only allow dash at position 5
-        if (value.length > 4) {
-            value = value.slice(0, 4) + '-' + value.slice(5).replace(/-/g, '');
-        } else {
-            value = value.replace(/-/g, '');
-        }
+            // Only allow dash at position 5
+            if (value.length > 4) {
+                value = value.slice(0, 4) + '-' + value.slice(5).replace(/-/g, '');
+            } else {
+                value = value.replace(/-/g, '');
+            }
 
-        this.value = value;
+            this.value = value;
+        });
     });
 });
-</script> 
+</script>
+@endpush 
