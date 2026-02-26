@@ -271,7 +271,7 @@
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Full Name <span class="text-danger">*</span></label>
                             <input type="text" class="form-control @error('full_name') is-invalid @enderror" 
-                                   name="full_name" value="{{ old('full_name', Auth::user()->full_name) }}" required>
+                                   name="full_name" value="{{ old('full_name', Auth::user()->full_name) }}"  readonly="true" required>
                             @error('full_name')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
