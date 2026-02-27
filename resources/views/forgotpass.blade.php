@@ -36,8 +36,8 @@
             margin-bottom: 22px;
         }
         .logo-container .icon-box {
-            width: 65px;
-            height: 65px;
+            width: 80px;
+            height: 80px;
             background: radial-gradient(circle at 30% 20%, #ffffff 0%, #f3f5ff 45%, #e3e7ff 100%);
             border-radius: 50%;
             display: flex;
@@ -47,8 +47,8 @@
             box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
         }
         .logo-container img {
-            width: 45px;
-            height: 45px;
+            width: 80px;
+            height: 80px;
             object-fit: contain;
         }
         .forgot-card h3 {

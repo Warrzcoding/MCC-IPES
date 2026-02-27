@@ -1624,18 +1624,12 @@
                        <!--<a href="{{ route('forgotpass') }}" class="forgot-link">
                             Forgot Password?
                         </a>-->
-                        <a href="#" class="forgot-link">
+                     <a href="{{ route('password.request') }}" class="forgot-link">
                             Forgot Password?
                         </a>
                     </div>
                 </form>
 
-                <!-- Student Signup Link -->
-                <div class="signup-link">
-                  <!-- <p>Sorry!!Forgot Password is unavailable!<a href="{{ route('pre_signup', ['type' => 'student', 'school_id' => $student_data['school_id']]) }}">
-                        <i class="fas fa-user-plus"></i> Sign up here
-                    </a></p>-->
-                </div>
             @endif      
     </div>
 
