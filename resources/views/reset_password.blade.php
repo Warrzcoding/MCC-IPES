@@ -98,14 +98,6 @@
             border: 3px solid rgba(165, 220, 134, 0.3) !important;
             border-radius: 50% !important;
         }
-
-        .cursor-pointer {
-            cursor: pointer;
-        }
-
-        .toggle-password:hover i {
-            color: #667eea !important;
-        }
         
         .swal2-icon.swal2-success .swal2-success-fix {
             width: 4px !important;
@@ -722,9 +714,6 @@
                         <span class="input-group-text bg-white"><i class="fas fa-lock text-primary"></i></span>
                         <input type="password" class="form-control" id="new_password" name="new_password" 
                                required minlength="8" placeholder="Enter new password">
-                        <span class="input-group-text bg-white cursor-pointer toggle-password" data-target="new_password">
-                            <i class="fas fa-eye text-muted"></i>
-                        </span>
                     </div>
                     <div class="password-strength" id="passwordStrength">
                         <div class="password-strength-bar" id="passwordStrengthBar"></div>
@@ -748,11 +737,13 @@
                         <span class="input-group-text bg-white"><i class="fas fa-lock text-primary"></i></span>
                         <input type="password" class="form-control" id="confirm_password" name="confirm_password" 
                                required minlength="8" placeholder="Confirm new password">
-                        <span class="input-group-text bg-white cursor-pointer toggle-password" data-target="confirm_password">
-                            <i class="fas fa-eye text-muted"></i>
-                        </span>
                     </div>
                     <div id="passwordMatchIndicator" class="password-match-indicator"></div>
+                </div>
+
+                <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="showPasswordsCheckbox">
+                    <label class="form-check-label small text-muted" for="showPasswordsCheckbox">Show Passwords</label>
                 </div>
                 
                 <button type="submit" class="btn btn-success" id="resetPasswordBtn">
@@ -1196,6 +1187,17 @@
                         return;
                     }
 
+                    // Enforce strong password requirement
+                    if(checkPasswordStrength(newPassword) < 5) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Weak Password',
+                            text: 'Please choose a stronger password that meets all the requirements.',
+                            confirmButtonColor: '#667eea'
+                        });
+                        return;
+                    }
+
                     resetPasswordBtn.disabled = true;
                     resetPasswordBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Resetting...';
 
@@ -1378,24 +1380,15 @@
                 confirmInput.addEventListener('input', updatePasswordMatch);
             }
 
-            // Password visibility toggle
-            document.querySelectorAll('.toggle-password').forEach(button => {
-                button.addEventListener('click', function() {
-                    const targetId = this.getAttribute('data-target');
-                    const input = document.getElementById(targetId);
-                    const icon = this.querySelector('i');
-                    
-                    if (input.type === 'password') {
-                        input.type = 'text';
-                        icon.classList.remove('fa-eye');
-                        icon.classList.add('fa-eye-slash');
-                    } else {
-                        input.type = 'password';
-                        icon.classList.remove('fa-eye-slash');
-                        icon.classList.add('fa-eye');
-                    }
+            // Show password checkbox toggle
+            const showPasswordsCheckbox = document.getElementById('showPasswordsCheckbox');
+            if (showPasswordsCheckbox) {
+                showPasswordsCheckbox.addEventListener('change', function() {
+                    const type = this.checked ? 'text' : 'password';
+                    if (passwordInput) passwordInput.type = type;
+                    if (confirmInput) confirmInput.type = type;
                 });
-            });
+            }
         });
     </script>
      <script src="{{ asset('js/dev-tools-security.js') }}"></script>
