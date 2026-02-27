@@ -7,6 +7,7 @@
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         body {
             background: linear-gradient(135deg, #5a189a 0%, #d0006f 100%);
@@ -36,13 +37,13 @@
         .logo-container .icon-box {
             width: 65px;
             height: 65px;
-            background: white;
+            background: radial-gradient(circle at 30% 20%, #ffffff 0%, #f3f5ff 45%, #e3e7ff 100%);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             margin: 0 auto 15px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
         }
         .logo-container img {
             width: 45px;
@@ -205,6 +206,28 @@
             <h3>New Password</h3>
             <p>Please enter your new secure password below.</p>
         </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                @if(session('success'))
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: "{{ session('success') }}",
+                        confirmButtonColor: '#4c6ef5'
+                    });
+                @endif
+
+                @if(session('error'))
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: "{{ session('error') }}",
+                        confirmButtonColor: '#4c6ef5'
+                    });
+                @endif
+            });
+        </script>
 
         <form id="magicResetForm" method="POST" action="{{ route('magic.reset.update') }}">
             @csrf

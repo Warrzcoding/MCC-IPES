@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use App\Models\User;
 use App\Models\RequestSignin;
@@ -30,6 +31,29 @@ class PasswordResetController extends Controller
 
             $email = $request->ms365_email;
             \Log::info("Email passed validation: " . $email);
+
+            // Rate Limiting Logic: 2 requests per day, 30 seconds cooldown
+            $dailyKey = 'password-reset-daily:' . $email;
+            $cooldownKey = 'password-reset-cooldown:' . $email;
+
+            // Check Cooldown (30 seconds)
+            if (RateLimiter::tooManyAttempts($cooldownKey, 1)) {
+                $seconds = RateLimiter::availableIn($cooldownKey);
+                return response()->json([
+                    'status' => 'error',
+                    'title' => 'Too Many Requests',
+                    'message' => "Please wait {$seconds} seconds before requesting another code."
+                ]);
+            }
+
+            // Check Daily Limit (2 requests)
+            if (RateLimiter::tooManyAttempts($dailyKey, 2)) {
+                return response()->json([
+                    'status' => 'error',
+                    'title' => 'Daily Limit Reached',
+                    'message' => 'You have reached the daily limit for password reset requests. Please try again tomorrow.'
+                ]);
+            }
 
             // Check if user exists in User table (approved users) or RequestSignin table (pending approval)
             $user = User::where('email', $email)->first();
@@ -74,6 +98,10 @@ class PasswordResetController extends Controller
                 ->send(new \App\Mail\OtpVerificationMail($otp, $email, 5));
 
             \Log::info("Password reset OTP sent to {$email}: {$otp}");
+
+            // Increment rate limits on successful send
+            RateLimiter::hit($dailyKey, 86400); // 24 hours
+            RateLimiter::hit($cooldownKey, 30); // 30 seconds
 
             return response()->json([
                 'status' => 'success',

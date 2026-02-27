@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 
@@ -23,6 +24,22 @@ class MagicLinkController extends Controller
         ]);
 
         $email = $request->email;
+
+        // Rate Limiting Logic: 2 requests per day, 30 seconds cooldown
+        $dailyKey = 'magic-link-daily:' . $email;
+        $cooldownKey = 'magic-link-cooldown:' . $email;
+
+        // Check Cooldown (30 seconds)
+        if (RateLimiter::tooManyAttempts($cooldownKey, 1)) {
+            $seconds = RateLimiter::availableIn($cooldownKey);
+            return back()->with('error', "Please wait {$seconds} seconds before requesting another link.");
+        }
+
+        // Check Daily Limit (2 requests)
+        if (RateLimiter::tooManyAttempts($dailyKey, 2)) {
+            return back()->with('error', 'You have reached the daily limit for reset link requests. Please try again tomorrow.');
+        }
+
         $token = Str::random(64);
 
         // Store hashed token in DB
@@ -40,6 +57,10 @@ class MagicLinkController extends Controller
 
         // Send email using Student Magic Link mailer
         Mail::mailer('gmail_student')->to($email)->send(new MagicLinkMail($url));
+
+        // Increment rate limits on successful send
+        RateLimiter::hit($dailyKey, 86400); // 24 hours
+        RateLimiter::hit($cooldownKey, 30); // 30 seconds
 
         return back()->with('success', 'Reset link sent! Please check your email in outlook.');
     }

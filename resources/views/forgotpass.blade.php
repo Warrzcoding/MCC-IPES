@@ -7,6 +7,7 @@
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         body {
             background: linear-gradient(135deg, #5a189a 0%, #d0006f 100%);
@@ -37,13 +38,13 @@
         .logo-container .icon-box {
             width: 65px;
             height: 65px;
-            background: white;
+            background: radial-gradient(circle at 30% 20%, #ffffff 0%, #f3f5ff 45%, #e3e7ff 100%);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             margin: 0 auto 15px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
         }
         .logo-container img {
             width: 45px;
@@ -164,17 +165,69 @@
             <p>Enter your ms email to receive a secure reset link.</p>
         </div>
 
-        @if(session('success'))
-            <div class="alert alert-success border-0 shadow-sm mb-4" style="border-radius: 14px; font-size: 0.8rem; font-weight: 600; background: rgba(40, 167, 69, 0.1); color: #28a745;">
-                <i class="fas fa-check-circle me-2"></i>{{ session('success') }}
-            </div>
-        @endif
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                @if(session('success'))
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: "{{ session('success') }}",
+                        confirmButtonColor: '#4c6ef5'
+                    });
+                @endif
 
-        @if(session('error'))
-            <div class="alert alert-danger border-0 shadow-sm mb-4" style="border-radius: 14px; font-size: 0.8rem; font-weight: 600; background: rgba(220, 53, 69, 0.1); color: #dc3545;">
-                <i class="fas fa-exclamation-circle me-2"></i>{{ session('error') }}
-            </div>
-        @endif
+                @if(session('error'))
+                    let title = 'Error';
+                    let text = "{{ session('error') }}";
+                    
+                    if (text.includes('daily limit')) {
+                        title = 'Daily Limit Reached';
+                    } else if (text.includes('wait')) {
+                        title = 'Too Many Requests';
+                    }
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: title,
+                        text: text,
+                        confirmButtonColor: '#4c6ef5'
+                    });
+                @endif
+
+                const emailInput = document.getElementById('email');
+                if (emailInput) {
+                    emailInput.addEventListener('input', function(e) {
+                        let value = this.value;
+                        
+                        // Accept only letters, numbers, dot, at, and ñ/Ñ
+                        // Using a regex to strip invalid characters
+                        const cleanValue = value.replace(/[^a-zA-Z0-9.@ñÑ]/g, '');
+                        
+                        if (value !== cleanValue) {
+                            this.value = cleanValue;
+                            value = cleanValue;
+                        }
+
+                        // Auto-complete @mcclawis.edu.ph
+                        if (value.includes('@')) {
+                            const parts = value.split('@');
+                            if (parts.length > 1) {
+                                // If user just typed '@' or started typing after '@'
+                                // but we want to force the domain
+                                this.value = parts[0] + '@mcclawis.edu.ph';
+                            }
+                        }
+                    });
+
+                    // Prevent spaces
+                    emailInput.addEventListener('keydown', function(e) {
+                        if (e.key === ' ') {
+                            e.preventDefault();
+                        }
+                    });
+                }
+            });
+        </script>
 
         <form method="POST" action="{{ route('magic.link.send') }}">
             @csrf

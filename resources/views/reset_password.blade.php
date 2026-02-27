@@ -319,9 +319,9 @@
         }
         
         .reset-header .logo {
-            width: 48px;
-            height: 48px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle at 30% 20%, #ffffff 0%, #f3f5ff 45%, #e3e7ff 100%);
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -329,6 +329,7 @@
             margin: 0 auto 16px;
             font-size: 1.6rem;
             color: white;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
         }
         
         .reset-header h2 {
@@ -525,8 +526,8 @@
             }
             
             .reset-header .logo {
-                width: 40px;
-                height: 40px;
+                width: 80px;
+                height: 80px;
                 font-size: 1rem;
                 margin-bottom: 5px;
                 box-shadow: 0 2px 8px rgba(102,126,234,0.13);
@@ -598,6 +599,27 @@
     </style>
 </head>
 <body>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            @if(session('success'))
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: "{{ session('success') }}",
+                    confirmButtonColor: '#667eea'
+                });
+            @endif
+
+            @if(session('error'))
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: "{{ session('error') }}",
+                    confirmButtonColor: '#667eea'
+                });
+            @endif
+        });
+    </script>
     <!-- 3D Cube background container -->
     <div class="floating-cubes" aria-hidden="true">
         <div class="cube"></div>
@@ -616,7 +638,7 @@
     <div class="reset-card position-relative">
         <div class="reset-header" style="margin-top: 18px;">
             <div class="logo">
-                <i class="fas fa-key"></i>
+                <img src="{{ asset('images/logo.png') }}" alt="MCC Logo" style="width: 100%; height: 100%; object-fit: contain;">
             </div>
             <h2>Reset Password</h2>
             <p>Verify your Account</p>
@@ -627,11 +649,11 @@
             <form id="resetEmailForm" method="POST" action="{{ route('password.reset.send_verification') }}">
                 @csrf
                 <div class="mb-3 text-center">
-                    <label for="ms365_email" class="form-label w-100 text-center">Email Address</label>
+                    <label for="ms365_email" class="form-label w-100 text-center">MS Email Address</label>
                     <div class="input-group">
                         <span class="input-group-text bg-white"><i class="fas fa-envelope text-primary"></i></span>
                         <input type="email" class="form-control" id="ms365_email" name="ms365_email"
-                               placeholder="your.name@mcclawis.edu.ph" required autofocus
+                               placeholder="your.msemail@mcclawis.edu.ph" required autofocus
                                inputmode="email"
                                autocomplete="email">
                     </div>
@@ -850,7 +872,8 @@
 
             function enforceEmailPattern(event) {
                 const input = event.target;
-                let value = input.value.replace(/\s+/g, '');
+                // Allow only letters, numbers, dot, at, and ñ/Ñ
+                let value = input.value.replace(/[^a-zA-Z0-9.@ñÑ]/g, '');
                 input.value = value;
 
                 if (value && !allowedEmailPattern.test(value)) {
@@ -881,6 +904,13 @@
                     if (atIndex !== -1) {
                         const beforeAt = value.substring(0, atIndex);
                         this.value = beforeAt + '@mcclawis.edu.ph';
+                    }
+                });
+
+                // Prevent spaces
+                emailInput.addEventListener('keydown', function(e) {
+                    if (e.key === ' ') {
+                        e.preventDefault();
                     }
                 });
             }
@@ -973,7 +1003,7 @@
                         } else {
                             Swal.fire({
                                 icon: 'error',
-                                title: 'Email Not Found',
+                                title: data.title || 'Action Failed',
                                 text: data.message || 'Failed to send verification code.',
                                 confirmButtonColor: '#667eea'
                             });
@@ -1036,7 +1066,7 @@
                         } else {
                             Swal.fire({
                                 icon: 'error',
-                                title: 'Error',
+                                title: data.title || 'Resend Failed',
                                 text: data.message || 'Failed to resend verification code.',
                                 confirmButtonColor: '#667eea'
                             });
