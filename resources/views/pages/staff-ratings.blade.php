@@ -589,10 +589,10 @@ function getAdjectivalRating($rating) {
                                     <option value="BSBA">BSBA</option>
                                     <option value="GEC">GEC</option>
                                 </select>
-                                <button type="button" id="printFilteredBtn" class="btn btn-success shadow-sm d-none align-items-center gap-2 refresh-btn-enhanced" 
+                               <!-- <button type="button" id="printFilteredBtn" class="btn btn-success shadow-sm d-none align-items-center gap-2 refresh-btn-enhanced" 
                                         onclick="printFilteredInstructors()" style="background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);">
                                     <i class="fas fa-print"></i> <span>Print Filtered</span>
-                                </button>
+                                </button>-->
                                 <button type="button" class="btn btn-primary shadow-sm d-flex align-items-center gap-2 refresh-btn-enhanced"
                                         onclick="location.reload();">
                                     <i class="fas fa-sync-alt"></i> <span>Refresh</span>

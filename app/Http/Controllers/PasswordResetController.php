@@ -70,7 +70,7 @@ class PasswordResetController extends Controller
 
         // Send email with OTP (HTML template)
         try {
-            \Illuminate\Support\Facades\Mail::to($email)
+            \Illuminate\Support\Facades\Mail::mailer('gmail_student')->to($email)
                 ->send(new \App\Mail\OtpVerificationMail($otp, $email, 5));
 
             \Log::info("Password reset OTP sent to {$email}: {$otp}");
