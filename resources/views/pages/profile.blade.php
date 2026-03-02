@@ -337,11 +337,21 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-12 mb-3">
+                        <div class="col-md-6 mb-3">
                             <label class="form-label">Section <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" 
                                    value="{{ old('section', Auth::user()->section) }}" 
                                    disabled>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Student Status <span class="text-danger">*</span></label>
+                            <select class="form-select @error('student_status') is-invalid @enderror" name="student_status" required>
+                                <option value="Regular" {{ old('student_status', Auth::user()->student_status) === 'Regular' ? 'selected' : '' }}>Regular</option>
+                                <option value="Irregular" {{ old('student_status', Auth::user()->student_status) === 'Irregular' ? 'selected' : '' }}>Irregular</option>
+                            </select>
+                            @error('student_status')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
                     </div>
                     <!-- Hidden inputs to preserve values for disabled fields -->
@@ -442,6 +452,26 @@
 @push('scripts')
 <script>
     (function() {
+        const profileImageInput = document.getElementById('profileImageInput');
+        const imagePreview = document.getElementById('imagePreview');
+        const previewImg = document.getElementById('previewImg');
+
+        if (profileImageInput) {
+            profileImageInput.addEventListener('change', function() {
+                const file = this.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        previewImg.src = e.target.result;
+                        imagePreview.style.display = 'block';
+                    }
+                    reader.readAsDataURL(file);
+                } else {
+                    imagePreview.style.display = 'none';
+                }
+            });
+        }
+
         const newPw = document.getElementById('new_password');
         const confirmPw = document.getElementById('new_password_confirmation');
         const matchText = document.getElementById('passwordMatchText');
@@ -519,59 +549,48 @@
             profileForm.addEventListener('submit', async function(e) {
                 e.preventDefault();
                 
+                const submitBtn = this.querySelector('button[type="submit"]');
+                const originalBtnContent = submitBtn.innerHTML;
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Updating...';
+
                 try {
                     const formData = new FormData(this);
                     const response = await fetch(this.action, {
                         method: 'POST',
                         body: formData,
                         headers: {
-                            'X-Requested-With': 'XMLHttpRequest'
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
                         }
                     });
 
-                    const contentType = response.headers.get('content-type');
+                    const data = await response.json();
                     
-                    if (contentType && contentType.includes('application/json')) {
-                        const data = await response.json();
-                        if (data.error) {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Unauthorized',
-                                text: data.error || 'You are not authorized to update this profile.',
-                                confirmButtonColor: '#667eea',
-                                confirmButtonText: 'OK'
-                            });
-                        } else if (data.message) {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Success',
-                                text: data.message,
-                                confirmButtonColor: '#667eea',
-                                confirmButtonText: 'OK'
-                            }).then(() => {
-                                window.location.reload();
-                            });
-                        }
+                    if (response.ok) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: data.message || 'Profile updated successfully!',
+                            confirmButtonColor: '#667eea',
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            window.location.reload();
+                        });
                     } else {
-                        if (response.ok || response.status === 302 || response.status === 301) {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Success',
-                                text: 'Profile updated successfully!',
-                                confirmButtonColor: '#667eea',
-                                confirmButtonText: 'OK'
-                            }).then(() => {
-                                window.location.reload();
-                            });
-                        } else {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error',
-                                text: 'An error occurred while updating your profile.',
-                                confirmButtonColor: '#667eea',
-                                confirmButtonText: 'OK'
-                            });
+                        let errorMessage = data.message || 'An error occurred while updating your profile.';
+                        
+                        if (data.errors) {
+                            errorMessage = Object.values(data.errors).flat().join('\n');
                         }
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: errorMessage,
+                            confirmButtonColor: '#667eea',
+                            confirmButtonText: 'OK'
+                        });
                     }
                 } catch (error) {
                     console.error('Error:', error);
@@ -582,6 +601,9 @@
                         confirmButtonColor: '#667eea',
                         confirmButtonText: 'OK'
                     });
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalBtnContent;
                 }
             });
         }

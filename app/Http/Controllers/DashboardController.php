@@ -947,12 +947,20 @@ class DashboardController extends Controller
             'course' => $user->role === 'student' || $user->role === 'admin' ? 'required|string|max:255' : 'nullable|string|max:255',
             'year_level' => $user->role === 'student' ? 'required|string|in:1st Year,2nd Year,3rd Year,4th Year' : 'nullable|string',
             'section' => $user->role === 'student' ? 'required|string|max:255' : 'nullable|string|max:255',
+            'student_status' => $user->role === 'student' ? 'required|string|in:Regular,Irregular' : 'nullable|string',
             'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'current_password' => 'nullable|string|required_with:new_password',
             'new_password' => ['nullable', 'string', 'confirmed', Password::min(8)->mixedCase()->numbers()->symbols()],
         ]);
         
         if ($validator->fails()) {
+            if ($request->ajax()) {
+                return response()->json([
+                    'error' => true,
+                    'message' => 'Validation failed. Please check your input.',
+                    'errors' => $validator->errors()
+                ], 422);
+            }
             // Return redirect with session data for SweetAlert modal
             return redirect()->back()
                 ->withErrors($validator)
@@ -967,12 +975,13 @@ class DashboardController extends Controller
             $user->username = $request->username;
             $user->email = $request->email;
             
-            if ($user->role === 'student') {
+            if ($user->isStudent()) {
                 $user->school_id = $request->school_id;
                 $user->course = $request->course;
                 $user->year_level = $request->year_level;
                 $user->section = $request->section;
-            } elseif ($user->role === 'admin') {
+                $user->student_status = $request->student_status;
+            } elseif ($user->isAdmin()) {
                 $user->course = $request->course;
             }
             
@@ -982,7 +991,7 @@ class DashboardController extends Controller
                 $imageName = time() . '_' . $image->getClientOriginalName();
                 
                 // Determine upload directory based on user role
-                $uploadDir = $user->role === 'student' ? 'uploads/students' : 'uploads/staff';
+                $uploadDir = $user->isStudent() ? 'uploads/students' : 'uploads/staff';
                 $uploadPath = public_path($uploadDir);
                 
                 // Create directory if it doesn't exist
@@ -1004,6 +1013,12 @@ class DashboardController extends Controller
             // Handle password change
             if ($request->filled('current_password') && $request->filled('new_password')) {
                 if (!Hash::check($request->current_password, $user->password)) {
+                    if ($request->ajax()) {
+                        return response()->json([
+                            'error' => true,
+                            'message' => 'Current password is incorrect.'
+                        ], 400);
+                    }
                     return redirect()->back()
                         ->withInput()
                         ->with('message', 'Current password is incorrect.')
@@ -1015,6 +1030,13 @@ class DashboardController extends Controller
             
             $user->save();
 
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Profile updated successfully!'
+                ]);
+            }
+
             // Return redirect with session data for SweetAlert modal
             return redirect()->back()
                 ->with('message', 'Profile updated successfully!')
@@ -1025,6 +1047,13 @@ class DashboardController extends Controller
                 'user_id' => Auth::id(),
                 'error' => $e->getMessage()
             ]);
+
+            if ($request->ajax()) {
+                return response()->json([
+                    'error' => true,
+                    'message' => 'Error updating profile. Please try again.'
+                ], 500);
+            }
 
             // Return redirect with session data for SweetAlert modal
             return redirect()->back()
