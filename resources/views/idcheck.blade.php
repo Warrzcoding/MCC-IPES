@@ -112,19 +112,14 @@
         .login-header { text-align: center; margin-bottom: 20px; }
         .login-header .logo {
             width: 84px; height: 84px;
-            background: linear-gradient(135deg, #f3f4ff 0%, #fff 100%);
+            background: #fff;
             border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
             margin: 0 auto 14px;
-            box-shadow: 0 8px 28px rgba(90,24,154,0.18), 0 0 0 4px rgba(99,102,241,0.12);
+            box-shadow: 0 8px 32px rgba(90,24,154,0.28), 0 4px 12px rgba(0,0,0,0.12);
             position: relative; overflow: hidden;
         }
-        .login-header .logo::after {
-            content: '';
-            position: absolute; inset: 5px;
-            border-radius: 50%;
-            border: 1.5px dashed rgba(99,102,241,0.35);
-        }
+        .login-header .logo::after { display: none; }
         .login-header h2 {
             color: var(--text-dark);
             font-weight: 800; font-size: 1.3rem;
@@ -451,8 +446,8 @@
             background: #f8f9ff;
             border: 1.5px solid #e0e7ff;
             border-radius: 14px;
-            padding: 10px 10px 9px;
-            text-align: left;
+            padding: 12px 10px 11px;
+            text-align: center;
             transition: all 0.22s;
         }
         .info-card:hover {
@@ -462,21 +457,24 @@
             box-shadow: 0 6px 18px rgba(99,102,241,0.1);
         }
         .info-card-icon {
-            width: 26px; height: 26px;
+            width: 28px; height: 28px;
             background: linear-gradient(135deg, #e0e7ff, #c7d2fe);
             border-radius: 8px;
             display: flex; align-items: center; justify-content: center;
-            margin-bottom: 6px;
+            margin: 0 auto 7px;
         }
         .info-card-icon i { font-size: 0.65rem; color: #4f46e5; }
         .info-label {
-            font-size: 0.6rem; color: var(--text-light);
-            text-transform: uppercase; letter-spacing: 0.1em;
-            font-weight: 600; margin-bottom: 2px;
+            display: block;
+            font-size: 0.58rem; color: var(--text-light);
+            text-transform: uppercase; letter-spacing: 0.12em;
+            font-weight: 600; margin-bottom: 4px;
         }
         .info-value {
-            font-size: 0.78rem; font-weight: 700;
-            color: var(--text-dark); line-height: 1.3;
+            display: block;
+            font-size: 1rem; font-weight: 800;
+            color: var(--text-dark); line-height: 1.2;
+            letter-spacing: 0.01em;
         }
 
         /* Course card spans full width */
@@ -718,8 +716,7 @@
                        pattern="[0-9]{4}-[0-9]{4}" maxlength="9"
                        title="Format: 0000-0000 (e.g., 2024-0001)"
                        autocomplete="off" inputmode="numeric">
-            </div>
-            <p class="input-hint"><i class="fas fa-circle-info" style="color:#c7d2fe;font-size:0.6rem;"></i> Format: YYYY-XXXX &nbsp;·&nbsp; e.g. 2024-0001</p>
+            </div>        
 
             <!-- Terms Checkbox -->
             <div class="terms-block">
@@ -791,9 +788,9 @@
                             <div class="info-value" id="modalYear"></div>
                         </div>
                         <div class="info-card">
-                            <div class="info-card-icon"><i class="fas fa-shield-check"></i></div>
-                            <div class="info-label">Status</div>
-                            <div class="info-value" style="color:#16a34a;">Active</div>
+                            <div class="info-card-icon"><i class="fas fa-users-viewfinder"></i></div>
+                            <div class="info-label">Section</div>
+                            <div class="info-value" id="modalSection"></div>
                         </div>
                     </div>
 
@@ -1058,6 +1055,7 @@
                     document.getElementById('modalFullName').textContent = result.data.fullname;
                     document.getElementById('modalCourse').textContent   = result.data.course;
                     document.getElementById('modalYear').textContent     = result.data.year + ' Year';
+                    document.getElementById('modalSection').textContent  = result.data.section;
                     new bootstrap.Modal(document.getElementById('idConfirmModal')).show();
                 } else if (result.status === 'not_found') {
                     Swal.fire({ icon:'error', title:'Not Found', text:'ID not found. Please check your ID number.', confirmButtonColor:'#667eea' });
