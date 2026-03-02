@@ -111,6 +111,7 @@
             font-size: 0.78rem;
             display: flex;
             align-items: center;
+            flex-wrap: wrap;
             gap: 0.3rem;
         }
 
@@ -706,7 +707,9 @@
             <div class="row">
                 <div class="col-md-6 mb-2">
                     <label for="password" class="form-label">
-                        <i class="fas fa-lock"></i> Password * <small style="font-size: 0.65rem; color: #6b7280; font-weight: normal; margin-left: 5px;">(at least 8 minimum,uppercase,lowercase,symbols, numbers)</small>
+                        <i class="fas fa-lock"></i> Password * 
+                        <small class="d-none d-md-inline" title="(8 minimum, Upper, Lower, Symbols, Numbers)" style="font-size: 0.65rem; color: #6b7280; font-weight: normal; margin-left: 5px;">(Requirement)</small>
+                        <small class="d-inline d-md-none" style="font-size: 0.62rem; color: #6b7280; font-weight: normal; margin-left: 5px;">(at least 8 minimum, Uppercase, Lowercase, Symbols, Numbers)</small>
                     </label>
                     <div class="password-container">
                         <input type="password" class="form-control @error('password') is-invalid @enderror"
