@@ -143,8 +143,9 @@
         }
         .form-divider span {
             font-size: 0.68rem; color: var(--text-light);
-            text-transform: uppercase; letter-spacing: 0.12em;
-            font-weight: 500; white-space: nowrap;
+            letter-spacing: 0.05em;
+            font-weight: 500; text-align: center;
+            line-height: 1.4;
         }
 
         /* ── Input Section Label ── */
@@ -696,11 +697,11 @@
                      style="width:60%;height:60%;object-fit:cover;border-radius:10%;">
             </div>
             <h2>ID Verification</h2>
-            <p>Student Access Check</p>
+           <!-- <p>Student Access Check</p>-->
         </div>
 
         <!-- Divider -->
-        <div class="form-divider"><span>Enter your school ID</span></div>
+        <div class="form-divider"><span>Enter your school ID to verify your eligibility before proceeding to registration.</span></div>
 
         <form id="idCheckForm">
             @csrf
@@ -930,7 +931,7 @@
                             <div class="terms-section-num">10</div>
                             <h4>Contact Information</h4>
                         </div>
-                        <p>For questions about these terms, please contact the MCC IT Department or Administration.</p>
+                        <p>For questions about these terms, please contact the MCC IT Department/IPES team or Administration .</p>
                         <p class="terms-meta">Last Updated: {{ date('F d, Y') }}</p>
                     </div>
 
