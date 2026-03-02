@@ -124,7 +124,7 @@
 
         <div class="content">
             <p>Hello,</p>
-            <p>You have requested to verify your Microsoft 365 account for MCC-IPES registration. Please use the verification code below to complete your pre-signup process.</p>
+            <p>You have requested to verify your Microsoft 365 account for MCC-IPES password reset. Please use the verification code below to complete your password reset process.</p>
         </div>
 
         <div class="otp-section">
@@ -138,7 +138,7 @@
         <div class="content">
             <p><strong>How to use this code:</strong></p>
             <ol>
-                <li>Return to the MCC-IPES pre-signup page</li>
+                <li>Return to the MCC-IPES reset password page</li>
                 <li>Enter this 6-digit code in the verification field</li>
                 <li>Click "Verify Code" to proceed</li>
             </ol>
