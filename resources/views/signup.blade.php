@@ -18,184 +18,287 @@
     @endif
 
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             background: linear-gradient(135deg, #5a189a 0%, #d0006f 100%);
-           
             min-height: 100vh;
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             justify-content: center;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 1rem 0.75rem;
         }
 
         .signup-container {
             background: white;
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            padding: 1.28rem;
-            max-width: 320px;
-            width: 80%;
-            margin: 0.64rem;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+            padding: 1.5rem 1.25rem;
+            width: 100%;
+            max-width: 480px;
+            margin: auto 0;
         }
 
         .signup-header {
             text-align: center;
-            margin-bottom: 0.96rem;
+            margin-bottom: 1.25rem;
         }
 
         .signup-header h2 {
-            margin: 0.4rem 0 0.2rem 0;
-            font-size: 1.2rem;
+            margin: 0.5rem 0 0.2rem 0;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #2d1b69;
         }
 
         .signup-header p {
             margin: 0 0 0.4rem 0;
-            font-size: 0.72rem;
+            font-size: 0.78rem;
+            color: #6b7280;
         }
 
         .signup-header .logo {
-            width: 38.4px;
-            height: 38.4px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            width: 86px;
+            height: 86px;
+            background: radial-gradient(circle at 30% 20%, #ffffff 0%, #f3f5ff 45%, #e3e7ff 100%);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 0.32rem;
-            font-size: 0.96rem;
-            color: white;
+            margin: 0 auto 12px;
+            box-shadow:
+                0 12px 30px rgba(0, 0, 0, 0.15),
+                0 0 0 1px rgba(255,255,255,0.8);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Section dividers */
+        .form-section {
+            background: #fafafa;
+            border: 1px solid #f0f0f0;
+            border-radius: 10px;
+            padding: 0.85rem 0.9rem 0.5rem;
+            margin-bottom: 0.85rem;
+        }
+
+        .form-section-title {
+            font-size: 0.68rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: #5a189a;
+            margin-bottom: 0.65rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .form-section-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(to right, #c4b5fd, transparent);
         }
 
         .form-label {
             font-weight: 600;
-            color: #333;
-            margin-bottom: 0.32rem;
-            font-size: 0.8rem;
+            color: #374151;
+            margin-bottom: 0.3rem;
+            font-size: 0.78rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .form-label i {
+            color: #7c3aed;
+            font-size: 0.72rem;
+            width: 14px;
         }
 
         .form-control, .form-select {
-            border-radius: 8px;
-            border: 1px solid #ddd;
-            padding: 0.48rem;
-            font-size: 0.72rem;
-            height: 32px;
+            border-radius: 9px;
+            border: 1.5px solid #e5e7eb;
+            padding: 0.55rem 0.75rem;
+            font-size: 0.82rem;
+            height: auto;
+            min-height: 40px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            background-color: #fff;
+            color: #1f2937;
+        }
+
+        .form-control::placeholder {
+            color: #9ca3af;
+            font-size: 0.78rem;
         }
 
         .form-control:focus, .form-select:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+            border-color: #7c3aed;
+            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.12);
+            outline: none;
+        }
+
+        .form-control[readonly] {
+            background-color: #f3f0ff;
+            color: #6d28d9;
+            border-color: #c4b5fd;
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #5a189a 0%, #d0006f 100%);
             border: none;
-            border-radius: 8px;
-            padding: 0.48rem 1.28rem;
-            font-weight: 600;
+            border-radius: 10px;
+            padding: 0.7rem 1.5rem;
+            font-weight: 700;
             width: 100%;
-            font-size: 0.8rem;
-            height: 32px;
+            font-size: 0.88rem;
+            height: auto;
+            min-height: 44px;
+            letter-spacing: 0.3px;
+            transition: opacity 0.2s, transform 0.1s;
+            box-shadow: 0 4px 15px rgba(90, 24, 154, 0.3);
         }
 
         .btn-primary:hover {
-            background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+            background: linear-gradient(135deg, #4c1085 0%, #b5005e 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(90, 24, 154, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
         }
 
         .signup-link {
             text-align: center;
-            margin-top: 0.64rem;
-            padding-top: 0.64rem;
-            border-top: 1px solid #eee;
-            font-size: 0.72rem;
+            margin-top: 0.9rem;
+            padding-top: 0.85rem;
+            border-top: 1px solid #f0f0f0;
+            font-size: 0.78rem;
+            color: #6b7280;
         }
 
         .signup-link a {
-            color: #667eea;
+            color: #7c3aed;
             text-decoration: none;
-            font-weight: 600;
+            font-weight: 700;
         }
 
         .signup-link a:hover {
-            color: #764ba2;
+            color: #5a189a;
+            text-decoration: underline;
         }
 
         .image-upload-section {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            margin-bottom: 0.96rem;
-            padding: 0.48rem;
-            border: 2px dashed #ddd;
-            border-radius: 8px;
-            font-size: 0.65rem;
+            gap: 0.85rem;
+            margin-bottom: 0.85rem;
+            padding: 0.75rem 0.9rem;
+            border: 2px dashed #c4b5fd;
+            border-radius: 10px;
+            background: #faf5ff;
+            font-size: 0.7rem;
+            transition: border-color 0.2s;
+        }
+
+        .image-upload-section:hover {
+            border-color: #7c3aed;
         }
 
         .image-preview {
-            width: 51.2px;
-            height: 51.2px;
+            width: 56px;
+            height: 56px;
             border-radius: 50%;
-            border: 3px solid #667eea;
+            border: 3px solid #7c3aed;
             object-fit: cover;
             flex-shrink: 0;
+            box-shadow: 0 2px 10px rgba(124, 58, 237, 0.25);
         }
 
         .image-upload-content {
             display: flex;
             flex-direction: column;
             align-items: flex-start;
-            gap: 0.15rem;
+            gap: 0.3rem;
+        }
+
+        .image-upload-content .text-muted {
+            color: #6b7280 !important;
+            font-size: 0.7rem;
+            line-height: 1.3;
         }
 
         .upload-btn {
-            background: #f8f9fa;
-            border: 1px solid #667eea;
-            color: #667eea;
-            padding: 0.18rem 0.5rem; /* smaller button */
-            border-radius: 6px;
+            background: white;
+            border: 1.5px solid #7c3aed;
+            color: #7c3aed;
+            padding: 0.3rem 0.75rem;
+            border-radius: 7px;
             cursor: pointer;
-            font-size: 0.65rem;      /* smaller text */
+            font-size: 0.72rem;
+            font-weight: 600;
+            transition: all 0.2s;
         }
 
         .upload-btn:hover {
-            background: #667eea;
+            background: #7c3aed;
             color: white;
         }
 
         .password-strength {
-            margin-top: 0.32rem;
+            margin-top: 0.4rem;
         }
 
         .password-strength-bar {
-            height: 2.4px;
-            background: #eee;
-            border-radius: 2px;
+            height: 4px;
+            background: #e5e7eb;
+            border-radius: 4px;
             overflow: hidden;
         }
 
         .password-strength-fill {
             height: 100%;
             transition: width 0.3s ease;
+            border-radius: 4px;
         }
 
         .password-strength-text {
             font-size: 0.7rem;
-            margin-top: 0.1rem;
+            margin-top: 0.2rem;
+            font-weight: 600;
         }
 
-        .password-weak { background: #dc3545; }
-        .password-fair { background: #ffc107; }
-        .password-good { background: #28a745; }
-        .password-strong { background: #20c997; }
+        .password-weak { background: #ef4444; }
+        .password-fair { background: #f59e0b; }
+        .password-good { background: #10b981; }
+        .password-strong { background: #059669; }
 
         .mb-2 {
-            margin-bottom: 0.48rem !important;
-        }
-        
-        .mt-2 {
-            margin-top: 0.48rem !important;
+            margin-bottom: 0.65rem !important;
         }
 
-        /* reCAPTCHA v3 Badge - Collapsed by default, expands on hover/focus */
+        .mt-2 {
+            margin-top: 0.65rem !important;
+        }
+
+        /* Row spacing inside sections */
+        .form-section .row {
+            margin-left: -0.4rem;
+            margin-right: -0.4rem;
+        }
+
+        .form-section .row > [class*="col-"] {
+            padding-left: 0.4rem;
+            padding-right: 0.4rem;
+        }
+
+        /* reCAPTCHA v3 Badge */
         .grecaptcha-badge {
             position: fixed !important;
             top: 10px !important;
@@ -213,92 +316,62 @@
             width: 256px !important;
         }
 
-        /* Desktop alignment fixes */
-        @media (min-width: 768px) {
-            .form-control, .form-select {
-                width: 100%;
-                max-width: 100%;
+        /* Mobile-first: single column on small screens */
+        @media (max-width: 575px) {
+            body {
+                padding: 0.75rem 0.5rem;
+                align-items: flex-start;
             }
 
-            .row .col-md-6 {
-                padding-left: 0.75rem;
-                padding-right: 0.75rem;
-            }
-
-            .row .col-md-6:first-child {
-                padding-left: 0;
-            }
-
-            .row .col-md-6:last-child {
-                padding-right: 0;
-            }
-        }
-
-        @media (max-width: 576px) {
             .signup-container {
-                padding: 0.96rem;
-                margin: 0.32rem;
-                max-width: 90%;
-                width: 90%;
-            }
-
-            .signup-header {
-                margin-bottom: 0.8rem;
+                padding: 1.25rem 1rem;
+                border-radius: 14px;
             }
 
             .signup-header h2 {
-                font-size: 1rem;
-                margin: 0.32rem 0 0.16rem 0;
-            }
-
-            .signup-header p {
-                font-size: 0.65rem;
-                margin: 0 0 0.32rem 0;
+                font-size: 1.15rem;
             }
 
             .signup-header .logo {
-                width: 32px;
-                height: 32px;
-                font-size: 0.8rem;
-                margin: 0 auto 0.24rem;
+                width: 80px;
+                height: 80px;
+                font-size: 1rem;
             }
 
-            .form-label {
-                font-size: 0.7rem;
-                margin-bottom: 0.24rem;
+            /* Stack all col-md-6 to full width on mobile */
+            .form-section .col-md-6 {
+                flex: 0 0 100%;
+                max-width: 100%;
             }
 
             .form-control, .form-select {
-                height: 28px;
-                padding: 0.4rem;
-                font-size: 0.68rem;
+                font-size: 1rem; /* Prevents iOS zoom */
+                min-height: 44px;
             }
 
             .btn-primary {
-                height: 28px;
-                padding: 0.4rem;
-                font-size: 0.72rem;
+                min-height: 48px;
+                font-size: 0.95rem;
             }
 
-            .image-preview {
-                width: 45px;
-                height: 45px;
+            .form-section {
+                padding: 0.85rem 0.8rem 0.5rem;
+            }
+        }
+
+        @media (min-width: 576px) and (max-width: 767px) {
+            .signup-container {
+                max-width: 480px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            body {
+                align-items: center;
             }
 
-            .image-upload-section {
-                margin-bottom: 0.8rem;
-                padding: 0.4rem;
-                font-size: 0.6rem;
-            }
-
-            .signup-link {
-                margin-top: 0.48rem;
-                padding-top: 0.48rem;
-                font-size: 0.65rem;
-            }
-
-            .mb-2 {
-                margin-bottom: 0.4rem !important;
+            .form-control, .form-select {
+                width: 100%;
             }
         }
 
@@ -365,37 +438,39 @@
             transform: translateY(-50%);
             background: none;
             border: none;
-            color: #666;
+            color: #9ca3af;
             cursor: pointer;
             padding: 5px;
-            font-size: 0.8rem;
+            font-size: 0.82rem;
             z-index: 10;
+            transition: color 0.2s;
         }
 
         .password-toggle:hover {
-            color: #667eea;
+            color: #7c3aed;
         }
 
         .password-toggle:focus {
             outline: none;
-            color: #667eea;
+            color: #7c3aed;
         }
 
         /* Password match indicator styles */
         .password-match-indicator {
-            font-size: 0.7rem;
-            margin-top: 0.25rem;
+            font-size: 0.72rem;
+            margin-top: 0.3rem;
             display: flex;
             align-items: center;
-            gap: 0.25rem;
+            gap: 0.3rem;
+            font-weight: 600;
         }
 
         .password-match-indicator.match {
-            color: #28a745;
+            color: #10b981;
         }
 
         .password-match-indicator.no-match {
-            color: #dc3545;
+            color: #ef4444;
         }
 
         .password-match-indicator.hidden {
@@ -431,10 +506,11 @@
     <div class="signup-container">
         <div class="signup-header">
             <div class="logo">
-                <i class="fas fa-user-plus"></i>
+                <img src="{{ asset('images/mccicin.jpg') }}" alt="MCC Logo"
+                     style="width: 60%; height: 60%; object-fit: cover; border-radius: 10%;">
             </div>
-            <h2>Sign Up</h2>
-            <p>Create your account for MCCIPES application</p>
+            <h2>Create Account</h2>
+            <p>Sign up for MCCIPES application</p>
         </div>
 
         <form method="POST" action="{{ route('signup.submit') }}" enctype="multipart/form-data" id="signupForm">
@@ -448,11 +524,11 @@
                      class="image-preview">
 
                 <div class="image-upload-content">
-                    <p class="text-muted small mb-0">Upload profile photo (JPEG or PNG, max 2 MB)</p>
+                    <p class="text-muted small mb-0">Upload profile photo<br>(JPEG or PNG, max 2 MB)</p>
                     <label for="profileImageInput" class="upload-btn mb-0">
                         <i class="fas fa-folder-open"></i> Choose File
                     </label>
-                    
+
                     <input type="file"
                            class="d-none @error('profile_image') is-invalid @enderror"
                            name="profile_image"
@@ -465,6 +541,8 @@
             </div>
 
             <!-- Personal Information -->
+            <div class="form-section">
+            <div class="form-section-title"><i class="fas fa-user-circle"></i> Personal Info</div>
             <div class="row">
                 <div class="col-md-6 mb-2">
                     <label for="full_name" class="form-label">
@@ -498,12 +576,12 @@
             <div class="row">
                 <div class="col-md-6 mb-2">
                     <label for="email" class="form-label">
-                        <i class="fas fa-envelope"></i> {{ isset($verified_email) && $verified_email ? 'MS Account' : 'Email' }} *
+                        <i class="fas fa-envelope"></i> {{ isset($verified_email) && $verified_email ? 'MS Account' : 'MS Email' }} *
                     </label>
                     <input type="email" class="form-control @error('email') is-invalid @enderror"
                            id="email" name="email" 
                            value="{{ isset($verified_email) && $verified_email ? $verified_email : old('email') }}"
-                           required placeholder="Enter email address"
+                           required placeholder="Enter valid ms email address"
                            maxlength="50"
                            pattern="^[a-zA-Z0-9._%+-]+@mcclawis\.edu\.ph$"
                            title="Email must end with @mcclawis.edu.ph"
@@ -513,7 +591,17 @@
                     @enderror
                 </div>
 
-                <!-- Student Status -->
+              
+            </div>
+            </div>{{-- end personal section --}}
+
+            <!-- School Information -->
+            <div class="form-section">
+            <div class="form-section-title"><i class="fas fa-school"></i> Academic Info</div>
+            <div class="row">
+
+
+              <!-- Student Status -->
                 <div class="col-md-6 mb-2">
                     <label for="student_status" class="form-label">
                         <i class="fas fa-graduation-cap"></i> Student Status *
@@ -527,10 +615,7 @@
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
-            </div>
 
-            <!-- School Information -->
-            <div class="row">
                 <div class="col-md-6 mb-2">
                     <label for="school_id" class="form-label">
                         <i class="fas fa-id-card"></i> School ID *
@@ -611,19 +696,22 @@
                     @enderror
                 </div>
             </div>
+            </div>{{-- end academic section --}}
 
             <input type="hidden" name="role" value="student">
 
             <!-- Password -->
+            <div class="form-section">
+            <div class="form-section-title"><i class="fas fa-lock"></i> Security</div>
             <div class="row">
                 <div class="col-md-6 mb-2">
                     <label for="password" class="form-label">
-                        <i class="fas fa-lock"></i> Password *
+                        <i class="fas fa-lock"></i> Password * <small style="font-size: 0.65rem; color: #6b7280; font-weight: normal; margin-left: 5px;">(at least 8 minimum,uppercase,lowercase,symbols, numbers)</small>
                     </label>
                     <div class="password-container">
                         <input type="password" class="form-control @error('password') is-invalid @enderror"
                                id="password" name="password" required maxlength="25"
-                               placeholder="Create password">
+                               placeholder="Create your ipes password">
                         <button type="button" class="password-toggle" id="passwordToggle" aria-label="Toggle password visibility">
                             <i class="fas fa-eye"></i>
                         </button>
@@ -657,6 +745,7 @@
                     </div>
                 </div>
             </div>
+            </div>{{-- end security section --}}
 
             <button type="submit" class="btn btn-primary mt-2" id="submitBtn">
                 <i class="fas fa-user-plus"></i> Submit Request
