@@ -592,17 +592,7 @@
                     @enderror
                 </div>
 
-              
-            </div>
-            </div>{{-- end personal section --}}
-
-            <!-- School Information -->
-            <div class="form-section">
-            <div class="form-section-title"><i class="fas fa-school"></i> Academic Info</div>
-            <div class="row">
-
-
-              <!-- Student Status -->
+                   <!-- Student Status -->
                 <div class="col-md-6 mb-2">
                     <label for="student_status" class="form-label">
                         <i class="fas fa-graduation-cap"></i> Student Status *
@@ -616,6 +606,18 @@
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
+
+              
+            </div>
+            </div>{{-- end personal section --}}
+
+            <!-- School Information -->
+            <div class="form-section">
+            <div class="form-section-title"><i class="fas fa-school"></i> Academic Info</div>
+            <div class="row">
+
+
+           
 
                 <div class="col-md-6 mb-2">
                     <label for="school_id" class="form-label">
