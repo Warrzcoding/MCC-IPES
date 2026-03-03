@@ -798,7 +798,7 @@
                     <p class="confirm-question mb-2">Is this your correct information?</p>
                     <div class="p-2 rounded-3" style="font-size: 0.68rem; background: rgba(220, 38, 38, 0.05); border: 1px solid rgba(220, 38, 38, 0.1); color: #dc2626; line-height: 1.4;">
                         <i class="fas fa-circle-exclamation me-1"></i>
-                        <strong>Honesty Notice:</strong> Please use your real data. Misuse or providing false information will lead to sanctions or punishment. You are tracked by the TEAM for any misuse.
+                        <strong>Honesty Notice:</strong> Please use your real data. Misuse or providing false information will lead to sanctions or account termination. Activity are tracked by the TEAM for any misuse.
                     </div>
                 </div>
 
