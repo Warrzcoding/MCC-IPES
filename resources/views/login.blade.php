@@ -1624,9 +1624,9 @@
                        <!--<a href="{{ route('forgotpass') }}" class="forgot-link">
                             Forgot Password?
                         </a>-->
-                     <a href="#" class="forgot-link">
+                     <a href="{{ route('password.request') }}" class="forgot-link">
                             Forgot Password?
-                        </a>    
+                        </a>   
                     </div>
                 </form>
 
