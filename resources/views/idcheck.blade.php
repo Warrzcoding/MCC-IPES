@@ -851,7 +851,7 @@
                     <!-- Email Verification Section (Initially Hidden) -->
                     <div id="emailVerificationSection" style="display: none; margin-top: 15px;">
                         <div class="verification-wrapper">
-                            <label class="info-label mb-1" style="display: block; text-align: left;">Please provide your valid Ms365 Email</label>
+                            <label class="info-label mb-1" style="display: block; text-align: left;">Please provide your valid Ms Email address</label>
                             <div class="underline-input-wrapper">
                                 <i class="fab fa-microsoft input-icon"></i>
                                 <input type="email" id="verificationEmail" class="underline-input" placeholder="your.email@mcclawis.edu.ph" autocomplete="off">
