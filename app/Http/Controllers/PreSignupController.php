@@ -7,7 +7,9 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use App\Models\User;
 use App\Models\IdChecker;
+use App\Models\RequestSignin;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Mail;
 
 class PreSignupController extends Controller
 {
@@ -174,6 +176,15 @@ class PreSignupController extends Controller
             $idRecord = IdChecker::where('id_number', $request->id_number)->first();
 
             if ($idRecord) {
+                // Check if the ID is already registered in users table
+                $existingUser = User::where('school_id', $request->id_number)->first();
+                if ($existingUser) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => 'This ID number is already registered. Please login or contact support.'
+                    ], 422);
+                }
+
                 // Construct fullname: fname mname_initial. lname
                 $mInitial = $idRecord->mname ? strtoupper(substr($idRecord->mname, 0, 1)) . '.' : '';
                 $fullName = trim($idRecord->fname . ($mInitial ? ' ' . $mInitial : '') . ' ' . $idRecord->lname);
@@ -210,10 +221,135 @@ class PreSignupController extends Controller
         }
     }
 
+    // Send OTP for ID check verification
+    public function sendIdCheckOtp(Request $request)
+    {
+        try {
+            // Validate input
+            $validator = Validator::make($request->all(), [
+                'ms365_email' => ['required', 'email', 'regex:/^[a-zA-Z0-9._%+-]+@mcclawis\.(edu|edi)\.ph$/i'],
+                'id_number' => 'required|string'
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Validation failed: ' . implode(', ', $validator->errors()->all())
+                ]);
+            }
+
+            $email = $request->ms365_email;
+            $schoolId = $request->id_number;
+
+            // 1. Check User table (Existing/Registered users)
+            if (User::where('email', $email)->exists() || User::where('school_id', $schoolId)->exists()) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'This ID Number or Email is already used/registered.'
+                ]);
+            }
+
+            // 2. Check RequestSignin table (Pending approval)
+            if (RequestSignin::where('email', $email)->exists() || RequestSignin::where('school_id', $schoolId)->exists()) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'This ID Number or Email has already requested sign-in. Please wait for admin approval.'
+                ]);
+            }
+
+            // Generate OTP (6 digits)
+            $otp = str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT);
+            
+            // Store OTP in session with expiration (5 minutes)
+            Session::put('idcheck_otp', $otp);
+            Session::put('idcheck_email', $email);
+            Session::put('idcheck_otp_expires', now()->addMinutes(5));
+
+            // Send email with OTP using gmail_student mailer
+            try {
+                Mail::mailer('gmail_student')->to($email)->send(new \App\Mail\RegistrationOtpMail($otp, $email, 5));
+                \Log::info("ID Check OTP sent to {$email} for ID {$schoolId}");
+            } catch (\Exception $mailEx) {
+                \Log::error("Mail sending failed: " . $mailEx->getMessage());
+                // Fallback to default mailer if gmail_student fails
+                Mail::to($email)->send(new \App\Mail\RegistrationOtpMail($otp, $email, 5));
+            }
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Verification code sent to your Microsoft 365 email.'
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error("ID Check OTP Error: " . $e->getMessage());
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to send Verification Code. ' . $e->getMessage()
+            ]);
+        }
+    }
+
+    // Verify OTP for ID check
+    public function verifyIdCheckOtp(Request $request)
+    {
+        try {
+            $request->validate([
+                'ms365_email' => 'required|email',
+                'otp_code' => 'required|string|size:6'
+            ]);
+
+            $email = $request->ms365_email;
+            $otp = $request->otp_code;
+
+            // Check if OTP exists and is not expired
+            $storedOtp = Session::get('idcheck_otp');
+            $storedEmail = Session::get('idcheck_email');
+            $otpExpires = Session::get('idcheck_otp_expires');
+
+            if (!$storedOtp || $email !== $storedEmail || now()->isAfter($otpExpires)) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Invalid or expired verification code.'
+                ]);
+            }
+
+            if ($otp !== $storedOtp) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Incorrect verification code.'
+                ]);
+            }
+
+            // OTP is valid
+            Session::put('idcheck_otp_verified', true);
+            
+            \Log::info("ID check OTP verified for email: {$email}");
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Verification code verified successfully.'
+            ]);
+        } catch (\Exception $e) {
+            \Log::error("ID check OTP verification error: " . $e->getMessage());
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Verification failed. Please try again.'
+            ]);
+        }
+    }
+
     // Store the verified ID information in session
     public function storeVerifiedId(Request $request)
     {
         try {
+            // Check if OTP was verified
+            if (!Session::get('idcheck_otp_verified')) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Email verification required.'
+                ], 403);
+            }
+
             \Log::info('ID Check Verification Attempt', [
                 'ip' => $request->ip(),
                 'data' => $request->all()
@@ -247,10 +383,14 @@ class PreSignupController extends Controller
                 'course' => 'nullable|string',
                 'year' => 'nullable',
                 'section' => 'nullable|string',
-                'gender' => 'nullable|string'
+                'gender' => 'nullable|string',
+                'ms365_email' => 'required|email'
             ]);
 
             Session::put('verified_id_info', $data);
+            Session::put('pre_signup_email', $data['ms365_email']);
+            Session::put('pre_signup_otp_verified', true);
+            
             \Log::info('ID Verification Success', ['id_number' => $data['id_number']]);
 
             return response()->json([

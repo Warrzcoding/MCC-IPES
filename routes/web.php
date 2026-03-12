@@ -48,6 +48,8 @@ Route::post('/pre-signup/verify-otp', [PreSignupController::class, 'verifyOtp'])
 Route::get('/idcheck', [PreSignupController::class, 'showIdCheckForm'])->name('idcheck');
 Route::post('/idcheck', [PreSignupController::class, 'checkId'])->name('idcheck.submit');
 Route::post('/idcheck/verify', [PreSignupController::class, 'checkIdAjax'])->name('idcheck.verify');
+Route::post('/idcheck/send-otp', [PreSignupController::class, 'sendIdCheckOtp'])->name('idcheck.send_otp');
+Route::post('/idcheck/verify-otp', [PreSignupController::class, 'verifyIdCheckOtp'])->name('idcheck.verify_otp');
 Route::post('/idcheck/store-session', [PreSignupController::class, 'storeVerifiedId'])->name('idcheck.store_session');
 
 // Signup Routes

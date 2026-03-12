@@ -666,6 +666,53 @@
             to   { opacity: 1; transform: translateY(0); }
         }
         .login-card { animation: fadeIn 0.5s ease both; }
+
+        /* ── Verification Inputs ── */
+        .verification-wrapper {
+            margin-bottom: 12px;
+        }
+
+        .underline-input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            border-bottom: 2px solid var(--border);
+            padding: 8px 0;
+            transition: all 0.3s ease;
+        }
+
+        .underline-input-wrapper:focus-within {
+            border-bottom-color: var(--accent);
+        }
+
+        .underline-input {
+            border: none;
+            background: transparent !important;
+            width: 100%;
+            padding: 4px 8px 4px 30px;
+            font-size: 0.9rem;
+            color: var(--text-dark);
+            outline: none;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 5px;
+            color: var(--text-light);
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .underline-input-wrapper:focus-within .input-icon {
+            color: var(--accent);
+        }
+
+        #verificationOtp {
+            letter-spacing: 4px;
+            font-weight: 600;
+        }
+
+        .swal-small { width: 320px !important; border-radius: 20px !important; }
     </style>
 </head>
 <body>
@@ -800,15 +847,42 @@
                         <i class="fas fa-circle-exclamation me-1"></i>
                         <strong>Honesty Notice:</strong> Please use your real data. Misuse or providing false information will lead to sanctions or account termination. Activity are tracked by the TEAM for any misuse.
                     </div>
+
+                    <!-- Email Verification Section (Initially Hidden) -->
+                    <div id="emailVerificationSection" style="display: none; margin-top: 15px;">
+                        <div class="verification-wrapper">
+                            <label class="info-label mb-1" style="display: block; text-align: left;">Microsoft 365 Email</label>
+                            <div class="underline-input-wrapper">
+                                <i class="fab fa-microsoft input-icon"></i>
+                                <input type="email" id="verificationEmail" class="underline-input" placeholder="your.email@mcclawis.edu.ph" autocomplete="off">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- OTP Verification Section (Initially Hidden) -->
+                    <div id="otpVerificationSection" style="display: none; margin-top: 15px;">
+                        <div class="verification-wrapper">
+                            <label class="info-label mb-1" style="display: block; text-align: left;">Enter Verification Code</label>
+                            <div class="underline-input-wrapper">
+                                <i class="fas fa-key input-icon"></i>
+                                <input type="text" id="verificationOtp" class="underline-input text-center" placeholder="000000" maxlength="6" autocomplete="off">
+                            </div>
+                            <div id="otpTimer" class="mt-2 text-muted" style="font-size: 0.65rem;"></div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Footer Buttons -->
-                <div class="modal-footer-custom">
-                    <button type="button" class="btn-not-me" data-bs-dismiss="modal">
+                <div class="modal-footer-custom" id="modalFooter">
+                    <button type="button" class="btn-not-me" id="cancelBtn" data-bs-dismiss="modal">
                         <i class="fas fa-xmark"></i> Not Me
                     </button>
                     <button type="button" class="btn-this-is-me" id="thisIsMeBtn">
                         <i class="fas fa-check"></i> This Is Me
+                    </button>
+                    <!-- Verify/Send Button (Initially Hidden) -->
+                    <button type="button" class="btn-this-is-me" id="verifyBtn" style="display: none; width: 100%;">
+                        <i class="fas fa-paper-plane"></i> Send Verification
                     </button>
                 </div>
 
@@ -1028,6 +1102,17 @@
             this.dispatchEvent(new Event('input'));
         });
 
+        // ── OTP input formatting ──
+        document.getElementById('verificationOtp').addEventListener('input', function (e) {
+            this.value = this.value.replace(/[^0-9]/g, '').substring(0, 6);
+        });
+
+        document.getElementById('verificationOtp').addEventListener('paste', function (e) {
+            e.preventDefault();
+            let paste = (e.clipboardData || window.clipboardData).getData('text').replace(/[^0-9]/g, '').substring(0, 6);
+            this.value = paste;
+        });
+
         // ── ID Check ──
         async function checkIdNumber() {
             const checkIdBtn = document.getElementById('checkIdBtn');
@@ -1061,6 +1146,16 @@
                     document.getElementById('modalCourse').textContent   = result.data.course;
                     document.getElementById('modalYear').textContent     = result.data.year + ' Year';
                     document.getElementById('modalSection').textContent  = result.data.section;
+                    
+                    // Reset modal state
+                    document.getElementById('emailVerificationSection').style.display = 'none';
+                    document.getElementById('otpVerificationSection').style.display = 'none';
+                    document.getElementById('thisIsMeBtn').style.display = 'flex';
+                    document.getElementById('cancelBtn').style.display = 'flex';
+                    document.getElementById('verifyBtn').style.display = 'none';
+                    document.getElementById('verificationEmail').value = '';
+                    document.getElementById('verificationOtp').value = '';
+                    
                     new bootstrap.Modal(document.getElementById('idConfirmModal')).show();
                 } else if (result.status === 'not_found') {
                     Swal.fire({ icon:'error', title:'Not Found', text:'ID not found. Please check your ID number.', confirmButtonColor:'#667eea' });
@@ -1076,38 +1171,162 @@
         document.getElementById('checkIdBtn').addEventListener('click', function (e) { e.preventDefault(); checkIdNumber(); });
         document.getElementById('school_id').addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); checkIdNumber(); } });
 
-        // ── This Is Me ──
-        document.getElementById('thisIsMeBtn').addEventListener('click', async function () {
-            if (!currentIdData) return;
-            try {
-                let requestData = { ...currentIdData };
+        // ── This Is Me (Initial click) ──
+        document.getElementById('thisIsMeBtn').addEventListener('click', function() {
+            // Show email verification section
+            document.getElementById('emailVerificationSection').style.display = 'block';
+            // Hide initial buttons
+            document.getElementById('thisIsMeBtn').style.display = 'none';
+            document.getElementById('cancelBtn').style.display = 'none';
+            // Show Verify/Send button
+            const verifyBtn = document.getElementById('verifyBtn');
+            verifyBtn.style.display = 'block';
+            verifyBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send Verification';
+        });
 
-                @if(config('services.recaptcha.site_key_v3'))
-                try {
-                    requestData.recaptcha_token = await executeRecaptchaV3('idcheck_verify');
-                } catch (err) { console.error('reCAPTCHA error:', err); }
-                @endif
+        // ── Verification Button (Send OTP / Verify OTP) ──
+        document.getElementById('verifyBtn').addEventListener('click', async function () {
+            const emailInput = document.getElementById('verificationEmail');
+            const otpInput = document.getElementById('verificationOtp');
+            const verifyBtn = document.getElementById('verifyBtn');
+            const emailSection = document.getElementById('emailVerificationSection');
+            const otpSection = document.getElementById('otpVerificationSection');
 
-                const response = await fetch('{{ route("idcheck.store_session") }}', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken },
-                    body: JSON.stringify(requestData)
-                });
-                const result = await response.json();
+            // Flow 1: Send OTP
+            if (otpSection.style.display === 'none') {
+                const email = emailInput.value.trim();
+                const emailPattern = /^[a-zA-Z0-9._%+-]+@mcclawis\.(edu|edi)\.ph$/i;
 
-                if (result.status === 'success') {
-                    Swal.fire({
-                        icon: 'success', title: 'Verified!',
-                        text: `Welcome ${currentIdData.fullname}! Proceeding to registration…`,
-                        confirmButtonColor: '#667eea', timer: 2000, showConfirmButton: false
-                    }).then(() => { window.location.href = '{{ route("signup") }}'; });
-                } else {
-                    let errorMessage = result.message || 'Verification failed.';
-                    if (result.errors) errorMessage += ' ' + Object.values(result.errors)[0][0];
-                    throw new Error(errorMessage);
+                if (!email) {
+                    Swal.fire({ icon:'warning', title:'Required', text:'Please enter your MS 365 email.', confirmButtonColor:'#667eea' });
+                    return;
                 }
-            } catch (err) {
-                Swal.fire({ icon:'error', title:'Error', text: err.message || 'Failed to process verification. Please try again.', confirmButtonColor:'#667eea' });
+                if (!emailPattern.test(email)) {
+                    Swal.fire({ icon:'warning', title:'Invalid Format', text:'Email must end with @mcclawis.edu.ph or @mcclawis.edi.ph', confirmButtonColor:'#667eea' });
+                    return;
+                }
+
+                try {
+                    verifyBtn.disabled = true;
+                    verifyBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+
+                    const formData = new FormData();
+                    formData.append('ms365_email', email);
+                    formData.append('id_number', currentIdData.id_number);
+
+                    @if(config('services.recaptcha.site_key_v3'))
+                    try {
+                        const token = await executeRecaptchaV3('idcheck_send_otp');
+                        formData.append('recaptcha_token', token);
+                    } catch (err) { console.error('reCAPTCHA error:', err); }
+                    @endif
+
+                    const response = await fetch('{{ route("idcheck.send_otp") }}', {
+                        method: 'POST',
+                        headers: { 'X-CSRF-TOKEN': csrfToken },
+                        body: formData
+                    });
+
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        console.error('Server error response:', errorText);
+                        throw new Error(`Server Error (${response.status}). Please check logs.`);
+                    }
+
+                    const result = await response.json();
+
+                    if (result.status === 'success') {
+                        Swal.fire({ icon:'success', title:'OTP Sent', text: result.message, confirmButtonColor:'#667eea', timer: 2000, showConfirmButton: false });
+                        
+                        // Switch to OTP input
+                        emailSection.style.display = 'none';
+                        otpSection.style.display = 'block';
+                        verifyBtn.innerHTML = '<i class="fas fa-check-circle"></i> Verify OTP';
+                    } else {
+                        // Show the actual error message from backend (e.g. ID/Email used)
+                        Swal.fire({ icon:'error', title:'Verification Error', text: result.message || 'Failed to send OTP.', confirmButtonColor:'#667eea' });
+                    }
+                } catch (err) {
+                    Swal.fire({ icon:'error', title:'Error', text: err.message, confirmButtonColor:'#667eea' });
+                } finally {
+                    verifyBtn.disabled = false;
+                }
+            } 
+            // Flow 2: Verify OTP and Finalize
+            else {
+                const otp = otpInput.value.trim();
+                const email = emailInput.value.trim();
+
+                if (otp.length !== 6) {
+                    Swal.fire({ icon:'warning', title:'Invalid Code', text:'Please enter the 6-digit verification code.', confirmButtonColor:'#667eea' });
+                    return;
+                }
+
+                try {
+                    verifyBtn.disabled = true;
+                    verifyBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
+
+                    // 1. Verify OTP
+                    const verifyFormData = new FormData();
+                    verifyFormData.append('ms365_email', email);
+                    verifyFormData.append('otp_code', otp);
+
+                    const verifyResponse = await fetch('{{ route("idcheck.verify_otp") }}', {
+                        method: 'POST',
+                        headers: { 'X-CSRF-TOKEN': csrfToken },
+                        body: verifyFormData
+                    });
+                    const verifyResult = await verifyResponse.json();
+
+                    if (verifyResult.status !== 'success') {
+                        throw new Error(verifyResult.message || 'OTP verification failed.');
+                    }
+
+                    // 2. Store session
+                    const storeFormData = new FormData();
+                    for (const key in currentIdData) {
+                        storeFormData.append(key, currentIdData[key]);
+                    }
+                    storeFormData.append('ms365_email', email);
+
+                    @if(config('services.recaptcha.site_key_v3'))
+                    try {
+                        const token = await executeRecaptchaV3('idcheck_verify');
+                        storeFormData.append('recaptcha_token', token);
+                    } catch (err) { console.error('reCAPTCHA error:', err); }
+                    @endif
+
+                    const storeResponse = await fetch('{{ route("idcheck.store_session") }}', {
+                        method: 'POST',
+                        headers: { 'X-CSRF-TOKEN': csrfToken },
+                        body: storeFormData
+                    });
+                    const storeResult = await storeResponse.json();
+
+                    if (storeResult.status === 'success') {
+                        Swal.fire({
+                            icon: 'success', title: 'Verified!',
+                            text: `Welcome ${currentIdData.fullname}! Proceeding to registration…`,
+                            confirmButtonColor: '#667eea', timer: 2000, showConfirmButton: false
+                        }).then(() => { window.location.href = '{{ route("signup") }}'; });
+                    } else {
+                        throw new Error(storeResult.message || 'Failed to process verification.');
+                    }
+                } catch (err) {
+                    Swal.fire({ icon:'error', title:'Error', text: err.message, confirmButtonColor:'#667eea' });
+                } finally {
+                    verifyBtn.disabled = false;
+                    verifyBtn.innerHTML = '<i class="fas fa-check-circle"></i> Verify OTP';
+                }
+            }
+        });
+
+        // ── Email Input Auto-complete (similar to pre_signup) ──
+        document.getElementById('verificationEmail').addEventListener('input', function() {
+            let v = this.value;
+            if (v.includes('@') && !v.includes('@mcclawis.edu.ph') && !v.includes('@mcclawis.edi.ph')) {
+                const atIndex = v.indexOf('@');
+                this.value = v.substring(0, atIndex) + '@mcclawis.edu.ph';
             }
         });
     </script>
