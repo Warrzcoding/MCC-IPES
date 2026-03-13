@@ -3207,5 +3207,7 @@ window.adminOtpOverlayEnabled = @json($adminOtpOverlayEnabled);
         });
     </script>
   <script src="{{ asset('js/dev-tools-security.js') }}?v=<?php echo time(); ?>"></script>
+   @stack('scripts')
+    @include('partials.chatbot')
 </body>
 </html>
