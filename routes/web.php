@@ -19,6 +19,11 @@ use App\Http\Controllers\LoginMonitorController;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\MagicLinkController;
 
+use App\Http\Controllers\ChatbotController;
+
+// Chatbot Route
+Route::post('/chatbot/message', [ChatbotController::class, 'handleMessage'])->name('chatbot.message');
+
 // Root route - redirect to login
 Route::get('/', function () {
     return view('login');

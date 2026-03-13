@@ -125,21 +125,50 @@
         background: var(--chatbot-gradient);
         color: white;
         border: none;
-        padding: 12px;
+        padding: 10px;
         border-radius: 12px;
         font-weight: 600;
         cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 10px;
+        gap: 8px;
         transition: transform 0.2s;
         box-shadow: 0 4px 15px rgba(255, 0, 153, 0.2);
+        font-size: 13px;
     }
 
-    .open-chat-btn:hover {
-        transform: translateY(-2px);
+    .social-links {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px solid #f0f0f0;
     }
+
+    .social-icon {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        text-decoration: none;
+        transition: transform 0.2s;
+        font-size: 16px;
+    }
+
+    .social-icon:hover {
+        transform: scale(1.1);
+        color: white;
+    }
+
+    .social-icon.facebook { background: #1877F2; }
+    .social-icon.github { background: #333; }
+    .social-icon.custom { background: #667eea; overflow: hidden; }
+    .social-icon.custom img { width: 100%; height: 100%; object-fit: cover; }
 
     /* Chat / Inbox Screen */
     #chatbot-chat {
@@ -277,6 +306,29 @@
             <button class="open-chat-btn" id="open-inbox">
                 <i class="fas fa-paper-plane"></i> Ask to open inbox
             </button>
+
+            <!-- Social Links / Additional Websites -->
+            <div class="social-links">
+                <a href="https://www.facebook.com/profile.php?id=61584272574390" target="_blank" class="social-icon facebook" title="MCCIPES Concern">
+                    <i class="fab fa-facebook-f"></i>
+                </a>
+                <a href="https://github.com/your-repo" target="_blank" class="social-icon github" title="WarrCODING">
+                    <i class="fab fa-github"></i>
+                </a>
+                <!-- Custom Website Links (Replace images and hrefs) -->
+                <a href="https://madridejoscommunitycollege.com" target="_blank" class="social-icon custom" title="MCC-Enrollment System">
+                    <img src="{{ asset('images/logo.png') }}" alt="S1">
+                </a>
+                <a href="https://mccgradeinfo.com" target="_blank" class="social-icon custom" title="MCC-Grading System">
+                    <img src="{{ asset('images/logo.png') }}" alt="S2">
+                </a>
+                <a href="https://mcc-clearance.com" target="_blank" class="social-icon custom" title="Mcc-Clearance System">
+                    <img src="{{ asset('images/logo.png') }}" alt="S3">
+                </a>
+                <a href="https://mcc-lrc.com" target="_blank" class="social-icon custom" title="MCC-Library">
+                    <img src="{{ asset('images/mcc-lrc.png') }}" alt="S4">
+                </a>
+            </div>
         </div>
 
         <!-- Direct Chat Screen -->
@@ -343,10 +395,25 @@
                 addMessage(question, 'user');
                 
                 const typing = showTyping();
-                setTimeout(() => {
+                
+                // Call Backend for FAQ
+                fetch('{{ route("chatbot.message") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({ message: question })
+                })
+                .then(response => response.json())
+                .then(data => {
                     typing.remove();
-                    addMessage("This is an automated response to: " + question + ". Please contact support for more details.", 'bot');
-                }, 1500);
+                    addMessage(data.reply, 'bot');
+                })
+                .catch(error => {
+                    typing.remove();
+                    addMessage("Sorry, I'm having trouble connecting to the server.", 'bot');
+                });
             });
         });
 
@@ -373,10 +440,25 @@
                 addMessage(text, 'user');
                 input.value = '';
                 const typing = showTyping();
-                setTimeout(() => {
+
+                // Call Backend API
+                fetch('{{ route("chatbot.message") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({ message: text })
+                })
+                .then(response => response.json())
+                .then(data => {
                     typing.remove();
-                    addMessage("I've received your message. Our team will get back to you soon.", 'bot');
-                }, 2000);
+                    addMessage(data.reply, 'bot');
+                })
+                .catch(error => {
+                    typing.remove();
+                    addMessage("Sorry, I'm having trouble connecting to the server.", 'bot');
+                });
             }
         }
 
