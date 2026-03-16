@@ -1752,6 +1752,6 @@
         }
     </script>
           <script src="{{ asset('js/dev-tools-security.js') }}"></script>
-    @stack('scripts')
+   
 </body>
 </html>

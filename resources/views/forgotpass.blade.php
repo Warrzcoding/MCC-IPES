@@ -259,5 +259,7 @@
             </div>
         </form>
     </div>
+      @stack('scripts')
+    @include('partials.chatbot')
 </body>
 </html>

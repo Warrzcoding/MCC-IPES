@@ -290,21 +290,21 @@
         <!-- Home Screen with FAQs -->
         <div id="chatbot-home">
             <div class="faq-title">Frequently Asked Questions</div>
-            <div class="faq-item" data-question="How to evaluate an instructor?">
+            <div class="faq-item" data-question="evaluate instructors">
                 How to evaluate an instructor? <i class="fas fa-chevron-right fa-xs"></i>
             </div>
-            <div class="faq-item" data-question="I forgot my password">
-                I forgot my password <i class="fas fa-chevron-right fa-xs"></i>
+            <div class="faq-item" data-question="create account">
+                How to create account? <i class="fas fa-chevron-right fa-xs"></i>
             </div>
-            <div class="faq-item" data-question="When is the evaluation deadline?">
-                When is the evaluation deadline? <i class="fas fa-chevron-right fa-xs"></i>
+            <div class="faq-item" data-question="forgot password">
+                How to reset password? <i class="fas fa-chevron-right fa-xs"></i>
             </div>
-            <div class="faq-item" data-question="How to see my ratings?">
-                How to see my ratings? <i class="fas fa-chevron-right fa-xs"></i>
+            <div class="faq-item" data-question="enable location">
+                How to enable or open location permission? <i class="fas fa-chevron-right fa-xs"></i>
             </div>
             
             <button class="open-chat-btn" id="open-inbox">
-                <i class="fas fa-paper-plane"></i> Ask to open inbox
+                <i class="fas fa-paper-plane"></i> Chat Now
             </button>
 
             <!-- Social Links / Additional Websites -->
@@ -389,13 +389,47 @@
         faqItems.forEach(item => {
             item.addEventListener('click', () => {
                 const question = item.getAttribute('data-question');
+                const questionText = item.textContent.trim();
                 homeScreen.style.display = 'none';
                 chatScreen.style.display = 'flex';
                 backBtn.style.display = 'block';
-                addMessage(question, 'user');
+                addMessage(questionText, 'user');
                 
                 const typing = showTyping();
                 
+                // Custom Local Answers for FAQs
+                let customAnswer = null;
+                if (question === 'evaluate instructors') {
+                    customAnswer = `To evaluate your instructors, please follow these steps:<br>1. Log in to your account.<br>2. Go to the "Evaluation" section.<br>3. Select the instructor you want to evaluate.<br>4. Fill out the evaluation form and submit.<br><br><img src="{{ asset('images/evaluate-guide.png') }}" alt="Evaluation Guide" style="width: 100%; border-radius: 8px; margin-top: 10px;">`;
+                } else if (question === 'create account') {
+                    customAnswer = `To create an account, follow these steps:
+                    <br><br><b>Step 1:</b> Tap "Start Student Login", Click "Signup here" link.
+                    <br><img src="{{ asset('images/signup-step1.png') }}" style="width: 100%; border-radius: 8px; margin-top: 5px;">
+                    <br><br><b>Step 2:</b> Enter your ID number to check eligibility. (Enrolled students are provided with an ID). Tap "Accept Terms and Conditions", then click "CHECK ID". 
+                    <br><i>Note: If your ID exists, click "THIS IS ME" to proceed to Step 3. If not, contact the IPES Team via our Facebook page (see links in FAQ).</i>
+                    <br><img src="{{ asset('images/signup-step2.png') }}" style="width: 100%; border-radius: 8px; margin-top: 5px;">
+                    <br><br><b>Step 3:</b> Enter your <b>sample@mcclawis.edu.ph</b> email address (MS 365 account) and click "SEND VERIFICATION".
+                    <br><img src="{{ asset('images/signup-step3.png') }}" style="width: 100%; border-radius: 8px; margin-top: 5px;">
+                    <br><br><b>Step 4:</b> Open your Outlook app where your MS account is logged in. Copy the verification code sent to you, then go back to the OTP verification page and "VERIFY OTP".
+                    <br><img src="{{ asset('images/signup-step4.png') }}" style="width: 100%; border-radius: 8px; margin-top: 5px;">
+                    <br><img src="{{ asset('images/signup-step5.png') }}" style="width: 100%; border-radius: 8px; margin-top: 5px;">
+                    <br><br><b>Step 5:</b> You will be redirected to the Signup form. Fill out the details and create a strong password, then click "Submit".
+                     <br><img src="{{ asset('images/signup-step6.png') }}" style="width: 100%; border-radius: 8px; margin-top: 5px;">
+                    <br><br><b>Step 6:</b> Wait for administrator approval before you can log in.`;
+                } else if (question === 'forgot password') {
+                    customAnswer = "If you've forgotten your password, click on the 'Forgot Password?' link on the login page. Enter your registered email address, and we'll send you instructions on how to reset it.";
+                } else if (question === 'enable location') {
+                    customAnswer = "To enable location services, look for the lock icon in your browser's address bar. Click it and ensure 'Location' is set to 'Allow'. This is required for attendance and other location-based features.";
+                }
+
+                if (customAnswer) {
+                    setTimeout(() => {
+                        typing.remove();
+                        addMessage(customAnswer, 'bot');
+                    }, 800);
+                    return;
+                }
+
                 // Call Backend for FAQ
                 fetch('{{ route("chatbot.message") }}', {
                     method: 'POST',
@@ -420,7 +454,7 @@
         function addMessage(text, type) {
             const msgDiv = document.createElement('div');
             msgDiv.className = `message ${type}`;
-            msgDiv.textContent = text;
+            msgDiv.innerHTML = text;
             messagesContainer.appendChild(msgDiv);
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
