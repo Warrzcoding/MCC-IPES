@@ -1330,5 +1330,7 @@
             }
         });
     </script>
+    stack('scripts')
+    @include('partials.chatbot')
 </body>
 </html>
