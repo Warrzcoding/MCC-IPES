@@ -417,7 +417,21 @@
                      <br><img src="{{ asset('images/signup-step6.png') }}" style="width: 100%; border-radius: 8px; margin-top: 5px;">
                     <br><br><b>Step 6:</b> Wait for administrator approval before you can log in.`;
                 } else if (question === 'forgot password') {
-                    customAnswer = "If you've forgotten your password, click on the 'Forgot Password?' link on the login page. Enter your registered email address, and we'll send you instructions on how to reset it.";
+                    customAnswer = `Here's how you reset your IPES password:
+                    <br><br><b>Step 1:</b> Tap "Start Student Login" then Enter your registered ID number and click "Verify".
+                    <br><img src="{{ asset('images/reset-step1.png') }}" style="width: 100%; border-radius: 8px; margin-top: 5px;">
+                    <br><br><b>Step 2:</b> Click "Forgot Password" link below.
+                    <br><img src="{{ asset('images/reset-step2.png') }}" style="width: 100%; border-radius: 8px; margin-top: 5px;">
+                    <br><br><b>Step 3:</b> Enter your MS email address (<b>sample@mcclawis.edu.ph</b> format) you used during registration then click "Send Verification".
+                    <br><img src="{{ asset('images/reset-step3.png') }}" style="width: 100%; border-radius: 8px; margin-top: 5px;">
+                    <br><br><b>Step 4:</b> Go to Outlook app where you logged your MS 365 account to see email sent with OTP code, copy it and back to Reset pass page.
+                    <br><img src="{{ asset('images/reset-step41.png') }}" style="width: 100%; border-radius: 8px; margin-top: 5px;">
+                     <br><img src="{{ asset('images/reset-step42.png') }}" style="width: 100%; border-radius: 8px; margin-top: 5px;">
+                    <br><br><b>Step 5:</b> Enter 6-digit Code and click "Verify Code".
+                    <br><img src="{{ asset('images/reset-step5.png') }}" style="width: 100%; border-radius: 8px; margin-top: 5px;">
+                    <br><br><b>Step 6:</b> Now create a strong password then try to login your new credentials.
+                     <br><img src="{{ asset('images/reset-step61.png') }}" style="width: 100%; border-radius: 8px; margin-top: 5px;">
+                     <br><img src="{{ asset('images/reset-step62.png') }}" style="width: 100%; border-radius: 8px; margin-top: 5px;">`;
                 } else if (question === 'enable location') {
                     customAnswer = "To enable location services, look for the lock icon in your browser's address bar. Click it and ensure 'Location' is set to 'Allow'. This is required for attendance and other location-based features.";
                 }
