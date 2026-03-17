@@ -433,7 +433,21 @@
                      <br><img src="{{ asset('images/reset-step61.png') }}" style="width: 100%; border-radius: 8px; margin-top: 5px;">
                      <br><img src="{{ asset('images/reset-step62.png') }}" style="width: 100%; border-radius: 8px; margin-top: 5px;">`;
                 } else if (question === 'enable location') {
-                    customAnswer = "To enable location services, look for the lock icon in your browser's address bar. Click it and ensure 'Location' is set to 'Allow'. This is required for attendance and other location-based features.";
+                    customAnswer = `<b>MOBILE APP:</b>
+                    <br><br>1. Please uninstall the old APK (as it does not support location).
+                    <br><img src="{{ asset('images/loc-mobile-step1.png') }}" style="width: 100%; border-radius: 8px; margin-top: 5px;">
+                    <br><br>2. Download the new APK from <b>mccpes.com</b> (it is recommended to use Incognito mode).
+                    <br><img src="{{ asset('images/loc-mobile-step21.png') }}" style="width: 100%; border-radius: 8px; margin-top: 5px;">
+                     <br><img src="{{ asset('images/loc-mobile-step22.png') }}" style="width: 100%; border-radius: 8px; margin-top: 5px;">
+                    <br><br>3. Install the downloaded APK (please disable WiFi/Data during installation).
+                    <br><img src="{{ asset('images/loc-mobile-step3.png') }}" style="width: 100%; border-radius: 8px; margin-top: 5px;">
+                    <br><br>4. On first app launch, it is recommended to "Allow" location for the app to work normally. If denied, try to manually enable location in app settings.
+                    <br><img src="{{ asset('images/loc-mobile-step4.png') }}" style="width: 100%; border-radius: 8px; margin-top: 5px;">
+                    <br><br><b>BROWSER:</b>
+                    <br><br>1. Go to <b>mccpes.com</b> (any browser) and tap the icon beside the domain URL.
+                    <br><img src="{{ asset('images/loc-browser-step1.png') }}" style="width: 100%; border-radius: 8px; margin-top: 5px;">
+                    <br><br>2. Tap "Permissions" for location and then enable it. You can now normally use the application.
+                    <br><img src="{{ asset('images/loc-browser-step2.png') }}" style="width: 100%; border-radius: 8px; margin-top: 5px;">`;
                 }
 
                 if (customAnswer) {
