@@ -21,8 +21,8 @@
     }
 
     #chatbot-button {
-        width: 50px;
-        height: 50px;
+        width: 55px;
+        height: 55px;
         border-radius: 50%;
         background: var(--chatbot-gradient);
         box-shadow: 0 4px 15px rgba(255, 0, 153, 0.3);
@@ -30,21 +30,71 @@
         align-items: center;
         justify-content: center;
         color: white;
-        font-size: 22px;
+        font-size: 24px;
         cursor: pointer;
         transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        position: relative;
+        animation: shake 2.5s ease-in-out infinite;
+        border: 2px solid transparent;
+    }
+
+    /* Spinning Border Effect */
+    #chatbot-button::before {
+        content: "";
+        position: absolute;
+        inset: -4px;
+        border-radius: 50%;
+        padding: 2px;
+        background: conic-gradient(from 0deg, var(--chatbot-violet), var(--chatbot-pink), var(--chatbot-purple), var(--chatbot-violet));
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        animation: spin 3s linear infinite;
+    }
+
+    /* Water Drop / Ripple Effect */
+    #chatbot-button::after {
+        content: "";
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: var(--chatbot-pink);
+        border-radius: 50%;
+        z-index: -1;
+        opacity: 0.5;
+        animation: waterDrop 2s ease-out infinite;
+    }
+
+    #chatbot-button i {
+        animation: spinIcon 4s linear infinite;
     }
 
     #chatbot-button:hover, #chatbot-button:focus {
-        transform: scale(1.1);
-        box-shadow: 0 6px 25px rgba(255, 0, 153, 0.4);
-        animation: shake 0.5s ease-in-out infinite;
+        transform: scale(1.15);
+        box-shadow: 0 8px 25px rgba(255, 0, 153, 0.5);
     }
 
     @keyframes shake {
-        0%, 100% { transform: scale(1.1) rotate(0deg); }
-        25% { transform: scale(1.1) rotate(-5deg); }
-        75% { transform: scale(1.1) rotate(5deg); }
+        0%, 100% { transform: rotate(0deg); }
+        10%, 30%, 50%, 70%, 90% { transform: rotate(-10deg); }
+        20%, 40%, 60%, 80% { transform: rotate(10deg); }
+    }
+
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    @keyframes spinIcon {
+        0%, 80% { transform: rotate(0deg); }
+        90% { transform: rotate(360deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    @keyframes waterDrop {
+        0% { transform: scale(1); opacity: 0.5; }
+        100% { transform: scale(2); opacity: 0; }
     }
 
     #chatbot-window {
