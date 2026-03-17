@@ -1392,5 +1392,7 @@
         });
     </script>
      <script src="{{ asset('js/dev-tools-security.js') }}"></script>
+       @stack('scripts')
+    @include('partials.chatbot')
 </body>
 </html> 

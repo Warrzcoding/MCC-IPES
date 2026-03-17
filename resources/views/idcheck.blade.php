@@ -1330,7 +1330,7 @@
             }
         });
     </script>
-    stack('scripts')
+    @stack('scripts')
     @include('partials.chatbot')
 </body>
 </html>
