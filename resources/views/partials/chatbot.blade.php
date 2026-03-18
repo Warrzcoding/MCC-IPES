@@ -322,6 +322,61 @@
         0%, 60%, 100% { transform: translateY(0); }
         30% { transform: translateY(-4px); }
     }
+
+    /* Confirmation Modal Styles */
+    #chatbot-confirm-modal {
+        position: absolute;
+        bottom: 60px; /* Position above social icons */
+        left: 50%;
+        transform: translateX(-50%);
+        width: 90%;
+        background: white;
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 2000;
+        font-family: 'Inter', sans-serif;
+        border-radius: 15px;
+        box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.1);
+        padding: 15px;
+        border: 1px solid rgba(255, 0, 153, 0.1);
+    }
+
+    .confirm-modal-content {
+        width: 100%;
+        text-align: center;
+        animation: modalFadeIn 0.3s ease;
+    }
+
+    @keyframes modalFadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .confirm-modal-text {
+        font-size: 12px;
+        color: #333;
+        margin-bottom: 12px;
+        line-height: 1.4;
+    }
+
+    .confirm-modal-btn {
+        background: var(--chatbot-gradient);
+        color: white;
+        border: none;
+        padding: 8px 20px;
+        border-radius: 20px;
+        font-weight: 600;
+        cursor: pointer;
+        width: 100%;
+        transition: transform 0.2s;
+        font-size: 12px;
+    }
+
+    .confirm-modal-btn:hover {
+        transform: scale(1.05);
+    }
 </style>
 
 <div id="chatbot-container">
@@ -356,6 +411,16 @@
             <button class="open-chat-btn" id="open-inbox">
                 <i class="fas fa-paper-plane"></i> Chat Now
             </button>
+
+            <!-- Redirect Confirmation Modal (Inside Chat Window) -->
+            <div id="chatbot-confirm-modal">
+                <div class="confirm-modal-content">
+                    <div class="confirm-modal-text" id="confirm-modal-message">
+                        You will be redirected to MCC-IPES page.
+                    </div>
+                    <button class="confirm-modal-btn" id="confirm-redirect-btn">Continue</button>
+                </div>
+            </div>
 
             <!-- Social Links / Additional Websites -->
             <div class="social-links">
@@ -414,6 +479,12 @@
         const input = document.getElementById('chatbot-input');
         const messagesContainer = document.getElementById('chatbot-messages');
         const faqItems = document.querySelectorAll('.faq-item');
+        const socialIcons = document.querySelectorAll('.social-icon');
+        const confirmModal = document.getElementById('chatbot-confirm-modal');
+        const confirmMsg = document.getElementById('confirm-modal-message');
+        const confirmBtn = document.getElementById('confirm-redirect-btn');
+
+        let pendingUrl = '';
 
         botBtn.addEventListener('click', () => {
             botWindow.classList.toggle('active');
@@ -421,6 +492,31 @@
 
         closeBtn.addEventListener('click', () => {
             botWindow.classList.remove('active');
+        });
+
+        // Social Icon Click Interceptor
+        socialIcons.forEach(icon => {
+            icon.addEventListener('click', function(e) {
+                e.preventDefault();
+                const platform = this.getAttribute('title') || 'the website';
+                pendingUrl = this.getAttribute('href');
+                confirmMsg.textContent = `You will be redirected to ${platform}.`;
+                confirmModal.style.display = 'flex';
+            });
+        });
+
+        confirmBtn.addEventListener('click', () => {
+            if (pendingUrl) {
+                window.open(pendingUrl, '_blank');
+            }
+            confirmModal.style.display = 'none';
+        });
+
+        // Close modal on tap outside (anywhere in the chat window)
+        botWindow.addEventListener('click', (e) => {
+            if (confirmModal.style.display === 'flex' && !confirmModal.contains(e.target) && !Array.from(socialIcons).some(icon => icon.contains(e.target))) {
+                confirmModal.style.display = 'none';
+            }
         });
 
         openInboxBtn.addEventListener('click', () => {
