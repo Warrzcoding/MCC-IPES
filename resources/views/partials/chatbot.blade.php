@@ -409,7 +409,7 @@
             </div>
             
             <button class="open-chat-btn" id="open-inbox">
-                <i class="fas fa-paper-plane"></i> Chat Now
+                <i class="fas fa-paper-plane"></i> Ask Now
             </button>
 
             <!-- Redirect Confirmation Modal (Inside Chat Window) -->
