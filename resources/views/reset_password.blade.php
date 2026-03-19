@@ -300,8 +300,8 @@
             border-radius: 25px;
             box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
             padding: 36px;
-            max-width: 320px;
-            width: 80%;
+            max-width: 400px;
+            width: 90%;
             transition: all 0.3s ease;
             margin: 0 auto;
             position: relative;
@@ -504,10 +504,10 @@
             }
             
             .reset-card {
-                padding: 5vw 2vw 5vw 2vw;
-                max-width: 340px;
+                padding: 5vw 4vw 5vw 4vw;
+                max-width: 360px;
                 min-width: 0;
-                width: 98vw;
+                width: 95vw;
                 border-radius: 16px;
                 box-shadow: 0 6px 24px rgba(102,126,234,0.13), 0 1.5px 8px rgba(0,0,0,0.08);
                 margin: 0 auto;
@@ -645,41 +645,41 @@
         </div>
         
         <!-- Step 1: Email Verification -->
-        <div id="resetStep1">
+        <div id="resetStep1" class="w-100">
             <form id="resetEmailForm" method="POST" action="{{ route('password.reset.send_verification') }}">
                 @csrf
                 <div class="mb-3 text-center">
                     <label for="ms365_email" class="form-label w-100 text-center">MS Email Address</label>
                     <div class="input-group">
                         <span class="input-group-text bg-white"><i class="fas fa-envelope text-primary"></i></span>
-                        <input type="email" class="form-control" id="ms365_email" name="ms365_email"
+                        <input type="email" class="form-control text-center" id="ms365_email" name="ms365_email"
                                placeholder="your.msemail@mcclawis.edu.ph" required autofocus
                                inputmode="email"
                                autocomplete="email">
                     </div>
                 </div>
-                <button type="submit" class="btn btn-primary" id="sendVerificationBtn">
+                <button type="submit" class="btn btn-primary w-100" id="sendVerificationBtn">
                     <i class="fas fa-paper-plane"></i> Send Verification Code
                 </button>
             </form>
         </div>
         
         <!-- Step 2: OTP Verification -->
-        <div id="resetStep2" style="display:none;">
+        <div id="resetStep2" class="w-100" style="display:none;">
             <form id="resetOtpForm" method="POST" action="{{ route('password.reset.verify_otp') }}">
                 @csrf
                 <input type="hidden" name="ms365_email" id="otp_email">
                 
                 <!-- OTP Timer Display -->
                 <div class="mb-3 text-center">
-                    <div class="alert alert-info" id="otpTimerAlert">
+                    <div class="alert alert-info w-100" id="otpTimerAlert">
                         <i class="fas fa-clock"></i>
                         <span id="otpTimerText">Time remaining: <span id="otpCountdown">05:00</span></span>
                     </div>
                 </div>
                 
                 <div class="mb-3 text-center">
-                    <label for="otp_code" class="form-label">Enter the code sent to your Outlook email</label>
+                    <label for="otp_code" class="form-label w-100 text-center">Enter the code sent to your Outlook email</label>
                     <div class="d-flex justify-content-center">
                         <input type="text" class="form-control text-center" id="otp_code" name="otp_code" 
                                maxlength="6" required placeholder="Enter 6-digit code"
@@ -687,12 +687,12 @@
                     </div>
                 </div>
                 
-                <button type="submit" class="btn btn-success mb-3" id="verifyOtpBtn">
+                <button type="submit" class="btn btn-success mb-3 w-100" id="verifyOtpBtn">
                     <i class="fas fa-check"></i> Verify Code
                 </button>
                 
                 <!-- Horizontal button layout -->
-                <div class="d-flex justify-content-between gap-2 mt-2">
+                <div class="d-flex justify-content-between gap-2 mt-2 w-100">
                    
                     <button type="button" class="btn btn-outline-primary flex-fill" id="resendOtpBtn" style="display:none; min-width: 0;">
                         <i class="fas fa-redo me-1"></i> Resend Code
@@ -702,7 +702,7 @@
         </div>
         
         <!-- Step 3: New Password -->
-        <div id="resetStep3" style="display:none;">
+        <div id="resetStep3" class="w-100" style="display:none;">
             <form id="resetPasswordForm" method="POST" action="{{ route('password.reset.update') }}">
                 @csrf
                 <input type="hidden" name="ms365_email" id="password_email">
@@ -746,7 +746,7 @@
                     <label class="form-check-label small text-muted" for="showPasswordsCheckbox">Show Passwords</label>
                 </div>
                 
-                <button type="submit" class="btn btn-success" id="resetPasswordBtn">
+                <button type="submit" class="btn btn-success w-100" id="resetPasswordBtn">
                     <i class="fas fa-save"></i> Reset Password
                 </button>
             </form>
