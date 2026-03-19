@@ -875,19 +875,6 @@
 
 
 
-            function enforceEmailPattern(event) {
-                const input = event.target;
-                // Allow only letters, numbers, dot, at, and ñ/Ñ
-                let value = input.value.replace(/[^a-zA-Z0-9.@ñÑ]/g, '');
-                input.value = value;
-
-                if (value && !allowedEmailPattern.test(value)) {
-                    input.setCustomValidity('Email must use @mcclawis.edu.ph format');
-                } else {
-                    input.setCustomValidity('');
-                }
-            }
-
             function validateEmailBeforeSubmit(inputElement) {
                 const value = inputElement.value.trim();
                 if (!allowedEmailPattern.test(value)) {
@@ -900,15 +887,25 @@
             }
 
             if (emailInput) {
-                emailInput.addEventListener('input', enforceEmailPattern, { passive: true });
-                
-                emailInput.addEventListener('input', function() {
-                    const value = this.value;
-                    const atIndex = value.indexOf('@');
+                emailInput.addEventListener('input', function(e) {
+                    // 1. Clean input (allow only letters, numbers, dot, at, and ñ/Ñ)
+                    let value = this.value.replace(/[^a-zA-Z0-9.@ñÑ]/g, '');
                     
+                    // 2. Handle autocomplete trigger (@)
+                    const atIndex = value.indexOf('@');
                     if (atIndex !== -1) {
                         const beforeAt = value.substring(0, atIndex);
-                        this.value = beforeAt + '@mcclawis.edu.ph';
+                        value = beforeAt + '@mcclawis.edu.ph';
+                    }
+                    
+                    // Update field value
+                    this.value = value;
+
+                    // 3. Validate and update custom validity
+                    if (value && !allowedEmailPattern.test(value)) {
+                        this.setCustomValidity('Email must use @mcclawis.edu.ph format');
+                    } else {
+                        this.setCustomValidity('');
                     }
                 });
 
