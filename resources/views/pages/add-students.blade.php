@@ -1382,6 +1382,14 @@ document.addEventListener('DOMContentLoaded', function () {
                     </form>
                 </div>
 
+                <!-- Loading Spinner -->
+                <div id="searchLoading" class="text-center py-5 d-none">
+                    <div class="spinner-border" role="status" style="width: 5rem; height: 5rem; color: #90ee90;">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-3 fw-bold" style="color: #90ee90; font-size: 1.2rem;">Searching students...</p>
+                </div>
+
                 <div id="studentsContent">
                 @if($students->isEmpty())
                     <p class="text-muted text-center py-4">
@@ -2508,6 +2516,18 @@ document.addEventListener('DOMContentLoaded', function() {
     if (moveBackwardBtn) {
         moveBackwardBtn.addEventListener('click', function() {
             confirmMove('backward');
+        });
+    }
+
+    // Handle search form loading state
+    const studentSearchForm = document.getElementById('studentSearchForm');
+    const searchLoading = document.getElementById('searchLoading');
+    const studentsContent = document.getElementById('studentsContent');
+
+    if (studentSearchForm && searchLoading && studentsContent) {
+        studentSearchForm.addEventListener('submit', function() {
+            searchLoading.classList.remove('d-none');
+            studentsContent.classList.add('d-none');
         });
     }
 });
