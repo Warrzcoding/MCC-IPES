@@ -80,6 +80,7 @@
                     }
                     .page-full-width .table thead th {
                         font-size: 0.68rem;
+                        white-space: nowrap;
                     }
                     .page-full-width .table th,
                     .page-full-width .table td {
@@ -848,7 +849,7 @@
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 }
-
+ss
 #studentsTable {
   min-width: 100%;
   table-layout: auto;
@@ -1361,10 +1362,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 <!-- Search Form -->
                  
                 <div class="search-filter-form">
-                    <form method="GET" action="{{ route('dashboard', ['page' => 'add-students']) }}" class="d-flex gap-2 align-items-end" id="studentSearchForm">
+                    <form method="GET" action="{{ route('dashboard', ['page' => 'add-students']) }}" class="d-flex gap-2 align-items-end justify-content-end" id="studentSearchForm">
                         <input type="hidden" name="page" value="add-students">
 
-                        <div class="flex-fill">
+                        <div style="width: 350px;">
                            
                             <input type="text" class="form-control" id="search" name="search"
                                    value="{{ request('search') }}"
