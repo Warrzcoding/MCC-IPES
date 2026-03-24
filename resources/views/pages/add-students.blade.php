@@ -853,13 +853,79 @@
   min-width: 100%;
   table-layout: auto;
   white-space: nowrap;
-  font-size: 0.68rem;
+  font-size: 0.7rem;
+  border-collapse: collapse;
+}
+
+#studentsTable thead th {
+  background-color: #f8fafc;
+  color: #64748b;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+  border-bottom: 1px solid #e2e8f0 !important;
+  border-top: none;
+  padding: 0.75rem 0.5rem;
+}
+
+#studentsTable tbody tr {
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+#studentsTable tbody tr:hover td,
+#studentsTable tbody tr:focus-within td {
+  background-color: #f3f3f3 !important;
+}
+
+#studentsTable tbody tr:hover td:first-child,
+#studentsTable tbody tr:focus-within td:first-child {
+  box-shadow: inset 3px 0 0 #f321ec;
 }
 
 #studentsTable th,
 #studentsTable td {
   vertical-align: middle;
-  padding: 0.2rem 0.18rem;
+  padding: 0.75rem 0.5rem;
+  border: none !important;
+  border-bottom: 1px solid #f1f5f9 !important;
+}
+
+/* Pagination Styling */
+.pagination-custom .page-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 32px;
+  padding: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #475569;
+  background-color: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.375rem;
+  transition: all 0.2s;
+  text-decoration: none;
+}
+
+.pagination-custom .page-btn:hover:not(.disabled):not(.active) {
+  background-color: #f8fafc;
+  border-color: #cbd5e1;
+  color: #1e293b;
+}
+
+.pagination-custom .page-btn.active {
+  background-color: #3b82f6;
+  border-color: #3b82f6;
+  color: #fff;
+}
+
+.pagination-custom .page-btn.disabled {
+  background-color: #f1f5f9;
+  border-color: #e2e8f0;
+  color: #94a3b8;
+  cursor: not-allowed;
 }
 
 /* Only truncate the MS Email column (4th column) */
@@ -1008,8 +1074,8 @@
 
 /* Ensure table doesn't break layout */
 .table-responsive {
-  border-radius: 0.375rem;
-  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* Enhanced pagination styling - Full pagination with page numbers */
@@ -1326,7 +1392,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     </p>
                 @else
                     <div class="table-responsive">
-                        <table class="table table-bordered table-sm" id="studentsTable">
+                        <table class="table table-sm" id="studentsTable">
                             <thead>
                                 <tr>
                                     <th>Profile</th>
