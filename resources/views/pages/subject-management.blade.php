@@ -92,23 +92,52 @@
 
 /* Responsive table styles */
 .table-responsive {
-    border: 1px solid #dee2e6;
-    border-radius: 0.375rem;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
 }
 
 #subjectTable1, #subjectTable2 {
-    min-width: 1100px;
+    min-width: 100%;
     white-space: nowrap;
-    font-size: var(--subject-text-size-table);
+    font-size: 0.7rem;
+    border-collapse: collapse;
+}
+
+#subjectTable1 thead th, #subjectTable2 thead th {
+    background-color: #f8fafc;
+    color: #64748b;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+    border: none !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    padding: 0.75rem 0.5rem;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+#subjectTable1 tbody tr, #subjectTable2 tbody tr {
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+#subjectTable1 tbody tr:hover td, #subjectTable1 tbody tr:focus-within td,
+#subjectTable2 tbody tr:hover td, #subjectTable2 tbody tr:focus-within td {
+    background-color: #f5f5f5 !important;
+}
+
+#subjectTable1 tbody tr:hover td:first-child, #subjectTable1 tbody tr:focus-within td:first-child,
+#subjectTable2 tbody tr:hover td:first-child, #subjectTable2 tbody tr:focus-within td:first-child {
+    box-shadow: inset 3px 0 0 #6c757d;
 }
 
 #subjectTable1 th, #subjectTable1 td,
 #subjectTable2 th, #subjectTable2 td {
-    padding: 0.4rem 0.25rem;
+    padding: 0.75rem 0.5rem;
     vertical-align: middle;
-    border: 1px solid #dee2e6;
+    border: none !important;
+    border-bottom: 1px solid #f1f5f9 !important;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -287,26 +316,9 @@
     }
 }
 
-/* Ensure table doesn't break layout */
-.table-responsive {
-    border: 1px solid #dee2e6;
-    border-radius: 0.375rem;
-}
 
-/* Header styling */
-#subjectTable1 thead th, #subjectTable2 thead th {
-    background-color: #f8f9fa;
-    font-weight: 600;
-    border-bottom: 2px solid #dee2e6;
-    position: sticky;
-    top: 0;
-    z-index: 10;
-}
 
-/* Hover effects */
-#subjectTable1 tbody tr:hover, #subjectTable2 tbody tr:hover {
-    background-color: #f8f9fa;
-}
+
 
 /* Text truncation for long content */
 #subjectTable1 td, #subjectTable2 td {
@@ -417,7 +429,7 @@
                             <p class="text-muted text-center py-4">No subjects found for Semester 1.</p>
                         @else
                             <div class="table-responsive">
-                                <table class="table table-bordered" id="subjectTable1">
+                                <table class="table table-sm" id="subjectTable1">
                             <thead>
                                 <tr>
                                     <th>Subject Code</th>
@@ -494,7 +506,7 @@
                             <p class="text-muted text-center py-4">No subjects found for Semester 2.</p>
                         @else
                             <div class="table-responsive">
-                                <table class="table table-bordered" id="subjectTable2">
+                                <table class="table table-sm" id="subjectTable2">
                                     <thead>
                                         <tr>
                                             <th>Subject Code</th>
