@@ -62,14 +62,45 @@
                     #staffTable {
                         min-width: 100%;
                         white-space: nowrap;
-                        font-size: 0.66rem;
+                        font-size: 0.7rem;
+                        border-collapse: collapse;
+                    }
+                    
+                    #staffTable thead th {
+                        background-color: #f8fafc;
+                        color: #64748b;
+                        font-weight: 600;
+                        text-transform: uppercase;
+                        letter-spacing: 0.025em;
+                        border: none !important;
+                        border-bottom: 1px solid #e2e8f0 !important;
+                        padding: 0.75rem 0.5rem;
+                        position: sticky;
+                        top: 0;
+                        z-index: 10;
+                    }
+
+                    #staffTable tbody tr {
+                        transition: all 0.2s ease;
+                        cursor: pointer;
+                    }
+
+                    #staffTable tbody tr:hover td,
+                    #staffTable tbody tr:focus-within td {
+                        background-color: #f5f5f5 !important;
+                    }
+
+                    #staffTable tbody tr:hover td:first-child,
+                    #staffTable tbody tr:focus-within td:first-child {
+                        box-shadow: inset 3px 0 0 #6c757d;
                     }
                     
                     #staffTable th,
                     #staffTable td {
-                        padding: 0.2rem 0.14rem;
+                        padding: 0.75rem 0.5rem;
                         vertical-align: middle;
-                        border: 1px solid #dee2e6;
+                        border: none !important;
+                        border-bottom: 1px solid #f1f5f9 !important;
                         white-space: nowrap;
                         overflow: hidden;
                         text-overflow: ellipsis;
@@ -331,23 +362,8 @@
                     
                     /* Ensure table doesn't break layout */
                     .table-responsive {
-                        border: 1px solid #dee2e6;
-                        border-radius: 0.375rem;
-                    }
-                    
-                    /* Header styling */
-                    #staffTable thead th {
-                        background-color: #f8f9fa;
-                        font-weight: 600;
-                        border-bottom: 2px solid #dee2e6;
-                        position: sticky;
-                        top: 0;
-                        z-index: 10;
-                    }
-                    
-                    /* Hover effects */
-                    #staffTable tbody tr:hover {
-                        background-color: #f8f9fa;
+                        overflow-x: auto;
+                        -webkit-overflow-scrolling: touch;
                     }
                     
                     /* Text truncation for long content */
@@ -362,56 +378,41 @@
                     #staffTable td:nth-child(9) {
                         white-space: normal;
                     }
-                                        /* Custom Pagination Styles */
-                    .pagination-custom {
-                        flex-wrap: wrap;
-                        justify-content: center;
-                    }
-
-                    .page-btn {
+                                        /* Pagination Styling */
+                    .pagination-custom .page-btn {
                         display: inline-flex;
                         align-items: center;
                         justify-content: center;
-                        min-width: 2rem;
-                        height: 2rem;
-                        padding: 0.25rem 0.5rem;
-                        margin: 0 0.125rem;
-                        font-size: 0.7rem;
-                        font-weight: 500;
-                        text-decoration: none;
-                        color: #495057;
-                        background-color: #fff;
-                        border: 1px solid #dee2e6;
-                        border-radius: 0.25rem;
-                        transition: all 0.15s ease-in-out;
-                        cursor: pointer;
-                    }
-
-                    .page-btn:hover:not(.disabled):not(.active) {
-                        color: #0056b3;
-                        background-color: #e9ecef;
-                        border-color: #adb5bd;
-                        text-decoration: none;
-                    }
-
-                    .page-btn.active {
-                        color: #fff;
-                        background-color: #007bff;
-                        border-color: #007bff;
+                        min-width: 32px;
+                        height: 32px;
+                        padding: 0.5rem;
+                        font-size: 0.75rem;
                         font-weight: 600;
+                        color: #475569;
+                        background-color: #fff;
+                        border: 1px solid #e2e8f0;
+                        border-radius: 0.375rem;
+                        transition: all 0.2s;
+                        text-decoration: none;
                     }
 
-                    .page-btn.disabled {
-                        color: #6c757d;
-                        background-color: #e9ecef;
-                        border-color: #dee2e6;
+                    .pagination-custom .page-btn:hover:not(.disabled):not(.active) {
+                        background-color: #f8fafc;
+                        border-color: #cbd5e1;
+                        color: #1e293b;
+                    }
+
+                    .pagination-custom .page-btn.active {
+                        background-color: #3b82f6;
+                        border-color: #3b82f6;
+                        color: #fff;
+                    }
+
+                    .pagination-custom .page-btn.disabled {
+                        background-color: #f1f5f9;
+                        border-color: #e2e8f0;
+                        color: #94a3b8;
                         cursor: not-allowed;
-                        opacity: 0.6;
-                        pointer-events: none;
-                    }
-
-                    .page-btn i {
-                        font-size: 0.65rem;
                     }
 
                     /* Responsive pagination */
@@ -459,7 +460,7 @@
             </div>
            <!--end of golbal serach-->
                     <div class="table-responsive">
-                        <table class="table table-bordered table-sm" id="staffTable">
+                        <table class="table table-sm" id="staffTable">
                             <thead>
                                 <tr>
                                     <th>Profile</th>
