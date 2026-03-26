@@ -546,7 +546,7 @@
                 // Custom Local Answers for FAQs
                 let customAnswer = null;
                 if (question === 'evaluate instructors') {
-                    customAnswer = `To evaluate your instructors, please follow these steps:<br>1. Log in to your account.<br>2. Go to the "Evaluation" section.<br>3. Select the instructor you want to evaluate.<br>4. Fill out the evaluation form and submit.<br><br><img src="{{ asset('images/evaluate-guide.png') }}" alt="Evaluation Guide" style="width: 100%; border-radius: 8px; margin-top: 10px;">`;
+                    customAnswer = `To evaluate your instructors, please follow these steps:<br>1. Log in to your account.<br>2. Go to the "Evaluation" section.<br>3. Select the instructor you want to evaluate.<br>4. Fill out the evaluation form and submit.<br><br><img src="{{ asset('images/ev1.png') }}" alt="Evaluation Guide" style="width: 100%; border-radius: 8px; margin-top: 10px;"><br><img src="{{ asset('images/ev2.png') }}" alt="Evaluation Guide" style="width: 100%; border-radius: 8px; margin-top: 10px;">`;
                 } else if (question === 'create account') {
                     customAnswer = `To create an account, follow these steps:
                     <br><br><b>Step 1:</b> Tap "Start Student Login", Click "Signup here" link.
