@@ -345,7 +345,7 @@
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Student Status <span class="text-danger">*</span></label>
-                            <select class="form-select @error('student_status') is-invalid @enderror" name="student_status" readonly="true" required>
+                            <select class="form-select @error('student_status') is-invalid @enderror" disabled required>
                                 <option value="Regular" {{ old('student_status', Auth::user()->student_status) === 'Regular' ? 'selected' : '' }}>Regular</option>
                                 <option value="Irregular" {{ old('student_status', Auth::user()->student_status) === 'Irregular' ? 'selected' : '' }}>Irregular</option>
                             </select>
@@ -360,6 +360,7 @@
                     <input type="hidden" name="course" value="{{ Auth::user()->course }}">
                     <input type="hidden" name="year_level" value="{{ Auth::user()->year_level }}">
                     <input type="hidden" name="section" value="{{ Auth::user()->section }}">
+                    <input type="hidden" name="student_status" value="{{ Auth::user()->student_status }}">
                     @endif
                     
                     @if(Auth::user()->role === 'admin')
