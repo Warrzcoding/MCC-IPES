@@ -345,7 +345,7 @@
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Student Status <span class="text-danger">*</span></label>
-                            <select class="form-select @error('student_status') is-invalid @enderror" name="student_status" required>
+                            <select class="form-select @error('student_status') is-invalid @enderror" name="student_status" readonly="true" required>
                                 <option value="Regular" {{ old('student_status', Auth::user()->student_status) === 'Regular' ? 'selected' : '' }}>Regular</option>
                                 <option value="Irregular" {{ old('student_status', Auth::user()->student_status) === 'Irregular' ? 'selected' : '' }}>Irregular</option>
                             </select>
