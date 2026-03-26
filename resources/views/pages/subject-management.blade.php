@@ -389,7 +389,19 @@
         <div class="card shadow mb-4">
             <div class="card-header py-3 d-flex justify-content-between align-items-center">
                 <h6 class="m-0 font-weight-bold text-primary">Subject List</h6>
-                <div>
+                <div class="d-flex align-items-center">
+                    <div id="staffSearchContainer" class="me-2 d-none">
+                        <div class="input-group input-group-sm" style="width: 250px;">
+                            <input type="text" id="staffSearchInput" class="form-control" placeholder="Search Instructor Name...">
+                            <button class="btn btn-outline-secondary" type="button" id="staffSearchBtn">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                        <div id="staffSearchResult" class="position-absolute mt-1 bg-white border rounded shadow-sm p-2 d-none" style="z-index: 1000; width: 250px; font-size: 0.75rem;"></div>
+                    </div>
+                    <button class="btn btn-info me-2 text-white" id="toggleStaffSearch">
+                        <i class="fas fa-user-check"></i> Check Instructor Name
+                    </button>
                     <!--<button class="btn btn-success me-2" id="csvUploadBtn" onclick="openCSVUpload()">
                         <i class="fas fa-upload"></i> Upload CSV
                     </button>-->
@@ -2485,6 +2497,79 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     }
+
+    // Staff search functionality
+    const toggleStaffSearch = document.getElementById('toggleStaffSearch');
+    const staffSearchContainer = document.getElementById('staffSearchContainer');
+    const staffSearchInput = document.getElementById('staffSearchInput');
+    const staffSearchBtn = document.getElementById('staffSearchBtn');
+    const staffSearchResult = document.getElementById('staffSearchResult');
+
+    if (toggleStaffSearch) {
+        toggleStaffSearch.addEventListener('click', function() {
+            staffSearchContainer.classList.toggle('d-none');
+            if (!staffSearchContainer.classList.contains('d-none')) {
+                staffSearchInput.focus();
+            }
+        });
+    }
+
+    if (staffSearchBtn) {
+        staffSearchBtn.addEventListener('click', function() {
+            performStaffSearch();
+        });
+    }
+
+    if (staffSearchInput) {
+        staffSearchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                performStaffSearch();
+            }
+        });
+    }
+
+    function performStaffSearch() {
+        const query = staffSearchInput.value.trim();
+        if (query.length < 2) {
+            staffSearchResult.innerHTML = '<div class="text-danger">Please enter at least 2 characters.</div>';
+            staffSearchResult.classList.remove('d-none');
+            return;
+        }
+
+        staffSearchResult.innerHTML = '<div class="text-center"><i class="fas fa-spinner fa-spin"></i> Searching...</div>';
+        staffSearchResult.classList.remove('d-none');
+
+        fetch(`{{ route('staff.search') }}?query=${encodeURIComponent(query)}`, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.length > 0) {
+                let html = '<ul class="list-unstyled mb-0">';
+                data.forEach(staff => {
+                    html += `<li class="py-1 border-bottom last-child-border-0"><strong>Fullname:</strong> ${staff.full_name}</li>`;
+                });
+                html += '</ul>';
+                staffSearchResult.innerHTML = html;
+            } else {
+                staffSearchResult.innerHTML = '<div class="text-muted">No instructor found.</div>';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            staffSearchResult.innerHTML = '<div class="text-danger">Error searching staff.</div>';
+        });
+    }
+
+    // Close search result when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!staffSearchContainer.contains(e.target) && !toggleStaffSearch.contains(e.target)) {
+            staffSearchResult.classList.add('d-none');
+        }
+    });
 });
 
 
