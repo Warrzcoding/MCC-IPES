@@ -457,7 +457,7 @@
                             <tbody>
                                 @if(isset($subjects))
                                     @foreach($subjects->where('semester', '1') as $subject)
-                                        <tr data-semester="{{ $subject->semester ?? '1' }}">
+                                        <tr id="subject-row-{{ str_replace(' ', '_', $subject->sub_code) }}-{{ str_replace(' ', '_', $subject->section ?? 'NA') }}" data-semester="{{ $subject->semester ?? '1' }}">
                                             <td>{{ $subject->sub_code }}</td>
                                             <td>{{ $subject->sub_name }}</td>
                                             <td>
@@ -534,7 +534,7 @@
                                     <tbody>
                                         @if(isset($subjects))
                                             @foreach($subjects->where('semester', '2') as $subject)
-                                                <tr data-semester="{{ $subject->semester ?? '2' }}">
+                                                <tr id="subject-row-{{ str_replace(' ', '_', $subject->sub_code) }}-{{ str_replace(' ', '_', $subject->section ?? 'NA') }}" data-semester="{{ $subject->semester ?? '2' }}">
                                                     <td>{{ $subject->sub_code }}</td>
                                                     <td>{{ $subject->sub_name }}</td>
                                                     <td>
@@ -2222,7 +2222,66 @@ document.addEventListener('DOMContentLoaded', function() {
                         showConfirmButton: false,
                         timerProgressBar: true,
                         didClose: () => {
-                            window.location.reload();
+                            // Update the table row instead of reloading
+                            const originalCode = document.getElementById('originalSubjectCode').value.replace(/ /g, '_');
+                            const originalSection = (document.getElementById('originalSection').value || 'NA').replace(/ /g, '_');
+                            const rowId = `subject-row-${originalCode}-${originalSection}`;
+                            const row = document.getElementById(rowId);
+
+                            if (row && data.data) {
+                                // Update ID in case code or section changed
+                                const newCode = data.data.sub_code.replace(/ /g, '_');
+                                const newSection = (data.data.section || 'NA').replace(/ /g, '_');
+                                row.id = `subject-row-${newCode}-${newSection}`;
+
+                                // Update cells
+                                const cells = row.cells;
+                                cells[0].textContent = data.data.sub_code;
+                                cells[1].textContent = data.data.sub_name;
+                                
+                                // Update Department badge
+                                cells[2].innerHTML = `<span class="dept-badge dept-${data.data.sub_department.toLowerCase()}">${data.data.sub_department}</span>`;
+                                
+                                cells[3].textContent = data.data.sub_year;
+                                cells[4].textContent = data.data.section || 'N/A';
+                                
+                                // Update Instructor
+                                cells[5].textContent = data.data.assign_instructor || 'Unassigned';
+                                if (!data.data.assign_instructor) {
+                                    cells[5].innerHTML = '<span class="text-muted">Unassigned</span>';
+                                }
+
+                                // Update Subject Type
+                                cells[6].innerHTML = `<span class="badge subject-type-${data.data.subject_type.toLowerCase()}">${data.data.subject_type}</span>`;
+
+                                // Update Edit button's onclick attributes
+                                const editBtn = row.querySelector('.btn-outline-primary');
+                                if (editBtn) {
+                                    const nameEscaped = data.data.sub_name.replace(/'/g, "\\'");
+                                    const deptEscaped = data.data.sub_department.replace(/'/g, "\\'");
+                                    editBtn.setAttribute('onclick', `loadSubjectData('${data.data.sub_code}', '${nameEscaped}', '${deptEscaped}', '${data.data.sub_year}', '${data.data.section || ''}', '${data.data.semester || ''}', '${data.data.instructor_staff_id || ''}', '${data.data.subject_type}')`);
+                                }
+
+                                // Update Delete button's onclick attributes
+                                const deleteBtn = row.querySelector('.btn-outline-danger');
+                                if (deleteBtn) {
+                                    const nameEscaped = data.data.sub_name.replace(/'/g, "\\'");
+                                    deleteBtn.setAttribute('onclick', `confirmDeleteSubject('${data.data.sub_code}', '${nameEscaped}', '${data.data.section || ''}')`);
+                                }
+
+                                // Close the modal
+                                const editModal = bootstrap.Modal.getInstance(document.getElementById('editModal'));
+                                if (editModal) editModal.hide();
+
+                                // Highlight the updated row briefly
+                                row.style.backgroundColor = '#d4edda';
+                                setTimeout(() => {
+                                    row.style.backgroundColor = '';
+                                }, 2000);
+                            } else {
+                                // Fallback to reload if row not found
+                                window.location.reload();
+                            }
                         }
                     });
                 } else {

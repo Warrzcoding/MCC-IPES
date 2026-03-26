@@ -1648,7 +1648,18 @@ $user->password = Hash::make($request->admin_password);
             if ($request->ajax() || $request->wantsJson()) {
                 return response()->json([
                     'success' => true,
-                    'message' => 'Subject updated successfully!'
+                    'message' => 'Subject updated successfully!',
+                    'data' => [
+                        'sub_code' => $subject->sub_code,
+                        'sub_name' => $subject->sub_name,
+                        'sub_department' => $subject->sub_department,
+                        'sub_year' => $subject->sub_year,
+                        'section' => $subject->section,
+                        'semester' => $subject->semester,
+                        'assign_instructor' => $subject->assign_instructor,
+                        'subject_type' => $subject->subject_type,
+                        'instructor_staff_id' => $request->assign_instructor
+                    ]
                 ]);
             }
 
