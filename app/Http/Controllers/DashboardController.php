@@ -1411,21 +1411,22 @@ $user->password = Hash::make($request->admin_password);
     // Subject Management Methods
     public function addSubject(Request $request)
     {
-        // Check for duplicate subject code and section combination
+        // Check for duplicate subject code, section and semester combination
         $existingSubject = \App\Models\Subject::where('sub_code', $request->sub_code)
             ->where('section', $request->section)
+            ->where('semester', $request->semester)
             ->first();
 
         if ($existingSubject) {
             if ($request->ajax() || $request->wantsJson()) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'A subject with code "' . $request->sub_code . '" already exists for section "' . $request->section . '". Please use a different section or subject code.',
+                    'message' => 'A subject with code "' . $request->sub_code . '" already exists for section "' . $request->section . '" in Semester ' . $request->semester . '. Please use a different section, subject code, or semester.',
                 ], 422);
             }
             
             return redirect()->back()
-                ->withErrors(['sub_code' => 'A subject with code "' . $request->sub_code . '" already exists for section "' . $request->section . '". Please use a different section or subject code.'])
+                ->withErrors(['sub_code' => 'A subject with code "' . $request->sub_code . '" already exists for section "' . $request->section . '" in Semester ' . $request->semester . '. Please use a different section, subject code, or semester.'])
                 ->withInput();
         }
 
@@ -1548,8 +1549,9 @@ $user->password = Hash::make($request->admin_password);
                 ->withInput();
         }
         
-        // Check for duplicate subject code and section combination (excluding the current record)
+        // Check for duplicate subject code, section and semester combination (excluding the current record)
         $duplicateQuery = \App\Models\Subject::where('sub_code', $request->sub_code)
+            ->where('semester', $request->semester)
             ->where('id', '!=', $currentSubject->id);
             
         // Handle null/empty sections properly for duplicate check
@@ -1565,12 +1567,12 @@ $user->password = Hash::make($request->admin_password);
             if ($request->ajax() || $request->wantsJson()) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'A subject with code "' . $request->sub_code . '" already exists for section "' . $request->section . '". Please use a different section or subject code.',
+                    'message' => 'A subject with code "' . $request->sub_code . '" already exists for section "' . $request->section . '" in Semester ' . $request->semester . '. Please use a different section, subject code, or semester.',
                 ], 422);
             }
             
             return redirect()->back()
-                ->withErrors(['sub_code' => 'A subject with code "' . $request->sub_code . '" already exists for section "' . $request->section . '". Please use a different section or subject code.'])
+                ->withErrors(['sub_code' => 'A subject with code "' . $request->sub_code . '" already exists for section "' . $request->section . '" in Semester ' . $request->semester . '. Please use a different section, subject code, or semester.'])
                 ->withInput();
         }
 
