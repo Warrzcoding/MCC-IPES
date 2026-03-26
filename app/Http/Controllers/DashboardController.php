@@ -1907,4 +1907,18 @@ $user->password = Hash::make($request->admin_password);
             ], 500);
         }
     }
+
+    public function searchStaff(Request $request)
+    {
+        $query = $request->get('query');
+        if (!$query) {
+            return response()->json([]);
+        }
+
+        $staff = Staff::where('full_name', 'LIKE', '%' . $query . '%')
+            ->select('full_name')
+            ->get();
+
+        return response()->json($staff);
+    }
 } 
