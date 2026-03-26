@@ -175,6 +175,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/dashboard/add-subject', [DashboardController::class, 'addSubject'])->name('subjects.store');
     Route::post('/dashboard/update-subject', [DashboardController::class, 'updateSubject'])->name('subjects.update');
     Route::post('/dashboard/delete-subject', [DashboardController::class, 'deleteSubject'])->name('subjects.delete');
+    Route::get('/dashboard/search-staff', [DashboardController::class, 'searchStaff'])->name('staff.search');
 
        // Question reuse routes
        Route::post('/questions/reuse-saved', [\App\Http\Controllers\QuestionController::class, 'reuseSavedQuestion'])->name('question.reuseSaved');
