@@ -5,17 +5,14 @@ namespace App\Mail;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
+use Illuminate\Mail\Mailables\Address;
 
 class RegistrationOtpMail extends Mailable
 {
-
     public $otpCode;
     public $email;
     public $expiryMinutes;
 
-    /**
-     * Create a new message instance.
-     */
     public function __construct($otpCode, $email, $expiryMinutes = 5)
     {
         $this->otpCode = $otpCode;
@@ -23,19 +20,17 @@ class RegistrationOtpMail extends Mailable
         $this->expiryMinutes = $expiryMinutes;
     }
 
-    /**
-     * Get the message envelope.
-     */
     public function envelope(): Envelope
     {
         return new Envelope(
+            from: new Address(
+                env('MAIL_STUDENT_FROM_ADDRESS'),
+                env('MAIL_STUDENT_FROM_NAME')
+            ),
             subject: 'MCC-IPES Registration Verification Code',
         );
     }
 
-    /**
-     * Get the message content definition.
-     */
     public function content(): Content
     {
         return new Content(
@@ -48,11 +43,6 @@ class RegistrationOtpMail extends Mailable
         );
     }
 
-    /**
-     * Get the attachments for the message.
-     *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
-     */
     public function attachments(): array
     {
         return [];

@@ -265,14 +265,13 @@ class PreSignupController extends Controller
             Session::put('idcheck_email', $email);
             Session::put('idcheck_otp_expires', now()->addMinutes(5));
 
-            // Send email with OTP using gmail_student mailer
+            // Send email with OTP using student_failover mailer (handles Brevo failover automatically)
             try {
-                Mail::mailer('gmail_student')->to($email)->send(new \App\Mail\RegistrationOtpMail($otp, $email, 5));
+                Mail::mailer('student_failover')->to($email)->send(new \App\Mail\RegistrationOtpMail($otp, $email, 5));
                 \Log::info("ID Check OTP sent to {$email} for ID {$schoolId}");
             } catch (\Exception $mailEx) {
                 \Log::error("Mail sending failed: " . $mailEx->getMessage());
-                // Fallback to default mailer if gmail_student fails
-                Mail::to($email)->send(new \App\Mail\RegistrationOtpMail($otp, $email, 5));
+                throw $mailEx; 
             }
 
             return response()->json([

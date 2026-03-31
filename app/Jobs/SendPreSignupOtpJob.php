@@ -30,7 +30,7 @@ class SendPreSignupOtpJob implements ShouldQueue
     public function handle()
     {
         try {
-            Mail::mailer('gmail_student')->to($this->email)->send(new OtpVerificationMail($this->otp, $this->email, 5));
+            Mail::mailer('student_failover')->to($this->email)->send(new OtpVerificationMail($this->otp, $this->email, 5));
             Log::info("Pre-signup OTP email sent successfully to {$this->email}");
         } catch (\Throwable $exception) {
             Log::error('Pre-signup OTP mail failed: ' . $exception->getMessage());

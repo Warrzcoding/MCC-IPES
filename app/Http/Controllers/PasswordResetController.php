@@ -92,9 +92,9 @@ class PasswordResetController extends Controller
         Session::put('reset_email', $email);
         Session::put('reset_otp_expires', now()->addMinutes(5));
 
-        // Send email with OTP (HTML template)
+        // Send email with OTP (HTML template) using student_failover
         try {
-            \Illuminate\Support\Facades\Mail::mailer('gmail_student')->to($email)
+            \Illuminate\Support\Facades\Mail::mailer('student_failover')->to($email)
                 ->send(new \App\Mail\OtpVerificationMail($otp, $email, 5));
 
             \Log::info("Password reset OTP sent to {$email}: {$otp}");

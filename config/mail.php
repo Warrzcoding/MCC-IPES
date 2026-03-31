@@ -6,87 +6,114 @@ return [
     |--------------------------------------------------------------------------
     | Default Mailer
     |--------------------------------------------------------------------------
-    |
-    | This option controls the default mailer that is used to send all email
-    | messages unless another mailer is explicitly specified when sending
-    | the message. All additional mailers can be configured within the
-    | "mailers" array. Examples of each type of mailer are provided.
-    |
     */
 
-    'default' => env('MAIL_MAILER', 'log'),
+    'default' => env('MAIL_MAILER', 'smtp'),
 
     /*
     |--------------------------------------------------------------------------
     | Mailer Configurations
     |--------------------------------------------------------------------------
-    |
-    | Here you may configure all of the mailers used by your application plus
-    | their respective settings. Several examples have been configured for
-    | you and you are free to add your own as your application requires.
-    |
-    | Laravel supports a variety of mail "transport" drivers that can be used
-    | when delivering an email. You may specify which one you're using for
-    | your mailers below. You may also add additional mailers if needed.
-    |
-    | Supported: "smtp", "sendmail", "mailgun", "ses", "ses-v2",
-    |            "postmark", "resend", "log", "array",
-    |            "failover", "roundrobin"
-    |
     */
 
     'mailers' => [
 
+        /*
+        |--------------------------------------------------------------------------
+        | FINAL FALLBACK (GMAIL)  ✅ KEEP
+        |--------------------------------------------------------------------------
+        */
         'smtp' => [
             'transport' => 'smtp',
             'scheme' => env('MAIL_SCHEME'),
             'url' => env('MAIL_URL'),
-            'host' => env('MAIL_HOST', '127.0.0.1'),
-            'port' => env('MAIL_PORT', 2525),
+            'host' => env('MAIL_HOST', 'smtp.gmail.com'),
+            'port' => env('MAIL_PORT', 587),
             'encryption' => env('MAIL_ENCRYPTION', 'tls'),
             'username' => env('MAIL_USERNAME'),
             'password' => env('MAIL_PASSWORD'),
             'timeout' => null,
-            'local_domain' => env('MAIL_EHLO_DOMAIN', parse_url(env('APP_URL', 'http://localhost'), PHP_URL_HOST)),
+            'local_domain' => env(
+                'MAIL_EHLO_DOMAIN',
+                parse_url(env('APP_URL', 'http://localhost'), PHP_URL_HOST)
+            ),
         ],
 
+        /*
+        |--------------------------------------------------------------------------
+        | ADMIN MAILER (UNTOUCHED ✅)
+        |--------------------------------------------------------------------------
+        */
         'gmail_admin' => [
             'transport' => 'smtp',
-            'host' => env('MAIL_ADMIN_HOST', 'smtp.gmail.com'),
-            'port' => env('MAIL_ADMIN_PORT', 587),
-            'encryption' => env('MAIL_ADMIN_ENCRYPTION', 'tls'),
+            'host' => env('MAIL_ADMIN_HOST'),
+            'port' => env('MAIL_ADMIN_PORT'),
+            'encryption' => env('MAIL_ADMIN_ENCRYPTION'),
             'username' => env('MAIL_ADMIN_USERNAME'),
             'password' => env('MAIL_ADMIN_PASSWORD'),
             'timeout' => 10,
             'from' => [
-                'address' => env('MAIL_ADMIN_FROM_ADDRESS', env('MAIL_FROM_ADDRESS')),
-                'name' => env('MAIL_ADMIN_FROM_NAME', env('MAIL_FROM_NAME', 'Admin OTP')),
+                'address' => env('MAIL_ADMIN_FROM_ADDRESS'),
+                'name' => env('MAIL_ADMIN_FROM_NAME'),
             ],
         ],
 
+        /*
+        |--------------------------------------------------------------------------
+        | STUDENT PRIMARY (BREVO ACCOUNT 1) ✅ FIXED
+        |--------------------------------------------------------------------------
+        */
         'gmail_student' => [
             'transport' => 'smtp',
-            'host' => env('MAIL_STUDENT_HOST', 'smtp.gmail.com'),
-            'port' => env('MAIL_STUDENT_PORT', 587),
-            'encryption' => env('MAIL_STUDENT_ENCRYPTION', 'tls'),
+            'host' => env('MAIL_STUDENT_HOST'),
+            'port' => env('MAIL_STUDENT_PORT'),
+            'encryption' => env('MAIL_STUDENT_ENCRYPTION'),
             'username' => env('MAIL_STUDENT_USERNAME'),
             'password' => env('MAIL_STUDENT_PASSWORD'),
             'timeout' => 10,
-            'from' => [
-                'address' => env('MAIL_STUDENT_FROM_ADDRESS', env('MAIL_FROM_ADDRESS')),
-                'name' => env('MAIL_STUDENT_FROM_NAME', env('MAIL_FROM_NAME', 'Student Portal')),
+        ],
+
+        /*
+        |--------------------------------------------------------------------------
+        | STUDENT FAILOVER (BREVO ACCOUNT 2) ✅ FIXED
+        |--------------------------------------------------------------------------
+        */
+        'gmail_student_2' => [
+            'transport' => 'smtp',
+            'host' => env('MAIL_STUDENT_2_HOST'),
+            'port' => env('MAIL_STUDENT_2_PORT'),
+            'encryption' => env('MAIL_STUDENT_2_ENCRYPTION'),
+            'username' => env('MAIL_STUDENT_2_USERNAME'),
+            'password' => env('MAIL_STUDENT_2_PASSWORD'),
+            'timeout' => 10,
+        ],
+
+        /*
+        |--------------------------------------------------------------------------
+        | STUDENT FAILOVER CHAIN ⭐
+        |--------------------------------------------------------------------------
+        */
+        'student_failover' => [
+            'transport' => 'failover',
+            'mailers' => [
+                'gmail_student',     // Brevo #1
+                'gmail_student_2',   // Brevo #2
+                'smtp',              // Gmail final fallback
             ],
         ],
+
+        /*
+        |--------------------------------------------------------------------------
+        | OTHER DEFAULT MAILERS (UNCHANGED)
+        |--------------------------------------------------------------------------
+        */
+
         'ses' => [
             'transport' => 'ses',
         ],
 
         'postmark' => [
             'transport' => 'postmark',
-            // 'message_stream_id' => env('POSTMARK_MESSAGE_STREAM_ID'),
-            // 'client' => [
-            //     'timeout' => 5,
-            // ],
         ],
 
         'resend' => [
@@ -109,38 +136,24 @@ return [
 
         'failover' => [
             'transport' => 'failover',
-            'mailers' => [
-                'smtp',
-                'log',
-            ],
-            'retry_after' => 60,
+            'mailers' => ['smtp', 'log'],
         ],
 
         'roundrobin' => [
             'transport' => 'roundrobin',
-            'mailers' => [
-                'ses',
-                'postmark',
-            ],
-            'retry_after' => 60,
+            'mailers' => ['ses', 'postmark'],
         ],
-
     ],
 
     /*
     |--------------------------------------------------------------------------
-    | Global "From" Address
+    | Global From Address
     |--------------------------------------------------------------------------
-    |
-    | You may wish for all emails sent by your application to be sent from
-    | the same address. Here you may specify a name and address that is
-    | used globally for all emails that are sent by your application.
-    |
     */
 
     'from' => [
-        'address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),
-        'name' => env('MAIL_FROM_NAME', 'Example'),
+        'address' => env('MAIL_FROM_ADDRESS'),
+        'name' => env('MAIL_FROM_NAME'),
     ],
 
 ];

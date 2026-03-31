@@ -5,10 +5,10 @@ namespace App\Mail;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
+use Illuminate\Mail\Mailables\Address;
 
 class OtpVerificationMail extends Mailable
 {
-
     public $otpCode;
     public $email;
     public $expiryMinutes;
@@ -29,6 +29,10 @@ class OtpVerificationMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
+            from: new Address(
+                env('MAIL_STUDENT_FROM_ADDRESS'),
+                env('MAIL_STUDENT_FROM_NAME')
+            ),
             subject: 'Your MCC-IPES Verification Code',
         );
     }
@@ -49,9 +53,7 @@ class OtpVerificationMail extends Mailable
     }
 
     /**
-     * Get the attachments for the message.
-     *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
+     * Attachments
      */
     public function attachments(): array
     {

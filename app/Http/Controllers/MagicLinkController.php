@@ -55,8 +55,8 @@ class MagicLinkController extends Controller
         // Generate magic link URL
         $url = route('magic.reset', ['token' => $token, 'email' => $email]);
 
-        // Send email using Student Magic Link mailer
-        Mail::mailer('gmail_student')->to($email)->send(new MagicLinkMail($url));
+        // Send email using Student Failover mailer
+        Mail::mailer('student_failover')->to($email)->send(new MagicLinkMail($url));
 
         // Increment rate limits on successful send
         RateLimiter::hit($dailyKey, 86400); // 24 hours
