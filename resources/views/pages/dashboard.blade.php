@@ -950,29 +950,15 @@ new Chart(document.getElementById('staffByTypeChart').getContext('2d'), {
         }
     }
 });
-// Average Evaluation Score per Academic Year Line Chart
-
 // Staff Performance Improvement per Academic Year/Semester (Enhanced Line Chart)
-// Data for both views
 const staffStatsYearly = {!! json_encode($staffPerformanceStatsPerYear) !!};
 const staffStatsSemester = {!! json_encode($staffPerformanceStatsPerSemester) !!};
 
-// Debug: Let's see what data we have
-console.log('Yearly Data:', staffStatsYearly);
-console.log('Semester Data:', staffStatsSemester);
-
-// Global variables for chart management
 let staffPerformanceChart;
 let currentStaffView = 'yearly';
 
-// Initialize the chart
 function initStaffPerformanceChart() {
     const ctxStaff = document.getElementById('staffPerformanceStatsPerYearChart').getContext('2d');
-    const gradient = ctxStaff.createLinearGradient(0, 0, ctxStaff.canvas.width, 0);
-    gradient.addColorStop(0, '#ff3e9e');
-    gradient.addColorStop(1, '#3e9eff');
-
-    // Get initial data (yearly view)
     const initialData = getStaffChartData('yearly');
 
     staffPerformanceChart = new Chart(ctxStaff, {
@@ -981,188 +967,133 @@ function initStaffPerformanceChart() {
             labels: initialData.labels,
             datasets: [
                 {
-                    label: 'Avg. Staff Score',
-                    data: initialData.avgData,
-                    borderColor: gradient,
-                    backgroundColor: 'rgba(62, 158, 255, 0.10)',
-                    fill: true,
-                    tension: 0.45,
-                    pointRadius: initialData.avgData.map((v, i) => (i === initialData.maxIdx || i === initialData.minIdx) ? 8 : 5),
-                    pointBackgroundColor: initialData.avgData.map((v, i) => i === initialData.maxIdx ? '#ff3e9e' : (i === initialData.minIdx ? '#3e9eff' : gradient)),
-                    borderWidth: 5,
-                    order: 2,
-                    z: 2
+                    label: 'Outstanding',
+                    data: initialData.outstanding,
+                    borderColor: '#28a745',
+                    backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                    fill: false,
+                    tension: 0.4,
+                    borderWidth: 3,
+                    pointRadius: 4,
+                    pointBackgroundColor: '#28a745'
+                },
+                {
+                    label: 'Very Satisfactory',
+                    data: initialData.verySatisfactory,
+                    borderColor: '#17a2b8',
+                    backgroundColor: 'rgba(23, 162, 184, 0.1)',
+                    fill: false,
+                    tension: 0.4,
+                    borderWidth: 3,
+                    pointRadius: 4,
+                    pointBackgroundColor: '#17a2b8'
+                },
+                {
+                    label: 'Satisfactory',
+                    data: initialData.satisfactory,
+                    borderColor: '#ffc107',
+                    backgroundColor: 'rgba(255, 193, 7, 0.1)',
+                    fill: false,
+                    tension: 0.4,
+                    borderWidth: 3,
+                    pointRadius: 4,
+                    pointBackgroundColor: '#ffc107'
+                },
+                {
+                    label: 'Unsatisfactory',
+                    data: initialData.unsatisfactory,
+                    borderColor: '#fd7e14',
+                    backgroundColor: 'rgba(253, 126, 20, 0.1)',
+                    fill: false,
+                    tension: 0.4,
+                    borderWidth: 3,
+                    pointRadius: 4,
+                    pointBackgroundColor: '#fd7e14'
                 }
             ]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            layout: {
-                padding: {
-                    right: 80,
-                    top: 20
-                }
+            interaction: {
+                mode: 'index',
+                intersect: false,
             },
             plugins: {
-                legend: { display: false },
-                datalabels: {
-                    color: '#fff',
-                    backgroundColor: function(context) {
-                        const idx = context.dataIndex;
-                        if (idx === initialData.maxIdx) return '#ff3e9e';
-                        if (idx === initialData.minIdx) return '#3e9eff';
-                        return 'rgba(62,158,255,0.7)';
-                    },
-                    borderRadius: 8,
-                    font: { weight: 'bold', size: 14 },
-                    padding: 6,
-                    align: 'top',
-                    anchor: 'center',
-                    formatter: function(value, context) {
-                        const idx = context.dataIndex;
-                        let label = value.toFixed(2);
-                        if (idx === initialData.maxIdx) label += ' ↑';
-                        if (idx === initialData.minIdx) label += ' ↓';
-                        // Add arrow for increase/decrease
-                        if (idx > 0) {
-                            const diff = initialData.changeData[idx];
-                            if (diff > 0.01) label += ' ▲';
-                            else if (diff < -0.01) label += ' ▼';
-                        }
-                        return label;
+                legend: { 
+                    display: true,
+                    position: 'top',
+                    labels: {
+                        usePointStyle: true,
+                        padding: 15,
+                        font: { size: 11 }
                     }
                 },
+                datalabels: { display: false },
                 tooltip: {
                     callbacks: {
-                        title: function(context) {
-                            const viewType = currentStaffView === 'yearly' ? 'Academic Year' : 'Period';
-                            return viewType + ': ' + context[0].label;
-                        },
                         label: function(context) {
+                            const label = context.dataset.label || '';
+                            const value = context.parsed.y;
                             const idx = context.dataIndex;
-                            let change = '';
-                            if (idx > 0) {
-                                const diff = initialData.changeData[idx];
-                                change = ` (${diff > 0 ? '+' : ''}${diff.toFixed(2)} from prev)`;
-                            }
-                            return `Avg: ${initialData.avgData[idx].toFixed(2)}${change}\nMin: ${initialData.minData[idx]}, Max: ${initialData.maxData[idx]}`;
+                            const data = getStaffChartData(currentStaffView);
+                            
+                            let pct = 0;
+                            if (label === 'Outstanding') pct = data.outstanding_pct[idx];
+                            else if (label === 'Very Satisfactory') pct = data.very_satisfactory_pct[idx];
+                            else if (label === 'Satisfactory') pct = data.satisfactory_pct[idx];
+                            else if (label === 'Unsatisfactory') pct = data.unsatisfactory_pct[idx];
+                            
+                            return `${label}: ${value} instructors (${pct}%)`;
                         }
                     }
                 },
             },
             scales: {
-                y: { beginAtZero: true, max: 5 }
-            },
-            elements: {
-                line: {
-                    borderJoinStyle: 'round',
-                    shadowOffsetX: 0,
-                    shadowOffsetY: 4,
-                    shadowBlur: 12,
-                    shadowColor: 'rgba(62,158,255,0.25)'
+                y: { 
+                    beginAtZero: true,
+                    ticks: { precision: 0 },
+                    title: { display: true, text: 'No. of Instructors', font: { size: 10 } }
                 }
             }
-        },
-        plugins: [ChartDataLabels, {
-            // Custom plugin to draw min/max area
-            id: 'minMaxArea',
-            afterDatasetsDraw(chart) {
-                const {ctx, chartArea: area} = chart;
-                const data = getStaffChartData(currentStaffView);
-                ctx.save();
-                ctx.globalAlpha = 0.18;
-                ctx.fillStyle = gradient;
-                for (let i = 0; i < data.labels.length - 1; i++) {
-                    const x1 = chart.scales.x.getPixelForValue(data.labels[i]);
-                    const x2 = chart.scales.x.getPixelForValue(data.labels[i+1]);
-                    const yMin1 = chart.scales.y.getPixelForValue(data.minData[i]);
-                    const yMin2 = chart.scales.y.getPixelForValue(data.minData[i+1]);
-                    const yMax1 = chart.scales.y.getPixelForValue(data.maxData[i]);
-                    const yMax2 = chart.scales.y.getPixelForValue(data.maxData[i+1]);
-                    ctx.beginPath();
-                    ctx.moveTo(x1, yMin1);
-                    ctx.lineTo(x2, yMin2);
-                    ctx.lineTo(x2, yMax2);
-                    ctx.lineTo(x1, yMax1);
-                    ctx.closePath();
-                    ctx.fill();
-                }
-                ctx.restore();
-            }
-        }]
+        }
     });
 }
 
-// Function to get chart data based on view type
 function getStaffChartData(viewType) {
-    let data, labels, avgData, minData, maxData;
-    
-    if (viewType === 'yearly') {
-        data = staffStatsYearly;
-        labels = data.map(item => item.year);
-        avgData = data.map(item => parseFloat(item.avg_score));
-        minData = data.map(item => parseFloat(item.min_score));
-        maxData = data.map(item => parseFloat(item.max_score));
-    } else {
-        data = staffStatsSemester;
-        labels = data.map(item => item.period_label);
-        avgData = data.map(item => parseFloat(item.avg_score));
-        minData = data.map(item => parseFloat(item.min_score));
-        maxData = data.map(item => parseFloat(item.max_score));
-    }
-    
-    // Calculate period-over-period change
-    const changeData = avgData.map((val, idx, arr) => idx === 0 ? 0 : val - arr[idx-1]);
-    
-    // Find max and min points
-    const maxIdx = avgData.indexOf(Math.max(...avgData));
-    const minIdx = avgData.indexOf(Math.min(...avgData));
-    
+    const data = viewType === 'yearly' ? staffStatsYearly : staffStatsSemester;
     return {
-        labels,
-        avgData,
-        minData,
-        maxData,
-        changeData,
-        maxIdx,
-        minIdx
+        labels: data.map(item => viewType === 'yearly' ? item.year : item.period_label),
+        outstanding: data.map(item => item.Outstanding),
+        verySatisfactory: data.map(item => item.Very_Satisfactory),
+        satisfactory: data.map(item => item.Satisfactory),
+        unsatisfactory: data.map(item => item.Unsatisfactory),
+        outstanding_pct: data.map(item => item.outstanding_pct),
+        very_satisfactory_pct: data.map(item => item.very_satisfactory_pct),
+        satisfactory_pct: data.map(item => item.satisfactory_pct),
+        unsatisfactory_pct: data.map(item => item.unsatisfactory_pct)
     };
 }
 
-// Function to toggle between yearly and semester view
 function toggleStaffPerformanceView(viewType) {
     currentStaffView = viewType;
-    
-    // Update button states
     document.getElementById('yearlyViewBtn').classList.toggle('active', viewType === 'yearly');
     document.getElementById('semesterViewBtn').classList.toggle('active', viewType === 'semester');
     
-    // Update chart title
     const title = viewType === 'yearly' 
-        ? 'Staff Performance Improvement (Avg. Score per Academic Year, Archived)'
-        : 'Staff Performance Improvement (Avg. Score per Semester, Archived)';
+        ? 'Staff Performance Trends (by Rating Category, Yearly)'
+        : 'Staff Performance Trends (by Rating Category, Semester)';
     document.getElementById('staffPerformanceTitle').textContent = title;
     
-    // Get new data
     const newData = getStaffChartData(viewType);
-    
-    // Update chart data
     staffPerformanceChart.data.labels = newData.labels;
-    staffPerformanceChart.data.datasets[0].data = newData.avgData;
-    staffPerformanceChart.data.datasets[0].pointRadius = newData.avgData.map((v, i) => (i === newData.maxIdx || i === newData.minIdx) ? 8 : 5);
-    staffPerformanceChart.data.datasets[0].pointBackgroundColor = newData.avgData.map((v, i) => {
-        const gradient = staffPerformanceChart.ctx.createLinearGradient(0, 0, staffPerformanceChart.ctx.canvas.width, 0);
-        gradient.addColorStop(0, '#ff3e9e');
-        gradient.addColorStop(1, '#3e9eff');
-        return i === newData.maxIdx ? '#ff3e9e' : (i === newData.minIdx ? '#3e9eff' : gradient);
-    });
-    
-    // Update chart
-    staffPerformanceChart.update('active');
+    staffPerformanceChart.data.datasets[0].data = newData.outstanding;
+    staffPerformanceChart.data.datasets[1].data = newData.verySatisfactory;
+    staffPerformanceChart.data.datasets[2].data = newData.satisfactory;
+    staffPerformanceChart.data.datasets[3].data = newData.unsatisfactory;
+    staffPerformanceChart.update();
 }
 
-// Initialize the chart when page loads
 initStaffPerformanceChart();
 
 // Instructor Rating Distribution Chart

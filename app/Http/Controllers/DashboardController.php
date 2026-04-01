@@ -78,131 +78,96 @@ class DashboardController extends Controller
                 ->pluck('avg_score', 'academic_years.year');
 
             // Approach 1 & 3: Staff performance improvement and distribution per academic year (from save_eval_result)
-            // Get data grouped by academic year only (for yearly view)
-            $staffPerformanceStatsPerYear = \DB::table('save_eval_result')
+            // Get all staff average ratings grouped by year and semester
+            $staffRatingsByPeriod = \DB::table('save_eval_result')
                 ->join('academic_years', 'save_eval_result.academic_year_id', '=', 'academic_years.id')
                 ->select(
+                    'save_eval_result.staff_id',
                     'academic_years.year',
-                    \DB::raw('avg(save_eval_result.response_score) as avg_score'),
-                    \DB::raw('min(save_eval_result.response_score) as min_score'),
-                    \DB::raw('max(save_eval_result.response_score) as max_score')
+                    'academic_years.semester',
+                    \DB::raw('avg(save_eval_result.response_score) as avg_score')
                 )
-                ->groupBy('academic_years.year')
-                ->orderBy('academic_years.year')
+                ->groupBy('save_eval_result.staff_id', 'academic_years.year', 'academic_years.semester')
                 ->get();
 
-            // Get data grouped by academic year and semester (for semester view)
-            // First, let's get all unique academic years that have evaluation data
-            $academicYearsWithData = \DB::table('save_eval_result')
-                ->join('academic_years', 'save_eval_result.academic_year_id', '=', 'academic_years.id')
-                ->select('academic_years.year')
-                ->distinct()
-                ->pluck('academic_years.year');
+            // Helper to categorize ratings
+            $categorize = function($avg) {
+                if ($avg >= 4.51) return 'Outstanding';
+                if ($avg >= 3.51) return 'Very Satisfactory';
+                if ($avg >= 2.51) return 'Satisfactory';
+                if ($avg >= 1.51) return 'Unsatisfactory';
+                return 'Poor';
+            };
 
-            // Now get semester data, ensuring we have both semesters for each year
-            $staffPerformanceStatsPerSemester = collect();
-            
-            foreach ($academicYearsWithData as $year) {
-                // Get data for both semesters of this year
-                for ($semester = 1; $semester <= 2; $semester++) {
-                    $semesterData = \DB::table('save_eval_result')
-                        ->join('academic_years', 'save_eval_result.academic_year_id', '=', 'academic_years.id')
-                        ->where('academic_years.year', $year)
-                        ->where('academic_years.semester', $semester)
-                        ->select(
-                            \DB::raw("'{$year}' as year"),
-                            \DB::raw("'{$semester}' as semester"),
-                            \DB::raw('avg(save_eval_result.response_score) as avg_score'),
-                            \DB::raw('min(save_eval_result.response_score) as min_score'),
-                            \DB::raw('max(save_eval_result.response_score) as max_score')
-                        )
-                        ->first();
-                    
-                    if ($semesterData && $semesterData->avg_score !== null) {
-                        $semesterLabel = $semester == 1 ? '1st Sem' : '2nd Sem';
-                        $semesterData->period_label = "{$year} - {$semesterLabel}";
-                        $staffPerformanceStatsPerSemester->push($semesterData);
-                    }
+            // Process data for Yearly View
+            $yearlyDataRaw = [];
+            foreach ($staffRatingsByPeriod as $row) {
+                $year = $row->year;
+                if (!isset($yearlyDataRaw[$year])) {
+                    $yearlyDataRaw[$year] = ['Outstanding' => 0, 'Very Satisfactory' => 0, 'Satisfactory' => 0, 'Unsatisfactory' => 0, 'Poor' => 0, 'total' => 0];
                 }
-            }
-            
-            // If no semester-specific data found, fall back to the original query
-            if ($staffPerformanceStatsPerSemester->isEmpty()) {
-                $staffPerformanceStatsPerSemester = \DB::table('save_eval_result')
-                    ->join('academic_years', 'save_eval_result.academic_year_id', '=', 'academic_years.id')
-                    ->select(
-                        'academic_years.year',
-                        \DB::raw('COALESCE(academic_years.semester, 1) as semester'),
-                        \DB::raw('avg(save_eval_result.response_score) as avg_score'),
-                        \DB::raw('min(save_eval_result.response_score) as min_score'),
-                        \DB::raw('max(save_eval_result.response_score) as max_score'),
-                        \DB::raw('CONCAT(academic_years.year, " - ", 
-                            CASE 
-                                WHEN COALESCE(academic_years.semester, 1) = 1 THEN "1st Sem"
-                                WHEN COALESCE(academic_years.semester, 1) = 2 THEN "2nd Sem"
-                                ELSE CONCAT(COALESCE(academic_years.semester, 1), "th Sem")
-                            END
-                        ) as period_label')
-                    )
-                    ->groupBy('academic_years.year', 'academic_years.semester')
-                    ->orderBy('academic_years.year')
-                    ->orderBy('academic_years.semester')
-                    ->get();
+                $cat = $categorize($row->avg_score);
+                $yearlyDataRaw[$year][$cat]++;
+                $yearlyDataRaw[$year]['total']++;
             }
 
-            // Debug: Let's also check what academic years we have
-            $debugAcademicYears = \DB::table('academic_years')
-                ->select('id', 'year', 'semester')
-                ->orderBy('year')
-                ->orderBy('semester')
-                ->get();
-            
-            // Debug: Let's check what evaluation data we have
-            $debugEvaluationData = \DB::table('save_eval_result')
-                ->join('academic_years', 'save_eval_result.academic_year_id', '=', 'academic_years.id')
-                ->select('academic_years.year', 'academic_years.semester', \DB::raw('count(*) as eval_count'))
-                ->groupBy('academic_years.year', 'academic_years.semester')
-                ->orderBy('academic_years.year')
-                ->orderBy('academic_years.semester')
-                ->get();
+            $staffPerformanceStatsPerYear = collect();
+            ksort($yearlyDataRaw);
+            foreach ($yearlyDataRaw as $year => $counts) {
+                $total = $counts['total'] ?: 1;
+                $staffPerformanceStatsPerYear->push((object)[
+                    'year' => $year,
+                    'Outstanding' => $counts['Outstanding'],
+                    'Very_Satisfactory' => $counts['Very Satisfactory'],
+                    'Satisfactory' => $counts['Satisfactory'],
+                    'Unsatisfactory' => $counts['Unsatisfactory'],
+                    'Poor' => $counts['Poor'],
+                    'total' => $counts['total'],
+                    'outstanding_pct' => round(($counts['Outstanding'] / $total) * 100, 1),
+                    'very_satisfactory_pct' => round(($counts['Very Satisfactory'] / $total) * 100, 1),
+                    'satisfactory_pct' => round(($counts['Satisfactory'] / $total) * 100, 1),
+                    'unsatisfactory_pct' => round(($counts['Unsatisfactory'] / $total) * 100, 1),
+                ]);
+            }
 
-            // Temporary debug - you can remove this after checking
-            \Log::info('Debug Academic Years:', $debugAcademicYears->toArray());
-            \Log::info('Debug Evaluation Data:', $debugEvaluationData->toArray());
-            \Log::info('Staff Performance Stats Per Year:', $staffPerformanceStatsPerYear->toArray());
-            \Log::info('Staff Performance Stats Per Semester:', $staffPerformanceStatsPerSemester->toArray());
+            // Process data for Semester View
+            $semesterDataRaw = [];
+            foreach ($staffRatingsByPeriod as $row) {
+                $key = "{$row->year}-{$row->semester}";
+                if (!isset($semesterDataRaw[$key])) {
+                    $semesterDataRaw[$key] = [
+                        'year' => $row->year,
+                        'semester' => $row->semester,
+                        'Outstanding' => 0, 'Very Satisfactory' => 0, 'Satisfactory' => 0, 'Unsatisfactory' => 0, 'Poor' => 0, 'total' => 0
+                    ];
+                }
+                $cat = $categorize($row->avg_score);
+                $semesterDataRaw[$key][$cat]++;
+                $semesterDataRaw[$key]['total']++;
+            }
 
-            // Categorical Distributions Analysis - Calculate counts based on ratings
+            $staffPerformanceStatsPerSemester = collect();
+            ksort($semesterDataRaw);
+            foreach ($semesterDataRaw as $key => $counts) {
+                $total = $counts['total'] ?: 1;
+                $semesterLabel = $counts['semester'] == 1 ? '1st Sem' : '2nd Sem';
+                $staffPerformanceStatsPerSemester->push((object)[
+                    'period_label' => "{$counts['year']} - {$semesterLabel}",
+                    'Outstanding' => $counts['Outstanding'],
+                    'Very_Satisfactory' => $counts['Very Satisfactory'],
+                    'Satisfactory' => $counts['Satisfactory'],
+                    'Unsatisfactory' => $counts['Unsatisfactory'],
+                    'Poor' => $counts['Poor'],
+                    'total' => $counts['total'],
+                    'outstanding_pct' => round(($counts['Outstanding'] / $total) * 100, 1),
+                    'very_satisfactory_pct' => round(($counts['Very Satisfactory'] / $total) * 100, 1),
+                    'satisfactory_pct' => round(($counts['Satisfactory'] / $total) * 100, 1),
+                    'unsatisfactory_pct' => round(($counts['Unsatisfactory'] / $total) * 100, 1),
+                ]);
+            }
+
+            // Categorical Distributions Analysis - Calculate counts based on ratings (Active Semester)
             $activeAY = \App\Models\AcademicYear::where('is_active', 1)->first();
-            
-            // Get all staff who have evaluations in the active academic year
-            $staffRatingsForDistribution = \App\Models\Staff::select('staff.id', 'staff.staff_type')
-                ->join('evaluations', 'staff.id', '=', 'evaluations.staff_id')
-                ->when($activeAY, function($q) use ($activeAY) {
-                    return $q->where('evaluations.academic_year_id', $activeAY->id);
-                })
-                ->groupBy('staff.id', 'staff.staff_type')
-                ->get();
-
-            // Fetch all category averages in bulk to match overall-ratings logic
-            $allCategoryAverages = \DB::table('evaluations')
-                ->join('questions', 'evaluations.question_id', '=', 'questions.id')
-                ->when($activeAY, function($q) use ($activeAY) {
-                    return $q->where('questions.academic_year_id', $activeAY->id);
-                })
-                ->select('evaluations.staff_id', 'questions.title', \DB::raw('AVG(evaluations.response_score) as category_avg'))
-                ->groupBy('evaluations.staff_id', 'questions.title')
-                ->get()
-                ->groupBy('staff_id');
-
-            // Category counts for each staff type
-            $categoryCounts = \App\Models\Question::when($activeAY, function($q) use ($activeAY) {
-                    return $q->where('academic_year_id', $activeAY->id);
-                })
-                ->select('staff_type', \DB::raw('COUNT(DISTINCT title) as count'))
-                ->groupBy('staff_type')
-                ->pluck('count', 'staff_type');
-
             $instructorRatingDistribution = [
                 'Outstanding' => 0,
                 'Very Satisfactory' => 0,
@@ -210,20 +175,19 @@ class DashboardController extends Controller
                 'Unsatisfactory' => 0,
             ];
 
-            foreach ($staffRatingsForDistribution as $s) {
-                $staffAvgs = $allCategoryAverages->get($s->id);
-                $totalCategories = $categoryCounts->get($s->staff_type, 0);
+            if ($activeAY) {
+                $activePeriodRatings = \DB::table('save_eval_result')
+                    ->where('academic_year_id', $activeAY->id)
+                    ->select('staff_id', \DB::raw('avg(response_score) as avg_score'))
+                    ->groupBy('staff_id')
+                    ->get();
 
-                if ($staffAvgs && $totalCategories > 0) {
-                    $average_rating = $staffAvgs->sum('category_avg') / $totalCategories;
-                } else {
-                    $average_rating = 0;
+                foreach ($activePeriodRatings as $row) {
+                    $cat = $categorize($row->avg_score);
+                    if (isset($instructorRatingDistribution[$cat])) {
+                        $instructorRatingDistribution[$cat]++;
+                    }
                 }
-
-                if ($average_rating >= 4.51) $instructorRatingDistribution['Outstanding']++;
-                elseif ($average_rating >= 3.51) $instructorRatingDistribution['Very Satisfactory']++;
-                elseif ($average_rating >= 2.51) $instructorRatingDistribution['Satisfactory']++;
-                elseif ($average_rating >= 1.51) $instructorRatingDistribution['Unsatisfactory']++;
             }
         } else {
             $studentsPerCourse = collect();
