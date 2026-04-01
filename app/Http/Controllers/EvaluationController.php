@@ -466,21 +466,15 @@ class EvaluationController extends Controller
     {
         DB::beginTransaction();
         try {
-            // Move evaluations
-            $evaluations = DB::table('evaluations')->get();
-            foreach ($evaluations as $eval) {
-                DB::table('save_eval_result')->insert([
-                    'staff_id' => $eval->staff_id,
-                    'question_id' => $eval->question_id, // Use the original question_id directly
-                    'response' => $eval->response,
-                    'user_id' => $eval->user_id,
-                    'academic_year_id' => $eval->academic_year_id ?? null,
-                    'comments' => $eval->comments,
-                    'response_score' => $eval->response_score,
-                    'created_at' => $eval->created_at ?? now(),
-                    'updated_at' => $eval->updated_at ?? now(),
-                ]);
-            }
+            // High-performance data migration using raw SQL to move data directly within the database
+            // This avoids loading thousands of rows into PHP memory and executing multiple INSERTs
+            DB::statement("
+                INSERT INTO save_eval_result (staff_id, question_id, response, user_id, academic_year_id, comments, response_score, created_at, updated_at)
+                SELECT staff_id, question_id, response, user_id, academic_year_id, comments, response_score, 
+                       COALESCE(created_at, NOW()), COALESCE(updated_at, NOW())
+                FROM evaluations
+            ");
+
             // Clear evaluations and instructor selections tables
             DB::table('evaluations')->delete();
             DB::table('instructor_selections')->delete();
