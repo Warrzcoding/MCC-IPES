@@ -959,15 +959,6 @@ let currentStaffView = 'yearly';
 
 function initStaffPerformanceChart() {
     const ctxStaff = document.getElementById('staffPerformanceStatsPerYearChart').getContext('2d');
-    
-    // Create a horizontal gradient for the line
-    const gradient = ctxStaff.createLinearGradient(0, 0, ctxStaff.canvas.width, 0);
-    gradient.addColorStop(0, '#28a745');   // Outstanding
-    gradient.addColorStop(0.25, '#17a2b8'); // Very Satisfactory
-    gradient.addColorStop(0.5, '#ffc107');  // Satisfactory
-    gradient.addColorStop(0.75, '#fd7e14'); // Unsatisfactory
-    gradient.addColorStop(1, '#dc3545');    // Poor
-
     const initialData = getStaffChartData('yearly');
 
     staffPerformanceChart = new Chart(ctxStaff, {
@@ -978,7 +969,34 @@ function initStaffPerformanceChart() {
                 {
                     label: 'Instructor Distribution',
                     data: initialData.counts,
-                    borderColor: gradient,
+                    borderColor: function(context) {
+                        const chart = context.chart;
+                        const {ctx, chartArea} = chart;
+                        if (!chartArea) return null;
+                        
+                        const gradient = ctx.createLinearGradient(chartArea.left, 0, chartArea.right, 0);
+                        // Outstanding - Green
+                        gradient.addColorStop(0, '#28a745');
+                        gradient.addColorStop(0.1, '#28a745');
+                        
+                        // Very Satisfactory - Blue (around 25%)
+                        gradient.addColorStop(0.2, '#17a2b8');
+                        gradient.addColorStop(0.3, '#17a2b8');
+                        
+                        // Satisfactory - Yellow (around 50%)
+                        gradient.addColorStop(0.45, '#ffc107');
+                        gradient.addColorStop(0.55, '#ffc107');
+                        
+                        // Unsatisfactory - Orange (around 75%)
+                        gradient.addColorStop(0.7, '#fd7e14');
+                        gradient.addColorStop(0.8, '#fd7e14');
+                        
+                        // Poor - Red (around 100%)
+                        gradient.addColorStop(0.9, '#dc3545');
+                        gradient.addColorStop(1, '#dc3545');
+                        
+                        return gradient;
+                    },
                     backgroundColor: 'rgba(40, 167, 69, 0.05)',
                     fill: true,
                     tension: 0.45,
