@@ -127,6 +127,7 @@ class DashboardController extends Controller
                     'very_satisfactory_pct' => round(($counts['Very Satisfactory'] / $total) * 100, 1),
                     'satisfactory_pct' => round(($counts['Satisfactory'] / $total) * 100, 1),
                     'unsatisfactory_pct' => round(($counts['Unsatisfactory'] / $total) * 100, 1),
+                    'poor_pct' => round(($counts['Poor'] / $total) * 100, 1),
                 ]);
             }
 
@@ -163,6 +164,7 @@ class DashboardController extends Controller
                     'very_satisfactory_pct' => round(($counts['Very Satisfactory'] / $total) * 100, 1),
                     'satisfactory_pct' => round(($counts['Satisfactory'] / $total) * 100, 1),
                     'unsatisfactory_pct' => round(($counts['Unsatisfactory'] / $total) * 100, 1),
+                    'poor_pct' => round(($counts['Poor'] / $total) * 100, 1),
                 ]);
             }
 
@@ -173,6 +175,7 @@ class DashboardController extends Controller
                 'Very Satisfactory' => 0,
                 'Satisfactory' => 0,
                 'Unsatisfactory' => 0,
+                'Poor' => 0,
             ];
 
             if ($activeAY) {
@@ -201,6 +204,7 @@ class DashboardController extends Controller
                 'Very Satisfactory' => 0,
                 'Satisfactory' => 0,
                 'Unsatisfactory' => 0,
+                'Poor' => 0,
             ];
         }
         

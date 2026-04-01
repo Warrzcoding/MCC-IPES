@@ -959,6 +959,15 @@ let currentStaffView = 'yearly';
 
 function initStaffPerformanceChart() {
     const ctxStaff = document.getElementById('staffPerformanceStatsPerYearChart').getContext('2d');
+    
+    // Create a horizontal gradient for the line
+    const gradient = ctxStaff.createLinearGradient(0, 0, ctxStaff.canvas.width, 0);
+    gradient.addColorStop(0, '#28a745');   // Outstanding
+    gradient.addColorStop(0.25, '#17a2b8'); // Very Satisfactory
+    gradient.addColorStop(0.5, '#ffc107');  // Satisfactory
+    gradient.addColorStop(0.75, '#fd7e14'); // Unsatisfactory
+    gradient.addColorStop(1, '#dc3545');    // Poor
+
     const initialData = getStaffChartData('yearly');
 
     staffPerformanceChart = new Chart(ctxStaff, {
@@ -967,89 +976,53 @@ function initStaffPerformanceChart() {
             labels: initialData.labels,
             datasets: [
                 {
-                    label: 'Outstanding',
-                    data: initialData.outstanding,
-                    borderColor: '#28a745',
-                    backgroundColor: 'rgba(40, 167, 69, 0.1)',
-                    fill: false,
-                    tension: 0.4,
-                    borderWidth: 3,
-                    pointRadius: 4,
-                    pointBackgroundColor: '#28a745'
-                },
-                {
-                    label: 'Very Satisfactory',
-                    data: initialData.verySatisfactory,
-                    borderColor: '#17a2b8',
-                    backgroundColor: 'rgba(23, 162, 184, 0.1)',
-                    fill: false,
-                    tension: 0.4,
-                    borderWidth: 3,
-                    pointRadius: 4,
-                    pointBackgroundColor: '#17a2b8'
-                },
-                {
-                    label: 'Satisfactory',
-                    data: initialData.satisfactory,
-                    borderColor: '#ffc107',
-                    backgroundColor: 'rgba(255, 193, 7, 0.1)',
-                    fill: false,
-                    tension: 0.4,
-                    borderWidth: 3,
-                    pointRadius: 4,
-                    pointBackgroundColor: '#ffc107'
-                },
-                {
-                    label: 'Unsatisfactory',
-                    data: initialData.unsatisfactory,
-                    borderColor: '#fd7e14',
-                    backgroundColor: 'rgba(253, 126, 20, 0.1)',
-                    fill: false,
-                    tension: 0.4,
-                    borderWidth: 3,
-                    pointRadius: 4,
-                    pointBackgroundColor: '#fd7e14'
+                    label: 'Instructor Distribution',
+                    data: initialData.counts,
+                    borderColor: gradient,
+                    backgroundColor: 'rgba(40, 167, 69, 0.05)',
+                    fill: true,
+                    tension: 0.45,
+                    borderWidth: 5,
+                    pointRadius: 6,
+                    pointHoverRadius: 8,
+                    pointBackgroundColor: ['#28a745', '#17a2b8', '#ffc107', '#fd7e14', '#dc3545'],
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2
                 }
             ]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            interaction: {
-                mode: 'index',
-                intersect: false,
-            },
             plugins: {
-                legend: { 
+                legend: { display: false },
+                datalabels: {
                     display: true,
-                    position: 'top',
-                    labels: {
-                        usePointStyle: true,
-                        padding: 15,
-                        font: { size: 11 }
+                    align: 'top',
+                    offset: 8,
+                    color: '#444',
+                    font: { weight: 'bold', size: 11 },
+                    formatter: function(value, context) {
+                        const pct = getStaffChartData(currentStaffView).percentages[context.dataIndex];
+                        return `${value} (${pct}%)`;
                     }
                 },
-                datalabels: { display: false },
                 tooltip: {
                     callbacks: {
                         label: function(context) {
-                            const label = context.dataset.label || '';
+                            const label = context.label;
                             const value = context.parsed.y;
-                            const idx = context.dataIndex;
-                            const data = getStaffChartData(currentStaffView);
-                            
-                            let pct = 0;
-                            if (label === 'Outstanding') pct = data.outstanding_pct[idx];
-                            else if (label === 'Very Satisfactory') pct = data.very_satisfactory_pct[idx];
-                            else if (label === 'Satisfactory') pct = data.satisfactory_pct[idx];
-                            else if (label === 'Unsatisfactory') pct = data.unsatisfactory_pct[idx];
-                            
-                            return `${label}: ${value} instructors (${pct}%)`;
+                            const pct = getStaffChartData(currentStaffView).percentages[context.dataIndex];
+                            return `${label}: ${value} Instructors (${pct}%)`;
                         }
                     }
                 },
             },
             scales: {
+                x: {
+                    grid: { display: false },
+                    ticks: { font: { weight: '600' } }
+                },
                 y: { 
                     beginAtZero: true,
                     ticks: { precision: 0 },
@@ -1061,17 +1034,19 @@ function initStaffPerformanceChart() {
 }
 
 function getStaffChartData(viewType) {
-    const data = viewType === 'yearly' ? staffStatsYearly : staffStatsSemester;
+    const dataArray = viewType === 'yearly' ? staffStatsYearly : staffStatsSemester;
+    // Get the latest period data
+    const latest = dataArray[dataArray.length - 1] || {
+        Outstanding: 0, Very_Satisfactory: 0, Satisfactory: 0, Unsatisfactory: 0, Poor: 0,
+        outstanding_pct: 0, very_satisfactory_pct: 0, satisfactory_pct: 0, unsatisfactory_pct: 0, poor_pct: 0,
+        total: 0, year: 'N/A', period_label: 'N/A'
+    };
+
     return {
-        labels: data.map(item => viewType === 'yearly' ? item.year : item.period_label),
-        outstanding: data.map(item => item.Outstanding),
-        verySatisfactory: data.map(item => item.Very_Satisfactory),
-        satisfactory: data.map(item => item.Satisfactory),
-        unsatisfactory: data.map(item => item.Unsatisfactory),
-        outstanding_pct: data.map(item => item.outstanding_pct),
-        very_satisfactory_pct: data.map(item => item.very_satisfactory_pct),
-        satisfactory_pct: data.map(item => item.satisfactory_pct),
-        unsatisfactory_pct: data.map(item => item.unsatisfactory_pct)
+        labels: ['Outstanding', 'Very Satisfactory', 'Satisfactory', 'Unsatisfactory', 'Poor'],
+        counts: [latest.Outstanding, latest.Very_Satisfactory, latest.Satisfactory, latest.Unsatisfactory, latest.Poor],
+        percentages: [latest.outstanding_pct, latest.very_satisfactory_pct, latest.satisfactory_pct, latest.unsatisfactory_pct, latest.poor_pct],
+        period: viewType === 'yearly' ? latest.year : latest.period_label
     };
 }
 
@@ -1080,17 +1055,14 @@ function toggleStaffPerformanceView(viewType) {
     document.getElementById('yearlyViewBtn').classList.toggle('active', viewType === 'yearly');
     document.getElementById('semesterViewBtn').classList.toggle('active', viewType === 'semester');
     
+    const newData = getStaffChartData(viewType);
+    
     const title = viewType === 'yearly' 
-        ? 'Staff Performance Trends (by Rating Category, Yearly)'
-        : 'Staff Performance Trends (by Rating Category, Semester)';
+        ? `Staff Performance Distribution (${newData.period})`
+        : `Staff Performance Distribution (${newData.period})`;
     document.getElementById('staffPerformanceTitle').textContent = title;
     
-    const newData = getStaffChartData(viewType);
-    staffPerformanceChart.data.labels = newData.labels;
-    staffPerformanceChart.data.datasets[0].data = newData.outstanding;
-    staffPerformanceChart.data.datasets[1].data = newData.verySatisfactory;
-    staffPerformanceChart.data.datasets[2].data = newData.satisfactory;
-    staffPerformanceChart.data.datasets[3].data = newData.unsatisfactory;
+    staffPerformanceChart.data.datasets[0].data = newData.counts;
     staffPerformanceChart.update();
 }
 
