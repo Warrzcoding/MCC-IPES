@@ -471,7 +471,7 @@ class EvaluationController extends Controller
             DB::statement("
                 INSERT INTO save_eval_result (staff_id, question_id, response, user_id, academic_year_id, comments, response_score, created_at, updated_at)
                 SELECT staff_id, question_id, response, user_id, academic_year_id, comments, response_score, 
-                       COALESCE(created_at, NOW()), COALESCE(updated_at, NOW())
+                       COALESCE(created_at, NOW()), NOW()
                 FROM evaluations
             ");
 
