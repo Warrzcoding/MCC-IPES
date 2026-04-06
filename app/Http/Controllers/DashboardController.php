@@ -218,6 +218,7 @@ class DashboardController extends Controller
                 'Unsatisfactory' => 0,
                 'Poor' => 0,
             ];
+            $activeOverallPerformancePct = 0;
         }
         
         // Students can only access: dashboard, staff-list, evaluates, irevaluates, lockedcards, profile
@@ -648,7 +649,11 @@ class DashboardController extends Controller
                     'studentsPerCourse',
                     'evaluatedStudentsPerCourse',
                     'staffByType',
-                    'avgScorePerYear'
+                    'avgScorePerYear',
+                    'staffPerformanceStatsPerYear',
+                    'staffPerformanceStatsPerSemester',
+                    'instructorRatingDistribution',
+                    'activeOverallPerformancePct'
                 ),
                 [
                     'page' => $page,
@@ -742,6 +747,10 @@ class DashboardController extends Controller
                 'evaluatedStudentsPerCourse',
                 'staffByType',
                 'avgScorePerYear',
+                'staffPerformanceStatsPerYear',
+                'staffPerformanceStatsPerSemester',
+                'instructorRatingDistribution',
+                'activeOverallPerformancePct',
                 'backupLogs'
             ));
         }
@@ -858,7 +867,10 @@ class DashboardController extends Controller
                 'evaluatedStudentsPerCourse',
                 'staffByType',
                 'avgScorePerYear',
+                'staffPerformanceStatsPerYear',
+                'staffPerformanceStatsPerSemester',
                 'instructorRatingDistribution',
+                'activeOverallPerformancePct',
                 'backupLogs'
             ));
         }
