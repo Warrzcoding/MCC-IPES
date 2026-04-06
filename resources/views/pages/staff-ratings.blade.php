@@ -1298,9 +1298,9 @@ function getAdjectivalRating($rating) {
                 <!-- Questions and Ratings Table -->
                 <table class='questions-table' style='width:100%;border-collapse:collapse;margin-bottom:0.4em;border:1px solid #333; font-size:10pt;'>
                     <thead>
-                        <tr style='background:#f8f9fa;page-break-inside:avoid;page-break-after:avoid; height:16px;'>
-                            <th style='border:1px solid #333;padding:2px 3px;text-align:left;font-weight:bold;width:70%; overflow:hidden; white-space:nowrap;'>Questionnaires</th>
-                            <th style='border:1px solid #333;padding:2px 3px;text-align:center;font-weight:bold;width:30%; height:16px;'>Rating</th>
+                        <tr style='background:#f8f9fa;page-break-inside:avoid;page-break-after:avoid; height:12px;'>
+                            <th style='border:1px solid #333;padding:1px 2px;text-align:left;font-weight:bold;width:70%; overflow:hidden; white-space:nowrap;'>Questionnaires</th>
+                            <th style='border:1px solid #333;padding:1px 2px;text-align:center;font-weight:bold;width:30%; height:12px;'>Rating</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -1325,8 +1325,8 @@ function getAdjectivalRating($rating) {
                 
                 // Add category header row
                 html += `
-                    <tr style='height:14px;'>
-                        <td colspan="2" style='border:1px solid #333;padding:2px 3px;background:#e3f2fd;font-weight:bold;color:#007bff; font-size:9pt;'>
+                    <tr style='height:12px;'>
+                        <td colspan="2" style='border:1px solid #333;padding:1px 2px;background:#e3f2fd;font-weight:bold;color:#007bff; font-size:9pt;'>
                             ${romanNumber}. ${categoryName}
                         </td>
                     </tr>
@@ -1337,9 +1337,9 @@ function getAdjectivalRating($rating) {
                     const rating = parseFloat(eval.average_rating || 0);
                     
                     html += `
-                        <tr style='height:18px;'>
-                            <td style='border:1px solid #333;padding:2px 3px;text-align:left;vertical-align:middle; word-wrap:break-word; font-size:9.5pt;'>${eval.question_text}</td>
-                            <td style='border:1px solid #333;padding:2px 3px;text-align:center;font-weight:bold; height:18px; font-size:9.5pt;'>${rating.toFixed(2)}</td>
+                        <tr style='height:14px;'>
+                            <td style='border:1px solid #333;padding:1px 2px;text-align:left;vertical-align:middle; word-wrap:break-word; font-size:9.2pt;'>${eval.question_text}</td>
+                            <td style='border:1px solid #333;padding:1px 2px;text-align:center;font-weight:bold; height:14px; font-size:9.2pt;'>${rating.toFixed(2)}</td>
                         </tr>
                     `;
                 });
@@ -1360,15 +1360,15 @@ function getAdjectivalRating($rating) {
                 </table>
                 
                 <!-- Summary Evaluation Table - Start on New Page -->
-                <div style='page-break-before:always; margin-top:2em; margin-bottom:0.5em;'>
-                    <h3 style='font-size:11pt;font-weight:bold;margin-bottom:0.4em;margin-top:0;color:#333;border-bottom:1px solid #ffffff;padding-bottom:0.2em; text-align:center;'>Summary of Evaluation Scores</h3>
-                    <table style='width:100%;border-collapse:collapse;border:1px solid #333; font-size:10pt;'>
+                <div style='page-break-before:always; margin-top:1.6em; margin-bottom:0.4em;'>
+                    <h3 style='font-size:10pt;font-weight:bold;margin-bottom:0.3em;margin-top:0;color:#333;border-bottom:1px solid #ffffff;padding-bottom:0.1em; text-align:center;'>Summary of Evaluation Scores</h3>
+                    <table style='width:100%;border-collapse:collapse;border:1px solid #333; font-size:9.2pt;'>
                         <thead>
-                            <tr style='background:#f8f9fa; height:16px;'>
-                                <th style='border:1px solid #333;padding:2px 3px;text-align:left;font-weight:bold;width:25%;'>Criteria</th>
-                                <th style='border:1px solid #333;padding:2px 3px;text-align:center;font-weight:bold;width:12%;'>Scores</th>
-                                <th style='border:1px solid #333;padding:2px 3px;text-align:center;font-weight:bold;width:18%;'>Verbal Interpretation</th>
-                                <th style='border:1px solid #333;padding:2px 3px;text-align:center;font-weight:bold;width:45%;'>Descriptive Explanation</th>
+                            <tr style='background:#f8f9fa; height:12px;'>
+                                <th style='border:1px solid #333;padding:1px 2px;text-align:left;font-weight:bold;width:25%;'>Criteria</th>
+                                <th style='border:1px solid #333;padding:1px 2px;text-align:center;font-weight:bold;width:12%;'>Scores</th>
+                                <th style='border:1px solid #333;padding:1px 2px;text-align:center;font-weight:bold;width:18%;'>Verbal Interpretation</th>
+                                <th style='border:1px solid #333;padding:1px 2px;text-align:center;font-weight:bold;width:45%;'>Descriptive Explanation</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -1408,11 +1408,11 @@ function getAdjectivalRating($rating) {
                 totalCount++;
                 
                 html += `
-                    <tr style='height:16px;'>
-                        <td style='border:1px solid #333;padding:2px 3px;text-align:left;vertical-align:middle;'>${romanNumber}. ${categoryName}</td>
-                        <td style='border:1px solid #333;padding:2px 3px;text-align:center;font-weight:bold;vertical-align:middle;'>${average.toFixed(2)}</td>
-                        <td style='border:1px solid #333;padding:2px 3px;text-align:center;font-weight:bold;vertical-align:middle;'>${verbalInterpretation}</td>
-                        <td style='border:1px solid #333;padding:2px 3px;text-align:left;font-style:italic;vertical-align:middle;line-height:1.2;'>${descriptiveExplanation}</td>
+                    <tr style='height:12px;'>
+                        <td style='border:1px solid #333;padding:1px 2px;text-align:left;vertical-align:middle;'>${romanNumber}. ${categoryName}</td>
+                        <td style='border:1px solid #333;padding:1px 2px;text-align:center;font-weight:bold;vertical-align:middle;'>${average.toFixed(2)}</td>
+                        <td style='border:1px solid #333;padding:1px 2px;text-align:center;font-weight:bold;vertical-align:middle;'>${verbalInterpretation}</td>
+                        <td style='border:1px solid #333;padding:1px 2px;text-align:left;font-style:italic;vertical-align:middle;line-height:1.0;'>${descriptiveExplanation}</td>
                     </tr>
                 `;
             });
@@ -1424,11 +1424,11 @@ function getAdjectivalRating($rating) {
                 const overallDescriptiveExplanation = getDescriptiveExplanation(overallVerbalInterpretation);
                 
                 html += `
-                    <tr style='background:#f0f8ff; height:16px;'>
-                        <td style='border:1px solid #333;padding:2px 3px;text-align:left;vertical-align:middle;font-weight:bold;'>Total</td>
-                        <td style='border:1px solid #333;padding:2px 3px;text-align:center;font-weight:bold;vertical-align:middle;'>${overallAverage.toFixed(2)}</td>
-                        <td style='border:1px solid #333;padding:2px 3px;text-align:center;font-weight:bold;vertical-align:middle;'>${overallVerbalInterpretation}</td>
-                        <td style='border:1px solid #333;padding:2px 3px;text-align:left;font-weight:bold;vertical-align:middle;line-height:1.2;'>${overallDescriptiveExplanation}</td>
+                    <tr style='background:#f0f8ff; height:12px;'>
+                        <td style='border:1px solid #333;padding:1px 2px;text-align:left;vertical-align:middle;font-weight:bold;'>Total</td>
+                        <td style='border:1px solid #333;padding:1px 2px;text-align:center;font-weight:bold;vertical-align:middle;'>${overallAverage.toFixed(2)}</td>
+                        <td style='border:1px solid #333;padding:1px 2px;text-align:center;font-weight:bold;vertical-align:middle;'>${overallVerbalInterpretation}</td>
+                        <td style='border:1px solid #333;padding:1px 2px;text-align:left;font-weight:bold;vertical-align:middle;line-height:1.0;'>${overallDescriptiveExplanation}</td>
                     </tr>
                 `;
             }

@@ -381,7 +381,7 @@ if (Auth::user()->isAdmin()) {
                     <div class="col-lg-6 col-md-12 mb-4 d-flex align-items-stretch">
                         <div class="card shadow-lg w-100 h-100 border-0 analytics-card" style="min-height: 320px; max-height: 340px; border-radius: 18px; transition: box-shadow 0.3s; ">
                             <div class="card-header py-2 bg-white border-0" style="border-radius: 18px 18px 0 0;">
-                                <h6 class="m-0 font-weight-bold text-primary">Students per Course (and Evaluated)</h6>
+                                <h6 class="m-0 font-weight-bold text-primary">Students Total breakdowns per Course (and Done Evaluated)</h6>
                             </div>
                             <div class="card-body d-flex flex-column justify-content-end p-2" style="height: 280px;">
                                 <div style="height: 240px; display: flex; align-items: center; justify-content: center; width: 100%;">
@@ -394,7 +394,7 @@ if (Auth::user()->isAdmin()) {
                      <div class="col-lg-6 col-md-12 mb-4 d-flex align-items-stretch">
                         <div class="card shadow-lg w-100 h-100 border-0 analytics-card" style="min-height: 320px; max-height: 340px; border-radius: 18px; transition: box-shadow 0.3s; ">
                             <div class="card-header py-2 bg-white border-0" style="border-radius: 18px 18px 0 0;">
-                                <h6 class="m-0 font-weight-bold text-primary">Teaching Staff by Department & Non-Teaching</h6>
+                                <h6 class="m-0 font-weight-bold text-primary">Teaching by Department & Non-Teaching</h6>
                             </div>
                             <div class="card-body d-flex flex-column justify-content-center p-2" style="overflow: hidden; height: 180px; min-height: 120px;">
                                 <div style="width: 100%; height: 100%; display: flex; justify-content: center; align-items: center;">
