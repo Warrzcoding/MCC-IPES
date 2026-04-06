@@ -408,7 +408,7 @@ if (Auth::user()->isAdmin()) {
                     <div class="col-12 mb-4 d-flex align-items-stretch">
                         <div class="card shadow-lg w-100 h-100 border-0 analytics-card" style="min-height: 340px; max-height: 400px; border-radius: 18px; transition: box-shadow 0.3s; ">
                             <div class="card-header py-2 bg-white border-0 d-flex justify-content-between align-items-center" style="border-radius: 18px 18px 0 0;">
-                                <h6 class="m-0 font-weight-bold text-primary">Categorical Distributions Analysis (Instructor Ratings)</h6>
+                                <h6 class="m-0 font-weight-bold text-primary">Live Categorical Distributions Analysis (Instructor Ratings)</h6>
                                 <div class="d-flex align-items-center" style="gap: 8px;">
                                     <div class="badge badge-success px-3 py-2" style="border-radius: 12px; cursor: help;" title="Average score of all instructors in this period expressed as a percentage of the maximum possible score (5.0)">
                                         <i class="fas fa-chart-line mr-1"></i> Overall Performance: {{ $activeOverallPerformancePct }}%
@@ -421,7 +421,7 @@ if (Auth::user()->isAdmin()) {
                             <div class="card-body d-flex flex-column justify-content-center p-3" style="height: 250px;">
                                 <div style="height: 220px; width: 100%;">
                                     <canvas id="instructorRatingDistributionChart"></canvas>
-                                </div>p
+                                </div>
                             </div>
                         </div>
                     </div> 
