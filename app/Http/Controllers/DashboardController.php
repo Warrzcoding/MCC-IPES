@@ -71,13 +71,19 @@ class DashboardController extends Controller
                 ->groupBy('staff_type')
                 ->pluck('total', 'staff_type');
 
-            $avgScorePerYear = \App\Models\Evaluation::join('academic_years', 'evaluations.academic_year_id', '=', 'academic_years.id')
-                ->select('academic_years.year', \DB::raw('avg(evaluations.response_score) as avg_score'))
+            $avgScorePerYear = \DB::table('save_eval_result')
+                ->join('academic_years', 'save_eval_result.academic_year_id', '=', 'academic_years.id')
+                ->select('academic_years.year', \DB::raw('avg(save_eval_result.response_score) as avg_score'))
                 ->groupBy('academic_years.year')
-                ->orderBy('academic_years.year')
-                ->pluck('avg_score', 'academic_years.year');
+                ->union(
+                    \DB::table('evaluations')
+                    ->join('academic_years', 'evaluations.academic_year_id', '=', 'academic_years.id')
+                    ->select('academic_years.year', \DB::raw('avg(evaluations.response_score) as avg_score'))
+                    ->groupBy('academic_years.year')
+                )
+                ->pluck('avg_score', 'year');
 
-            // Approach 1 & 3: Staff performance improvement and distribution per academic year (from save_eval_result)
+            // Approach 1 & 3: Staff performance improvement and distribution per academic year (from save_eval_result & evaluations)
             // Get all staff average ratings grouped by year and semester
             $staffRatingsByPeriod = \DB::table('save_eval_result')
                 ->join('academic_years', 'save_eval_result.academic_year_id', '=', 'academic_years.id')
@@ -88,6 +94,17 @@ class DashboardController extends Controller
                     \DB::raw('avg(save_eval_result.response_score) as avg_score')
                 )
                 ->groupBy('save_eval_result.staff_id', 'academic_years.year', 'academic_years.semester')
+                ->union(
+                    \DB::table('evaluations')
+                    ->join('academic_years', 'evaluations.academic_year_id', '=', 'academic_years.id')
+                    ->select(
+                        'evaluations.staff_id',
+                        'academic_years.year',
+                        'academic_years.semester',
+                        \DB::raw('avg(evaluations.response_score) as avg_score')
+                    )
+                    ->groupBy('evaluations.staff_id', 'academic_years.year', 'academic_years.semester')
+                )
                 ->get();
 
             // Helper to categorize ratings
@@ -186,7 +203,7 @@ class DashboardController extends Controller
 
             $activeOverallPerformancePct = 0;
             if ($activeAY) {
-                $activePeriodRatings = \DB::table('save_eval_result')
+                $activePeriodRatings = \DB::table('evaluations')
                     ->where('academic_year_id', $activeAY->id)
                     ->select('staff_id', \DB::raw('avg(response_score) as avg_score'))
                     ->groupBy('staff_id')
