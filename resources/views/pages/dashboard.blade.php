@@ -409,14 +409,19 @@ if (Auth::user()->isAdmin()) {
                         <div class="card shadow-lg w-100 h-100 border-0 analytics-card" style="min-height: 340px; max-height: 400px; border-radius: 18px; transition: box-shadow 0.3s; ">
                             <div class="card-header py-2 bg-white border-0 d-flex justify-content-between align-items-center" style="border-radius: 18px 18px 0 0;">
                                 <h6 class="m-0 font-weight-bold text-primary">Categorical Distributions Analysis (Instructor Ratings)</h6>
-                                <div class="badge badge-info px-3 py-2" style="border-radius: 12px;">
-                                    <i class="fas fa-users mr-1"></i> Total Instructors: {{ array_sum($instructorRatingDistribution) }}
+                                <div class="d-flex align-items-center" style="gap: 8px;">
+                                    <div class="badge badge-success px-3 py-2" style="border-radius: 12px; cursor: help;" title="Average score of all instructors in this period expressed as a percentage of the maximum possible score (5.0)">
+                                        <i class="fas fa-chart-line mr-1"></i> Overall Performance: {{ $activeOverallPerformancePct }}%
+                                    </div>
+                                    <div class="badge badge-info px-3 py-2" style="border-radius: 12px;">
+                                        <i class="fas fa-users mr-1"></i> Total Instructors: {{ array_sum($instructorRatingDistribution) }}
+                                    </div>
                                 </div>
                             </div>
                             <div class="card-body d-flex flex-column justify-content-center p-3" style="height: 250px;">
                                 <div style="height: 220px; width: 100%;">
                                     <canvas id="instructorRatingDistributionChart"></canvas>
-                                </div>
+                                </div>p
                             </div>
                         </div>
                     </div> 
@@ -425,14 +430,19 @@ if (Auth::user()->isAdmin()) {
                    <div class="col-12 mb-4 d-flex align-items-stretch">
                         <div class="card shadow-lg w-100 h-100 border-0 analytics-card" style="min-height: 340px; max-height: 400px; border-radius: 18px; transition: box-shadow 0.3s; ">
                             <div class="card-header py-2 bg-white border-0 d-flex justify-content-between align-items-center" style="border-radius: 18px 18px 0 0;">
-                                <h6 class="m-0 font-weight-bold text-primary" id="staffPerformanceTitle">Staff Performance Improvement (Avg. Score per Academic Year, Archived)</h6>
-                                <div class="btn-group btn-group-sm" role="group">
-                                    <button type="button" class="btn btn-outline-primary active" id="yearlyViewBtn" onclick="toggleStaffPerformanceView('yearly')">
-                                        <i class="fas fa-calendar-alt"></i> Yearly
-                                    </button>
-                                    <button type="button" class="btn btn-outline-primary" id="semesterViewBtn" onclick="toggleStaffPerformanceView('semester')">
-                                        <i class="fas fa-calendar"></i> Semester
-                                    </button>
+                                <h6 class="m-0 font-weight-bold text-primary" id="staffPerformanceTitle">Staff Performance Distribution</h6>
+                                <div class="d-flex align-items-center" style="gap: 12px;">
+                                    <span id="overallPerfBadge" class="font-weight-bold text-success" style="font-size: 0.88rem;">
+                                        Overall Performance: 0%
+                                    </span>
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <button type="button" class="btn btn-outline-primary" id="prevSemesterBtn" onclick="navigateSemester('prev')">
+                                            <i class="fas fa-chevron-left"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-outline-primary" id="nextSemesterBtn" onclick="navigateSemester('next')">
+                                            <i class="fas fa-chevron-right"></i>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                             <div class="card-body d-flex flex-column justify-content-center p-2" style="height: 220px; ">
@@ -950,16 +960,17 @@ new Chart(document.getElementById('staffByTypeChart').getContext('2d'), {
         }
     }
 });
-// Staff Performance Improvement per Academic Year/Semester (Enhanced Line Chart)
-const staffStatsYearly = {!! json_encode($staffPerformanceStatsPerYear) !!};
+// Staff Performance Distribution (by Semester)
 const staffStatsSemester = {!! json_encode($staffPerformanceStatsPerSemester) !!};
 
 let staffPerformanceChart;
-let currentStaffView = 'yearly';
+let currentSemesterIndex = staffStatsSemester.length > 0 ? staffStatsSemester.length - 1 : 0; // Default to latest
 
 function initStaffPerformanceChart() {
-    const ctxStaff = document.getElementById('staffPerformanceStatsPerYearChart').getContext('2d');
-    const initialData = getStaffChartData('yearly');
+    const canvas = document.getElementById('staffPerformanceStatsPerYearChart');
+    if (!canvas) return;
+    const ctxStaff = canvas.getContext('2d');
+    const initialData = getStaffChartData(currentSemesterIndex);
 
     staffPerformanceChart = new Chart(ctxStaff, {
         type: 'line',
@@ -1021,7 +1032,8 @@ function initStaffPerformanceChart() {
                     color: '#444',
                     font: { weight: 'bold', size: 11 },
                     formatter: function(value, context) {
-                        const pct = getStaffChartData(currentStaffView).percentages[context.dataIndex];
+                        const data = getStaffChartData(currentSemesterIndex);
+                        const pct = data.percentages[context.dataIndex];
                         return `${value} (${pct}%)`;
                     }
                 },
@@ -1030,7 +1042,8 @@ function initStaffPerformanceChart() {
                         label: function(context) {
                             const label = context.label;
                             const value = context.parsed.y;
-                            const pct = getStaffChartData(currentStaffView).percentages[context.dataIndex];
+                            const data = getStaffChartData(currentSemesterIndex);
+                            const pct = data.percentages[context.dataIndex];
                             return `${label}: ${value} Instructors (${pct}%)`;
                         }
                     }
@@ -1049,39 +1062,67 @@ function initStaffPerformanceChart() {
             }
         }
     });
+    
+    updateSemesterChart();
 }
 
-function getStaffChartData(viewType) {
-    const dataArray = viewType === 'yearly' ? staffStatsYearly : staffStatsSemester;
-    // Get the latest period data
-    const latest = dataArray[dataArray.length - 1] || {
-        Outstanding: 0, Very_Satisfactory: 0, Satisfactory: 0, Unsatisfactory: 0, Poor: 0,
-        outstanding_pct: 0, very_satisfactory_pct: 0, satisfactory_pct: 0, unsatisfactory_pct: 0, poor_pct: 0,
-        total: 0, year: 'N/A', period_label: 'N/A'
-    };
+function getStaffChartData(index) {
+    if (!staffStatsSemester || staffStatsSemester.length === 0) {
+        return {
+            labels: ['Outstanding', 'Very Satisfactory', 'Satisfactory', 'Unsatisfactory', 'Poor'],
+            counts: [0, 0, 0, 0, 0],
+            percentages: [0, 0, 0, 0, 0],
+            period: 'No Data',
+            overall: 0
+        };
+    }
 
+    const data = staffStatsSemester[index];
     return {
         labels: ['Outstanding', 'Very Satisfactory', 'Satisfactory', 'Unsatisfactory', 'Poor'],
-        counts: [latest.Outstanding, latest.Very_Satisfactory, latest.Satisfactory, latest.Unsatisfactory, latest.Poor],
-        percentages: [latest.outstanding_pct, latest.very_satisfactory_pct, latest.satisfactory_pct, latest.unsatisfactory_pct, latest.poor_pct],
-        period: viewType === 'yearly' ? latest.year : latest.period_label
+        counts: [data.Outstanding, data.Very_Satisfactory, data.Satisfactory, data.Unsatisfactory, data.Poor],
+        percentages: [data.outstanding_pct, data.very_satisfactory_pct, data.satisfactory_pct, data.unsatisfactory_pct, data.poor_pct],
+        period: data.period_label,
+        overall: data.overall_performance_pct
     };
 }
 
-function toggleStaffPerformanceView(viewType) {
-    currentStaffView = viewType;
-    document.getElementById('yearlyViewBtn').classList.toggle('active', viewType === 'yearly');
-    document.getElementById('semesterViewBtn').classList.toggle('active', viewType === 'semester');
+function navigateSemester(direction) {
+    if (direction === 'prev' && currentSemesterIndex > 0) {
+        currentSemesterIndex--;
+    } else if (direction === 'next' && currentSemesterIndex < staffStatsSemester.length - 1) {
+        currentSemesterIndex++;
+    }
     
-    const newData = getStaffChartData(viewType);
+    updateSemesterChart();
+}
+
+function updateSemesterChart() {
+    const newData = getStaffChartData(currentSemesterIndex);
     
-    const title = viewType === 'yearly' 
-        ? `Staff Performance Distribution (${newData.period})`
-        : `Staff Performance Distribution (${newData.period})`;
-    document.getElementById('staffPerformanceTitle').textContent = title;
+    // Update UI elements
+    const titleElem = document.getElementById('staffPerformanceTitle');
+    if (titleElem) titleElem.textContent = `Staff Performance Distribution (${newData.period})`;
     
-    staffPerformanceChart.data.datasets[0].data = newData.counts;
-    staffPerformanceChart.update();
+    const perfBadge = document.getElementById('overallPerfBadge');
+    if (perfBadge) {
+        perfBadge.textContent = `Overall Performance: ${newData.overall}%`;
+    }
+    
+    // Update chart
+    if (staffPerformanceChart) {
+        staffPerformanceChart.data.datasets[0].data = newData.counts;
+        staffPerformanceChart.update();
+    }
+    
+    updateSemesterNavigation();
+}
+
+function updateSemesterNavigation() {
+    const prevBtn = document.getElementById('prevSemesterBtn');
+    const nextBtn = document.getElementById('nextSemesterBtn');
+    if (prevBtn) prevBtn.disabled = currentSemesterIndex <= 0;
+    if (nextBtn) nextBtn.disabled = currentSemesterIndex >= staffStatsSemester.length - 1;
 }
 
 initStaffPerformanceChart();

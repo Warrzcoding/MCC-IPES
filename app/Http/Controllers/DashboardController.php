@@ -131,7 +131,7 @@ class DashboardController extends Controller
                 ]);
             }
 
-            // Process data for Semester View
+            // Process data for Semester View (Main View now)
             $semesterDataRaw = [];
             foreach ($staffRatingsByPeriod as $row) {
                 $key = "{$row->year}-{$row->semester}";
@@ -139,12 +139,13 @@ class DashboardController extends Controller
                     $semesterDataRaw[$key] = [
                         'year' => $row->year,
                         'semester' => $row->semester,
-                        'Outstanding' => 0, 'Very Satisfactory' => 0, 'Satisfactory' => 0, 'Unsatisfactory' => 0, 'Poor' => 0, 'total' => 0
+                        'Outstanding' => 0, 'Very Satisfactory' => 0, 'Satisfactory' => 0, 'Unsatisfactory' => 0, 'Poor' => 0, 'total' => 0, 'sum_avg' => 0
                     ];
                 }
                 $cat = $categorize($row->avg_score);
                 $semesterDataRaw[$key][$cat]++;
                 $semesterDataRaw[$key]['total']++;
+                $semesterDataRaw[$key]['sum_avg'] += $row->avg_score;
             }
 
             $staffPerformanceStatsPerSemester = collect();
@@ -152,6 +153,10 @@ class DashboardController extends Controller
             foreach ($semesterDataRaw as $key => $counts) {
                 $total = $counts['total'] ?: 1;
                 $semesterLabel = $counts['semester'] == 1 ? '1st Sem' : '2nd Sem';
+                // Overall Performance Percentage for this specific period
+                // (Sum of average ratings / total staff) / 5.0 * 100
+                $overall_perf_pct = round((($counts['sum_avg'] / $total) / 5) * 100, 1);
+
                 $staffPerformanceStatsPerSemester->push((object)[
                     'period_label' => "{$counts['year']} - {$semesterLabel}",
                     'Outstanding' => $counts['Outstanding'],
@@ -165,6 +170,7 @@ class DashboardController extends Controller
                     'satisfactory_pct' => round(($counts['Satisfactory'] / $total) * 100, 1),
                     'unsatisfactory_pct' => round(($counts['Unsatisfactory'] / $total) * 100, 1),
                     'poor_pct' => round(($counts['Poor'] / $total) * 100, 1),
+                    'overall_performance_pct' => $overall_perf_pct
                 ]);
             }
 
@@ -178,6 +184,7 @@ class DashboardController extends Controller
                 'Poor' => 0,
             ];
 
+            $activeOverallPerformancePct = 0;
             if ($activeAY) {
                 $activePeriodRatings = \DB::table('save_eval_result')
                     ->where('academic_year_id', $activeAY->id)
@@ -185,11 +192,16 @@ class DashboardController extends Controller
                     ->groupBy('staff_id')
                     ->get();
 
-                foreach ($activePeriodRatings as $row) {
-                    $cat = $categorize($row->avg_score);
-                    if (isset($instructorRatingDistribution[$cat])) {
-                        $instructorRatingDistribution[$cat]++;
+                if ($activePeriodRatings->count() > 0) {
+                    $totalAvg = 0;
+                    foreach ($activePeriodRatings as $row) {
+                        $totalAvg += $row->avg_score;
+                        $cat = $categorize($row->avg_score);
+                        if (isset($instructorRatingDistribution[$cat])) {
+                            $instructorRatingDistribution[$cat]++;
+                        }
                     }
+                    $activeOverallPerformancePct = round((($totalAvg / $activePeriodRatings->count()) / 5) * 100, 1);
                 }
             }
         } else {
@@ -895,6 +907,7 @@ class DashboardController extends Controller
             'staffPerformanceStatsPerYear', // pass to view
             'staffPerformanceStatsPerSemester', // pass semester data to view
             'instructorRatingDistribution',
+            'activeOverallPerformancePct',
             'pendingRequestsCount',
             'pendingRequests',
             'rejectedRequests', // Always include this
