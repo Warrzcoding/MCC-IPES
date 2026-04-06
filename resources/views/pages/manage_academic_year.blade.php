@@ -998,11 +998,11 @@ if (!function_exists('getRatingStatus')) {
                                                                 title="View Comments">
                                                             <i class="fas fa-comments"></i>
                                                         </button>
-                                                        <button class="btn btn-outline-success btn-sm" 
+                                                       <!-- <button class="btn btn-outline-success btn-sm" 
                                                                 onclick="showPrintConfirmModal({{ $staff->staffModel->id }})"
                                                                 title="Print Report">
                                                             <i class="fas fa-print"></i>
-                                                        </button>
+                                                        </button>-->
                                                     </div>
                                                 </div>
                                             </div>
