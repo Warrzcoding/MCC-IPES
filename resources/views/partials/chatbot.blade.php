@@ -437,7 +437,7 @@
                 <a href="https://mccgradeinfo.com" target="_blank" class="social-icon custom" title="MCC-Grading System">
                     <img src="{{ asset('images/logo.png') }}" alt="S2">
                 </a>
-                <a href="https://mcc-clearance.com" target="_blank" class="social-icon custom" title="Mcc-Clearance System">
+                <a href="https://mcc-bsit-internship.com" target="_blank" class="social-icon custom" title="Mcc-BSIT INTERNSHIP SYSTEM">
                     <img src="{{ asset('images/logo.png') }}" alt="S3">
                 </a>
                 <a href="https://mcc-lrc.com" target="_blank" class="social-icon custom" title="MCC-Library">
