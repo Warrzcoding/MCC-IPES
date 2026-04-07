@@ -573,4 +573,34 @@ class SuperAdminController extends Controller
             return response()->json(['success' => false, 'message' => 'Error adding ID User: ' . $e->getMessage()], 500);
         }
     }
+
+    /**
+     * Check ID number in idchecker table.
+     */
+    public function checkIdNumber(Request $request)
+    {
+        if (!session()->has('super_admin_id')) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
+        }
+
+        $idNumber = $request->input('id_number');
+
+        if (!$idNumber) {
+            return response()->json(['success' => false, 'message' => 'ID Number is required.'], 400);
+        }
+
+        $record = IdChecker::where('id_number', $idNumber)->first();
+
+        if ($record) {
+            return response()->json([
+                'success' => true,
+                'data' => $record
+            ]);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => 'No record found for this ID number.'
+        ]);
+    }
 }

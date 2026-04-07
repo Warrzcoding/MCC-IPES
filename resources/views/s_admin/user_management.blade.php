@@ -455,6 +455,169 @@
                 margin-right: auto;
             }
         }
+        /* ==================== IDCHECK STYLES ==================== */
+        .btn-idcheck {
+            background: transparent;
+            border: 2px solid #ffcc00;
+            color: #ffcc00;
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: bold;
+            transition: var(--transition);
+            white-space: nowrap;
+        }
+
+        .btn-idcheck:hover {
+            background: #ffcc00;
+            color: #000;
+            box-shadow: 0 0 15px rgba(255, 204, 0, 0.5);
+        }
+
+        /* Hacker Style Modal */
+        .hacker-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+        }
+
+        .hacker-modal-content {
+            background: var(--primary-dark);
+            margin: 10% auto;
+            border: 1px solid var(--accent-green);
+            width: 450px;
+            box-shadow: 0 0 30px rgba(0, 255, 65, 0.2);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .hacker-modal-content.expanded {
+            width: 550px;
+        }
+
+        .hacker-modal-header {
+            padding: 15px;
+            border-bottom: 1px solid var(--accent-green);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--accent-green);
+            font-family: 'Courier New', monospace;
+        }
+
+        .hacker-modal-close {
+            color: var(--accent-green);
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .hacker-modal-body {
+            padding: 25px;
+            text-align: center;
+        }
+
+        .hacker-input {
+            background: #000;
+            border: 1px solid var(--accent-green);
+            color: var(--accent-green-light);
+            padding: 12px;
+            font-family: 'Courier New', monospace;
+            width: 100%;
+            outline: none;
+            font-size: 18px;
+            text-align: center;
+        }
+
+        .btn-hacker-search {
+            background: var(--accent-green);
+            color: #000;
+            border: none;
+            padding: 0 20px;
+            font-weight: bold;
+            transition: 0.3s;
+            font-size: 14px;
+        }
+
+        .btn-hacker-search:hover {
+            background: var(--accent-green-light);
+            box-shadow: 0 0 10px var(--accent-green);
+        }
+
+        .text-accent {
+            color: var(--accent-green);
+            font-size: 14px;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .separator {
+            border-top: 1px solid rgba(0, 255, 65, 0.3);
+            text-align: center;
+            margin-top: 25px;
+            position: relative;
+            color: var(--accent-green);
+            font-size: 12px;
+            letter-spacing: 2px;
+        }
+
+        .separator::before {
+            content: "";
+            background: var(--primary-dark);
+            padding: 0 15px;
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .id-info-grid {
+            margin-top: 20px;
+            display: grid;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .id-info-item {
+            display: flex;
+            flex-direction: column;
+            border: 1px solid rgba(0, 255, 65, 0.3);
+            background: rgba(0, 255, 65, 0.05);
+            padding: 10px 20px;
+            min-width: 300px;
+            border-radius: 4px;
+        }
+
+        .id-info-item .label {
+            font-size: 11px;
+            color: var(--accent-green);
+            opacity: 0.8;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        .id-info-item .value {
+            font-size: 20px;
+            color: var(--text-light);
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(0, 255, 65, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .hacker-modal-content {
+                width: 90%;
+                margin: 30% auto;
+            }
+            .hacker-modal-content.expanded {
+                width: 95%;
+            }
+        }
     </style>
 </head>
 <body>
@@ -522,9 +685,14 @@
                 <h5 class="mb-0" style="color: var(--accent-green);">
                     <i class="fas fa-user-graduate me-2"></i>Student Management
                 </h5>
-                <div class="search-box">
-                    <i class="fas fa-search"></i>
-                    <input type="text" id="userSearch" placeholder="Search students...">
+                <div class="d-flex align-items-center gap-2">
+                    <button class="btn-idcheck" id="openIdCheckModal">
+                        <i class="fas fa-id-card me-1"></i> IDCHECK
+                    </button>
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="userSearch" placeholder="Search students...">
+                    </div>
                 </div>
             </div>
             <div class="card-body p-0">
@@ -804,9 +972,163 @@
         </div>
     </div>
 
+    <!-- ID Check Modal -->
+    <div id="idCheckModal" class="hacker-modal">
+        <div class="hacker-modal-content" id="idCheckModalContent">
+            <div class="hacker-modal-header">
+                <h5 class="mb-0"><i class="fas fa-id-card me-2"></i>ID_CHECKER_v1.0</h5>
+                <span class="hacker-modal-close" id="closeIdCheckModal">&times;</span>
+            </div>
+            <div class="hacker-modal-body">
+                <div class="mb-3">
+                    <label class="form-label text-accent">ENTER_SCHOOL_ID:</label>
+                    <div class="input-group">
+                        <input type="text" id="idCheckInput" class="hacker-input" placeholder="0000-0000" maxlength="9">
+                        <button class="btn-hacker-search" id="idCheckSearchBtn">
+                            <i class="fas fa-search"></i> SEARCH
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="idCheckResult" style="display: none;">
+                    <div class="separator mb-3">RESULT_FOUND</div>
+                    <div class="id-info-grid">
+                        <div class="id-info-item">
+                            <span class="label">FULL_NAME:</span>
+                            <span class="value" id="res_fullname"></span>
+                        </div>
+                        <div class="id-info-item">
+                            <span class="label">COURSE:</span>
+                            <span class="value" id="res_course"></span>
+                        </div>
+                        <div class="id-info-item">
+                            <span class="label">YEAR_SECTION:</span>
+                            <span class="value" id="res_year_section"></span>
+                        </div>
+                        <div class="id-info-item">
+                            <span class="label">GENDER:</span>
+                            <span class="value" id="res_gender"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="idCheckNoResult" class="text-danger mt-2" style="display: none; font-size: 12px;">
+                    <i class="fas fa-exclamation-triangle me-1"></i> RECORD_NOT_FOUND_IN_DATABASE
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
     <script>
+        // ID Check Modal Logic
+        const idCheckModal = document.getElementById('idCheckModal');
+        const openIdCheckBtn = document.getElementById('openIdCheckModal');
+        const closeIdCheckBtn = document.getElementById('closeIdCheckModal');
+        const idCheckInput = document.getElementById('idCheckInput');
+        const idCheckSearchBtn = document.getElementById('idCheckSearchBtn');
+        const idCheckResult = document.getElementById('idCheckResult');
+        const idCheckNoResult = document.getElementById('idCheckNoResult');
+        const idCheckModalContent = document.getElementById('idCheckModalContent');
+
+        // Open Modal
+        openIdCheckBtn.onclick = function() {
+            idCheckModal.style.display = "block";
+            idCheckInput.focus();
+        }
+
+        // Close Modal
+        closeIdCheckBtn.onclick = function() {
+            idCheckModal.style.display = "none";
+            resetIdCheck();
+        }
+
+        // Prevent closing when clicking outside
+        window.onclick = function(event) {
+            if (event.target == idCheckModal) {
+                // Do nothing (don't close)
+            }
+        }
+
+        function resetIdCheck() {
+            idCheckInput.value = '';
+            idCheckResult.style.display = 'none';
+            idCheckNoResult.style.display = 'none';
+            idCheckModalContent.classList.remove('expanded');
+        }
+
+        // Input Sanitization and Formatting (0000-0000)
+        idCheckInput.oninput = function(e) {
+            let value = e.target.value.replace(/\D/g, ''); // Remove non-numbers
+            if (value.length > 8) value = value.slice(0, 8); // Max 8 digits
+            
+            if (value.length > 4) {
+                value = value.slice(0, 4) + '-' + value.slice(4);
+            }
+            e.target.value = value;
+        }
+
+        // Search Functionality
+        idCheckSearchBtn.onclick = function() {
+            const idNumber = idCheckInput.value;
+            if (idNumber.length < 9) {
+                idCheckNoResult.innerText = "INVALID_FORMAT: USE 0000-0000";
+                idCheckNoResult.style.display = 'block';
+                idCheckResult.style.display = 'none';
+                return;
+            }
+
+            idCheckSearchBtn.disabled = true;
+            idCheckSearchBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+            fetch("{{ route('superadmin.check-id-number') }}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify({ id_number: idNumber })
+            })
+            .then(response => response.json())
+            .then(data => {
+                idCheckSearchBtn.disabled = false;
+                idCheckSearchBtn.innerHTML = '<i class="fas fa-search"></i> SEARCH';
+
+                if (data.success) {
+                    const student = data.data;
+                    document.getElementById('res_fullname').innerText = `${student.fname} ${student.mname ? student.mname + ' ' : ''}${student.lname}`;
+                    document.getElementById('res_course').innerText = student.course;
+                    document.getElementById('res_year_section').innerText = `${student.year} - ${student.section}`;
+                    document.getElementById('res_gender').innerText = student.gender;
+
+                    idCheckNoResult.style.display = 'none';
+                    idCheckResult.style.display = 'block';
+                    idCheckModalContent.classList.add('expanded');
+                } else {
+                    idCheckNoResult.innerText = "RECORD_NOT_FOUND_IN_DATABASE";
+                    idCheckNoResult.style.display = 'block';
+                    idCheckResult.style.display = 'none';
+                    idCheckModalContent.classList.remove('expanded');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                idCheckSearchBtn.disabled = false;
+                idCheckSearchBtn.innerHTML = '<i class="fas fa-search"></i> SEARCH';
+                idCheckNoResult.innerText = "CONNECTION_ERROR_DETECTED";
+                idCheckNoResult.style.display = 'block';
+            });
+        }
+
+        // Allow Enter key to search
+        idCheckInput.addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                idCheckSearchBtn.click();
+            }
+        });
+
         // Profile Modal Functionality
         function viewUserProfile(name, id, email, imgSrc, joined, course, section) {
             document.getElementById('profileFullName').textContent = name;
