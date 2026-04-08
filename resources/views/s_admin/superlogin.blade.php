@@ -405,6 +405,143 @@
             gap: 8px !important;
             margin-top: 12px !important;
         }
+
+        /* ==================== OTP OVERLAY ==================== */
+        .otp-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(5, 13, 29, 0.85);
+            backdrop-filter: blur(12px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            padding: 20px;
+        }
+
+        .otp-overlay.active {
+            display: flex;
+        }
+
+        .otp-modal {
+            width: 100%;
+            max-width: 320px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px 20px;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        }
+
+        .otp-modal-icon {
+            font-size: 40px;
+            color: var(--accent);
+            margin-bottom: 15px;
+        }
+
+        .otp-modal-title {
+            color: var(--text-light);
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .otp-modal-subtitle {
+            color: rgba(232, 241, 255, 0.6);
+            font-size: 0.88rem;
+            margin-bottom: 20px;
+        }
+
+        .otp-email-display {
+            color: var(--accent-light);
+            font-weight: 600;
+        }
+
+        .otp-input-group {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .otp-input-group input {
+            width: 40px;
+            height: 48px;
+            background: rgba(12, 29, 60, 0.72);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            color: var(--text-light);
+            font-size: 1.25rem;
+            font-weight: 700;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+
+        .otp-input-group input:focus {
+            border-color: var(--accent-light);
+            box-shadow: 0 0 10px rgba(31, 138, 255, 0.3);
+            outline: none;
+            background: rgba(12, 29, 60, 0.9);
+        }
+
+        .otp-input-group input.error {
+            border-color: #ff6b81;
+            box-shadow: 0 0 10px rgba(255, 107, 129, 0.2);
+        }
+
+        .otp-error-msg {
+            color: #ff6b81;
+            font-size: 0.8rem;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        .otp-error-msg.show {
+            display: block;
+        }
+
+        .otp-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .otp-timer {
+            font-size: 0.8rem;
+            color: rgba(232, 241, 255, 0.5);
+            margin-top: 15px;
+        }
+
+        #otpResendBtn {
+            background: none;
+            border: none;
+            color: var(--accent-light);
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-decoration: underline;
+            padding: 0;
+            cursor: pointer;
+        }
+
+        #otpResendBtn:disabled {
+            color: rgba(232, 241, 255, 0.3);
+            cursor: not-allowed;
+            text-decoration: none;
+        }
+
+        #otpCancelBtn {
+            background: none;
+            border: none;
+            color: rgba(232, 241, 255, 0.5);
+            font-size: 0.8rem;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+
+        #otpCancelBtn:hover {
+            color: #ff6b81;
+        }
     </style>
 </head>
 <body>
@@ -587,11 +724,52 @@
         </div>
     </div>
 
+    <!-- OTP Verification Modal -->
+    <div id="otpOverlay" class="otp-overlay">
+        <div class="otp-modal">
+            <div class="otp-modal-icon">
+                <i class="fas fa-envelope-open-text"></i>
+            </div>
+            <h5 class="otp-modal-title">Verification Required</h5>
+            <p class="otp-modal-subtitle">
+                Please enter the 6-digit code sent to <br>
+                <span id="otpEmailDisplay" class="otp-email-display"></span>
+            </p>
+            
+            <div id="otpInputGroup" class="otp-input-group">
+                <input type="text" maxlength="1" pattern="\d*" inputmode="numeric">
+                <input type="text" maxlength="1" pattern="\d*" inputmode="numeric">
+                <input type="text" maxlength="1" pattern="\d*" inputmode="numeric">
+                <input type="text" maxlength="1" pattern="\d*" inputmode="numeric">
+                <input type="text" maxlength="1" pattern="\d*" inputmode="numeric">
+                <input type="text" maxlength="1" pattern="\d*" inputmode="numeric">
+            </div>
+
+            <div id="otpErrorMsg" class="otp-error-msg"></div>
+
+            <div class="otp-actions">
+                <button type="button" id="verifyOtpBtn" class="btn btn-primary w-100">
+                    Verify Code
+                </button>
+                
+                <div class="otp-timer">
+                    Didn't receive the code? 
+                    <button type="button" id="otpResendBtn" disabled>Resend</button>
+                </div>
+
+                <button type="button" id="otpCancelBtn">
+                    Cancel & Return
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
 
     <script>
         let accessCodeTimerInterval = null;
+        let accessCodeModal = null;
 
         function startAccessCodeTimer() {
             let timeLeft = 20;
@@ -601,88 +779,358 @@
                 clearInterval(accessCodeTimerInterval);
             }
 
-            timerDisplay.textContent = timeLeft + 's';
-
-            accessCodeTimerInterval = setInterval(() => {
-                timeLeft--;
+            if (timerDisplay) {
                 timerDisplay.textContent = timeLeft + 's';
 
-                if (timeLeft <= 0) {
-                    clearInterval(accessCodeTimerInterval);
-                    window.location.href = '{{ route("login") }}';
-                }
-            }, 1000);
+                accessCodeTimerInterval = setInterval(() => {
+                    timeLeft--;
+                    timerDisplay.textContent = timeLeft + 's';
+
+                    if (timeLeft <= 0) {
+                        clearInterval(accessCodeTimerInterval);
+                        window.location.href = '{{ route("login") }}';
+                    }
+                }, 1000);
+            }
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
-            // Show access code modal on page load
-            const accessCodeModal = new bootstrap.Modal(document.getElementById('accessCodeModal'));
-            accessCodeModal.show();
-            startAccessCodeTimer();
+        // Super Admin OTP Controller
+        const superAdminOtpController = (function() {
+            const overlay = document.getElementById('otpOverlay');
+            const inputs = Array.from(document.querySelectorAll('#otpInputGroup input'));
+            const emailDisplay = document.getElementById('otpEmailDisplay');
+            const verifyBtn = document.getElementById('verifyOtpBtn');
+            const resendBtn = document.getElementById('otpResendBtn');
+            const cancelBtn = document.getElementById('otpCancelBtn');
+            const errorMsg = document.getElementById('otpErrorMsg');
+            
+            let resendTimer = null;
+            let countdown = 60;
 
-            // Handle access code verification
-            document.getElementById('verifyAccessCodeBtn').addEventListener('click', function() {
-                const accessCode = document.getElementById('accessCodeInput').value.trim();
-                const errorDiv = document.getElementById('accessCodeError');
+            function init() {
+                if (!overlay) return;
 
-                if (!accessCode) {
-                    errorDiv.textContent = 'Please enter an access code';
-                    errorDiv.style.display = 'block';
-                    return;
-                }
+                // Input handling
+                inputs.forEach((input, index) => {
+                    input.addEventListener('input', (e) => {
+                        const value = e.target.value;
+                        if (value && index < inputs.length - 1) {
+                            inputs[index + 1].focus();
+                        }
+                        updateVerifyBtnState();
+                    });
 
-                this.disabled = true;
-                this.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Verifying...';
+                    input.addEventListener('keydown', (e) => {
+                        if (e.key === 'Backspace' && !e.target.value && index > 0) {
+                            inputs[index - 1].focus();
+                        }
+                        if (e.key === 'Enter' && getOtpValue().length === 6) {
+                            verifyOtp();
+                        }
+                    });
 
-                fetch('{{ route("superadmin.verify-accesscode") }}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}'
-                    },
-                    body: JSON.stringify({
-                        accesscode: accessCode
-                    })
-                })
-                .then(response => {
-                    if (response.ok) {
-                        return response.json().then(data => {
-                            clearInterval(accessCodeTimerInterval);
-                            accessCodeModal.hide();
-                            errorDiv.style.display = 'none';
-                            document.getElementById('accessCodeInput').value = '';
+                    input.addEventListener('keypress', (e) => {
+                        if (!/[0-9]/.test(e.key)) {
+                            e.preventDefault();
+                        }
+                    });
+                });
+
+                if (verifyBtn) verifyBtn.addEventListener('click', verifyOtp);
+                if (resendBtn) resendBtn.addEventListener('click', resendOtp);
+                if (cancelBtn) cancelBtn.addEventListener('click', cancelOtp);
+            }
+
+            function getOtpValue() {
+                return inputs.map(input => input.value).join('');
+            }
+
+            function updateVerifyBtnState() {
+                if (verifyBtn) verifyBtn.disabled = getOtpValue().length !== 6;
+            }
+
+            function showLoading(btn, text) {
+                if (!btn) return;
+                btn.disabled = true;
+                btn.dataset.originalText = btn.innerHTML;
+                btn.innerHTML = `<i class="fas fa-spinner fa-spin me-2"></i>${text}`;
+            }
+
+            function hideLoading(btn) {
+                if (!btn) return;
+                btn.disabled = false;
+                btn.innerHTML = btn.dataset.originalText || 'Verify Code';
+            }
+
+            async function verifyOtp() {
+                const code = getOtpValue();
+                if (code.length !== 6) return;
+
+                showLoading(verifyBtn, 'Verifying...');
+                if (errorMsg) errorMsg.classList.remove('show');
+                inputs.forEach(input => input.classList.remove('error'));
+
+                try {
+                    const response = await fetch('{{ route("superadmin.otp.verify") }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({ otp_code: code })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok && data.status === 'success') {
+                        // Success - Show SweetAlert and redirect
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Verification Successful',
+                            text: 'Welcome back! Accessing Super Admin Portal...',
+                            confirmButtonColor: '#1f8aff',
+                            timer: 2000,
+                            timerProgressBar: true,
+                            showConfirmButton: false,
+                            allowOutsideClick: false,
+                            allowEscapeKey: false,
+                            background: 'rgba(11, 21, 41, 0.95)',
+                            color: '#e8f1ff',
+                            didOpen: function() {
+                                const popup = Swal.getPopup();
+                                if (popup) {
+                                    popup.style.borderRadius = '16px';
+                                    popup.style.border = '1px solid rgba(255, 255, 255, 0.08)';
+                                    popup.style.boxShadow = '0 20px 55px rgba(5, 15, 35, 0.45)';
+                                }
+                            }
+                        }).then(() => {
+                            window.location.href = data.redirect;
                         });
                     } else {
-                        return response.json().then(data => {
-                            errorDiv.textContent = data.message || 'Invalid access code';
-                            errorDiv.style.display = 'block';
-                            this.disabled = false;
-                            this.innerHTML = '<i class="fas fa-arrow-right me-1"></i>Verify';
-                            startAccessCodeTimer();
-                        });
+                        if (errorMsg) {
+                            errorMsg.textContent = data.message || 'Invalid verification code.';
+                            errorMsg.classList.add('show');
+                        }
+                        inputs.forEach(input => input.classList.add('error'));
+                        hideLoading(verifyBtn);
                     }
-                })
-                .catch(error => {
-                    errorDiv.textContent = 'An error occurred. Please try again.';
-                    errorDiv.style.display = 'block';
-                    this.disabled = false;
-                    this.innerHTML = '<i class="fas fa-arrow-right me-1"></i>Verify';
-                    startAccessCodeTimer();
+                } catch (error) {
+                    console.error('OTP Verification Error:', error);
+                    if (errorMsg) {
+                        errorMsg.textContent = 'An error occurred. Please try again.';
+                        errorMsg.classList.add('show');
+                    }
+                    hideLoading(verifyBtn);
+                }
+            }
+
+            async function resendOtp() {
+                if (!resendBtn || resendBtn.disabled) return;
+
+                resendBtn.disabled = true;
+                const originalText = resendBtn.innerHTML;
+                resendBtn.innerHTML = 'Sending...';
+
+                try {
+                    const response = await fetch('{{ route("superadmin.otp.resend") }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({})
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok && data.success) {
+                        Swal.fire({
+                            title: 'Code Sent',
+                            text: 'A new verification code has been sent to your email.',
+                            icon: 'success',
+                            timer: 2000,
+                            showConfirmButton: false,
+                            background: 'rgba(11, 21, 41, 0.95)',
+                            color: '#e8f1ff'
+                        });
+                        startTimer();
+                    } else {
+                        Swal.fire({
+                            title: 'Error',
+                            text: data.message || 'Failed to resend code.',
+                            icon: 'error',
+                            background: 'rgba(11, 21, 41, 0.95)',
+                            color: '#e8f1ff'
+                        });
+                        resendBtn.disabled = false;
+                        resendBtn.innerHTML = originalText;
+                    }
+                } catch (error) {
+                    console.error('OTP Resend Error:', error);
+                    resendBtn.disabled = false;
+                    resendBtn.innerHTML = originalText;
+                }
+            }
+
+            async function cancelOtp() {
+                try {
+                    await fetch('{{ route("superadmin.otp.cancel") }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        }
+                    });
+                } finally {
+                    location.reload();
+                }
+            }
+
+            function startTimer() {
+                if (!resendBtn) return;
+                countdown = 60;
+                resendBtn.disabled = true;
+                
+                if (resendTimer) clearInterval(resendTimer);
+                
+                resendTimer = setInterval(() => {
+                    countdown--;
+                    if (countdown <= 0) {
+                        clearInterval(resendTimer);
+                        resendBtn.disabled = false;
+                        resendBtn.innerHTML = 'Resend';
+                    } else {
+                        resendBtn.innerHTML = `Resend in ${countdown}s`;
+                    }
+                }, 1000);
+            }
+
+            return {
+                init: init,
+                open: function(email) {
+                    if (emailDisplay) emailDisplay.textContent = email;
+                    if (overlay) overlay.classList.add('active');
+                    if (inputs.length > 0) inputs[0].focus();
+                    startTimer();
+                }
+            };
+        })();
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize access code modal
+            const modalEl = document.getElementById('accessCodeModal');
+            if (modalEl) {
+                accessCodeModal = new bootstrap.Modal(modalEl);
+                
+                // Show modal if not verified AND no OTP is pending
+                @if(!session('super_admin_otp_pending') && !session('temp_access_verified'))
+                    modalEl.addEventListener('shown.bs.modal', function () {
+                        startAccessCodeTimer();
+                        const input = document.getElementById('accessCodeInput');
+                        if (input) input.focus();
+                    });
+                    accessCodeModal.show();
+                @endif
+            }
+
+            // Initialize OTP controller
+            superAdminOtpController.init();
+
+            @if(session('otp_sent'))
+                superAdminOtpController.open('{{ session("email") }}');
+            @elseif(session('super_admin_otp_pending') && isset($pendingEmail))
+                superAdminOtpController.open('{{ $pendingEmail }}');
+            @endif
+
+            // Handle access code verification
+            const verifyAccessBtn = document.getElementById('verifyAccessCodeBtn');
+            if (verifyAccessBtn) {
+                verifyAccessBtn.addEventListener('click', function() {
+                    const accessCodeInput = document.getElementById('accessCodeInput');
+                    const accessCode = accessCodeInput ? accessCodeInput.value.trim() : '';
+                    const errorDiv = document.getElementById('accessCodeError');
+
+                    if (!accessCode) {
+                        if (errorDiv) {
+                            errorDiv.textContent = 'Please enter an access code';
+                            errorDiv.style.display = 'block';
+                        }
+                        return;
+                    }
+
+                    this.disabled = true;
+                    const originalBtnText = this.innerHTML;
+                    this.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Verifying...';
+
+                    fetch('{{ route("superadmin.verify-accesscode") }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({
+                            accesscode: accessCode
+                        })
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            return response.json().then(data => {
+                                clearInterval(accessCodeTimerInterval);
+                                if (accessCodeModal) {
+                                    accessCodeModal.hide();
+                                    // Robust cleanup of modal state
+                                    setTimeout(() => {
+                                        document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+                                        document.body.classList.remove('modal-open');
+                                        document.body.style.overflow = '';
+                                        document.body.style.paddingRight = '';
+                                    }, 300);
+                                }
+                                if (errorDiv) errorDiv.style.display = 'none';
+                                if (accessCodeInput) accessCodeInput.value = '';
+                            });
+                        } else {
+                            return response.json().then(data => {
+                                if (errorDiv) {
+                                    errorDiv.textContent = data.message || 'Invalid access code';
+                                    errorDiv.style.display = 'block';
+                                }
+                                this.disabled = false;
+                                this.innerHTML = originalBtnText;
+                                startAccessCodeTimer();
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        if (errorDiv) {
+                            errorDiv.textContent = 'An error occurred. Please try again.';
+                            errorDiv.style.display = 'block';
+                        }
+                        this.disabled = false;
+                        this.innerHTML = originalBtnText;
+                        startAccessCodeTimer();
+                    });
                 });
-            });
+            }
 
             // Validate access code input - allow only alphanumeric characters
-            const accessCodeInput = document.getElementById('accessCodeInput');
-            accessCodeInput.addEventListener('input', function(event) {
-                this.value = this.value.replace(/[^a-zA-Z0-9]/g, '');
-            });
+            const accessCodeInputEl = document.getElementById('accessCodeInput');
+            if (accessCodeInputEl) {
+                accessCodeInputEl.addEventListener('input', function(event) {
+                    this.value = this.value.replace(/[^a-zA-Z0-9]/g, '');
+                });
 
-            // Allow Enter key to verify access code
-            accessCodeInput.addEventListener('keypress', function(event) {
-                if (event.key === 'Enter') {
-                    document.getElementById('verifyAccessCodeBtn').click();
-                }
-            });
+                // Allow Enter key to verify access code
+                accessCodeInputEl.addEventListener('keypress', function(event) {
+                    if (event.key === 'Enter') {
+                        const btn = document.getElementById('verifyAccessCodeBtn');
+                        if (btn) btn.click();
+                    }
+                });
+            }
 
             // Handle validation error alert timeout (5 seconds)
             const errorAlert = document.getElementById('validationErrorAlert');
@@ -773,7 +1221,32 @@
         }
 
         // Handle successful login redirect
-        @if(session('login_success'))
+        @if(session('super_admin_login_success'))
+            window.addEventListener('load', function() {
+                Swal.fire({
+                    title: 'Access Granted!',
+                    text: 'Verification successful. Redirecting to Super Admin Portal...',
+                    icon: 'success',
+                    confirmButtonColor: '#1f8aff',
+                    timer: 2000,
+                    timerProgressBar: true,
+                    showConfirmButton: false,
+                    allowOutsideClick: false,
+                    background: 'rgba(11, 21, 41, 0.95)',
+                    color: '#e8f1ff',
+                    didOpen: function() {
+                        const popup = Swal.getPopup();
+                        if (popup) {
+                            popup.style.borderRadius = '16px';
+                            popup.style.border = '1px solid rgba(255, 255, 255, 0.08)';
+                            popup.style.boxShadow = '0 20px 55px rgba(5, 15, 35, 0.45)';
+                        }
+                    }
+                }).then(() => {
+                    window.location.href = '{{ route("superadmin.home") }}';
+                });
+            });
+        @elseif(session('login_success'))
             window.addEventListener('load', function() {
                 Swal.fire({
                     title: 'Welcome Back!',

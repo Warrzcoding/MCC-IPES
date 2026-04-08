@@ -12,20 +12,39 @@ use App\Models\IdChecker;
 use App\Models\Evaluation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Session;
+use App\Mail\SuperAdminOtpMail;
 
 class SuperAdminController extends Controller
 {
     /**
      * Display the super admin login form.
      */
-    public function showLoginForm()
+    public function showLoginForm(Request $request)
     {
         // If already authenticated as super admin, redirect to home page
         if (session()->has('super_admin_id')) {
             return redirect()->route('superadmin.home');
         }
 
-        return view('s_admin.superlogin');
+        // Always forget temporary access on a fresh GET request to force access code modal
+        // unless we are in the middle of an OTP verification or there are validation errors
+        if ($request->isMethod('get') && !session('super_admin_otp_pending') && !session()->has('errors')) {
+            session()->forget('temp_access_verified');
+        }
+
+        $pendingEmail = null;
+        if (session('super_admin_otp_pending') && session('pending_super_admin_id')) {
+            $pendingAdmin = SuperAdmin::find(session('pending_super_admin_id'));
+            if ($pendingAdmin) {
+                $pendingEmail = $pendingAdmin->email;
+            }
+        }
+
+        return view('s_admin.superlogin', [
+            'pendingEmail' => $pendingEmail
+        ]);
     }
 
     /**
@@ -54,17 +73,37 @@ class SuperAdminController extends Controller
         }
 
         if ($superAdmin && Hash::check($credentials['password'], $superAdmin->password)) {
-            // Successful login - reset failed attempts
+            // Successful credentials - Generate and send OTP
             $superAdmin->resetFailedAttempts();
 
-            // Store in session
-            session(['super_admin_id' => $superAdmin->id]);
-            $request->session()->regenerate();
+            $otp = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+            $superAdmin->otp_code = Hash::make($otp);
+            $superAdmin->otp_expires_at = now()->addMinutes(5);
+            $superAdmin->otp_attempts = 0;
+            $superAdmin->otp_last_sent_at = now();
+            $superAdmin->save();
 
-            // Update last login timestamp
-            $superAdmin->update(['last_login' => now()]);
+            // Send OTP email using gmail_admin mailer
+            file_put_contents(storage_path('logs/debug_mail.log'), '['.now().'] Attempting to send Super Admin OTP email to: ' . $superAdmin->email . "\n", FILE_APPEND);
+            try {
+                Mail::mailer('gmail_admin')->to($superAdmin->email)->send(new SuperAdminOtpMail($otp, $superAdmin->name, 5));
+                file_put_contents(storage_path('logs/debug_mail.log'), '['.now().'] Super Admin OTP email sent successfully.' . "\n", FILE_APPEND);
+            } catch (\Exception $e) {
+                file_put_contents(storage_path('logs/debug_mail.log'), '['.now().'] Super Admin OTP Email failed: ' . $e->getMessage() . "\n", FILE_APPEND);
+                try {
+                    file_put_contents(storage_path('logs/debug_mail.log'), '['.now().'] Attempting fallback mailer for Super Admin OTP.' . "\n", FILE_APPEND);
+                    Mail::to($superAdmin->email)->send(new SuperAdminOtpMail($otp, $superAdmin->name, 5));
+                    file_put_contents(storage_path('logs/debug_mail.log'), '['.now().'] Super Admin OTP fallback email sent.' . "\n", FILE_APPEND);
+                } catch (\Exception $e2) {
+                    file_put_contents(storage_path('logs/debug_mail.log'), '['.now().'] Super Admin OTP Fallback Email failed: ' . $e2->getMessage() . "\n", FILE_APPEND);
+                }
+            }
 
-            return redirect()->route('superadmin.home')->with('login_success', true);
+            // Store in session for verification
+            Session::put('super_admin_otp_pending', true);
+            Session::put('pending_super_admin_id', $superAdmin->id);
+
+            return back()->with('otp_sent', true)->with('email', $superAdmin->email);
         }
 
         // Failed login attempt
@@ -76,9 +115,9 @@ class SuperAdminController extends Controller
                 return back()
                     ->withInput($request->only('email'))
                     ->with('account_locked', true)
-                    ->with('locked_time', 900)
+                    ->with('locked_time', 60) // 1 minute as per incrementFailedAttempts
                     ->withErrors([
-                        'email' => 'Account locked due to 3 failed login attempts. Please try again in 15 minutes.',
+                        'email' => 'Account locked due to 3 failed login attempts. Please try again in 1 minute.',
                     ]);
             }
 
@@ -95,6 +134,164 @@ class SuperAdminController extends Controller
         return back()->withErrors([
             'email' => __('These credentials do not match our records.'),
         ])->onlyInput('email');
+    }
+
+    /**
+     * Verify OTP for super admin login.
+     */
+    public function verifyOtp(Request $request)
+    {
+        $request->validate([
+            'otp_code' => ['required', 'digits:6'],
+        ]);
+
+        $superAdminId = Session::get('pending_super_admin_id');
+
+        if (!$superAdminId) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Session expired. Please login again.',
+            ], 422);
+        }
+
+        $superAdmin = SuperAdmin::find($superAdminId);
+
+        if (!$superAdmin || !$superAdmin->otp_code) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Verification unavailable. Please login again.',
+            ], 422);
+        }
+
+        // Check expiry
+        if ($superAdmin->otp_expires_at && now()->greaterThan($superAdmin->otp_expires_at)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Verification code expired. Please request a new one.',
+            ], 422);
+        }
+
+        // Check code
+        if (!Hash::check($request->otp_code, $superAdmin->otp_code)) {
+            $superAdmin->increment('otp_attempts');
+            
+            if ($superAdmin->otp_attempts >= 5) {
+                $this->cancelOtp($request);
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Too many invalid attempts. Please login again.',
+                ], 422);
+            }
+
+            $remaining = 5 - $superAdmin->otp_attempts;
+            return response()->json([
+                'success' => false,
+                'message' => "Invalid code. {$remaining} attempts remaining.",
+            ], 422);
+        }
+
+        // Success - Log in the super admin
+        $superAdmin->otp_code = null;
+        $superAdmin->otp_expires_at = null;
+        $superAdmin->otp_attempts = 0;
+        $superAdmin->otp_last_sent_at = null;
+        $superAdmin->last_login = now();
+        $superAdmin->save();
+
+        // Clear OTP session and set super admin session
+        Session::forget(['super_admin_otp_pending', 'pending_super_admin_id']);
+        Session::put('super_admin_id', $superAdmin->id);
+        Session::flash('login_success', true);
+        Session::flash('super_admin_login_success', true); // Specific flag for super admin
+        $request->session()->regenerate();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Verification successful.',
+            'redirect' => route('superadmin.home')
+        ]);
+    }
+
+    /**
+     * Resend OTP for super admin.
+     */
+    public function resendOtp(Request $request)
+    {
+        $superAdminId = Session::get('pending_super_admin_id');
+
+        if (!$superAdminId) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Session expired. Please login again.',
+            ], 422);
+        }
+
+        $superAdmin = SuperAdmin::find($superAdminId);
+
+        if (!$superAdmin) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Account unavailable. Please login again.',
+            ], 422);
+        }
+
+        // Rate limiting: wait 60 seconds
+        if ($superAdmin->otp_last_sent_at && $superAdmin->otp_last_sent_at->greaterThan(now()->subSeconds(60))) {
+            $wait = 60 - now()->diffInSeconds($superAdmin->otp_last_sent_at);
+            return response()->json([
+                'success' => false,
+                'message' => "Please wait {$wait} seconds before requesting a new code.",
+            ], 429);
+        }
+
+        $otp = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+        $superAdmin->otp_code = Hash::make($otp);
+        $superAdmin->otp_expires_at = now()->addMinutes(5);
+        $superAdmin->otp_attempts = 0;
+        $superAdmin->otp_last_sent_at = now();
+        $superAdmin->save();
+
+        file_put_contents(storage_path('logs/debug_mail.log'), '['.now().'] Resending Super Admin OTP email to: ' . $superAdmin->email . "\n", FILE_APPEND);
+        try {
+            Mail::mailer('gmail_admin')->to($superAdmin->email)->send(new SuperAdminOtpMail($otp, $superAdmin->name, 5));
+            file_put_contents(storage_path('logs/debug_mail.log'), '['.now().'] Super Admin OTP email resent successfully.' . "\n", FILE_APPEND);
+        } catch (\Exception $e) {
+            file_put_contents(storage_path('logs/debug_mail.log'), '['.now().'] Super Admin OTP Resend failed: ' . $e->getMessage() . "\n", FILE_APPEND);
+            try {
+                Mail::to($superAdmin->email)->send(new SuperAdminOtpMail($otp, $superAdmin->name, 5));
+                file_put_contents(storage_path('logs/debug_mail.log'), '['.now().'] Super Admin OTP resend fallback email sent.' . "\n", FILE_APPEND);
+            } catch (\Exception $e2) {
+                file_put_contents(storage_path('logs/debug_mail.log'), '['.now().'] Super Admin OTP Resend Fallback Email failed: ' . $e2->getMessage() . "\n", FILE_APPEND);
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'A new verification code has been sent to your email.',
+        ]);
+    }
+
+    /**
+     * Cancel OTP process.
+     */
+    public function cancelOtp(Request $request)
+    {
+        $superAdminId = Session::get('pending_super_admin_id');
+
+        if ($superAdminId) {
+            $superAdmin = SuperAdmin::find($superAdminId);
+            if ($superAdmin) {
+                $superAdmin->otp_code = null;
+                $superAdmin->otp_expires_at = null;
+                $superAdmin->otp_attempts = 0;
+                $superAdmin->otp_last_sent_at = null;
+                $superAdmin->save();
+            }
+        }
+
+        Session::forget(['super_admin_otp_pending', 'pending_super_admin_id', 'temp_access_verified']);
+
+        return response()->json(['success' => true]);
     }
 
     /**

@@ -17,17 +17,24 @@ class SuperAdmin extends Model
         'failed_login_attempts',
         'locked_until',
         'is_locked',
+        'otp_code',
+        'otp_expires_at',
+        'otp_attempts',
+        'otp_last_sent_at',
     ];
 
     protected $hidden = [
         'password',
         'accesscode',
+        'otp_code',
     ];
 
     protected $casts = [
         'last_login' => 'datetime',
         'locked_until' => 'datetime',
         'is_locked' => 'boolean',
+        'otp_expires_at' => 'datetime',
+        'otp_last_sent_at' => 'datetime',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
