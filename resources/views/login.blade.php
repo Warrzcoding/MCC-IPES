@@ -2551,9 +2551,11 @@ window.adminOtpOverlayEnabled = @json($adminOtpOverlayEnabled);
 
         // Mobile Student Login Function
         function startMobileStudentLogin() {
-            // Fix for iOS Safari: Call triggerLocationCheck directly to preserve user gesture activation context
-            // Using navigator.permissions.query().then() is async and loses this activation context.
-            triggerLocationCheck();
+            // iOS Fix: Show form IMMEDIATELY to provide visual feedback and allow manual ID entry.
+            // Removed automatic background geolocation trigger here to avoid potential Safari permission 
+            // prompt interference with keyboard/focus. 
+            // The system will still capture location when the user interacts with inputs via loginGeolocationManager.
+            proceedWithMobileLogin();
         }
 
         function triggerLocationCheck() {
@@ -2589,15 +2591,34 @@ window.adminOtpOverlayEnabled = @json($adminOtpOverlayEnabled);
 
         function proceedWithMobileLogin() {
             // Hide mobile button and desktop form
-            document.querySelector('.mobile-student-btn').classList.remove('show-mobile');
-            document.querySelector('.desktop-user-select').style.display = 'none';
+            const mobileBtn = document.querySelector('.mobile-student-btn');
+            if (mobileBtn) mobileBtn.classList.remove('show-mobile');
+            
+            const desktopSelect = document.querySelector('.desktop-user-select');
+            if (desktopSelect) desktopSelect.style.display = 'none';
             
             // Show student ID form
-            document.getElementById('studentIdForm').style.display = 'block';
-            document.getElementById('school_id').focus();
+            const studentForm = document.getElementById('studentIdForm');
+            if (studentForm) {
+                studentForm.style.display = 'block';
+                
+                // Focus the field
+                const schoolId = document.getElementById('school_id');
+                if (schoolId) {
+                    // iOS Fix: Short delay to ensure transition completes and paint happens before focusing
+                    // 10ms is the sweet spot for iOS Safari to trigger keyboard on visible elements
+                    setTimeout(() => {
+                        schoolId.focus();
+                        // Scroll to the input to ensure it's not hidden by the keyboard
+                        schoolId.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }, 10);
+                }
+            }
             
             // Clear any existing forms
-            clearAllForms();
+            if (typeof clearAllForms === 'function') {
+                clearAllForms();
+            }
         }
 
         // Enhanced resetForm function to handle responsive behavior
