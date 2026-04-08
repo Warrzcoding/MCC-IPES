@@ -31,6 +31,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+   
+
+     <!-- Alertify JS link -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -55,7 +58,16 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             perspective: 1000px;
             position: relative;
-            overflow: hidden;
+            /* Allow scrolling on mobile to accommodate keyboard */
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        /* Use dynamic viewport height for modern browsers */
+        @supports (height: 100dvh) {
+            body {
+                min-height: 100dvh;
+            }
         }
 
         .otp-overlay {
@@ -65,7 +77,7 @@
             display: none;
             align-items: center;
             justify-content: center;
-            z-index: 100000;
+         z-index: 100000;
             padding: 20px;
             backdrop-filter: blur(10px);
         }
@@ -2597,6 +2609,9 @@ window.adminOtpOverlayEnabled = @json($adminOtpOverlayEnabled);
         }
 
         function proceedWithMobileLogin() {
+            // Clear any existing forms first to avoid blurring newly focused input
+            clearAllForms();
+
             // Hide mobile button and desktop form
             document.querySelector('.mobile-student-btn').classList.remove('show-mobile');
             document.querySelector('.desktop-user-select').style.display = 'none';
@@ -2604,9 +2619,6 @@ window.adminOtpOverlayEnabled = @json($adminOtpOverlayEnabled);
             // Show student ID form
             document.getElementById('studentIdForm').style.display = 'block';
             document.getElementById('school_id').focus();
-            
-            // Clear any existing forms
-            clearAllForms();
         }
 
         // Enhanced resetForm function to handle responsive behavior
@@ -2643,6 +2655,11 @@ window.adminOtpOverlayEnabled = @json($adminOtpOverlayEnabled);
 
         // Handle window resize to maintain responsive behavior
         window.addEventListener('resize', function() {
+            // Skip layout adjustments if an input is focused (prevents keyboard dismissal on iOS)
+            if (document.activeElement && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'SELECT')) {
+                return;
+            }
+
             const isMobile = window.innerWidth <= 768;
             const mobileBtn = document.querySelector('.mobile-student-btn');
             const desktopForm = document.querySelector('.desktop-user-select');
