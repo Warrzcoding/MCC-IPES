@@ -32,7 +32,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Login - Instructors Performance Evaluation System</title>
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
@@ -368,7 +368,7 @@
             border: 2px solid #e9ecef;
             padding: 12px 16px;
             margin-bottom: 16px;
-            font-size: 13px;
+            font-size: 16px;
             transition: all 0.3s ease;
             position: relative;
             background: #fff;
@@ -1010,7 +1010,7 @@
         font-size: 1.2rem !important;
     }
     .form-control, .form-select {
-        font-size: 12px !important;
+        font-size: 16px !important;
         padding: 8px 10px !important;
         border-radius: 8px !important;
     }
