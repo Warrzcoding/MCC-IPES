@@ -1237,9 +1237,10 @@ function getAdjectivalRating($rating) {
                     <p style="margin-bottom: 0.2em;">Enclosed with this letter, is a detailed report highlighting the evaluation results for each instructor.</p>
                 </div>
                 
-                <div style="margin-bottom: 0;">
+                <div style="margin-bottom: 0; margin-top: -30px;">
                     <table style="width: 100%; border-collapse: collapse; margin-top: 0; page-break-inside: auto;">
                         <thead>
+                            <tr style="height: 40px !important; border: none !important;"><th colspan="3" style="border: none !important; height: 40px !important;"></th></tr>
                             <tr style="background-color: #f8f9fa;">
                                 <th style="border: 1px solid #ddd; padding: 4px 6px; text-align: left; font-weight: bold; font-size: 10pt;">NAME OF INSTRUCTORS</th>
                                 <th style="border: 1px solid #ddd; padding: 4px 6px; text-align: center; font-weight: bold; font-size: 10pt;">AVERAGE SCORES</th>
