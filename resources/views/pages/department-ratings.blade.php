@@ -1213,7 +1213,7 @@ function getAdjectivalRating($rating) {
                              <i class='fas fa-envelope'></i> mcc.cgsofficial@gmail.com<br>
                              <i class='fab fa-facebook'></i> fb.com/MCCCenterforGuidanceService 
                             </span><br><br>
-                             <strong style='font-size:10pt; font-family: "Century Gothic", sans-serif;'>MCC Department's Performance Evaluation Results</strong><br>
+                             <strong style='font-size:10pt; font-family: "Century Gothic", sans-serif;'>MCC Department's Performance Evaluation Resultss</strong><br>
                            <span style='font-size:10pt; font-family: "Century Gothic", sans-serif; font-weight: normal;'>S.Y {{ $currentAcademicYear?->year }} - {{ $currentAcademicYear?->semester == 1 ? 'First' : ($currentAcademicYear?->semester == 2 ? 'Second' : $currentAcademicYear?->semester) }} Sem </span>
                         </div>
                         <img src='/images/logo.png' alt='Right Logo' style='width:100px;height:100px;flex-shrink:0;margin-left:5px;' onerror='this.style.display="none"'>
