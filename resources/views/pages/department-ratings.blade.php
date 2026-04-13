@@ -1268,21 +1268,9 @@ function getAdjectivalRating($rating) {
                 </div>
         `;
 
-        // Calculate if we should force the signature section to the next page
-        // Based on estimated row capacity (Page 1: ~15 rows, Other Pages: ~25 rows)
-        const rowCount = staffData.length;
-        let shouldForcePush = false;
-        if (rowCount <= 10) {
-            if (rowCount >= 9) shouldForcePush = true; // Force push if 0 or 1 row left on P1
-        } else {
-            const remainingRows = (rowCount - 10) % 20;
-            // Force push if 0 or 1 row left on subsequent pages
-            if (remainingRows >= 19 || remainingRows === 0) shouldForcePush = true;
-        }
-        
         html += `
                 <!-- Signature Section - Dynamic spacing to prevent breaking and minimize empty gaps -->
-                <div style='page-break-inside: avoid; page-break-after: avoid; margin-top: .7em; margin-bottom: 0; text-align:left; font-size:10pt; line-height:1.3; ${shouldForcePush ? "page-break-before: always;" : ""}'>
+                <div style='page-break-inside: avoid; page-break-after: avoid; margin-top: .7em; margin-bottom: 0; text-align:left; font-size:10pt; line-height:1.3;'>
                     <div style='page-break-inside: avoid; margin-bottom:1em;'>
                         Prepared by:
                     </div>
