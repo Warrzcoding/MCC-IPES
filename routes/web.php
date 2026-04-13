@@ -23,6 +23,13 @@ use App\Http\Controllers\ChatbotController;
 
 // Chatbot Route
 Route::post('/chatbot/message', [ChatbotController::class, 'handleMessage'])->name('chatbot.message');
+Route::get('/download-apk', function () {
+    $filePath = public_path('apk/android/students_ipes.apk');
+    if (file_exists($filePath)) {
+        return response()->download($filePath);
+    }
+    return abort(404, 'APK file not found.');
+})->name('download.apk');
 
 // Root route - redirect to login
 Route::get('/', function () {

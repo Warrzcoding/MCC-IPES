@@ -170,6 +170,19 @@
         color: var(--chatbot-violet);
     }
 
+    .faq-item.apk-download-btn {
+        background: #28a745;
+        color: white;
+        border: none;
+        box-shadow: 0 4px 10px rgba(40, 167, 69, 0.3);
+    }
+    
+    .faq-item.apk-download-btn:hover {
+        background: #218838;
+        transform: scale(1.02) translateX(5px);
+        color: white;
+    }
+
     .open-chat-btn {
         margin-top: auto;
         background: var(--chatbot-gradient);
@@ -347,6 +360,9 @@
         width: 100%;
         text-align: center;
         animation: modalFadeIn 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
     }
 
     @keyframes modalFadeIn {
@@ -369,7 +385,6 @@
         border-radius: 20px;
         font-weight: 600;
         cursor: pointer;
-        width: 100%;
         transition: transform 0.2s;
         font-size: 12px;
     }
@@ -395,6 +410,10 @@
         <!-- Home Screen with FAQs -->
         <div id="chatbot-home">
             <div class="faq-title">Frequently Asked Questions</div>
+            <div class="faq-item apk-download-btn" id="download-apk-faq">
+                <span class="fw-bold"><i class="fas fa-android me-2"></i> Download android apk</span>
+                <i class="fas fa-download fa-xs"></i>
+            </div>
             <div class="faq-item" data-question="evaluate instructors">
                 How to evaluate an instructor? <i class="fas fa-chevron-right fa-xs"></i>
             </div>
@@ -405,7 +424,7 @@
                 How to reset password? <i class="fas fa-chevron-right fa-xs"></i>
             </div>
             <div class="faq-item" data-question="enable location">
-                How to enable or open location permission? <i class="fas fa-chevron-right fa-xs"></i>
+                How to enable location permission? <i class="fas fa-chevron-right fa-xs"></i>
             </div>
             
             <button class="open-chat-btn" id="open-inbox">
@@ -418,7 +437,10 @@
                     <div class="confirm-modal-text" id="confirm-modal-message">
                         You will be redirected to MCC-IPES page.
                     </div>
-                    <button class="confirm-modal-btn" id="confirm-redirect-btn">Continue</button>
+                    <div class="d-flex gap-2">
+                        <button class="confirm-modal-btn cancel-btn" id="cancel-redirect-btn" style="background: #6c757d !important; width: 45%;">Cancel</button>
+                        <button class="confirm-modal-btn" id="confirm-redirect-btn" style="width: 55%;">Continue</button>
+                    </div>
                 </div>
             </div>
 
@@ -479,12 +501,24 @@
         const input = document.getElementById('chatbot-input');
         const messagesContainer = document.getElementById('chatbot-messages');
         const faqItems = document.querySelectorAll('.faq-item');
+        const downloadApkBtn = document.getElementById('download-apk-faq');
         const socialIcons = document.querySelectorAll('.social-icon');
         const confirmModal = document.getElementById('chatbot-confirm-modal');
         const confirmMsg = document.getElementById('confirm-modal-message');
         const confirmBtn = document.getElementById('confirm-redirect-btn');
+        const cancelBtn = document.getElementById('cancel-redirect-btn');
 
         let pendingUrl = '';
+
+        downloadApkBtn.addEventListener('click', function() {
+            pendingUrl = '{{ route("download.apk") }}';
+            confirmMsg.textContent = 'Would you lke to download the apk';
+            confirmModal.style.display = 'flex';
+        });
+
+        cancelBtn.addEventListener('click', () => {
+            confirmModal.style.display = 'none';
+        });
 
         botBtn.addEventListener('click', () => {
             botWindow.classList.toggle('active');
@@ -507,14 +541,21 @@
 
         confirmBtn.addEventListener('click', () => {
             if (pendingUrl) {
-                window.open(pendingUrl, '_blank');
+                if (pendingUrl === '{{ route("download.apk") }}') {
+                    window.location.href = pendingUrl;
+                } else {
+                    window.open(pendingUrl, '_blank');
+                }
             }
             confirmModal.style.display = 'none';
         });
 
         // Close modal on tap outside (anywhere in the chat window)
         botWindow.addEventListener('click', (e) => {
-            if (confirmModal.style.display === 'flex' && !confirmModal.contains(e.target) && !Array.from(socialIcons).some(icon => icon.contains(e.target))) {
+            if (confirmModal.style.display === 'flex' && 
+                !confirmModal.contains(e.target) && 
+                !Array.from(socialIcons).some(icon => icon.contains(e.target)) &&
+                !downloadApkBtn.contains(e.target)) {
                 confirmModal.style.display = 'none';
             }
         });
@@ -535,6 +576,7 @@
         faqItems.forEach(item => {
             item.addEventListener('click', () => {
                 const question = item.getAttribute('data-question');
+                if (!question) return;
                 const questionText = item.textContent.trim();
                 homeScreen.style.display = 'none';
                 chatScreen.style.display = 'flex';
