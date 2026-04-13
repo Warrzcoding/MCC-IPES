@@ -1234,13 +1234,12 @@ function getAdjectivalRating($rating) {
                     
                     <p style="margin-bottom: 0.7em;">Please be advised that the following instructors were evaluated by all MCC Students.</p>
                     
-                    <p style="margin-bottom: 0.6em;">Enclosed with this letter, is a detailed report highlighting the evaluation results for each instructor.</p>
+                    <p style="margin-bottom: 0.2em;">Enclosed with this letter, is a detailed report highlighting the evaluation results for each instructor.</p>
                 </div>
                 
                 <div style="margin-bottom: 0;">
-                    <table style="width: 100%; border-collapse: collapse; margin-top: 0.4em; page-break-inside: auto;">
+                    <table style="width: 100%; border-collapse: collapse; margin-top: 0; page-break-inside: auto;">
                         <thead>
-                            <tr style="height: 40px !important; border: none !important;"><th colspan="3" style="border: none !important; height: 40px !important;"></th></tr>
                             <tr style="background-color: #f8f9fa;">
                                 <th style="border: 1px solid #ddd; padding: 4px 6px; text-align: left; font-weight: bold; font-size: 10pt;">NAME OF INSTRUCTORS</th>
                                 <th style="border: 1px solid #ddd; padding: 4px 6px; text-align: center; font-weight: bold; font-size: 10pt;">AVERAGE SCORES</th>
