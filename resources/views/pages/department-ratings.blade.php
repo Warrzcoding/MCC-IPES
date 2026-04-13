@@ -1271,6 +1271,7 @@ function getAdjectivalRating($rating) {
         html += `
                 <!-- Signature Section - Dynamic spacing to prevent breaking and minimize empty gaps -->
                 <div style='page-break-inside: avoid; page-break-after: avoid; margin-top: .7em; margin-bottom: 0; text-align:left; font-size:10pt; line-height:1.3;'>
+                <br><br>
                     <div style='page-break-inside: avoid; margin-bottom:1em;'>
                         Prepared by:
                     </div>
