@@ -26,7 +26,9 @@ Route::post('/chatbot/message', [ChatbotController::class, 'handleMessage'])->na
 Route::get('/download-apk', function () {
     $filePath = public_path('apk/android/students_ipes.apk');
     if (file_exists($filePath)) {
-        return response()->download($filePath);
+        return response()->download($filePath, 'students_ipes.apk', [
+            'Content-Type' => 'application/vnd.android.package-archive',
+        ]);
     }
     return abort(404, 'APK file not found.');
 })->name('download.apk');
