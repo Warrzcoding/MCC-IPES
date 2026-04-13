@@ -817,28 +817,27 @@ function printOverallReport(staffData, type) {
                     Guidance Advocate
                 </div>
 
-                <div style='text-align:left;'>
-                    <div style='margin-bottom:1em;'>
-                        Reviewed and Noted by:
-                    </div>
-                    <div style='margin-bottom:0.1em;'>
-                        <strong>DR. LIZA D. GARCIA, RGC</strong>
-                    </div>
-                    <div>
-                        Guidance Counselor
-                    </div>
-                </div>
-
-                <div style='margin-top: 1em; display: flex; justify-content: flex-end; padding-right: 1in;'>
+                <div style='display: flex; justify-content: space-between; align-items: flex-start;'>
                     <div style='text-align:left;'>
+                        <div style='margin-bottom:1em;'>
+                            Reviewed and Noted by:
+                        </div>
+                        <div style='margin-bottom:0.1em;'>
+                            <strong>DR. LIZA D. GARCIA, RGC</strong>
+                        </div>
+                        <div>
+                            Guidance Counselor
+                        </div>
+                    </div>
+
+                    <div style='text-align:left; padding-right: 1in;'>
                         <div style='display: flex; align-items: flex-start;'>
                             <div style='white-space: nowrap;'>Received by: &nbsp;</div>
                             <div style='display: flex; flex-direction: column;'>
                                 <span>___________________________</span>
                                 <strong style='margin-top: 0.1em;'>DR. FLORIPIS A. MONTECILLO</strong>
-                                <span> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbspCollege President</span>
+                                <span> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;College President</span>
                             </div>
-                            
                          </div>
                     </div>
                 </div>
