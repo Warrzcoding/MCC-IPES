@@ -411,7 +411,7 @@
         <div id="chatbot-home">
             <div class="faq-title">Frequently Asked Questions</div>
             <div class="faq-item apk-download-btn" id="download-apk-faq">
-                <span class="fw-bold"><i class="fas fa-android me-2"></i> Download android apk</span>
+                <span class="fw-bold"> Download android apk</span>
                 <i class="fas fa-download fa-xs"></i>
             </div>
             <div class="faq-item" data-question="evaluate instructors">
@@ -512,7 +512,7 @@
 
         downloadApkBtn.addEventListener('click', function() {
             pendingUrl = '{{ asset("apk/android/students_ipes.apk") }}';
-            confirmMsg.textContent = 'Would you lke to download the apk';
+            confirmMsg.textContent = 'It will download nly if you run this in browser';
             confirmModal.style.display = 'flex';
         });
 
