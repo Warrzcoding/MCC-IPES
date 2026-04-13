@@ -789,7 +789,7 @@ function printOverallReport(staffData, type) {
         } else if (adjective.toUpperCase() === 'SATISFACTORY') {
             rowColor = '#ffcccc'; // light red
         } else if (adjective.toUpperCase() === 'UNSATISFACTORY') {
-            rowColor = '#ff3333'; // dark red
+            rowColor = '#f29f5f'; // dark red
         }
 
         html += `
