@@ -724,7 +724,7 @@
                     
                     <div class="mb-3">
                         <label for="editFullName" class="form-label">Full Name</label>
-                        <input type="text" class="form-control" id="editFullName" name="full_name"  required>
+                        <input type="text" class="form-control" id="editFullName" name="full_name" readonly="true" required>
                     </div>
                     <div class="mb-3">
                         <label for="editStaffId" class="form-label">Instructor ID</label>
