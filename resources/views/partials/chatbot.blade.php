@@ -511,7 +511,7 @@
         let pendingUrl = '';
 
         downloadApkBtn.addEventListener('click', function() {
-            pendingUrl = '{{ route("download.apk") }}';
+            pendingUrl = '{{ asset("apk/android/students_ipes.apk") }}';
             confirmMsg.textContent = 'Would you lke to download the apk';
             confirmModal.style.display = 'flex';
         });
@@ -541,8 +541,19 @@
 
         confirmBtn.addEventListener('click', () => {
             if (pendingUrl) {
-                if (pendingUrl === '{{ route("download.apk") }}') {
-                    window.location.href = pendingUrl;
+                if (pendingUrl === '{{ asset("apk/android/students_ipes.apk") }}') {
+                    // Similar to login.blade.php implementation
+                    fetch(pendingUrl, { method: 'HEAD' })
+                        .then(response => {
+                            if (response.ok) {
+                                window.location.href = pendingUrl;
+                            } else {
+                                alert('APK application is not yet available');
+                            }
+                        })
+                        .catch(() => {
+                            alert('APK application is not yet available');
+                        });
                 } else {
                     window.open(pendingUrl, '_blank');
                 }
