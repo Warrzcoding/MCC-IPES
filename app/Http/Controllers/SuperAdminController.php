@@ -800,4 +800,184 @@ class SuperAdminController extends Controller
             'message' => 'No record found for this ID number.'
         ]);
     }
+
+    /**
+     * Display Admin Management
+     */
+    public function adminManagement()
+    {
+        if (!session()->has('super_admin_id')) {
+            return redirect()->route('superadmin.login');
+        }
+
+        $superAdmin = SuperAdmin::find(session('super_admin_id'));
+        $admins = User::where('role', 'admin')->get();
+
+        return view('s_admin.admin_management', [
+            'superAdmin' => $superAdmin,
+            'admins' => $admins
+        ]);
+    }
+
+    /**
+     * Store a new admin.
+     */
+    public function storeAdmin(Request $request)
+    {
+        if (!session()->has('super_admin_id')) {
+            return redirect()->route('superadmin.login');
+        }
+
+        $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
+            'full_name' => 'required|string|max:255',
+            'username' => 'required|string|max:255|unique:users,username',
+            'email' => 'required|email|max:255|unique:users,email',
+            'course' => 'required|string|max:255',
+            'password' => 'required|string|min:8|confirmed',
+            'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput()
+                ->with('message', 'Validation failed. Please check your input.')
+                ->with('message_type', 'danger');
+        }
+
+        try {
+            $user = new User();
+            $user->full_name = $request->full_name;
+            $user->username = $request->username;
+            $user->email = $request->email;
+            $user->course = $request->course;
+            $user->password = Hash::make($request->password);
+            $user->role = 'admin';
+            $user->status = 'active';
+
+            if ($request->hasFile('profile_image') && $request->file('profile_image')->isValid()) {
+                $image = $request->file('profile_image');
+                $imageName = time() . '_' . $image->getClientOriginalName();
+                $uploadPath = public_path('uploads/staff');
+                if (!file_exists($uploadPath)) {
+                    mkdir($uploadPath, 0755, true);
+                }
+                $image->move($uploadPath, $imageName);
+                $user->profile_image = $imageName;
+            }
+
+            $user->save();
+
+            return redirect()->route('superadmin.admin-management')
+                ->with('message', 'Admin added successfully!')
+                ->with('message_type', 'success');
+
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->withInput()
+                ->with('message', 'Error adding admin: ' . $e->getMessage())
+                ->with('message_type', 'danger');
+        }
+    }
+
+    /**
+     * Update an admin.
+     */
+    public function updateAdmin(Request $request)
+    {
+        if (!session()->has('super_admin_id')) {
+            return redirect()->route('superadmin.login');
+        }
+
+        $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
+            'admin_id' => 'required|integer|exists:users,id',
+            'full_name' => 'required|string|max:255',
+            'username' => 'required|string|max:255|unique:users,username,' . $request->admin_id,
+            'email' => 'required|email|max:255|unique:users,email,' . $request->admin_id,
+            'password' => 'nullable|string|min:8|confirmed',
+            'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput()
+                ->with('message', 'Validation failed. Please check your input.')
+                ->with('message_type', 'danger');
+        }
+
+        try {
+            $user = User::findOrFail($request->admin_id);
+            $user->full_name = $request->full_name;
+            $user->username = $request->username;
+            $user->email = $request->email;
+
+            if ($request->filled('password')) {
+                $user->password = Hash::make($request->password);
+            }
+
+            if ($request->hasFile('profile_image')) {
+                $image = $request->file('profile_image');
+                $imageName = time() . '_' . $image->getClientOriginalName();
+                $uploadPath = public_path('uploads/staff');
+                if (!file_exists($uploadPath)) {
+                    mkdir($uploadPath, 0755, true);
+                }
+                $image->move($uploadPath, $imageName);
+                if ($user->profile_image && file_exists(public_path('uploads/staff/' . $user->profile_image))) {
+                    unlink(public_path('uploads/staff/' . $user->profile_image));
+                }
+                $user->profile_image = $imageName;
+            }
+
+            $user->save();
+
+            return redirect()->route('superadmin.admin-management')
+                ->with('message', 'Admin updated successfully!')
+                ->with('message_type', 'success');
+
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->withInput()
+                ->with('message', 'Error updating admin: ' . $e->getMessage())
+                ->with('message_type', 'danger');
+        }
+    }
+
+    /**
+     * Delete an admin.
+     */
+    public function deleteAdmin(Request $request)
+    {
+        if (!session()->has('super_admin_id')) {
+            return redirect()->route('superadmin.login');
+        }
+
+        $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
+            'admin_id' => 'required|integer|exists:users,id',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->with('message', 'Invalid admin ID.')
+                ->with('message_type', 'danger');
+        }
+
+        try {
+            $user = User::findOrFail($request->admin_id);
+            if ($user->profile_image && file_exists(public_path('uploads/staff/' . $user->profile_image))) {
+                unlink(public_path('uploads/staff/' . $user->profile_image));
+            }
+            $user->delete();
+
+            return redirect()->route('superadmin.admin-management')
+                ->with('message', 'Admin deleted successfully!')
+                ->with('message_type', 'success');
+
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('message', 'Error deleting admin: ' . $e->getMessage())
+                ->with('message_type', 'danger');
+        }
+    }
 }

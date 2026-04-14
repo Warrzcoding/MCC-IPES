@@ -107,6 +107,10 @@ Route::post('/superadmin/update-password', [SuperAdminController::class, 'update
 Route::post('/superadmin/logout', [SuperAdminController::class, 'logout'])->name('superadmin.logout');
 Route::post('/superadmin/add-id-user', [SuperAdminController::class, 'addIdUser'])->name('superadmin.add-id-user');
 Route::post('/superadmin/check-id-number', [SuperAdminController::class, 'checkIdNumber'])->name('superadmin.check-id-number');
+Route::get('/superadmin/admin-management', [SuperAdminController::class, 'adminManagement'])->name('superadmin.admin-management');
+Route::post('/superadmin/admin-management/store', [SuperAdminController::class, 'storeAdmin'])->name('superadmin.admin-management.store');
+Route::post('/superadmin/admin-management/update', [SuperAdminController::class, 'updateAdmin'])->name('superadmin.admin-management.update');
+Route::post('/superadmin/admin-management/delete', [SuperAdminController::class, 'deleteAdmin'])->name('superadmin.admin-management.delete');
 
 // Dashboard Routes (protected by auth middleware)
 Route::middleware(['auth'])->group(function () {

@@ -590,9 +590,9 @@
             </li>
            
             <li>
-                <a href="#">
-                    <i class="fas fa-chart-bar"></i>
-                    <span>Reports</span>
+                <a href="{{ route('superadmin.admin-management') }}" class="{{ request()->routeIs('superadmin.admin-management') ? 'active' : '' }}">
+                    <i class="fas fa-user-shield"></i>
+                    <span>Admin Management</span>
                 </a>
             </li>
             <li>
