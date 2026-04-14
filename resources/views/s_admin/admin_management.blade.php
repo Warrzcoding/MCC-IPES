@@ -350,6 +350,71 @@
 
         label { color: var(--accent-green); margin-bottom: 5px; font-size: 13px; }
 
+        /* Password Strength Indicator */
+        .password-strength-container {
+            margin-top: 5px;
+            height: 5px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+            display: none;
+        }
+
+        .password-strength-bar {
+            height: 100%;
+            width: 0%;
+            transition: all 0.3s ease;
+        }
+
+        .strength-text {
+            font-size: 11px;
+            margin-top: 2px;
+            display: block;
+        }
+
+        .password-requirements {
+            font-size: 10px;
+            color: #888;
+            margin-top: 5px;
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .password-requirements li {
+            margin-bottom: 2px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .password-requirements li.valid {
+            color: var(--accent-green);
+        }
+
+        .password-requirements li.invalid {
+            color: #ff4d4d;
+        }
+
+        .password-toggle {
+            cursor: pointer;
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--accent-green);
+            z-index: 10;
+        }
+
+        .input-group-password {
+            position: relative;
+        }
+
+        .match-feedback {
+            font-size: 11px;
+            margin-top: 2px;
+            display: none;
+        }
+
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: var(--primary-dark); }
         ::-webkit-scrollbar-thumb { background: var(--accent-green); }
@@ -497,20 +562,40 @@
                             <label>Department/Course</label>
                             <select name="course" class="form-control" required>
                                 <option value="">Select Department</option>
-                                <option value="BSIT">BSIT</option>
-                                <option value="BSHM">BSHM</option>
-                                <option value="BSBA">BSBA</option>
-                                <option value="BSED">BSED</option>
-                                <option value="BEED">BEED</option>
+                                <option value="SuperAdmin">SuperAdmin</option>
+                                <option value="admin">admin</option>
+                                <option value="cgs staff">cgs staff</option>
+                                <option value="librarian">librarian</option>
+                                <option value="guidance advocate">guidance advocate</option>
+                                <option value="developers">developers</option>
+                                <option value="IT department">IT department</option>
                             </select>
                         </div>
                         <div class="mb-3">
                             <label>Password</label>
-                            <input type="password" name="password" class="form-control" required>
+                            <div class="input-group-password">
+                                <input type="password" name="password" id="add_password" class="form-control" required>
+                                <i class="fas fa-eye password-toggle" onclick="togglePassword('add_password', this)"></i>
+                            </div>
+                            <div class="password-strength-container" id="add_strength_container">
+                                <div class="password-strength-bar" id="add_strength_bar"></div>
+                            </div>
+                            <span class="strength-text" id="add_strength_text"></span>
+                            <ul class="password-requirements" id="add_requirements">
+                                <li data-req="length"><i class="fas fa-circle" style="font-size: 6px;"></i> At least 8 characters</li>
+                                <li data-req="upper"><i class="fas fa-circle" style="font-size: 6px;"></i> One uppercase letter</li>
+                                <li data-req="lower"><i class="fas fa-circle" style="font-size: 6px;"></i> One lowercase letter</li>
+                                <li data-req="number"><i class="fas fa-circle" style="font-size: 6px;"></i> One number</li>
+                                <li data-req="symbol"><i class="fas fa-circle" style="font-size: 6px;"></i> One special character</li>
+                            </ul>
                         </div>
                         <div class="mb-3">
                             <label>Confirm Password</label>
-                            <input type="password" name="password_confirmation" class="form-control" required>
+                            <div class="input-group-password">
+                                <input type="password" name="password_confirmation" id="add_password_confirmation" class="form-control" required>
+                                <i class="fas fa-eye password-toggle" onclick="togglePassword('add_password_confirmation', this)"></i>
+                            </div>
+                            <span class="match-feedback" id="add_match_feedback"></span>
                         </div>
                         <div class="mb-3">
                             <label>Profile Image (Optional)</label>
@@ -560,15 +645,45 @@
                             <label>Email Address</label>
                             <input type="email" name="email" id="edit_email" class="form-control" required>
                         </div>
+                        <div class="mb-3">
+                            <label>Department/Course</label>
+                            <select name="course" id="edit_course" class="form-control" required>
+                                <option value="SuperAdmin">SuperAdmin</option>
+                                <option value="admin">admin</option>
+                                <option value="cgs staff">cgs staff</option>
+                                <option value="librarian">librarian</option>
+                                <option value="guidance advocate">guidance advocate</option>
+                                <option value="developers">developers</option>
+                                <option value="IT department">IT department</option>
+                            </select>
+                        </div>
                         
                         <hr style="border-color: var(--border-color);">
                         <div class="mb-3">
                             <label>New Password (Optional)</label>
-                            <input type="password" name="password" class="form-control" placeholder="Leave blank to keep current">
+                            <div class="input-group-password">
+                                <input type="password" name="password" id="edit_password" class="form-control" placeholder="Leave blank to keep current">
+                                <i class="fas fa-eye password-toggle" onclick="togglePassword('edit_password', this)"></i>
+                            </div>
+                            <div class="password-strength-container" id="edit_strength_container">
+                                <div class="password-strength-bar" id="edit_strength_bar"></div>
+                            </div>
+                            <span class="strength-text" id="edit_strength_text"></span>
+                            <ul class="password-requirements" id="edit_requirements">
+                                <li data-req="length"><i class="fas fa-circle" style="font-size: 6px;"></i> At least 8 characters</li>
+                                <li data-req="upper"><i class="fas fa-circle" style="font-size: 6px;"></i> One uppercase letter</li>
+                                <li data-req="lower"><i class="fas fa-circle" style="font-size: 6px;"></i> One lowercase letter</li>
+                                <li data-req="number"><i class="fas fa-circle" style="font-size: 6px;"></i> One number</li>
+                                <li data-req="symbol"><i class="fas fa-circle" style="font-size: 6px;"></i> One special character</li>
+                            </ul>
                         </div>
                         <div class="mb-3">
                             <label>Confirm New Password</label>
-                            <input type="password" name="password_confirmation" class="form-control" placeholder="Confirm new password">
+                            <div class="input-group-password">
+                                <input type="password" name="password_confirmation" id="edit_password_confirmation" class="form-control" placeholder="Confirm new password">
+                                <i class="fas fa-eye password-toggle" onclick="togglePassword('edit_password_confirmation', this)"></i>
+                            </div>
+                            <span class="match-feedback" id="edit_match_feedback"></span>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -635,7 +750,105 @@
             document.getElementById('mainContainer').classList.toggle('expanded');
         }
 
+        function togglePassword(inputId, icon) {
+            const input = document.getElementById(inputId);
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        function checkPasswordStrength(password, prefix) {
+            const strengthBar = $(`#${prefix}_strength_bar`);
+            const strengthText = $(`#${prefix}_strength_text`);
+            const container = $(`#${prefix}_strength_container`);
+            const requirements = $(`#${prefix}_requirements`);
+            
+            if (password.length === 0) {
+                container.hide();
+                strengthText.text('');
+                requirements.find('li').removeClass('valid invalid');
+                return;
+            }
+
+            container.show();
+            
+            const checks = {
+                length: password.length >= 8,
+                upper: /[A-Z]/.test(password),
+                lower: /[a-z]/.test(password),
+                number: /[0-9]/.test(password),
+                symbol: /[^A-Za-z0-9]/.test(password)
+            };
+
+            let score = 0;
+            Object.keys(checks).forEach(req => {
+                const isValid = checks[req];
+                if (isValid) score++;
+                requirements.find(`li[data-req="${req}"]`).toggleClass('valid', isValid).toggleClass('invalid', !isValid);
+            });
+
+            let color = '#ff4d4d';
+            let text = 'Weak';
+            let width = '20%';
+
+            if (score === 5) {
+                color = 'var(--accent-green)';
+                text = 'Strong';
+                width = '100%';
+            } else if (score >= 3) {
+                color = '#ffc107';
+                text = 'Medium';
+                width = '60%';
+            }
+
+            strengthBar.css({
+                'width': width,
+                'background-color': color,
+                'box-shadow': `0 0 10px ${color}`
+            });
+            strengthText.text(text).css('color', color);
+        }
+
+        function checkMatch(pass, confirm, feedbackId) {
+            const feedback = $(`#${feedbackId}`);
+            if (confirm.length === 0) {
+                feedback.hide();
+                return;
+            }
+            feedback.show();
+            if (pass === confirm) {
+                feedback.text('Passwords match').css('color', 'var(--accent-green)');
+            } else {
+                feedback.text('Passwords do not match').css('color', '#ff4d4d');
+            }
+        }
+
         $(document).ready(function() {
+            // Password Strength Listeners
+            $('#add_password').on('input', function() {
+                checkPasswordStrength($(this).val(), 'add');
+                checkMatch($(this).val(), $('#add_password_confirmation').val(), 'add_match_feedback');
+            });
+
+            $('#add_password_confirmation').on('input', function() {
+                checkMatch($('#add_password').val(), $(this).val(), 'add_match_feedback');
+            });
+
+            $('#edit_password').on('input', function() {
+                checkPasswordStrength($(this).val(), 'edit');
+                checkMatch($(this).val(), $('#edit_password_confirmation').val(), 'edit_match_feedback');
+            });
+
+            $('#edit_password_confirmation').on('input', function() {
+                checkMatch($('#edit_password').val(), $(this).val(), 'edit_match_feedback');
+            });
+
             // SweetAlert Alerts
             @if(session('message'))
                 Swal.fire({
@@ -686,6 +899,7 @@
                 $('#edit_full_name').val(admin.full_name);
                 $('#edit_username').val(admin.username);
                 $('#edit_email').val(admin.email);
+                $('#edit_course').val(admin.course);
                 
                 // Set initial preview
                 if (admin.profile_image) {

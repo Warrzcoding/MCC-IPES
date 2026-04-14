@@ -851,6 +851,7 @@ class SuperAdminController extends Controller
             $user->username = $request->username;
             $user->email = $request->email;
             $user->course = $request->course;
+            $user->is_main_admin = 0;
             $user->password = Hash::make($request->password);
             $user->role = 'admin';
             $user->status = 'active';
@@ -894,6 +895,7 @@ class SuperAdminController extends Controller
             'full_name' => 'required|string|max:255',
             'username' => 'required|string|max:255|unique:users,username,' . $request->admin_id,
             'email' => 'required|email|max:255|unique:users,email,' . $request->admin_id,
+            'course' => 'required|string|max:255',
             'password' => 'nullable|string|min:8|confirmed',
             'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
@@ -911,6 +913,8 @@ class SuperAdminController extends Controller
             $user->full_name = $request->full_name;
             $user->username = $request->username;
             $user->email = $request->email;
+            $user->course = $request->course;
+            $user->is_main_admin = 0;
 
             if ($request->filled('password')) {
                 $user->password = Hash::make($request->password);
