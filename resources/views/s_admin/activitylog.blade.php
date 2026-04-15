@@ -491,10 +491,10 @@
                     <span>Users Management</span>
                 </a>
             </li>
-            <li>
-                <a href="#">
-                    <i class="fas fa-chart-bar"></i>
-                    <span>Reports</span>
+           <li>
+                <a href="{{ route('superadmin.admin-management') }}" class="active">
+                    <i class="fas fa-user-shield"></i>
+                    <span>Admin Management</span>
                 </a>
             </li>
             <li>
