@@ -512,13 +512,13 @@
 
         downloadApkBtn.addEventListener('click', function() {
             pendingUrl = '{{ asset("apk/android/students_ipes.apk") }}';
-            confirmMsg.textContent = 'It will download nly if you run this in browser';
+            confirmMsg.textContent = 'It will download only if you run this in browser';
             confirmModal.style.display = 'flex';
         });
 
         cancelBtn.addEventListener('click', () => {
             confirmModal.style.display = 'none';
-        });
+        });sss
 
         botBtn.addEventListener('click', () => {
             botWindow.classList.toggle('active');
