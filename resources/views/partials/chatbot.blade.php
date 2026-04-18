@@ -518,7 +518,7 @@
 
         cancelBtn.addEventListener('click', () => {
             confirmModal.style.display = 'none';
-        });sss
+        });
 
         botBtn.addEventListener('click', () => {
             botWindow.classList.toggle('active');
