@@ -93,11 +93,13 @@ Route::post('/magic-link/update', [MagicLinkController::class, 'resetPassword'])
 Route::get('/superadmin/login', [SuperAdminController::class, 'showLoginForm'])->name('superadmin.login');
 Route::post('/superadmin/login', [SuperAdminController::class, 'login'])->name('superadmin.login.submit');
 Route::post('/superadmin/verify-accesscode', [SuperAdminController::class, 'verifyAccessCode'])->name('superadmin.verify-accesscode');
+Route::post('/superadmin/verify-admin-accesscode', [SuperAdminController::class, 'verifyAdminAccessCode'])->name('superadmin.verify-admin-accesscode');
 Route::post('/superadmin/otp/verify', [SuperAdminController::class, 'verifyOtp'])->name('superadmin.otp.verify');
 Route::post('/superadmin/otp/resend', [SuperAdminController::class, 'resendOtp'])->name('superadmin.otp.resend');
 Route::post('/superadmin/otp/cancel', [SuperAdminController::class, 'cancelOtp'])->name('superadmin.otp.cancel');
 Route::get('/superadmin/home', [SuperAdminController::class, 'home'])->name('superadmin.home');
 Route::get('/superadmin/users', [SuperAdminController::class, 'userManagement'])->name('superadmin.users');
+Route::get('/superadmin/users/data', [SuperAdminController::class, 'getUsersData'])->name('superadmin.users.data');
 Route::get('/superadmin/activity-log', [SuperAdminController::class, 'activityLog'])->name('superadmin.activity-log');
 Route::get('/superadmin/filemanager', [SuperAdminController::class, 'fileManager'])->name('superadmin.filemanager');
 Route::get('/superadmin/backup/download', [SuperAdminController::class, 'downloadBackup'])->name('superadmin.backup.download');

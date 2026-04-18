@@ -13,6 +13,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
     
     <style>
         :root {
@@ -290,6 +291,11 @@
             color: var(--text-light);
             vertical-align: middle;
             background: #000000;
+            width: 100% !important;
+        }
+
+        .dataTables_wrapper {
+            width: 100% !important;
         }
 
         .table th {
@@ -478,23 +484,26 @@
         .hacker-modal {
             display: none;
             position: fixed;
-            z-index: 1000;
+            z-index: 5000;
             left: 0;
             top: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(5px);
+            background-color: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(8px);
+            justify-content: center;
+            align-items: center;
         }
 
         .hacker-modal-content {
             background: var(--primary-dark);
-            margin: 10% auto;
-            border: 1px solid var(--accent-green);
+            margin: auto;
+            border: 2px solid var(--accent-green);
             width: 450px;
-            box-shadow: 0 0 30px rgba(0, 255, 65, 0.2);
-            border-radius: 4px;
-            transition: width 0.3s ease;
+            box-shadow: 0 0 50px rgba(0, 255, 65, 0.3);
+            border-radius: 8px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
         }
 
         .hacker-modal-content.expanded {
@@ -618,6 +627,124 @@
                 width: 95%;
             }
         }
+
+        /* ==================== ACCESS CODE MODAL ==================== */
+        .hacker-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            backdrop-filter: blur(8px);
+        }
+
+        .hacker-access-modal {
+            width: 450px;
+            background: #000;
+            border: 2px solid var(--accent-green);
+            box-shadow: 0 0 40px rgba(0, 255, 65, 0.2);
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+            animation: modalBorderPulse 4s infinite linear;
+        }
+
+        @keyframes modalBorderPulse {
+            0% { border-color: var(--accent-green); box-shadow: 0 0 20px rgba(0, 255, 65, 0.4); }
+            33% { border-color: #00ffff; box-shadow: 0 0 20px rgba(0, 255, 255, 0.4); }
+            66% { border-color: #bf00ff; box-shadow: 0 0 20px rgba(191, 0, 255, 0.4); }
+            100% { border-color: var(--accent-green); box-shadow: 0 0 20px rgba(0, 255, 65, 0.4); }
+        }
+
+        .hacker-title {
+            color: var(--accent-green);
+            font-size: 24px;
+            margin-bottom: 25px;
+            text-align: center;
+            letter-spacing: 4px;
+            font-weight: bold;
+            text-shadow: 0 0 15px rgba(0, 255, 65, 0.6);
+            animation: textGlitch 5s infinite;
+        }
+
+        @keyframes textGlitch {
+            0% { transform: skew(0deg); }
+            2% { transform: skew(10deg); }
+            4% { transform: skew(-10deg); }
+            6% { transform: skew(0deg); }
+            100% { transform: skew(0deg); }
+        }
+
+        .hacker-input-wrapper {
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        .hacker-input {
+            width: 100%;
+            background: rgba(0, 255, 65, 0.05);
+            border: 1px solid var(--accent-green);
+            color: var(--accent-green-light);
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 18px;
+            text-align: center;
+            outline: none;
+            letter-spacing: 8px;
+            transition: 0.3s;
+        }
+
+        .hacker-input:focus {
+            box-shadow: 0 0 25px rgba(0, 255, 65, 0.3);
+            background: rgba(0, 255, 65, 0.1);
+        }
+
+        .hacker-btn {
+            width: 100%;
+            padding: 15px;
+            background: transparent;
+            border: 1px solid var(--accent-green);
+            color: var(--accent-green);
+            font-weight: bold;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: 0.3s;
+            text-transform: uppercase;
+        }
+
+        .hacker-btn:hover {
+            background: var(--accent-green);
+            color: #000;
+            box-shadow: 0 0 30px rgba(0, 255, 65, 0.6);
+        }
+
+        .hacker-close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            color: var(--accent-green);
+            cursor: pointer;
+            font-size: 20px;
+            transition: 0.3s;
+        }
+
+        .hacker-close:hover {
+            color: #ff4444;
+            text-shadow: 0 0 10px #ff4444;
+        }
+
+        .system-status {
+            font-size: 10px;
+            color: #555;
+            margin-top: 20px;
+            text-align: center;
+            font-family: monospace;
+        }
     </style>
 </head>
 <body>
@@ -652,25 +779,25 @@
     <aside class="sidebar" id="sidebar">
         <ul class="sidebar-menu">
             <li>
-                <a href="{{ route('superadmin.home') }}">
+                <a href="{{ route('superadmin.home') }}" class="{{ request()->routeIs('superadmin.home') ? 'active' : '' }}">
                     <i class="fas fa-dashboard"></i>
                     <span>Dashboard</span>
                 </a>
             </li>
             <li>
-                <a href="{{ route('superadmin.users') }}" class="active">
+                <a href="{{ route('superadmin.users') }}" class="{{ request()->routeIs('superadmin.users') ? 'active' : '' }}">
                     <i class="fas fa-users"></i>
                     <span>Users Management</span>
                 </a>
             </li>
             <li>
-                <a href="{{ route('superadmin.admin-management') }}" class="active">
+                <a href="{{ route('superadmin.admin-management') }}" id="adminManagementLink" class="{{ request()->routeIs('superadmin.admin-management') ? 'active' : '' }}">
                     <i class="fas fa-user-shield"></i>
                     <span>Admin Management</span>
-                ss</a>
+                </a>
             </li>
             <li>
-                <a href="{{ route('superadmin.activity-log') }}">
+                <a href="{{ route('superadmin.activity-log') }}" class="{{ request()->routeIs('superadmin.activity-log') ? 'active' : '' }}">
                     <i class="fas fa-history"></i>
                     <span>Activity Logs</span>
                 </a>
@@ -689,15 +816,11 @@
                     <button class="btn-idcheck" id="openIdCheckModal">
                         <i class="fas fa-id-card me-1"></i> IDCHECK
                     </button>
-                    <div class="search-box">
-                        <i class="fas fa-search"></i>
-                        <input type="text" id="userSearch" placeholder="Search students...">
-                    </div>
                 </div>
             </div>
-            <div class="card-body p-0">
+            <div class="card-body p-4">
                 <div class="table-responsive">
-                    <table class="table table-hover mb-0" id="studentsTable">
+                    <table class="table table-hover mb-0" id="studentsTable" style="width: 100%;">
                         <thead>
                             <tr>
                                 <th class="text-center">Profile</th>
@@ -711,40 +834,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse($students as $student)
-                            <tr>
-                                <td class="text-center">
-                                    <img src="{{ $student->profile_image ? asset('uploads/students/' . $student->profile_image) : asset('images/hack.png') }}" 
-                                         class="profile-img" alt="Profile" loading="lazy"
-                                         onerror="this.src='{{ asset('images/hack.png') }}'">
-                                </td>   
-                                <td class="text-cyan">{{ $student->full_name }}</td>
-                                <td><span class="school-id-code">{{ $student->school_id }}</span></td>
-                                <td class="text-cyan">{{ $student->email }}</td>
-                                <td class="text-purple">{{ $student->created_at->format('M d, Y') }}</td>
-                                <td class="text-cyan">{{ $student->course }}</td>
-                                <td class="text-purple">{{ $student->section }}</td>
-                                <td class="text-center">
-                                    <button class="btn-action btn-view" title="View Profile" onclick="viewUserProfile('{{ $student->full_name }}', '{{ $student->school_id }}', '{{ $student->email }}', '{{ $student->profile_image ? asset('uploads/students/' . $student->profile_image) : asset('images/hack.png') }}', '{{ $student->created_at->format('M d, Y') }}', '{{ $student->course }}', '{{ $student->section }}')">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                    <button class="btn-action btn-copy" title="Copy Info" onclick="copyUserInfo('{{ $student->full_name }}', '{{ $student->school_id }}', '{{ $student->email }}')">
-                                        <i class="fas fa-copy"></i>
-                                    </button>
-                                    <button class="btn-action btn-edit" title="Edit Student" onclick="loadStudentData('{{ $student->id }}', '{{ $student->username }}', '{{ $student->email }}', '{{ $student->full_name }}', '{{ $student->school_id }}', '{{ $student->course }}', '{{ $student->year_level }}', '{{ $student->section }}', '{{ $student->profile_image ? asset('uploads/students/' . $student->profile_image) : asset('images/hack.png') }}', '{{ $student->student_status }}')">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="btn-action btn-password" title="Change Password" onclick="openPasswordModal('{{ $student->id }}', '{{ $student->full_name }}')">
-                                        <i class="fas fa-key"></i>
-                                    </button>
-                                   
-                                </td>
-                            </tr>
-                            @empty
-                            <tr>
-                                <td colspan="7" class="text-center py-4">No students found.</td>
-                            </tr>
-                            @endforelse
+                            <!-- Data populated by DataTables AJAX -->
                         </tbody>
                     </table>
                 </div>
@@ -753,7 +843,7 @@
     </main>
 
     <!-- PROFILE PREVIEW MODAL (Overlay) -->
-    <div id="profileModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; backdrop-filter: blur(8px);">
+    <div id="profileModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 4000; backdrop-filter: blur(8px);">
         <div class="modal-content-custom" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 600px; background: var(--secondary-dark); border: 2px solid var(--accent-green); border-radius: 8px; box-shadow: 0 0 40px rgba(0,255,65,0.4); padding: 30px; max-height: 90vh; overflow-y: auto;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid var(--border-color); padding-bottom: 15px;">
                 <h6 style="color: var(--accent-green); margin: 0; letter-spacing: 2px; font-weight: bold;">
@@ -816,7 +906,7 @@
     </div>
 
     <!-- PASSWORD UPDATE MODAL (Overlay) -->
-    <div id="passwordModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; backdrop-filter: blur(5px);">
+    <div id="passwordModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 4000; backdrop-filter: blur(5px);">
         <div class="modal-content-custom" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 400px; background: var(--secondary-dark); border: 2px solid var(--accent-green); border-radius: 8px; box-shadow: 0 0 30px rgba(0,255,65,0.3); padding: 25px; max-height: 90vh; overflow-y: auto;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
                 <h6 style="color: var(--accent-green); margin: 0; letter-spacing: 1px;">
@@ -869,7 +959,7 @@
     </div>
 
     <!-- EDIT USER MODAL (Overlay) -->
-    <div id="editModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; backdrop-filter: blur(5px);">
+    <div id="editModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 4000; backdrop-filter: blur(5px);">
         <div class="modal-content-custom" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 500px; background: var(--secondary-dark); border: 2px solid var(--accent-green); border-radius: 8px; box-shadow: 0 0 30px rgba(0,255,65,0.3); padding: 25px; max-height: 90vh; overflow-y: auto;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
                 <h6 style="color: var(--accent-green); margin: 0; letter-spacing: 1px;">
@@ -1019,9 +1109,81 @@
         </div>
     </div>
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
     <script>
+        $(document).ready(function() {
+            // Initialize Server-side DataTable
+            const table = $('#studentsTable').DataTable({
+                processing: true,
+                serverSide: true,
+                autoWidth: true,
+                ajax: "{{ route('superadmin.users.data') }}",
+                columns: [
+                    { 
+                        data: 'profile_image_url',
+                        className: 'text-center',
+                        render: function(data) {
+                            return `<img src="${data}" class="profile-img" alt="Profile" loading="lazy" onerror="this.src='{{ asset('images/hack.png') }}'">`;
+                        }
+                    },
+                    { data: 'full_name', className: 'text-cyan fw-bold' },
+                    { 
+                        data: 'school_id',
+                        render: function(data) {
+                            return `<span class="school-id-code">${data}</span>`;
+                        }
+                    },
+                    { data: 'email', className: 'text-cyan' },
+                    { data: 'created_at_formatted', className: 'text-purple' },
+                    { data: 'course', className: 'text-cyan' },
+                    { data: 'section', className: 'text-purple' },
+                    { 
+                        data: null,
+                        className: 'text-center',
+                        orderable: false,
+                        render: function(data) {
+                            return `
+                                <button class="btn-action btn-view" title="View Profile" onclick="viewUserProfile('${data.full_name}', '${data.school_id}', '${data.email}', '${data.profile_image_url}', '${data.created_at_formatted}', '${data.course}', '${data.section}')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn-action btn-copy" title="Copy Info" onclick="copyUserInfo('${data.full_name}', '${data.school_id}', '${data.email}')">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                                <button class="btn-action btn-edit" title="Edit Student" onclick="loadStudentData('${data.id}', '${data.username}', '${data.email}', '${data.full_name}', '${data.school_id}', '${data.course}', '${data.year_level}', '${data.section}', '${data.profile_image_url}', '${data.student_status}')">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn-action btn-password" title="Change Password" onclick="openPasswordModal('${data.id}', '${data.full_name}')">
+                                    <i class="fas fa-key"></i>
+                                </button>
+                            `;
+                        }
+                    }
+                ],
+                language: {
+                    search: "_INPUT_",
+                    searchPlaceholder: "SEARCH_DATABASE...",
+                    lengthMenu: "SHOW _MENU_ RECORDS",
+                    info: "SHOWING _START_ TO _END_ OF _TOTAL_ ENTRIES",
+                    paginate: {
+                        next: '<i class="fas fa-chevron-right"></i>',
+                        previous: '<i class="fas fa-chevron-left"></i>'
+                    }
+                },
+                order: [[4, 'desc']], // Default sort by Joined date
+                pageLength: 10,
+                drawCallback: function() {
+                    $('.dataTables_paginate > .pagination').addClass('pagination-hacker');
+                }
+            });
+
+            // Make table globally accessible if needed
+            window.studentsTable = table;
+        });
+
         // ID Check Modal Logic
         const idCheckModal = document.getElementById('idCheckModal');
         const openIdCheckBtn = document.getElementById('openIdCheckModal');
@@ -1032,102 +1194,119 @@
         const idCheckNoResult = document.getElementById('idCheckNoResult');
         const idCheckModalContent = document.getElementById('idCheckModalContent');
 
-        // Open Modal
-        openIdCheckBtn.onclick = function() {
-            idCheckModal.style.display = "block";
-            idCheckInput.focus();
+        if (openIdCheckBtn && idCheckModal) {
+            openIdCheckBtn.onclick = function() {
+                idCheckModal.style.display = "flex";
+                if (idCheckInput) idCheckInput.focus();
+            };
         }
 
-        // Close Modal
-        closeIdCheckBtn.onclick = function() {
-            idCheckModal.style.display = "none";
-            resetIdCheck();
+        if (closeIdCheckBtn && idCheckModal) {
+            closeIdCheckBtn.onclick = function() {
+                idCheckModal.style.display = "none";
+                resetIdCheck();
+            };
         }
 
-        // Prevent closing when clicking outside
-        window.onclick = function(event) {
-            if (event.target == idCheckModal) {
-                // Do nothing (don't close)
-            }
-        }
-
-        function resetIdCheck() {
-            idCheckInput.value = '';
-            idCheckResult.style.display = 'none';
-            idCheckNoResult.style.display = 'none';
-            idCheckModalContent.classList.remove('expanded');
-        }
-
-        // Input Sanitization and Formatting (0000-0000)
-        idCheckInput.oninput = function(e) {
-            let value = e.target.value.replace(/\D/g, ''); // Remove non-numbers
-            if (value.length > 8) value = value.slice(0, 8); // Max 8 digits
-            
-            if (value.length > 4) {
-                value = value.slice(0, 4) + '-' + value.slice(4);
-            }
-            e.target.value = value;
-        }
-
-        // Search Functionality
-        idCheckSearchBtn.onclick = function() {
-            const idNumber = idCheckInput.value;
-            if (idNumber.length < 9) {
-                idCheckNoResult.innerText = "INVALID_FORMAT: USE 0000-0000";
-                idCheckNoResult.style.display = 'block';
-                idCheckResult.style.display = 'none';
-                return;
-            }
-
-            idCheckSearchBtn.disabled = true;
-            idCheckSearchBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-
-            fetch("{{ route('superadmin.check-id-number') }}", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                },
-                body: JSON.stringify({ id_number: idNumber })
-            })
-            .then(response => response.json())
-            .then(data => {
-                idCheckSearchBtn.disabled = false;
-                idCheckSearchBtn.innerHTML = '<i class="fas fa-search"></i> SEARCH';
-
-                if (data.success) {
-                    const student = data.data;
-                    document.getElementById('res_fullname').innerText = `${student.fname} ${student.mname ? student.mname + ' ' : ''}${student.lname}`;
-                    document.getElementById('res_course').innerText = student.course;
-                    document.getElementById('res_year_section').innerText = `${student.year} - ${student.section}`;
-                    document.getElementById('res_gender').innerText = student.gender;
-
-                    idCheckNoResult.style.display = 'none';
-                    idCheckResult.style.display = 'block';
-                    idCheckModalContent.classList.add('expanded');
-                } else {
-                    idCheckNoResult.innerText = "RECORD_NOT_FOUND_IN_DATABASE";
-                    idCheckNoResult.style.display = 'block';
-                    idCheckResult.style.display = 'none';
-                    idCheckModalContent.classList.remove('expanded');
+        // Close when clicking overlay
+        if (idCheckModal) {
+            idCheckModal.addEventListener('click', function(event) {
+                if (event.target === idCheckModal) {
+                    idCheckModal.style.display = "none";
+                    resetIdCheck();
                 }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                idCheckSearchBtn.disabled = false;
-                idCheckSearchBtn.innerHTML = '<i class="fas fa-search"></i> SEARCH';
-                idCheckNoResult.innerText = "CONNECTION_ERROR_DETECTED";
-                idCheckNoResult.style.display = 'block';
             });
         }
 
-        // Allow Enter key to search
-        idCheckInput.addEventListener("keypress", function(event) {
-            if (event.key === "Enter") {
-                event.preventDefault();
-                idCheckSearchBtn.click();
-            }
-        });
+        function resetIdCheck() {
+            if (idCheckInput) idCheckInput.value = '';
+            if (idCheckResult) idCheckResult.style.display = 'none';
+            if (idCheckNoResult) idCheckNoResult.style.display = 'none';
+            if (idCheckModalContent) idCheckModalContent.classList.remove('expanded');
+        }
+
+        if (idCheckInput) {
+            idCheckInput.oninput = function(e) {
+                let value = e.target.value.replace(/\D/g, ''); 
+                if (value.length > 8) value = value.slice(0, 8); 
+                
+                if (value.length > 4) {
+                    value = value.slice(0, 4) + '-' + value.slice(4);
+                }
+                e.target.value = value;
+            };
+
+            idCheckInput.addEventListener("keypress", function(event) {
+                if (event.key === "Enter") {
+                    event.preventDefault();
+                    if (idCheckSearchBtn) idCheckSearchBtn.click();
+                }
+            });
+        }
+
+        if (idCheckSearchBtn && idCheckInput) {
+            idCheckSearchBtn.onclick = function() {
+                const idNumber = idCheckInput.value;
+                if (idNumber.length < 9) {
+                    if (idCheckNoResult) {
+                        idCheckNoResult.innerText = "INVALID_FORMAT: USE 0000-0000";
+                        idCheckNoResult.style.display = 'block';
+                    }
+                    if (idCheckResult) idCheckResult.style.display = 'none';
+                    return;
+                }
+
+                idCheckSearchBtn.disabled = true;
+                idCheckSearchBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+                fetch("{{ route('superadmin.check-id-number') }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({ id_number: idNumber })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    idCheckSearchBtn.disabled = false;
+                    idCheckSearchBtn.innerHTML = '<i class="fas fa-search"></i> SEARCH';
+
+                    if (data.success) {
+                        const student = data.data;
+                        const resFullname = document.getElementById('res_fullname');
+                        const resCourse = document.getElementById('res_course');
+                        const resYearSection = document.getElementById('res_year_section');
+                        const resGender = document.getElementById('res_gender');
+
+                        if (resFullname) resFullname.innerText = `${student.fname} ${student.mname ? student.mname + ' ' : ''}${student.lname}`;
+                        if (resCourse) resCourse.innerText = student.course;
+                        if (resYearSection) resYearSection.innerText = `${student.year} - ${student.section}`;
+                        if (resGender) resGender.innerText = student.gender;
+
+                        if (idCheckNoResult) idCheckNoResult.style.display = 'none';
+                        if (idCheckResult) idCheckResult.style.display = 'block';
+                        if (idCheckModalContent) idCheckModalContent.classList.add('expanded');
+                    } else {
+                        if (idCheckNoResult) {
+                            idCheckNoResult.innerText = "RECORD_NOT_FOUND_IN_DATABASE";
+                            idCheckNoResult.style.display = 'block';
+                        }
+                        if (idCheckResult) idCheckResult.style.display = 'none';
+                        if (idCheckModalContent) idCheckModalContent.classList.remove('expanded');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    idCheckSearchBtn.disabled = false;
+                    idCheckSearchBtn.innerHTML = '<i class="fas fa-search"></i> SEARCH';
+                    if (idCheckNoResult) {
+                        idCheckNoResult.innerText = "CONNECTION_ERROR_DETECTED";
+                        idCheckNoResult.style.display = 'block';
+                    }
+                });
+            };
+        }
 
         // Profile Modal Functionality
         function viewUserProfile(name, id, email, imgSrc, joined, course, section) {
@@ -1385,9 +1564,12 @@
                                 color: 'var(--accent-green)',
                                 timer: 2000,
                                 showConfirmButton: false
-                            }).then(() => {
-                                window.location.reload();
                             });
+                            closeEditModal();
+                            // Refresh DataTable without reloading page
+                            if (window.studentsTable) {
+                                window.studentsTable.ajax.reload(null, false);
+                            }
                         } else {
                             throw new Error(data.message || 'Validation failed.');
                         }
@@ -1411,27 +1593,6 @@
             });
         });
 
-        // Search Functionality
-        document.getElementById('userSearch').addEventListener('keyup', function() {
-            let filter = this.value.toUpperCase();
-            let rows = document.querySelector("#studentsTable tbody").rows;
-            
-            for (let i = 0; i < rows.length; i++) {
-                let name = rows[i].cells[1].textContent.toUpperCase();
-                let id = rows[i].cells[2].textContent.toUpperCase();
-                let email = rows[i].cells[3].textContent.toUpperCase();
-                let joined = rows[i].cells[4].textContent.toUpperCase();
-                
-                if (name.indexOf(filter) > -1 || id.indexOf(filter) > -1 || email.indexOf(filter) > -1 || joined.indexOf(filter) > -1) {
-                    rows[i].style.display = "";
-                } else {
-                    rows[i].style.display = "none";
-                }
-            }
-        });
- 
-
-        
         // Password Modal Functionality
         function openPasswordModal(userId, userName) {
             document.getElementById('targetUserId').value = userId;
@@ -1600,37 +1761,170 @@
                 });
             });
         }
+    </script>
+
+    <!-- Admin Access Code Overlay -->
+    <div class="hacker-overlay" id="adminAccessOverlay">
+        <div class="hacker-access-modal">
+            <div class="hacker-close" id="closeHackerModal">&times;</div>
+            <div class="hacker-title">System Restricted</div>
+            <p style="text-align: center; color: var(--accent-green); font-size: 12px; margin-bottom: 20px;">
+                <i class="fas fa-biohazard"></i> LEVEL 4 CLEARANCE REQUIRED <i class="fas fa-biohazard"></i>
+            </p>
+            <div class="hacker-input-wrapper">
+                <input type="password" id="adminAccessCode" class="hacker-input" placeholder="ACCESS CODE" autocomplete="off">
+            </div>
+            <button class="hacker-btn" id="verifyAccessBtn">Verify Identity</button>
+            <div class="system-status">
+                <span id="hackerStatus">SECURE_CHANNEL_READY...</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const adminLink = document.getElementById('adminManagementLink');
+            const overlay = document.getElementById('adminAccessOverlay');
+            const closeBtn = document.getElementById('closeHackerModal');
+            const verifyBtn = document.getElementById('verifyAccessBtn');
+            const input = document.getElementById('adminAccessCode');
+            const statusText = document.getElementById('hackerStatus');
+            
+            // Flag from PHP session
+            let isVerified = {{ session('admin_access_verified') ? 'true' : 'false' }};
+
+            if (adminLink) {
+                adminLink.addEventListener('click', function(e) {
+                    if (!isVerified) {
+                        e.preventDefault();
+                        overlay.style.display = 'flex';
+                        input.focus();
+                    }
+                });
+            }
+
+            if (closeBtn) {
+                closeBtn.addEventListener('click', function() {
+                    overlay.style.display = 'none';
+                    input.value = '';
+                });
+            }
+
+            if (verifyBtn) {
+                verifyBtn.addEventListener('click', verifyCode);
+            }
+
+            if (input) {
+                input.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') verifyCode();
+                });
+            }
+
+            function verifyCode() {
+                const code = input.value;
+                if (!code) return;
+
+                verifyBtn.disabled = true;
+                verifyBtn.innerText = 'BRUTE_FORCING...';
+                statusText.innerText = 'ESTABLISHING_ENCRYPTED_LINK...';
+
+                fetch("{{ route('superadmin.verify-admin-accesscode') }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify({ access_code: code })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    overlay.style.display = 'none'; // Hide overlay so alert is visible
+
+                    if (data.success) {
+                        isVerified = true;
+                        statusText.innerText = 'ACCESS_GRANTED_BY_SERVER';
+                        Swal.fire({
+                            title: 'ACCESS GRANTED',
+                            text: data.message,
+                            icon: 'success',
+                            background: '#000',
+                            color: '#00ff41',
+                            confirmButtonColor: '#00ff41'
+                        }).then(() => {
+                            window.location.href = data.redirect;
+                        });
+                    } else {
+                        statusText.innerText = 'ERROR: INVALID_AUTHORIZATION';
+                        Swal.fire({
+                            title: 'ACCESS DENIED',
+                            text: data.message || 'Invalid Access Code',
+                            icon: 'error',
+                            background: '#000',
+                            color: '#ff4444',
+                            confirmButtonColor: '#ff4444'
+                        }).then(() => {
+                            overlay.style.display = 'flex'; // Re-show for retry
+                            verifyBtn.disabled = false;
+                            verifyBtn.innerText = 'Verify Identity';
+                            input.value = '';
+                            input.focus();
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    overlay.style.display = 'none';
+                    statusText.innerText = 'SYSTEM_CRITICAL_FAILURE';
+                    Swal.fire({
+                        title: 'SYSTEM ERROR',
+                        text: 'Failed to communicate with authorization server.',
+                        icon: 'error',
+                        background: '#000',
+                        color: '#ff4444'
+                    }).then(() => {
+                        overlay.style.display = 'flex';
+                        verifyBtn.disabled = false;
+                        verifyBtn.innerText = 'Verify Identity';
+                    });
+                });
+            }
+
+            // Logout Confirmation
+            const logoutBtn = document.getElementById('logoutBtn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', function() {
+                    Swal.fire({
+                        title: 'TERMINATE_SESSION?',
+                        text: 'Are you sure you want to logout from the Super Admin Panel?',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#ff4d4d',
+                        cancelButtonColor: '#6c757d',
+                        confirmButtonText: 'YES, LOGOUT',
+                        background: 'var(--secondary-dark)',
+                        color: 'var(--text-light)'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            const logoutForm = document.getElementById('logoutForm');
+                            if (logoutForm) logoutForm.submit();
+                        }
+                    });
+                });
+            }
+        });
 
         // Sidebar Toggle
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const mainContainer = document.getElementById('mainContainer');
             if (window.innerWidth <= 992) {
-                sidebar.classList.toggle('show');
+                if (sidebar) sidebar.classList.toggle('show');
             } else {
-                sidebar.classList.toggle('hidden');
-                mainContainer.classList.toggle('expanded');
+                if (sidebar) sidebar.classList.toggle('hidden');
+                if (mainContainer) mainContainer.classList.toggle('expanded');
             }
         }
-
-        // Logout
-        document.getElementById('logoutBtn').addEventListener('click', function() {
-            Swal.fire({
-                title: 'Confirm Logout',
-                text: 'Are you sure you want to logout?',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#ff4d4d',
-                cancelButtonColor: '#6c757d',
-                confirmButtonText: 'Yes, Logout',
-                background: 'var(--secondary-dark)',
-                color: 'var(--text-light)'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    document.getElementById('logoutForm').submit();
-                }
-            });
-        });
     </script>
 </body>
 </html>

@@ -364,11 +364,93 @@ class SuperAdminController extends Controller
         }
 
         $superAdmin = SuperAdmin::find(session('super_admin_id'));
-        $students = User::where('role', 'student')->get();
-
+        
+        // We now load data via AJAX for faster initial page load
         return view('s_admin.user_management', [
             'superAdmin' => $superAdmin,
-            'students' => $students
+            'students' => [] // Initial empty load
+        ]);
+    }
+
+    /**
+     * Get users data for DataTables AJAX
+     */
+    public function getUsersData(Request $request)
+    {
+        if (!session()->has('super_admin_id')) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $query = User::where('role', 'student');
+
+        // Search
+        if ($request->has('search') && $request->search['value']) {
+            $searchValue = $request->search['value'];
+            $query->where(function($q) use ($searchValue) {
+                $q->where('full_name', 'like', "%{$searchValue}%")
+                  ->orWhere('school_id', 'like', "%{$searchValue}%")
+                  ->orWhere('email', 'like', "%{$searchValue}%")
+                  ->orWhere('course', 'like', "%{$searchValue}%")
+                  ->orWhere('section', 'like', "%{$searchValue}%");
+            });
+        }
+
+        $totalRecords = User::where('role', 'student')->count();
+        $filteredRecords = $query->count();
+
+        // Ordering mapping to real DB columns
+        $columnsMap = [
+            0 => 'profile_image',
+            1 => 'full_name',
+            2 => 'school_id',
+            3 => 'email',
+            4 => 'created_at',
+            5 => 'course',
+            6 => 'section'
+        ];
+
+        if ($request->has('order')) {
+            $columnIndex = $request->order[0]['column'];
+            $columnSortOrder = $request->order[0]['dir'];
+            
+            if (isset($columnsMap[$columnIndex])) {
+                $query->orderBy($columnsMap[$columnIndex], $columnSortOrder);
+            }
+        } else {
+            $query->orderBy('created_at', 'desc');
+        }
+
+        // Pagination
+        $start = $request->start ?? 0;
+        $length = $request->length ?? 10;
+        $students = $query->skip($start)->take($length)->get();
+
+        $data = [];
+        foreach ($students as $student) {
+            $profileImg = $student->profile_image ? asset('uploads/students/' . $student->profile_image) : asset('images/hack.png');
+            $joinedDate = $student->created_at->format('M d, Y');
+            
+            $data[] = [
+                'id' => $student->id,
+                'username' => $student->username,
+                'full_name' => $student->full_name,
+                'school_id' => $student->school_id,
+                'email' => $student->email,
+                'course' => $student->course,
+                'section' => $student->section,
+                'year_level' => $student->year_level,
+                'student_status' => $student->student_status,
+                'profile_image_url' => $profileImg,
+                'created_at_formatted' => $joinedDate,
+                'actions' => '' // Will be handled in frontend
+            ];
+        }
+
+        return response()->json([
+            'draw' => intval($request->draw),
+            'recordsTotal' => $totalRecords,
+            'recordsFiltered' => $filteredRecords,
+            'data' => $data
         ]);
     }
 
@@ -482,7 +564,7 @@ class SuperAdminController extends Controller
      */
     public function logout(Request $request)
     {
-        session()->forget('super_admin_id');
+        session()->forget(['super_admin_id', 'admin_access_verified']);
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
@@ -801,13 +883,21 @@ class SuperAdminController extends Controller
         ]);
     }
 
-    /**
-     * Display Admin Management
-     */
-    public function adminManagement()
+    public function adminManagement(Request $request)
     {
         if (!session()->has('super_admin_id')) {
+            if ($request->ajax()) {
+                return response()->json(['success' => false, 'message' => 'Unauthorized session.'], 403);
+            }
             return redirect()->route('superadmin.login');
+        }
+
+        // Check if admin access code has been verified for this session
+        if (!session()->has('admin_access_verified')) {
+            if ($request->ajax()) {
+                return response()->json(['success' => false, 'message' => 'Access code verification required.'], 401);
+            }
+            return redirect()->route('superadmin.home')->with('error', 'Unauthorized access. Please enter the access code.');
         }
 
         $superAdmin = SuperAdmin::find(session('super_admin_id'));
@@ -817,6 +907,39 @@ class SuperAdminController extends Controller
             'superAdmin' => $superAdmin,
             'admins' => $admins
         ]);
+    }
+
+    /**
+     * Verify the admin management access code.
+     */
+    public function verifyAdminAccessCode(Request $request)
+    {
+        $request->validate([
+            'access_code' => ['required', 'string'],
+        ]);
+
+        if (!session()->has('super_admin_id')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized session.',
+            ], 403);
+        }
+
+        $superAdmin = SuperAdmin::find(session('super_admin_id'));
+
+        if ($superAdmin && Hash::check($request->access_code, $superAdmin->admin_accesscode)) {
+            Session::put('admin_access_verified', true);
+            return response()->json([
+                'success' => true,
+                'message' => 'Access Granted. System Unlocked.',
+                'redirect' => route('superadmin.admin-management')
+            ]);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Invalid Access Code. Access Denied.',
+        ], 422);
     }
 
     /**

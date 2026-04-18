@@ -7,6 +7,7 @@
 <head>
     <meta charset="UTF-8">
      <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Super Admin Dashboard - MCCIPES</title>
     <link rel="icon" type="image/png" href="{{ asset('images/mccicon.jpg') }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -408,6 +409,124 @@
             box-shadow: 0 0 15px rgba(0, 255, 65, 0.5);
         }
 
+        /* ==================== ACCESS CODE MODAL ==================== */
+        .hacker-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            backdrop-filter: blur(8px);
+        }
+
+        .hacker-access-modal {
+            width: 450px;
+            background: #000;
+            border: 2px solid var(--accent-green);
+            box-shadow: 0 0 40px rgba(0, 255, 65, 0.2);
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+            animation: modalBorderPulse 4s infinite linear;
+        }
+
+        @keyframes modalBorderPulse {
+            0% { border-color: var(--accent-green); box-shadow: 0 0 20px rgba(0, 255, 65, 0.4); }
+            33% { border-color: #00ffff; box-shadow: 0 0 20px rgba(0, 255, 255, 0.4); }
+            66% { border-color: #bf00ff; box-shadow: 0 0 20px rgba(191, 0, 255, 0.4); }
+            100% { border-color: var(--accent-green); box-shadow: 0 0 20px rgba(0, 255, 65, 0.4); }
+        }
+
+        .hacker-title {
+            color: var(--accent-green);
+            font-size: 24px;
+            margin-bottom: 25px;
+            text-align: center;
+            letter-spacing: 4px;
+            font-weight: bold;
+            text-shadow: 0 0 15px rgba(0, 255, 65, 0.6);
+            animation: textGlitch 5s infinite;
+        }
+
+        @keyframes textGlitch {
+            0% { transform: skew(0deg); }
+            2% { transform: skew(10deg); }
+            4% { transform: skew(-10deg); }
+            6% { transform: skew(0deg); }
+            100% { transform: skew(0deg); }
+        }
+
+        .hacker-input-wrapper {
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        .hacker-input {
+            width: 100%;
+            background: rgba(0, 255, 65, 0.05);
+            border: 1px solid var(--accent-green);
+            color: var(--accent-green-light);
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 18px;
+            text-align: center;
+            outline: none;
+            letter-spacing: 8px;
+            transition: 0.3s;
+        }
+
+        .hacker-input:focus {
+            box-shadow: 0 0 25px rgba(0, 255, 65, 0.3);
+            background: rgba(0, 255, 65, 0.1);
+        }
+
+        .hacker-btn {
+            width: 100%;
+            padding: 15px;
+            background: transparent;
+            border: 1px solid var(--accent-green);
+            color: var(--accent-green);
+            font-weight: bold;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: 0.3s;
+            text-transform: uppercase;
+        }
+
+        .hacker-btn:hover {
+            background: var(--accent-green);
+            color: #000;
+            box-shadow: 0 0 30px rgba(0, 255, 65, 0.6);
+        }
+
+        .hacker-close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            color: var(--accent-green);
+            cursor: pointer;
+            font-size: 20px;
+            transition: 0.3s;
+        }
+
+        .hacker-close:hover {
+            color: #ff4444;
+            text-shadow: 0 0 10px #ff4444;
+        }
+
+        .system-status {
+            font-size: 10px;
+            color: #555;
+            margin-top: 20px;
+            text-align: center;
+            font-family: monospace;
+        }
+
         /* ==================== RESPONSIVE ==================== */
         @media (max-width: 992px) {
             body {
@@ -577,31 +696,29 @@
     <aside class="sidebar" id="sidebar">
         <ul class="sidebar-menu">
             <li>
-                <a href="{{ route('superadmin.home') }}" class="active">
+                <a href="{{ route('superadmin.home') }}" class="{{ request()->routeIs('superadmin.home') ? 'active' : '' }}">
                     <i class="fas fa-dashboard"></i>
                     <span>Dashboard</span>
                 </a>
             </li>
             <li>
-                <a href="{{ route('superadmin.users') }}">
+                <a href="{{ route('superadmin.users') }}" class="{{ request()->routeIs('superadmin.users') ? 'active' : '' }}">
                     <i class="fas fa-users"></i>
                     <span>Users Management</span>
                 </a>
             </li>
-           
             <li>
-                <a href="{{ route('superadmin.admin-management') }}" class="{{ request()->routeIs('superadmin.admin-management') ? 'active' : '' }}">
+                <a href="{{ route('superadmin.admin-management') }}" id="adminManagementLink" class="{{ request()->routeIs('superadmin.admin-management') ? 'active' : '' }}">
                     <i class="fas fa-user-shield"></i>
                     <span>Admin Management</span>
                 </a>
             </li>
             <li>
-                <a href="{{ route('superadmin.activity-log') }}">
+                <a href="{{ route('superadmin.activity-log') }}" class="{{ request()->routeIs('superadmin.activity-log') ? 'active' : '' }}">
                     <i class="fas fa-history"></i>
                     <span>Activity Logs</span>
                 </a>
             </li>
-          
         </ul>
     </aside>
 
@@ -960,33 +1077,35 @@
         });
 
         // Handle logout confirmation
-        document.getElementById('logoutBtn').addEventListener('click', function() {
-            Swal.fire({
-                title: 'Confirm Logout',
-                text: 'Are you sure you want to logout from the Super Admin Panel?',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#ff6b6b',
-                cancelButtonColor: '#6c757d',
-                confirmButtonText: 'Yes, Logout',
-                cancelButtonText: 'Cancel',
-                background: 'rgba(10, 14, 39, 0.95)',
-                color: '#e8f5e9',
-                didOpen: function() {
-                    const popup = Swal.getPopup();
-                    if (popup) {
-                        popup.style.borderRadius = '16px';
-                        popup.style.border = '1px solid rgba(0, 255, 65, 0.3)';
-                        popup.style.boxShadow = '0 20px 55px rgba(0, 255, 65, 0.15)';
+        const logoutBtn = document.getElementById('logoutBtn');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', function() {
+                Swal.fire({
+                    title: 'TERMINATE_SESSION?',
+                    text: 'Are you sure you want to logout from the Super Admin Panel?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#ff4d4d',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'YES, LOGOUT',
+                    background: 'var(--secondary-dark)',
+                    color: 'var(--text-light)',
+                    didOpen: function() {
+                        const popup = Swal.getPopup();
+                        if (popup) {
+                            popup.style.borderRadius = '16px';
+                            popup.style.border = '1px solid rgba(0, 255, 65, 0.3)';
+                            popup.style.boxShadow = '0 20px 55px rgba(0, 255, 65, 0.15)';
+                        }
                     }
-                }
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // Submit the form
-                    document.getElementById('logoutForm').submit();
-                }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        const logoutForm = document.getElementById('logoutForm');
+                        if (logoutForm) logoutForm.submit();
+                    }
+                });
             });
-        });
+        }
         // Handle optimize button confirmation
         document.getElementById('optimizeBtn').addEventListener('click', function() {
             Swal.fire({
@@ -1132,11 +1251,144 @@
                 }
             });
         });
+    </script>
+
+    <!-- Admin Access Code Overlay -->
+    <div class="hacker-overlay" id="adminAccessOverlay">
+        <div class="hacker-access-modal">
+            <div class="hacker-close" id="closeHackerModal">&times;</div>
+            <div class="hacker-title">System Restricted</div>
+            <p style="text-align: center; color: var(--accent-green); font-size: 12px; margin-bottom: 20px;">
+                <i class="fas fa-biohazard"></i> LEVEL 4 CLEARANCE REQUIRED <i class="fas fa-biohazard"></i>
+            </p>
+            <div class="hacker-input-wrapper">
+                <input type="password" id="adminAccessCode" class="hacker-input" placeholder="ACCESS CODE" autocomplete="off">
+            </div>
+            <button class="hacker-btn" id="verifyAccessBtn">Verify Identity</button>
+            <div class="system-status">
+                <span id="hackerStatus">SECURE_CHANNEL_READY...</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const adminLink = document.getElementById('adminManagementLink');
+            const overlay = document.getElementById('adminAccessOverlay');
+            const closeBtn = document.getElementById('closeHackerModal');
+            const verifyBtn = document.getElementById('verifyAccessBtn');
+            const input = document.getElementById('adminAccessCode');
+            const statusText = document.getElementById('hackerStatus');
+            
+            // Flag from PHP session
+            let isVerified = {{ session('admin_access_verified') ? 'true' : 'false' }};
+
+            if (adminLink) {
+                adminLink.addEventListener('click', function(e) {
+                    if (!isVerified) {
+                        e.preventDefault();
+                        overlay.style.display = 'flex';
+                        input.focus();
+                    }
+                });
+            }
+
+            if (closeBtn) {
+                closeBtn.addEventListener('click', function() {
+                    overlay.style.display = 'none';
+                    input.value = '';
+                });
+            }
+
+            if (verifyBtn) {
+                verifyBtn.addEventListener('click', verifyCode);
+            }
+
+            if (input) {
+                input.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') verifyCode();
+                });
+            }
+
+            function verifyCode() {
+                const code = input.value;
+                if (!code) return;
+
+                verifyBtn.disabled = true;
+                verifyBtn.innerText = 'BRUTE_FORCING...';
+                statusText.innerText = 'ESTABLISHING_ENCRYPTED_LINK...';
+
+                fetch("{{ route('superadmin.verify-admin-accesscode') }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify({ access_code: code })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    overlay.style.display = 'none'; // Hide overlay
+
+                    if (data.success) {
+                        isVerified = true;
+                        statusText.innerText = 'ACCESS_GRANTED_BY_SERVER';
+                        Swal.fire({
+                            title: 'ACCESS GRANTED',
+                            text: data.message,
+                            icon: 'success',
+                            background: '#000',
+                            color: '#00ff41',
+                            confirmButtonColor: '#00ff41'
+                        }).then(() => {
+                            window.location.href = data.redirect;
+                        });
+                    } else {
+                        statusText.innerText = 'ERROR: INVALID_AUTHORIZATION';
+                        Swal.fire({
+                            title: 'ACCESS DENIED',
+                            text: data.message || 'Invalid Access Code',
+                            icon: 'error',
+                            background: '#000',
+                            color: '#ff4444',
+                            confirmButtonColor: '#ff4444'
+                        }).then(() => {
+                            overlay.style.display = 'flex';
+                            verifyBtn.disabled = false;
+                            verifyBtn.innerText = 'Verify Identity';
+                            input.value = '';
+                            input.focus();
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    overlay.style.display = 'none';
+                    statusText.innerText = 'SYSTEM_CRITICAL_FAILURE';
+                    Swal.fire({
+                        title: 'SYSTEM ERROR',
+                        text: 'Failed to communicate with authorization server.',
+                        icon: 'error',
+                        background: '#000',
+                        color: '#ff4444'
+                    }).then(() => {
+                        overlay.style.display = 'flex';
+                        verifyBtn.disabled = false;
+                        verifyBtn.innerText = 'Verify Identity';
+                    });
+                });
+            }
+        });
 
         // Initialize Department Stats Chart
         document.addEventListener('DOMContentLoaded', function() {
-            const ctx = document.getElementById('departmentStatsChart').getContext('2d');
+            const chartCanvas = document.getElementById('departmentStatsChart');
+            if (!chartCanvas) return;
+
+            const ctx = chartCanvas.getContext('2d');
             const departmentStats = @json($departmentStats);
+            let isHovering = false;
             
             // Department Color Mapping for "Overall Total" (Vivid/Flaming base)
             const deptColors = {
@@ -1308,8 +1560,6 @@
             });
 
             // Flaming/Glowing Animation Loop
-            let isHovering = false;
-
             function animate() {
                 // Check isHovering to pause background updates when interacting
                 // This prevents the "shifting" or "flickering" of tooltips

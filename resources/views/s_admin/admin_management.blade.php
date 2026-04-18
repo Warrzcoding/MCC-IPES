@@ -456,10 +456,30 @@
     <!-- ==================== SIDEBAR ==================== -->
     <aside class="sidebar" id="sidebar">
         <ul class="sidebar-menu">
-            <li><a href="{{ route('superadmin.home') }}"><i class="fas fa-dashboard"></i><span>Dashboard</span></a></li>
-            <li><a href="{{ route('superadmin.users') }}"><i class="fas fa-users"></i><span>Users Management</span></a></li>
-            <li><a href="{{ route('superadmin.admin-management') }}" class="active"><i class="fas fa-user-shield"></i><span>Admin Management</span></a></li>
-            <li><a href="{{ route('superadmin.activity-log') }}"><i class="fas fa-history"></i><span>Activity Logs</span></a></li>
+            <li>
+                <a href="{{ route('superadmin.home') }}" class="{{ request()->routeIs('superadmin.home') ? 'active' : '' }}">
+                    <i class="fas fa-dashboard"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('superadmin.users') }}" class="{{ request()->routeIs('superadmin.users') ? 'active' : '' }}">
+                    <i class="fas fa-users"></i>
+                    <span>Users Management</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('superadmin.admin-management') }}" class="{{ request()->routeIs('superadmin.admin-management') ? 'active' : '' }}">
+                    <i class="fas fa-user-shield"></i>
+                    <span>Admin Management</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('superadmin.activity-log') }}" class="{{ request()->routeIs('superadmin.activity-log') ? 'active' : '' }}">
+                    <i class="fas fa-history"></i>
+                    <span>Activity Logs</span>
+                </a>
+            </li>
         </ul>
     </aside>
 
