@@ -1066,7 +1066,7 @@
     <div id="idCheckModal" class="hacker-modal">
         <div class="hacker-modal-content" id="idCheckModalContent">
             <div class="hacker-modal-header">
-                <h5 class="mb-0"><i class="fas fa-id-card me-2"></i>ID_CHECKER_v1.0</h5>
+                <h5 class="mb-0"><i class="fas fa-id-card me-2"></i>ID ELEGIBILITY CHECKER</h5>
                 <span class="hacker-modal-close" id="closeIdCheckModal">&times;</span>
             </div>
             <div class="hacker-modal-body">
