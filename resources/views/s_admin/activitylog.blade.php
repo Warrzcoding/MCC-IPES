@@ -779,6 +779,9 @@
                                 
                                 <div class="info-label">Network IP</div>
                                 <div class="info-value"><span class="school-id-code" id="modal-ip-display">127.0.0.1</span></div>
+
+                                <div class="info-label">Recorded Coordinates</div>
+                                <div class="info-value"><span class="school-id-code" id="modal-coords-display">0.00, 0.00</span></div>
                                 
                                 <div class="info-label">Status</div>
                                 <div id="modal-status-display">
@@ -975,6 +978,7 @@
                 $('#modal-user-display').text(btn.data('user'));
                 $('#modal-email-display').text(btn.data('email'));
                 $('#modal-ip-display').text(btn.data('ip'));
+                $('#modal-coords-display').text(`${lat}, ${lng}`);
                 $('#modal-time-display').text(btn.data('time'));
                 $('#modal-ua-display').text(btn.data('ua'));
                 
@@ -1020,17 +1024,17 @@
                 });
 
                 // Add default view
-                streetView.addTo(map);
+                satelliteView.addTo(map);
 
                 // Add Layer Control
                 const baseMaps = {
-                    "Street View": streetView,
-                    "Satellite View": satelliteView
+                    "Satellite View": satelliteView,
+                    "Street View": streetView
                 };
                 L.control.layers(baseMaps).addTo(map);
 
                 marker = L.marker([currentLat, currentLng]).addTo(map)
-                    .bindPopup(`<b>Location:</b><br>${locationName || 'Saved Pin'}`)
+                    .bindPopup(`<b>Recorded Location:</b><br>Lat: ${currentLat}<br>Lng: ${currentLng}`)
                     .openPopup();
                 
                 // Fix map display issue in modal
