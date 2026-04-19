@@ -1893,7 +1893,8 @@
             // Logout Confirmation
             const logoutBtn = document.getElementById('logoutBtn');
             if (logoutBtn) {
-                logoutBtn.addEventListener('click', function() {
+                logoutBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
                     Swal.fire({
                         title: 'TERMINATE_SESSION?',
                         text: 'Are you sure you want to logout from the Super Admin Panel?',

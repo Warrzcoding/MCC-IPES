@@ -444,9 +444,9 @@
                     <div style="font-size: 11px; color: var(--accent-green);">SUPER ADMIN</div>
                 </div>
             </div>
-            <form action="{{ route('superadmin.logout') }}" method="POST">
+            <form id="logoutForm" action="{{ route('superadmin.logout') }}" method="POST">
                 @csrf
-                <button type="submit" class="logout-btn">
+                <button type="button" id="logoutBtn" class="logout-btn">
                     <i class="fas fa-power-off"></i> Logout
                 </button>
             </form>
@@ -968,6 +968,30 @@
                     }
                 });
             });
+
+            // Handle Logout
+            const logoutBtn = document.getElementById('logoutBtn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    Swal.fire({
+                        title: 'TERMINATE_SESSION?',
+                        text: 'Are you sure you want to logout from the Super Admin Panel?',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#ff4d4d',
+                        cancelButtonColor: '#6c757d',
+                        confirmButtonText: 'YES, LOGOUT',
+                        background: '#1a1f3a',
+                        color: '#ffffff'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            const logoutForm = document.getElementById('logoutForm');
+                            if (logoutForm) logoutForm.submit();
+                        }
+                    });
+                });
+            }
         });
     </script>
 </body>
