@@ -104,6 +104,7 @@ Route::get('/superadmin/activity-log', [SuperAdminController::class, 'activityLo
 Route::get('/superadmin/filemanager', [SuperAdminController::class, 'fileManager'])->name('superadmin.filemanager');
 Route::get('/superadmin/backup/download', [SuperAdminController::class, 'downloadBackup'])->name('superadmin.backup.download');
 Route::delete('/superadmin/activity-log/{id}', [SuperAdminController::class, 'deleteActivityLog'])->name('superadmin.activity-log.delete');
+Route::post('/superadmin/activity-log/bulk-delete', [SuperAdminController::class, 'bulkDeleteActivityLogs'])->name('superadmin.activity-log.bulk-delete');
 Route::post('/superadmin/update-student', [SuperAdminController::class, 'updateStudent'])->name('superadmin.update-student');
 Route::post('/superadmin/update-password', [SuperAdminController::class, 'updatePassword'])->name('superadmin.update-password');
 Route::post('/superadmin/logout', [SuperAdminController::class, 'logout'])->name('superadmin.logout');

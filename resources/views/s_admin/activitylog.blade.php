@@ -347,6 +347,16 @@
             border-color: var(--accent-green) !important;
         }
 
+        .form-check-input:checked {
+            background-color: var(--accent-green);
+            border-color: var(--accent-green);
+        }
+
+        .form-check-input:focus {
+            box-shadow: 0 0 10px var(--accent-green);
+            border-color: var(--accent-green);
+        }
+
         /* Modal Styling */
         .modal-content {
             background: linear-gradient(135deg, var(--secondary-dark) 0%, var(--primary-dark) 100%);
@@ -638,6 +648,12 @@
                     <span>Login History</span>
                 </div>
                 <div class="d-flex gap-2 align-items-center">
+                    <button id="toggleSelectionMode" class="btn-action btn-view">
+                        <i class="fas fa-check-square me-1"></i> Selection Mode
+                    </button>
+                    <button id="bulkDeleteBtn" class="btn-action btn-delete d-none">
+                        <i class="fas fa-trash-alt me-1"></i> Delete Selected (<span id="selectedCount">0</span>)
+                    </button>
                     <form action="{{ route('superadmin.activity-log') }}" method="GET" class="d-flex gap-2">
                         <div class="input-group" style="max-width: 300px;">
                             <input type="text" name="search" class="form-control bg-transparent text-white border-accent-green" 
@@ -665,6 +681,9 @@
                                 <th>Status</th>
                                 <th>Date & Time</th>
                                 <th class="text-center">Action</th>
+                                <th class="selection-column d-none text-center" style="width: 40px;">
+                                    <input type="checkbox" id="selectAll" class="form-check-input bg-transparent border-accent-green">
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
@@ -709,10 +728,13 @@
                                             <i class="fas fa-trash"></i> Delete
                                         </button>
                                     </td>
+                                    <td class="selection-column d-none text-center">
+                                        <input type="checkbox" class="form-check-input attempt-checkbox bg-transparent border-accent-green" value="{{ $attempt->id }}">
+                                    </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="7" class="text-center py-4 text-muted">No activity logs found.</td>
+                                    <td colspan="8" class="text-center py-4 text-muted">No activity logs found.</td>
                                 </tr>
                             @endforelse
                         </tbody>
@@ -1016,6 +1038,106 @@
                     map.invalidateSize();
                 }, 100);
             }
+
+            // Toggle Selection Mode
+            $('#toggleSelectionMode').on('click', function() {
+                const isSelectionMode = $('.selection-column').first().hasClass('d-none');
+                
+                if (isSelectionMode) {
+                    $('.selection-column').removeClass('d-none');
+                    $(this).html('<i class="fas fa-times me-1"></i> Exit Selection');
+                    $(this).removeClass('btn-view').addClass('btn-delete');
+                } else {
+                    $('.selection-column').addClass('d-none');
+                    $(this).html('<i class="fas fa-check-square me-1"></i> Selection Mode');
+                    $(this).removeClass('btn-delete').addClass('btn-view');
+                    
+                    // Reset selections
+                    $('.attempt-checkbox').prop('checked', false);
+                    $('#selectAll').prop('checked', false);
+                    updateBulkDeleteButton();
+                }
+            });
+
+            // Select All
+            $('#selectAll').on('change', function() {
+                $('.attempt-checkbox').prop('checked', this.checked);
+                updateBulkDeleteButton();
+            });
+
+            // Individual Checkbox
+            $(document).on('change', '.attempt-checkbox', function() {
+                const allChecked = $('.attempt-checkbox:checked').length === $('.attempt-checkbox').length;
+                $('#selectAll').prop('checked', allChecked);
+                updateBulkDeleteButton();
+            });
+
+            function updateBulkDeleteButton() {
+                const selectedCount = $('.attempt-checkbox:checked').length;
+                $('#selectedCount').text(selectedCount);
+                
+                if (selectedCount > 0) {
+                    $('#bulkDeleteBtn').removeClass('d-none');
+                } else {
+                    $('#bulkDeleteBtn').addClass('d-none');
+                }
+            }
+
+            // Bulk Delete
+            $('#bulkDeleteBtn').on('click', function() {
+                const selectedIds = $('.attempt-checkbox:checked').map(function() {
+                    return $(this).val();
+                }).get();
+
+                if (selectedIds.length === 0) return;
+
+                Swal.fire({
+                    title: 'CONFIRM BULK DELETION',
+                    text: `Are you sure you want to delete ${selectedIds.length} selected activity log(s)?`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#ff4d4d',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'YES, DELETE SELECTED',
+                    background: '#0a0e27',
+                    color: '#ffffff'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: "{{ route('superadmin.activity-log.bulk-delete') }}",
+                            type: 'POST',
+                            data: {
+                                ids: selectedIds
+                            },
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            },
+                            success: function(response) {
+                                if (response.success) {
+                                    Swal.fire({
+                                        title: 'DELETED',
+                                        text: response.message,
+                                        icon: 'success',
+                                        background: '#0a0e27',
+                                        color: '#ffffff'
+                                    }).then(() => {
+                                        window.location.reload();
+                                    });
+                                }
+                            },
+                            error: function(xhr) {
+                                Swal.fire({
+                                    title: 'ERROR',
+                                    text: 'Failed to delete selected logs. Try again.',
+                                    icon: 'error',
+                                    background: '#0a0e27',
+                                    color: '#ffffff'
+                                });
+                            }
+                        });
+                    }
+                });
+            });
 
             // Delete Attempt
             $('.delete-attempt').on('click', function() {

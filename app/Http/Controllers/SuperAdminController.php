@@ -644,6 +644,39 @@ class SuperAdminController extends Controller
     }
 
     /**
+     * Bulk delete activity logs.
+     */
+    public function bulkDeleteActivityLogs(Request $request)
+    {
+        if (!session()->has('super_admin_id')) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
+        }
+
+        $ids = $request->input('ids');
+
+        if (empty($ids) || !is_array($ids)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No items selected for deletion.'
+            ], 400);
+        }
+
+        try {
+            $count = \App\Models\LoginAttempt::whereIn('id', $ids)->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => "Successfully deleted {$count} activity log(s)."
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error deleting activity logs: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
      * Download a full database backup.
      */
     public function downloadBackup()
