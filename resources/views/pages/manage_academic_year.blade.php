@@ -1293,7 +1293,10 @@ if (!function_exists('getRatingStatus')) {
                             line-height: 1.4;
                             color: #333;
                             margin: 0;
-                            padding: 20mm;
+                            padding: 0;
+                        }
+                        .page-margin-space {
+                            height: 20mm;
                         }
                         .print-header {
                             text-align: center;
@@ -1320,6 +1323,8 @@ if (!function_exists('getRatingStatus')) {
                             column-count: 2;
                             column-gap: 20px;
                             column-fill: auto;
+                            width: 100%;
+                            padding: 0 15mm; /* Side margins */
                         }
                         .comment-item {
                             break-inside: avoid;
@@ -1342,39 +1347,62 @@ if (!function_exists('getRatingStatus')) {
                             padding-top: 5px;
                             font-style: italic;
                         }
+                        table.print-wrapper {
+                            width: 100%;
+                            border-collapse: collapse;
+                        }
+                        /* thead and tfoot repeat on every page */
+                        thead.report-header-space, tfoot.report-footer-space {
+                            display: table-header-group;
+                            display: table-footer-group;
+                        }
                     }
                 </style>
             </head>
             <body>
-                <div class="print-header">
-                    <div style="display:flex; align-items:center; justify-content:center; margin-bottom:15px;">
-                        <img src="{{ asset('images/mccicin.jpg') }}" alt="Left Logo" style="width:70px; height:70px; margin-right:15px;" onerror="this.style.display='none'">
-                        <div style="text-align:center;">
-                            <h1 style="margin:0; font-size:18pt; color:#1e3c72;">Instructor Evaluation Comments</h1>
-                            <h2 style="margin:5px 0 0 0; color:#555; font-size:14pt;">${currentStaffNameForComments}</h2>
-                            <div class="print-meta" style="margin-top:5px; font-size:9pt; color:#777;">
-                                Academic Year: {{ $year->year }} | Printed on: ${new Date().toLocaleString()}
-                            </div>
-                        </div>
-                        <img src="{{ asset('images/madlogo.png') }}" alt="Right Logo" style="width:70px; height:70px; margin-left:15px;" onerror="this.style.display='none'">
-                    </div>
-                </div>
-                <div class="comments-container">
-                    ${currentCommentsData.map(comment => `
-                        <div class="comment-item">
-                            <div class="comment-text">${comment.comments}</div>
-                            <div class="comment-footer">
-                                ${new Date(comment.created_at).toLocaleDateString('en-US', {
-                                    year: 'numeric',
-                                    month: 'long',
-                                    day: 'numeric',
-                                    hour: '2-digit',
-                                    minute: '2-digit'
-                                })}
-                            </div>
-                        </div>
-                    `).join('')}
-                </div>
+                <table class="print-wrapper">
+                    <thead class="report-header-space">
+                        <tr><td><div class="page-margin-space"></div></td></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <div class="print-header">
+                                    <div style="display:flex; align-items:center; justify-content:center; margin-bottom:15px;">
+                                        <img src="{{ asset('images/mccicin.jpg') }}" alt="Left Logo" style="width:70px; height:70px; margin-right:15px;" onerror="this.style.display='none'">
+                                        <div style="text-align:center;">
+                                            <h1 style="margin:0; font-size:18pt; color:#1e3c72;">Instructor Evaluation Comments</h1>
+                                            <h2 style="margin:5px 0 0 0; color:#555; font-size:14pt;">${currentStaffNameForComments}</h2>
+                                            <div class="print-meta" style="margin-top:5px; font-size:9pt; color:#777;">
+                                                Academic Year: {{ $year->year }} | Printed on: ${new Date().toLocaleString()}
+                                            </div>
+                                        </div>
+                                        <img src="{{ asset('images/madlogo.png') }}" alt="Right Logo" style="width:70px; height:70px; margin-left:15px;" onerror="this.style.display='none'">
+                                    </div>
+                                </div>
+                                <div class="comments-container">
+                                    ${currentCommentsData.map(comment => `
+                                        <div class="comment-item">
+                                            <div class="comment-text">${comment.comments}</div>
+                                            <div class="comment-footer">
+                                                ${new Date(comment.created_at).toLocaleDateString('en-US', {
+                                                    year: 'numeric',
+                                                    month: 'long',
+                                                    day: 'numeric',
+                                                    hour: '2-digit',
+                                                    minute: '2-digit'
+                                                })}
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tfoot class="report-footer-space">
+                        <tr><td><div class="page-margin-space"></div></td></tr>
+                    </tfoot>
+                </table>
             </body>
             </html>
         `;
