@@ -1129,11 +1129,16 @@ if (!function_exists('getRatingStatus')) {
     <div class="modal fade" id="commentsModal" tabindex="-1" aria-labelledby="commentsModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <div class="modal-header table-header text-white">
+                <div class="modal-header table-header text-white d-flex align-items-center justify-content-between">
                     <h5 class="modal-title" id="commentsModalLabel">
                         <i class="fas fa-comments me-2"></i><span id="commentsStaffName">Staff Comments</span>
                     </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <div class="d-flex align-items-center">
+                        <button type="button" class="btn btn-light btn-sm me-3" id="printCommentsBtn" style="display: none;" onclick="printComments()">
+                            <i class="fas fa-print me-1"></i>Print
+                        </button>
+                        <button type="button" class="btn-close btn-close-white m-0" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
                 </div>
                 <div class="modal-body" id="commentsContent">
                     <div class="text-center">
@@ -1149,8 +1154,16 @@ if (!function_exists('getRatingStatus')) {
 </div>
 
     <script>
+    let currentCommentsData = [];
+    let currentStaffNameForComments = '';
+
     function viewComments(staffId, staffName) {
-        const modal = new bootstrap.Modal(document.getElementById('commentsModal'));
+        currentStaffNameForComments = staffName;
+        currentCommentsData = [];
+        document.getElementById('printCommentsBtn').style.display = 'none';
+        
+        const modalElement = document.getElementById('commentsModal');
+        const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
         const modalTitle = document.getElementById('commentsModalLabel');
         const commentsContent = document.getElementById('commentsContent');
         
@@ -1178,6 +1191,7 @@ if (!function_exists('getRatingStatus')) {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
+                currentCommentsData = data.comments;
                 displayComments(data.comments, staffName);
             } else {
                 document.getElementById('commentsContent').innerHTML = `
@@ -1200,8 +1214,10 @@ if (!function_exists('getRatingStatus')) {
 
     function displayComments(comments, staffName) {
         const commentsContent = document.getElementById('commentsContent');
+        const printBtn = document.getElementById('printCommentsBtn');
         
         if (comments.length === 0) {
+            printBtn.style.display = 'none';
             commentsContent.innerHTML = `
                 <div class='no-comments'>
                     <i class='fas fa-comment-slash fa-3x mb-3 text-muted'></i>
@@ -1212,6 +1228,12 @@ if (!function_exists('getRatingStatus')) {
             return;
         }
         
+        printBtn.style.display = 'block';
+        printBtn.onclick = function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            printComments();
+        };
         let html = ``;
         comments.forEach(comment => {
             html += `
@@ -1232,6 +1254,152 @@ if (!function_exists('getRatingStatus')) {
         });
         
         commentsContent.innerHTML = html;
+    }
+
+    function printComments() {
+        if (!currentCommentsData || currentCommentsData.length === 0) {
+            console.error('No comments data available for printing');
+            return;
+        }
+
+        // Create a hidden iframe for printing
+        let printFrame = document.getElementById('printFrame');
+        if (!printFrame) {
+            printFrame = document.createElement('iframe');
+            printFrame.id = 'printFrame';
+            printFrame.name = 'printFrame';
+            printFrame.style.position = 'fixed';
+            printFrame.style.right = '0';
+            printFrame.style.bottom = '0';
+            printFrame.style.width = '0';
+            printFrame.style.height = '0';
+            printFrame.style.border = '0';
+            document.body.appendChild(printFrame);
+        }
+
+        const printHtml = `
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>Comments - ${currentStaffNameForComments}</title>
+                <style>
+                    @media print {
+                        @page { 
+                            size: portrait;
+                            margin: 0; 
+                        }
+                        body {
+                            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                            line-height: 1.4;
+                            color: #333;
+                            margin: 0;
+                            padding: 20mm;
+                        }
+                        .print-header {
+                            text-align: center;
+                            margin-bottom: 25px;
+                            border-bottom: 2px solid #1e3c72;
+                            padding-bottom: 15px;
+                        }
+                        .print-header h1 {
+                            margin: 0;
+                            color: #1e3c72;
+                            font-size: 18pt;
+                        }
+                        .print-header h2 {
+                            margin: 5px 0 0 0;
+                            color: #555;
+                            font-size: 14pt;
+                        }
+                        .print-meta {
+                            margin-top: 5px;
+                            font-size: 9pt;
+                            color: #777;
+                        }
+                        .comments-container {
+                            column-count: 2;
+                            column-gap: 20px;
+                            column-fill: auto;
+                        }
+                        .comment-item {
+                            break-inside: avoid;
+                            margin-bottom: 15px;
+                            padding: 10px;
+                            border: 1px solid #e0e0e0;
+                            border-left: 4px solid #1e3c72;
+                            background-color: #fcfcfc;
+                            display: block;
+                        }
+                        .comment-text {
+                            font-size: 10pt;
+                            margin-bottom: 8px;
+                            word-wrap: break-word;
+                        }
+                        .comment-footer {
+                            font-size: 8pt;
+                            color: #666;
+                            border-top: 1px solid #eee;
+                            padding-top: 5px;
+                            font-style: italic;
+                        }
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="print-header">
+                    <div style="display:flex; align-items:center; justify-content:center; margin-bottom:15px;">
+                        <img src="{{ asset('images/mccicin.jpg') }}" alt="Left Logo" style="width:70px; height:70px; margin-right:15px;" onerror="this.style.display='none'">
+                        <div style="text-align:center;">
+                            <h1 style="margin:0; font-size:18pt; color:#1e3c72;">Instructor Evaluation Comments</h1>
+                            <h2 style="margin:5px 0 0 0; color:#555; font-size:14pt;">${currentStaffNameForComments}</h2>
+                            <div class="print-meta" style="margin-top:5px; font-size:9pt; color:#777;">
+                                Academic Year: {{ $year->year }} | Printed on: ${new Date().toLocaleString()}
+                            </div>
+                        </div>
+                        <img src="{{ asset('images/madlogo.png') }}" alt="Right Logo" style="width:70px; height:70px; margin-left:15px;" onerror="this.style.display='none'">
+                    </div>
+                </div>
+                <div class="comments-container">
+                    ${currentCommentsData.map(comment => `
+                        <div class="comment-item">
+                            <div class="comment-text">${comment.comments}</div>
+                            <div class="comment-footer">
+                                ${new Date(comment.created_at).toLocaleDateString('en-US', {
+                                    year: 'numeric',
+                                    month: 'long',
+                                    day: 'numeric',
+                                    hour: '2-digit',
+                                    minute: '2-digit'
+                                })}
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </body>
+            </html>
+        `;
+
+        try {
+            const frameDoc = printFrame.contentWindow.document;
+            frameDoc.open();
+            frameDoc.write(printHtml);
+            frameDoc.close();
+
+            // Give it a moment to load and render
+            setTimeout(() => {
+                printFrame.contentWindow.focus();
+                printFrame.contentWindow.print();
+            }, 500);
+        } catch (e) {
+            console.error('Print error:', e);
+            // Fallback for cross-origin or other issues
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(printHtml);
+            printWindow.document.close();
+            printWindow.onload = function() {
+                printWindow.print();
+            };
+        }
     }
 
     // Print functionality
@@ -1642,6 +1810,4 @@ document.addEventListener('DOMContentLoaded', function() {
 [data-bs-toggle="tooltip"] {
     cursor: help !important;
 }
-</style>
-
-<script> 
+</style> 
