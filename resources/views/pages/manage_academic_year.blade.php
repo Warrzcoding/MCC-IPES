@@ -1321,10 +1321,11 @@ if (!function_exists('getRatingStatus')) {
                         }
                         .comments-container {
                             column-count: 2;
-                            column-gap: 20px;
+                            column-gap: 30px;
                             column-fill: auto;
                             width: 100%;
-                            padding: 0 15mm; /* Side margins */
+                            padding: 0 25mm; /* Increased side margins to prevent cutting */
+                            box-sizing: border-box;
                         }
                         .comment-item {
                             break-inside: avoid;
@@ -1336,12 +1337,13 @@ if (!function_exists('getRatingStatus')) {
                             display: block;
                         }
                         .comment-text {
-                            font-size: 10pt;
+                            font-size: 8.5pt; /* Reduced font size */
                             margin-bottom: 8px;
                             word-wrap: break-word;
+                            overflow-wrap: break-word;
                         }
                         .comment-footer {
-                            font-size: 8pt;
+                            font-size: 7pt; /* Reduced footer font size */
                             color: #666;
                             border-top: 1px solid #eee;
                             padding-top: 5px;
