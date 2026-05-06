@@ -1127,7 +1127,7 @@
                         data: 'profile_image_url',
                         className: 'text-center',
                         render: function(data) {
-                            return `<img src="${data}" class="profile-img" alt="Profile" loading="lazy" onerror="this.src='{{ asset('images/hack.png') }}'">`;
+                            return `<img src="${data}" class="profile-img" alt="Profile" loading="lazy" onerror="this.src='{{ asset('images/hack.png') }}'; this.onerror=null;">`;
                         }
                     },
                     { data: 'full_name', className: 'text-cyan fw-bold' },
@@ -1396,22 +1396,22 @@
                 '1st Year': [
                     { value: 'FM-1A', label: 'FM-1A' }, { value: 'FM-1B', label: 'FM-1B' }, { value: 'FM-1C', label: 'FM-1C' }, { value: 'FM-1D', label: 'FM-1D' },
                     { value: 'FM-1E', label: 'FM-1E' }, { value: 'FM-1F', label: 'FM-1F' }, { value: 'FM-1G', label: 'FM-1G' }, { value: 'FM-1H', label: 'FM-1H' },
-                    { value: 'FM-1I', label: 'FM-1I' }, { value: 'FM-1J', label: 'FM-1J' }, { value: 'FM-1K', label: 'FM-1K' }
+                    { value: 'FM-1I', label: 'FM-1I' }, { value: 'FM-1J', label: 'FM-1J' }, { value: 'FM-1K', label: 'FM-1K' }, { value: 'FM-1L', label: 'FM-1L' }
                 ],
                 '2nd Year': [
                     { value: 'FM-2A', label: 'FM-2A' }, { value: 'FM-2B', label: 'FM-2B' }, { value: 'FM-2C', label: 'FM-2C' }, { value: 'FM-2D', label: 'FM-2D' },
                     { value: 'FM-2E', label: 'FM-2E' }, { value: 'FM-2F', label: 'FM-2F' }, { value: 'FM-2G', label: 'FM-2G' }, { value: 'FM-2H', label: 'FM-2H' },
-                    { value: 'FM-2I', label: 'FM-2I' }, { value: 'FM-2J', label: 'FM-2J' }, { value: 'FM-2K', label: 'FM-2K' }
+                    { value: 'FM-2I', label: 'FM-2I' }, { value: 'FM-2J', label: 'FM-2J' }, { value: 'FM-2K', label: 'FM-2K' }, { value: 'FM-2L', label: 'FM-2L' }
                 ],
                 '3rd Year': [
                     { value: 'FM-3A', label: 'FM-3A' }, { value: 'FM-3B', label: 'FM-3B' }, { value: 'FM-3C', label: 'FM-3C' }, { value: 'FM-3D', label: 'FM-3D' },
                     { value: 'FM-3E', label: 'FM-3E' }, { value: 'FM-3F', label: 'FM-3F' }, { value: 'FM-3G', label: 'FM-3G' }, { value: 'FM-3H', label: 'FM-3H' },
-                    { value: 'FM-3I', label: 'FM-3I' }, { value: 'FM-3J', label: 'FM-3J' }, { value: 'FM-3K', label: 'FM-3K' }
+                    { value: 'FM-3I', label: 'FM-3I' }, { value: 'FM-3J', label: 'FM-3J' }, { value: 'FM-3K', label: 'FM-3K' }, { value: 'FM-3L', label: 'FM-3L' }
                 ],
                 '4th Year': [
                     { value: 'FM-4A', label: 'FM-4A' }, { value: 'FM-4B', label: 'FM-4B' }, { value: 'FM-4C', label: 'FM-4C' }, { value: 'FM-4D', label: 'FM-4D' },
                     { value: 'FM-4E', label: 'FM-4E' }, { value: 'FM-4F', label: 'FM-4F' }, { value: 'FM-4G', label: 'FM-4G' }, { value: 'FM-4H', label: 'FM-4H' },
-                    { value: 'FM-4I', label: 'FM-4I' }, { value: 'FM-4J', label: 'FM-4J' }, { value: 'FM-4K', label: 'FM-4K' }
+                    { value: 'FM-4I', label: 'FM-4I' }, { value: 'FM-4J', label: 'FM-4J' }, { value: 'FM-4K', label: 'FM-4K' }, { value: 'FM-4L', label: 'FM-4L' }
                 ]
             },
             'BSED': {
