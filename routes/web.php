@@ -161,6 +161,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/staff/detailed-evaluations/{staffId}', [StaffController::class, 'getStaffDetailedEvaluations'])->name('staff.detailedEvaluations.general');
 
     // Staff CRUD Routes
+    Route::get('/dashboard/staff/data', [StaffController::class, 'getStaffData'])->name('staff.data');
     Route::post('/dashboard/add-staff', [StaffController::class, 'store'])->name('staff.store');
     Route::post('/dashboard/update-staff', [StaffController::class, 'update'])->name('staff.update');
     Route::post('/dashboard/delete-staff', [StaffController::class, 'destroy'])->name('staff.delete');

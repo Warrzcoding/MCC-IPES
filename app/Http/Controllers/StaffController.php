@@ -16,6 +16,91 @@ class StaffController extends Controller
         return view('pages.add-staff', compact('staff'));
     }
 
+    /**
+     * Get staff data for DataTables AJAX
+     */
+    public function getStaffData(Request $request)
+    {
+        $query = Staff::query();
+
+        // Search
+        if ($request->has('search') && $request->search['value']) {
+            $searchValue = $request->search['value'];
+            \Log::info('Searching for: ' . $searchValue);
+            $query->where(function($q) use ($searchValue) {
+                $q->where('full_name', 'like', "%{$searchValue}%")
+                  ->orWhere('staff_id', 'like', "%{$searchValue}%")
+                  ->orWhere('email', 'like', "%{$searchValue}%")
+                  ->orWhere('department', 'like', "%{$searchValue}%")
+                  ->orWhere('status', 'like', "%{$searchValue}%")
+                  ->orWhere('staff_type', 'like', "%{$searchValue}%");
+            });
+        }
+
+        $totalRecords = Staff::count();
+        $filteredRecords = $query->count();
+        \Log::info("Total: $totalRecords, Filtered: $filteredRecords");
+
+        // Ordering
+        $columnsMap = [
+            0 => 'image_path',
+            1 => 'staff_id',
+            2 => 'full_name',
+            3 => 'email',
+            4 => 'department',
+            5 => 'status',
+            6 => 'staff_type',
+            7 => 'created_at'
+        ];
+
+        if ($request->has('order')) {
+            $columnIndex = $request->order[0]['column'];
+            $columnSortOrder = $request->order[0]['dir'];
+            
+            if (isset($columnsMap[$columnIndex])) {
+                $query->orderBy($columnsMap[$columnIndex], $columnSortOrder);
+            }
+        } else {
+            $query->orderBy('full_name', 'asc');
+        }
+
+        // Pagination
+        $start = $request->start ?? 0;
+        $length = $request->length ?? 10;
+        $staffMembers = $query->skip($start)->take($length)->get();
+
+        $data = [];
+        foreach ($staffMembers as $staff) {
+            $imageUrl = '';
+            if ($staff->image_path) {
+                if (str_starts_with($staff->image_path, 'uploads/')) {
+                    $imageUrl = asset($staff->image_path);
+                } else {
+                    $imageUrl = asset('storage/' . $staff->image_path);
+                }
+            } else {
+                $imageUrl = asset('images/hack.png');
+            }
+
+            $statusValue = strtolower($staff->status ?? '');
+            $statusDisplay = in_array($statusValue, ['jo', 'cos']) ? strtoupper($statusValue) : ucfirst($statusValue);
+            
+            $data[] = array_merge($staff->toArray(), [
+                'status_display' => $statusDisplay,
+                'staff_type_display' => ucfirst($staff->staff_type),
+                'image_url' => $imageUrl,
+                'created_at_formatted' => $staff->created_at ? $staff->created_at->format('Y-m-d') : '',
+            ]);
+        }
+
+        return response()->json([
+            'draw' => intval($request->draw),
+            'recordsTotal' => $totalRecords,
+            'recordsFiltered' => $filteredRecords,
+            'data' => $data
+        ]);
+    }
+
     public function store(Request $request)
     {
         // Normalize status to lowercase for validation consistency
@@ -105,6 +190,13 @@ class StaffController extends Controller
         ]);
 
         if ($validator->fails()) {
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Validation failed.',
+                    'errors' => $validator->errors()
+                ], 422);
+            }
             return redirect()->back()
                 ->withErrors($validator)
                 ->withInput()
@@ -115,6 +207,12 @@ class StaffController extends Controller
         $staff = Staff::where('staff_id', $request->original_staff_id)->first();
         
         if (!$staff) {
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Staff not found.'
+                ], 404);
+            }
             return redirect()->back()
                 ->with('message', 'Staff not found.')
                 ->with('message_type', 'danger');
@@ -167,10 +265,24 @@ class StaffController extends Controller
 
             $staff->update($updateData);
 
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Staff updated successfully!',
+                    'message_type' => 'success'
+                ]);
+            }
+
             return redirect()->back()
                 ->with('message', 'Staff updated successfully!')
                 ->with('message_type', 'success');
         } catch (\Exception $e) {
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Error updating staff: ' . $e->getMessage()
+                ], 500);
+            }
             return redirect()->back()
                 ->with('message', 'Error updating staff. Please try again.')
                 ->with('message_type', 'danger')
@@ -183,6 +295,12 @@ class StaffController extends Controller
         $staff = Staff::where('staff_id', $request->staff_id)->first();
         
         if (!$staff) {
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Staff not found.'
+                ], 404);
+            }
             return redirect()->back()
                 ->with('message', 'Staff not found.')
                 ->with('message_type', 'danger');
@@ -196,10 +314,24 @@ class StaffController extends Controller
             
             $staff->delete();
 
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Staff deleted successfully!',
+                    'message_type' => 'success'
+                ]);
+            }
+
             return redirect()->back()
                 ->with('message', 'Staff deleted successfully!')
                 ->with('message_type', 'success');
         } catch (\Exception $e) {
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Error deleting staff: ' . $e->getMessage()
+                ], 500);
+            }
             return redirect()->back()
                 ->with('message', 'Error deleting staff. Please try again.')
                 ->with('message_type', 'danger');

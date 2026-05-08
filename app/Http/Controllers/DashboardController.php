@@ -49,8 +49,23 @@ class DashboardController extends Controller
         // Role-based access control
         $user = Auth::user();
 
-        // --- Analytics Data for Dashboard Charts (always set for admin) ---
-        if ($user->isAdmin()) {
+        // --- Analytics Data for Dashboard Charts (only for dashboard home) ---
+        $studentsPerCourse = collect();
+        $evaluatedStudentsPerCourse = collect();
+        $staffByType = collect();
+        $avgScorePerYear = collect();
+        $staffPerformanceStatsPerYear = collect();
+        $staffPerformanceStatsPerSemester = collect();
+        $instructorRatingDistribution = [
+            'Outstanding' => 0,
+            'Very Satisfactory' => 0,
+            'Satisfactory' => 0,
+            'Unsatisfactory' => 0,
+            'Poor' => 0,
+        ];
+        $activeOverallPerformancePct = 0;
+
+        if ($user->isAdmin() && $page === 'dashboard') {
             $currentAcademicYear = \App\Models\AcademicYear::where('is_active', 1)->orderBy('id', 'desc')->first();
 
             $studentsPerCourse = \App\Models\User::where('role', 'student')
@@ -221,21 +236,6 @@ class DashboardController extends Controller
                     $activeOverallPerformancePct = round((($totalAvg / $activePeriodRatings->count()) / 5) * 100, 1);
                 }
             }
-        } else {
-            $studentsPerCourse = collect();
-            $evaluatedStudentsPerCourse = collect();
-            $staffByType = collect();
-            $avgScorePerYear = collect();
-            $staffPerformanceStatsPerYear = collect();
-            $staffPerformanceStatsPerSemester = collect();
-            $instructorRatingDistribution = [
-                'Outstanding' => 0,
-                'Very Satisfactory' => 0,
-                'Satisfactory' => 0,
-                'Unsatisfactory' => 0,
-                'Poor' => 0,
-            ];
-            $activeOverallPerformancePct = 0;
         }
         
         // Students can only access: dashboard, staff-list, evaluates, irevaluates, lockedcards, profile
@@ -300,20 +300,7 @@ class DashboardController extends Controller
         $backupLogs = null;
         
         if ($page === 'add-staff') {
-
-            $searchQuery = $request->input('search_staff', '');
-               $staffQuery = Staff::query();
-             if ($searchQuery) {
-                          $staffQuery = $staffQuery->where(function($q) use ($searchQuery) {
-                          $q->where('full_name', 'like', "%{$searchQuery}%")
-                          ->orWhere('staff_id', 'like', "%{$searchQuery}%")
-                          ->orWhere('email', 'like', "%{$searchQuery}%")
-                          ->orWhere('department', 'like', "%{$searchQuery}%");
-                     });
-                }
-             $staff = $staffQuery->orderBy('full_name')->paginate(15)->appends($request->all());
-             /* $staff = Staff::orderBy('full_name')->paginate(15);*/
-              /* $staff = Staff::orderBy('full_name')->get();*/
+            $staff = collect(); // Load via AJAX
         }
         
         if ($page === 'add-students') {

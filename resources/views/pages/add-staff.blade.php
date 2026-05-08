@@ -35,6 +35,8 @@
     </div>
 </div>
 
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+
 <div class="row page-full-width">
     <!-- Staff List -->
     <div class="col-12">
@@ -53,6 +55,88 @@
          
             <div class="card-body">
                 <style>
+                    /* DataTables overrides for hacker/compact theme */
+                    .dataTables_wrapper .dataTables_filter {
+                        display: flex;
+                        justify-content: flex-end;
+                        margin-bottom: 1rem;
+                    }
+                    .dataTables_wrapper .dataTables_filter input {
+                        background: #fff;
+                        border: 1px solid #e2e8f0;
+                        border-radius: 0.375rem;
+                        padding: 0.4rem 0.75rem;
+                        font-size: 0.75rem;
+                        width: 250px;
+                        transition: all 0.2s;
+                    }
+                    .dataTables_wrapper .dataTables_filter input:focus {
+                        outline: none;
+                        border-color: #3b82f6;
+                        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+                    }
+                    .dataTables_wrapper .dataTables_length select {
+                        padding: 0.3rem 2rem 0.3rem 0.75rem;
+                        font-size: 0.75rem;
+                        border-radius: 0.375rem;
+                        border: 1px solid #e2e8f0;
+                    }
+                    .dataTables_wrapper .dataTables_info {
+                        font-size: 0.7rem;
+                        color: #64748b;
+                        padding-top: 1rem;
+                    }
+                    .dataTables_wrapper .dataTables_paginate {
+                        padding-top: 1rem;
+                    }
+
+                    .dataTables_wrapper {
+                        position: relative;
+                        width: 100% !important;
+                    }
+
+                    /* Ensure processing indicator is always on top and centered */
+                    .dataTables_wrapper .dataTables_processing {
+                        display: none !important;
+                    }
+                    
+                    .search-loader {
+                        position: absolute;
+                        left: 10px;
+                        top: 50%;
+                        transform: translateY(-50%);
+                        width: 12px;
+                        height: 12px;
+                        border: 1.5px solid rgba(59, 130, 246, 0.2);
+                        border-top-color: #3b82f6;
+                        border-radius: 50%;
+                        animation: search-spin 0.6s linear infinite;
+                        display: none;
+                        z-index: 10;
+                    }
+                    @keyframes search-spin {
+                        to { transform: translateY(-50%) rotate(360deg); }
+                    }
+                    .pagination {
+                        gap: 0.25rem;
+                    }
+                    .page-link {
+                        padding: 0.4rem 0.75rem;
+                        font-size: 0.75rem;
+                        border-radius: 0.375rem !important;
+                        color: #475569;
+                        border: 1px solid #e2e8f0;
+                        transition: all 0.2s;
+                    }
+                    .page-item.active .page-link {
+                        background-color: #3b82f6;
+                        border-color: #3b82f6;
+                    }
+                    .page-item.disabled .page-link {
+                        background-color: #f8fafc;
+                        color: #94a3b8;
+                    }
+                    
                     /* Responsive table styles for zoom compatibility */
                     .table-responsive {
                         overflow-x: auto;
@@ -213,7 +297,11 @@
                         height: 28px !important;
                         font-weight: 600;
                         font-size: 0.65rem !important;
-                        padding: 0.24rem 0.55rem !important;
+                        padding: 0 0.75rem !important;
+                        display: flex;
+                        align-items: center;
+                        gap: 0.25rem;
+                        border-radius: 0.375rem !important;
                     }
                     .refresh-btn-enhanced i,
                     .refresh-btn-enhanced span {
@@ -221,16 +309,28 @@
                     }
                     
                     .search-box {
-                        font-size: 0.66rem;
+                        position: relative;
+                        display: flex;
+                        align-items: center;
                     }
                     .search-box input {
                         font-size: 0.66rem !important;
-                        padding-left: 36px !important;
+                        padding-left: 32px !important;
                         padding-top: 0.28rem !important;
                         padding-bottom: 0.28rem !important;
+                        height: 28px !important;
+                        width: 220px;
+                        border: 1px solid #cbd5e1 !important;
+                        border-radius: 0.375rem !important;
                     }
                     .search-box i {
+                        position: absolute;
+                        left: 10px;
+                        top: 50%;
+                        transform: translateY(-50%);
                         font-size: 0.62rem !important;
+                        color: #64748b;
+                        z-index: 5;
                     }
                     
                     .staff-type-filter {
@@ -432,191 +532,40 @@
 
                 </style>
                 
-                @if($staff->isEmpty())
-                    <p class="text-muted text-center py-4">No staff found.</p>
-                @else
-
-                  <!--Start of golbal serach-->
-            <div class="card-header py-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
-                <h7  class="m-0 font-weight-bold text-primary">Instructors List</h7>
-                <div class="d-flex gap-2 flex-wrap align-items-center">
-                    <form method="GET" action="{{ route('dashboard') }}" class="d-flex gap-2" style="flex-wrap: wrap; align-items: center;">
-                        <input type="hidden" name="page" value="add-staff">
-                        <div class="position-relative" style="min-width: 200px;">
-                            <i class="fas fa-search position-absolute" style="left: 0.7rem; top: 50%; transform: translateY(-50%); color: #999; font-size: 0.75rem;"></i>
-                            <input type="text" name="search_staff" class="form-control" placeholder="Search by name, ID, email..." 
-                                   value="{{ request('search_staff') }}" style="padding-left: 2rem; font-size: 0.75rem; padding: 0.4rem 0.6rem 0.4rem 2rem;">
+                <div class="card-header py-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
+                    <h7 class="m-0 font-weight-bold text-primary">Instructors List</h7>
+                    <div class="d-flex gap-2 align-items-center">
+                        <div class="search-box">
+                            <i class="fas fa-search" id="searchIcon"></i>
+                            <input type="text" id="customSearch" class="form-control" placeholder="Search database...">
+                            <div id="searchLoader" class="search-loader"></div>
                         </div>
-                        <button type="submit" class="btn btn-primary btn-compact-action">
-                            <i class="fas fa-search"></i> Search
+                        <button class="btn btn-sm btn-outline-secondary refresh-btn-enhanced" onclick="window.staffTable.ajax.reload()">
+                            <i class="fas fa-sync-alt"></i> Refresh Data
                         </button>
-                        @if(request('search_staff'))
-                            <a href="{{ route('dashboard', ['page' => 'add-staff']) }}" class="btn btn-secondary btn-compact-action">
-                                <i class="fas fa-times"></i> Clear
-                            </a>
-                        @endif
-                    </form>
-                </div>
-            </div>
-           <!--end of golbal serach-->
-                    <div class="table-responsive">
-                        <table class="table table-sm" id="staffTable">
-                            <thead>
-                                <tr>
-                                    <th>Profile</th>
-                                    <th>Staff ID</th>
-                                    <th>Full Name</th>
-                                    <th>Email</th>                                
-                                    <th>Department</th>
-                                     <th>Status</th>
-                                    <th>Staff Type</th>
-                                    <th>Created</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($staff as $staff_member)
-                                    <tr>
-                                        <td>
-                                            @php
-                                                $imageUrl = '';
-                                                if ($staff_member->image_path) {
-                                                    if (str_starts_with($staff_member->image_path, 'uploads/')) {
-                                                        $imageUrl = asset($staff_member->image_path);
-                                                    } else {
-                                                        $imageUrl = asset('storage/' . $staff_member->image_path);
-                                                    }
-                                                } else {
-                                                    $imageUrl = asset('images/default-avatar.png');
-                                                }
-                                            @endphp
-                                            <img src="{{ $imageUrl }}" 
-                                                 alt="Staff Photo" 
-                                                 style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; background-color: #f8f9fa;"
-                                                 onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiNlOWVjZWYiLz4KPHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4PSIxMCIgeT0iMTAiPgo8cGF0aCBkPSJNMTIgMTJDMTRuMjEgMCAyNC0xLjI3IDI0LTZzLTkuNzktNi0yNC02LTI0IDEuMjctMjQgNiA5Ljc5IDYgMjQgNnoiIGZpbGw9IiM2Yzc1N2QiLz4KPHBhdGggZD0iTTEyIDEyYzYuNjI3IDAgMTItNS4zNzMgMTItMTJzLTUuMzczLTEyLTEyLTEyLTEyIDUuMzczLTEyIDEyIDUuMzczIDEyIDEyIDEyeiIgZmlsbD0iIzZjNzU3ZCIvPgo8L3N2Zz4KPC9zdmc+'">
-                                        </td>
-                                        <td>{{ $staff_member->staff_id }}</td>
-                                        <td>{{ $staff_member->full_name }}</td>
-                                        <td>{{ $staff_member->email }}</td>                                  
-                                        <td>{{ $staff_member->department }}</td>
-                                        <td>
-                                            @php
-                                                $statusValue = strtolower($staff_member->status ?? '');
-                                                $statusDisplay = in_array($statusValue, ['jo','cos']) ? strtoupper($statusValue) : ucfirst($statusValue);
-                                            @endphp
-                                            {{ $statusDisplay }}
-                                        </td>
-                                        <td>{{ ucfirst($staff_member->staff_type) }}</td>
-                                        <td>{{ $staff_member->created_at ? $staff_member->created_at->format('Y-m-d') : '' }}</td>
-                                        <td>
-                                            @php
-                                                $editImageUrl = '';
-                                                if ($staff_member->image_path) {
-                                                    if (str_starts_with($staff_member->image_path, 'uploads/')) {
-                                                        $editImageUrl = asset($staff_member->image_path);
-                                                    } else {
-                                                        $editImageUrl = asset('storage/' . $staff_member->image_path);
-                                                    }
-                                                }
-                                            @endphp
-                                            <button class="btn btn-sm btn-outline-primary" 
-                                                    data-bs-toggle="modal" 
-                                                    data-bs-target="#editModal"
-                                                    onclick="loadStaffData('{{ $staff_member->staff_id }}', '{{ addslashes($staff_member->full_name) }}', '{{ addslashes($staff_member->email) }}', '{{ addslashes($staff_member->status) }}', '{{ addslashes($staff_member->department) }}', '{{ $staff_member->staff_type }}', '{{ $editImageUrl }}')">
-                                                <i class="fas fa-edit"></i>
-                                            </button>                     
-                                            <button class="btn btn-sm btn-outline-info" 
-                                                    onclick="viewStaffData('{{ $staff_member->staff_id }}', '{{ addslashes($staff_member->full_name) }}', '{{ addslashes($staff_member->email) }}', '{{ addslashes($staff_member->status) }}', '{{ addslashes($staff_member->department) }}', '{{ ucfirst($staff_member->staff_type) }}', '{{ $imageUrl }}')">
-                                                <i class="fas fa-eye"></i>
-                                            </button>
-                                              <button class="btn btn-sm btn-outline-danger" onclick="deleteStaff('{{ $staff_member->staff_id }}', '{{ addslashes($staff_member->full_name) }}')">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
                     </div>
-                    <!--pagination page-->
-                      @if(method_exists($staff, 'hasPages') && $staff->hasPages())
-                        <div class="d-flex justify-content-between align-items-center mt-3">
-                            <div class="text-muted small">
-                                Showing {{ $staff->firstItem() }}-{{ $staff->lastItem() }} of {{ $staff->total() }} staff members
-                            </div>
-                            <nav aria-label="Staff pagination">
-                                <div class="pagination-custom d-flex align-items-center gap-1">
-                                    {{-- Previous Button --}}
-                                    @if($staff->onFirstPage())
-                                        <span class="page-btn disabled">
-                                            <i class="fas fa-chevron-left"></i>
-                                        </span>
-                                    @else
-                                        <a href="{{ $staff->previousPageUrl() }}" class="page-btn">
-                                            <i class="fas fa-chevron-left"></i>
-                                        </a>
-                                    @endif
+                </div>
 
-                                    {{-- Page Numbers --}}
-                                    @php
-                                        $currentPage = $staff->currentPage();
-                                        $lastPage = $staff->lastPage();
-                                        $showPages = 8;
-                                        $halfShow = floor($showPages / 2);
-
-                                        $startPage = max(1, $currentPage - $halfShow);
-                                        $endPage = min($lastPage, $currentPage + $halfShow);
-
-                                        if ($endPage - $startPage + 1 < $showPages) {
-                                            if ($startPage == 1) {
-                                                $endPage = min($lastPage, $startPage + $showPages - 1);
-                                            } elseif ($endPage == $lastPage) {
-                                                $startPage = max(1, $endPage - $showPages + 1);
-                                            }
-                                        }
-                                    @endphp
-
-                                    {{-- Show first page if not in range --}}
-                                    @if($startPage > 1)
-                                        <a href="{{ $staff->url(1) }}" class="page-btn">1</a>
-                                        @if($startPage > 2)
-                                            <span class="page-btn disabled">...</span>
-                                        @endif
-                                    @endif
-
-                                    {{-- Show page range --}}
-                                    @for($page = $startPage; $page <= $endPage; $page++)
-                                        @if($page == $currentPage)
-                                            <span class="page-btn active">{{ $page }}</span>
-                                        @else
-                                            <a href="{{ $staff->url($page) }}" class="page-btn">{{ $page }}</a>
-                                        @endif
-                                    @endfor
-
-                                    {{-- Show last page if not in range --}}
-                                    @if($endPage < $lastPage)
-                                        @if($endPage < $lastPage - 1)
-                                            <span class="page-btn disabled">...</span>
-                                        @endif
-                                        <a href="{{ $staff->url($lastPage) }}" class="page-btn">{{ $lastPage }}</a>
-                                    @endif
-
-                                    {{-- Next Button --}}
-                                    @if($staff->hasMorePages())
-                                        <a href="{{ $staff->nextPageUrl() }}" class="page-btn">
-                                            <i class="fas fa-chevron-right"></i>
-                                        </a>
-                                    @else
-                                        <span class="page-btn disabled">
-                                            <i class="fas fa-chevron-right"></i>
-                                        </span>
-                                    @endif
-                                </div>
-                            </nav>
-                        </div>
-                    @endif
-                 <!--end of pagination page-->
-                @endif
+                <div class="table-responsive">
+                    <table class="table table-sm" id="staffTable">
+                        <thead>
+                            <tr>
+                                <th>Profile</th>
+                                <th>Staff ID</th>
+                                <th>Full Name</th>
+                                <th>Email</th>                                
+                                <th>Department</th>
+                                <th>Status</th>
+                                <th>Staff Type</th>
+                                <th>Created</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Populated by DataTables -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -801,7 +750,128 @@
 <!-- SweetAlert2 CDN -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+
 <script>
+$(document).ready(function() {
+    // Initialize Server-side DataTable for Staff
+    const table = $('#staffTable').DataTable({
+        processing: false, // Disable default loader
+        serverSide: true,
+        autoWidth: false,
+        dom: 'lrtip', // Hide default search box
+        ajax: {
+            url: "{{ route('staff.data') }}",
+            error: function(xhr, error, code) {
+                console.error('DataTables Ajax Error:', error);
+                console.log('XHR Response:', xhr.responseText);
+                // Only show alert if it's not a cancelled request
+                if (xhr.status !== 0) {
+                    Swal.fire({
+                        title: 'Data Load Error',
+                        text: 'Failed to retrieve staff data. Please check console for details.',
+                        icon: 'error'
+                    });
+                }
+            }
+        },
+        columns: [
+            { 
+                data: 'image_url',
+                className: 'text-center',
+                orderable: false,
+                render: function(data) {
+                    return `<img src="${data}" alt="Staff Photo" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; background-color: #f8f9fa;" onerror="this.src='{{ asset('images/ins.png') }}'; this.onerror=null;">`;
+                }
+            },
+            { data: 'staff_id' },
+            { data: 'full_name' },
+            { data: 'email' },
+            { data: 'department' },
+            { 
+                data: 'status_display',
+                render: function(data) {
+                    return data;
+                }
+            }, 
+            { data: 'staff_type_display' },
+            { data: 'created_at_formatted' },
+            { 
+                data: null,
+                className: 'text-center',
+                orderable: false,
+                render: function(data) {
+                    const fullNameEscaped = data.full_name.replace(/'/g, "\\'");
+                    const emailEscaped = data.email.replace(/'/g, "\\'");
+                    const statusEscaped = data.status.replace(/'/g, "\\'");
+                    const deptEscaped = data.department.replace(/'/g, "\\'");
+                    
+                    return `
+                        <button class="btn btn-sm btn-outline-primary" 
+                                data-bs-toggle="modal" 
+                                data-bs-target="#editModal"
+                                onclick="loadStaffData('${data.staff_id}', '${fullNameEscaped}', '${emailEscaped}', '${statusEscaped}', '${deptEscaped}', '${data.staff_type}', '${data.image_url}')">
+                            <i class="fas fa-edit"></i>
+                        </button>                     
+                        <button class="btn btn-sm btn-outline-info" 
+                                onclick="viewStaffData('${data.staff_id}', '${fullNameEscaped}', '${emailEscaped}', '${statusEscaped}', '${deptEscaped}', '${data.staff_type_display}', '${data.image_url}')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger" onclick="deleteStaff('${data.staff_id}', '${fullNameEscaped}')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    `;
+                }
+            }
+        ],
+        language: {
+            search: "_INPUT_",
+            searchPlaceholder: "Search staff...",
+            lengthMenu: "Show _MENU_ entries",
+            info: "Showing _START_ to _END_ of _TOTAL_ entries",
+            paginate: {
+                next: '<i class="fas fa-chevron-right"></i>',
+                previous: '<i class="fas fa-chevron-left"></i>'
+            }
+        },
+        order: [[2, 'asc']], // Default sort by Full Name
+        pageLength: 10,
+        drawCallback: function() {
+            // Re-apply any custom styling after draw
+        }
+    });
+
+    // Make table globally accessible
+    window.staffTable = table;
+
+    // Custom search with debounce for "faster" feel and less server load
+    let searchTimer;
+    $('#customSearch').on('keyup change', function() {
+        const searchValue = this.value;
+        
+        // Only show loader if we're actually searching
+        if (searchValue.trim() !== "") {
+            $('#searchIcon').hide();
+            $('#searchLoader').show();
+        } else {
+            $('#searchLoader').hide();
+            $('#searchIcon').show();
+        }
+        
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(function() {
+            table.search(searchValue).draw();
+        }, 300); // 300ms debounce
+    });
+
+    // Hide loader after draw
+    table.on('draw', function() {
+        $('#searchLoader').hide();
+        $('#searchIcon').show();
+    });
+});
+
 // Email auto-complete: when user types '@', append '@gmail.com' if no domain yet
 function setupEmailAutocomplete(inputId) {
     const input = document.getElementById(inputId);
@@ -925,7 +995,7 @@ function viewStaffData(staffId, fullName, email, status, department, staffType, 
             <div class="text-center mb-3">
                 <img src="${imageUrl}" alt="Staff Avatar" 
                      style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid #dee2e6; background-color: #f8f9fa;"
-                     onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxjaXJjbGUgY3g9IjUwIiBjeT0iNTAiIHI9IjUwIiBmaWxsPSIjZTllY2VmIi8+Cjxzdmcgd2lkdGg9IjUwIiBoZWlnaHQ9IjUwIiB2aWV3Qm94PSIwIDAgMjQgMjQiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeD0iMjUiIHk9IjI1Ij4KPHBhdGggZD0iTTEyIDEyQzE0LjIxIDAgMjQtMS4yNyAyNC02cy05Ljc5LTYtMjQtNi0yNCAxLjI3LTI0IDYgOS43OSA2IDI0IDZ6IiBmaWxsPSIjNmM3NTdkIi8+CjxwYXRoIGQ9Ik0xMiAxMmM2LjYyNyAwIDEyLTUuMzczIDEyLTEycy01LjM3My0xMi0xMi0xMi0xMiA1LjM3My0xMiAxMiA1LjM3MyAxMiAxMiAxMnoiIGZpbGw9IiM2Yzc1N2QiLz4KPC9zdmc+Cjwvc3ZnPg=='">
+                     onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxjaXJjbGUgY3g9IjUwIiBjeT0iNTAiIHI9IjUwIiBmaWxsPSIjZTllY2VmIi8+Cjxzdmcgd2lkdGg9IjUwIiBoZWlnaHQ9IjUwIiB2aWV3Qm94PSIwIDAgMjQgMjQiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeD0iMjUiIHk9IjI1Ij4KPHBhdGggZD0iTTEyIDEyQzE0LjIxIDAgMjQtMS4yNyAyNC02cy05Ljc5LTYtMjQtNi0yNCAxLjI3LTI0IDYgOS43OSA2IDI0IDZ6IiBmaWxsPSIjNmM3NTdkIi8+CjxwYXRoIGQ9Ik0xMiAxMmM2LjYyNyAwIDEyLTUuMzczIDEyLTEycy01LjM3My0xMi0xMi0xMi0xMiA1LjM3My0xMiAxMiA1LjM3MyAxMiAxMiAxMnoiIGZpbGw9IiM2Yzc1N2QiLz4KPC9zdmc+Cjwvc3ZnPg=='; this.onerror=null;">
                 <h5 class="mt-2 mb-3">${fullName}</h5>
             </div>
             <div class="text-start">
@@ -1018,115 +1088,6 @@ document.addEventListener('DOMContentLoaded', function() {
             staffIdInput.value = generateStaffIdFromName(fullNameInput.value);
         });
     }
-    // --- UI: Flex container for search and filter ---
-  /* const searchFilterWrapper = document.createElement('div');
-    searchFilterWrapper.className = 'd-flex flex-wrap align-items-center gap-2 mb-2';
-    // --- Search box with icon ---
-    const searchBox = document.createElement('div');
-    searchBox.className = 'search-box mb-0';
-    searchBox.style.flex = '1 1 220px';
-    searchBox.style.minWidth = '200px';
-    searchBox.style.position = 'relative';
-    searchBox.style.fontSize = '0.66rem';
-    const searchIcon = document.createElement('i');
-    searchIcon.className = 'fas fa-search search-icon';
-    searchIcon.style.fontSize = '0.62rem';
-    searchIcon.style.position = 'absolute';
-    searchIcon.style.left = '15px';
-    searchIcon.style.top = '50%';
-    searchIcon.style.transform = 'translateY(-50%)';
-    searchIcon.style.color = '#6c757d';
-    const searchInput = document.createElement('input');
-    searchInput.type = 'text';
-    searchInput.id = 'searchInput';
-    searchInput.className = 'form-control';
-   searchInput.placeholder = 'Search staff by name, department, or email...';
-    searchInput.style.fontSize = '0.66rem';
-    searchInput.style.paddingLeft = '34px';
-    searchInput.style.paddingTop = '0.28rem';
-    searchInput.style.paddingBottom = '0.28rem';
-    searchInput.style.borderRadius = '20px';
-    searchInput.style.border = '1.3px solid #e9ecef';
-    searchInput.style.boxShadow = 'none';
-    searchInput.addEventListener('focus', function() {
-        searchInput.style.borderColor = '#007bff';
-        searchInput.style.boxShadow = '0 0 0 0.15rem rgba(0,123,255,.2)';
-    });
-    searchInput.addEventListener('blur', function() {
-        searchInput.style.borderColor = '#e9ecef';
-        searchInput.style.boxShadow = 'none';
-    });
-    searchBox.appendChild(searchIcon);
-    searchBox.appendChild(searchInput);
-    // --- Staff type filter select ---
-    const filterDiv = document.createElement('div');
-    filterDiv.style.minWidth = '180px';
-    const staffTypeSelect = document.createElement('select');
-    staffTypeSelect.id = 'staffTypeFilter';
-    staffTypeSelect.className = 'form-select staff-type-filter';
-    staffTypeSelect.style.fontSize = '0.62rem';
-    staffTypeSelect.style.padding = '0.24rem 1.5rem 0.24rem 0.45rem';
-    staffTypeSelect.style.minHeight = '1.8rem';
-    staffTypeSelect.innerHTML = `
-      <option value="">All Staff Types</option>
-      <option value="Teaching">Teaching</option>
-      <option value="Non-teaching">Non-Teaching</option>
-    `;*/
-   /* filterDiv.appendChild(staffTypeSelect);
-    // --- Assemble UI ---
-    searchFilterWrapper.appendChild(searchBox);
-    searchFilterWrapper.appendChild(filterDiv);
-    // --- Refresh button ---
-    const refreshButton = document.createElement('button');
-    refreshButton.type = 'button';
-    refreshButton.className = 'btn btn-primary ms-2 shadow-sm d-flex align-items-center gap-2 rounded-pill refresh-btn-enhanced';
-    refreshButton.style.height = '28px';
-    refreshButton.style.fontWeight = '600';
-    refreshButton.style.fontSize = '0.65rem';
-    refreshButton.style.padding = '0.24rem 0.55rem';
-    refreshButton.innerHTML = '<i class="fas fa-sync-alt fa-spin-on-hover" style="font-size:0.62rem;"></i> <span style="font-size:0.65rem;">Refresh</span>';
-    refreshButton.onclick = function() {
-        location.reload();
-    };*/
-    searchFilterWrapper.appendChild(refreshButton);
-    // --- Insert UI ---
-    const table = document.getElementById('staffTable');
-    if (table) {
-        table.parentNode.insertBefore(searchFilterWrapper, table);
-        // --- Filtering logic ---
-        function filterRows() {
-            const input = searchInput.value.toLowerCase();
-            const type = staffTypeSelect.value;
-            const rows = table.querySelectorAll('tbody tr');
-            rows.forEach(row => {
-                // If this is the empty state row, always show if no results
-                if (row.querySelector('td[colspan]')) {
-                    row.style.display = 'none';
-                    return;
-                }
-                let found = false;
-                // Search in all columns except actions
-                for (let j = 1; j < row.cells.length - 1; j++) {
-                    if (row.cells[j] && row.cells[j].textContent.toLowerCase().indexOf(input) > -1) {
-                        found = true;
-                        break;
-                    }
-                }
-                // Staff type is in the 7th cell (index 6)
-                let staffType = row.cells[6] ? row.cells[6].textContent.trim() : '';
-                let matchesType = !type || staffType.includes(type);
-                row.style.display = (found && matchesType) ? '' : 'none';
-            });
-            // Show empty state if all rows are hidden
-            const visibleRows = Array.from(rows).filter(row => row.style.display !== 'none' && !row.querySelector('td[colspan]'));
-            const emptyRow = table.querySelector('tbody tr td[colspan]')?.parentElement;
-            if (emptyRow) {
-                emptyRow.style.display = visibleRows.length === 0 ? '' : 'none';
-            }
-        }
-        searchInput.addEventListener('keyup', filterRows);
-        staffTypeSelect.addEventListener('change', filterRows);
-    }
 });
 
 // Form submission handling with SweetAlert
@@ -1162,37 +1123,48 @@ document.addEventListener('DOMContentLoaded', function() {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                 }
             })
-            .then(response => response.text())
-            .then(html => {
+            .then(response => response.json())
+            .then(data => {
                 Swal.close();
                 
-                Swal.fire({
-                    title: 'Success!',
-                    text: 'Instructor updated successfully!',
-                    icon: 'success',
-                    timer: 3000,
-                    showConfirmButton: false,
-                    timerProgressBar: true,
-                    customClass: {
-                        popup: 'success-alert-popup'
-                    },
-                    didOpen: function() {
-                        const popup = Swal.getPopup();
-                        if (popup) {
-                            popup.style.minWidth = window.innerWidth <= 768 ? '280px' : '350px';
-                            popup.style.minHeight = window.innerWidth <= 768 ? '200px' : '220px';
+                if (data.message_type === 'success' || data.success) {
+                    Swal.fire({
+                        title: 'Success!',
+                        text: data.message || 'Instructor updated successfully!',
+                        icon: 'success',
+                        timer: 3000,
+                        showConfirmButton: false,
+                        timerProgressBar: true,
+                        customClass: {
+                            popup: 'success-alert-popup'
+                        },
+                        didOpen: function() {
+                            const popup = Swal.getPopup();
+                            if (popup) {
+                                popup.style.minWidth = window.innerWidth <= 768 ? '280px' : '350px';
+                                popup.style.minHeight = window.innerWidth <= 768 ? '200px' : '220px';
+                            }
+                        },
+                        showClass: {
+                            popup: 'animate__animated animate__fadeInDown'
+                        },
+                        hideClass: {
+                            popup: 'animate__animated animate__fadeOutUp'
+                        },
+                        didClose: () => {
+                            const editModal = bootstrap.Modal.getInstance(document.getElementById('editModal'));
+                            if (editModal) editModal.hide();
+                            if (window.staffTable) window.staffTable.ajax.reload(null, false);
                         }
-                    },
-                    showClass: {
-                        popup: 'animate__animated animate__fadeInDown'
-                    },
-                    hideClass: {
-                        popup: 'animate__animated animate__fadeOutUp'
-                    },
-                    didClose: () => {
-                        window.location.reload();
-                    }
-                });
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: data.message || 'Failed to update instructor.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -1237,43 +1209,37 @@ document.addEventListener('DOMContentLoaded', function() {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                 }
             })
-            .then(response => response.text())
-            .then(html => {
+            .then(response => response.json())
+            .then(data => {
                 Swal.close();
                 
-                Swal.fire({
-                    title: 'Instructor Deleted!',
-                    text: 'Instructor has been successfully removed from the system.',
-                    icon: 'success',
-                    timer: 3000,
-                    showConfirmButton: false,
-                    timerProgressBar: true,
-                    showClass: {
-                        popup: 'animate__animated animate__fadeInDown'
-                    },
-                    hideClass: {
-                        popup: 'animate__animated animate__fadeOutUp'
-                    },
-                    didClose: () => {
-                        window.location.reload();
-                    }
-                });
+                if (data.message_type === 'success' || data.success) {
+                    Swal.fire({
+                        title: 'Deleted!',
+                        text: data.message || 'Instructor has been deleted.',
+                        icon: 'success',
+                        timer: 2000,
+                        showConfirmButton: false,
+                        didClose: () => {
+                            if (window.staffTable) window.staffTable.ajax.reload(null, false);
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: data.message || 'Failed to delete instructor.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
             })
             .catch(error => {
                 console.error('Error:', error);
                 Swal.fire({
-                    title: 'Delete Failed!',
-                    html: `
-                        <div class="text-center">
-                            <i class="fas fa-exclamation-circle text-danger" style="font-size: 3rem; margin-bottom: 1rem;"></i>
-                            <p>Failed to delete the staff. Please try again.</p>
-                            <p class="text-muted small">If the problem persists, contact the administrator.</p>
-                        </div>
-                    `,
+                    title: 'Error!',
+                    text: 'An error occurred while deleting. Please try again.',
                     icon: 'error',
-                    confirmButtonText: 'OK',
-                    confirmButtonColor: '#d33',
-                    width: '500px'
+                    confirmButtonText: 'OK'
                 });
             });
         });
