@@ -345,6 +345,11 @@
             object-fit: cover;
         }
 
+        /* Ensure SweetAlert is always on top */
+        .swal2-container {
+            z-index: 999999 !important;
+        }
+
         .btn-action {
             padding: 3px 8px;
             border-radius: 3px;
@@ -462,6 +467,24 @@
             }
         }
         /* ==================== IDCHECK STYLES ==================== */
+        .btn-add-student {
+            background: transparent;
+            border: 2px solid var(--accent-green);
+            color: var(--accent-green);
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: bold;
+            transition: var(--transition);
+            white-space: nowrap;
+        }
+
+        .btn-add-student:hover {
+            background: var(--accent-green);
+            color: #000;
+            box-shadow: 0 0 15px rgba(0, 255, 65, 0.5);
+        }
+
         .btn-idcheck {
             background: transparent;
             border: 2px solid #ffcc00;
@@ -813,6 +836,9 @@
                     <i class="fas fa-user-graduate me-2"></i>Student Management
                 </h5>
                 <div class="d-flex align-items-center gap-2">
+                    <button class="btn-add-student" id="openAddStudentModal">
+                        <i class="fas fa-user-plus me-1"></i> ADD STUDENT
+                    </button>
                     <button class="btn-idcheck" id="openIdCheckModal">
                         <i class="fas fa-id-card me-1"></i> IDCHECK
                     </button>
@@ -989,7 +1015,7 @@
                     </div>
                     <div class="col-md-6 mb-3">
                         <label style="color: var(--accent-green); font-size: 11px; display: block; margin-bottom: 5px;">SCHOOL_ID</label>
-                        <input type="text" name="school_id" id="editSchoolId" required 
+                        <input type="text" name="school_id" id="editSchoolId" required maxlength="9" placeholder="0000-0000"
                                style="width: 100%; background: #000; border: 1px solid var(--accent-green); color: var(--accent-green); padding: 8px; border-radius: 4px; font-family: 'Courier New', monospace; font-size: 13px;">
                     </div>
                 </div>
@@ -1056,6 +1082,140 @@
                     <button type="submit" 
                             style="flex: 2; background: var(--accent-green); border: none; color: var(--primary-dark); padding: 10px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; transition: var(--transition); box-shadow: 0 0 10px rgba(0,255,65,0.4);">
                         UPDATE_DATA
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ADD STUDENT MODAL (Overlay) -->
+    <div id="addStudentModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 4000; backdrop-filter: blur(5px);">
+        <div class="modal-content-custom" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 500px; background: var(--secondary-dark); border: 2px solid var(--accent-green); border-radius: 8px; box-shadow: 0 0 30px rgba(0,255,65,0.3); padding: 25px; max-height: 90vh; overflow-y: auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+                <h6 style="color: var(--accent-green); margin: 0; letter-spacing: 1px;">
+                    <i class="fas fa-user-plus me-2"></i>MANUAL ADD STUDENT
+                </h6>
+            </div>
+            
+            <form id="addStudentForm" method="POST" enctype="multipart/form-data" action="{{ route('superadmin.store-student') }}">
+                @csrf
+                
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <div style="margin-bottom: 10px;">
+                        <img id="addImagePreview" src="{{ asset('images/hack.png') }}" alt="Preview" 
+                             style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent-green); background-color: #000;">
+                    </div>
+                    <label style="color: var(--accent-green); font-size: 11px; display: block; margin-bottom: 5px;">USER_PHOTO</label>
+                    <input type="file" name="image" id="addImage" accept="image/*" onchange="previewAddImage(this)"
+                           style="width: 100%; background: #000; border: 1px solid var(--accent-green); color: var(--accent-green); padding: 5px; border-radius: 4px; font-family: 'Courier New', monospace; font-size: 11px;">
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label style="color: var(--accent-green); font-size: 11px; display: block; margin-bottom: 5px;">USERNAME</label>
+                        <input type="text" name="username" id="addUsername" required 
+                               style="width: 100%; background: #000; border: 1px solid var(--accent-green); color: var(--accent-green); padding: 8px; border-radius: 4px; font-family: 'Courier New', monospace; font-size: 13px;">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label style="color: var(--accent-green); font-size: 11px; display: block; margin-bottom: 5px;">SCHOOL_ID</label>
+                        <input type="text" name="school_id" id="addSchoolId" required maxlength="9" placeholder="0000-0000"
+                               style="width: 100%; background: #000; border: 1px solid var(--accent-green); color: var(--accent-green); padding: 8px; border-radius: 4px; font-family: 'Courier New', monospace; font-size: 13px;">
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label style="color: var(--accent-green); font-size: 11px; display: block; margin-bottom: 5px;">FULL_NAME</label>
+                    <input type="text" name="full_name" id="addFullName" required 
+                           style="width: 100%; background: #000; border: 1px solid var(--accent-green); color: var(--accent-green); padding: 8px; border-radius: 4px; font-family: 'Courier New', monospace; font-size: 13px;">
+                </div>
+
+                <div class="mb-3">
+                    <label style="color: var(--accent-green); font-size: 11px; display: block; margin-bottom: 5px;">EMAIL_ADDRESS</label>
+                    <input type="email" name="email" id="addEmail" required
+                           style="width: 100%; background: #000; border: 1px solid var(--accent-green); color: var(--accent-green); padding: 8px; border-radius: 4px; font-family: 'Courier New', monospace; font-size: 13px;">
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label style="color: var(--accent-green); font-size: 11px; display: block; margin-bottom: 5px;">COURSE</label>
+                        <select name="course" id="addCourse" required onchange="populateAddSections()"
+                                style="width: 100%; background: #000; border: 1px solid var(--accent-green); color: var(--accent-green); padding: 8px; border-radius: 4px; font-family: 'Courier New', monospace; font-size: 13px;">
+                            <option value="BSIT">BSIT</option>
+                            <option value="BSHM">BSHM</option>
+                            <option value="BSBA">BSBA</option>
+                            <option value="BSED">BSED</option>
+                            <option value="BEED">BEED</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label style="color: var(--accent-green); font-size: 11px; display: block; margin-bottom: 5px;">YEAR_LEVEL</label>
+                        <select name="year_level" id="addYearLevel" required onchange="populateAddSections()"
+                                style="width: 100%; background: #000; border: 1px solid var(--accent-green); color: var(--accent-green); padding: 8px; border-radius: 4px; font-family: 'Courier New', monospace; font-size: 13px;">
+                            <option value="1st Year">1st Year</option>
+                            <option value="2nd Year">2nd Year</option>
+                            <option value="3rd Year">3rd Year</option>
+                            <option value="4th Year">4th Year</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label style="color: var(--accent-green); font-size: 11px; display: block; margin-bottom: 5px;">SECTION</label>
+                        <select name="section" id="addSection" required
+                                style="width: 100%; background: #000; border: 1px solid var(--accent-green); color: var(--accent-green); padding: 8px; border-radius: 4px; font-family: 'Courier New', monospace; font-size: 13px;">
+                            <option value="">Select section...</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label style="color: var(--accent-green); font-size: 11px; display: block; margin-bottom: 5px;">STUDENT_STATUS</label>
+                        <select name="student_status" id="addStudentStatus" required
+                                style="width: 100%; background: #000; border: 1px solid var(--accent-green); color: var(--accent-green); padding: 8px; border-radius: 4px; font-family: 'Courier New', monospace; font-size: 13px;">
+                            <option value="Regular">Regular</option>
+                            <option value="Irregular">Irregular</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label style="color: var(--accent-green); font-size: 11px; display: block; margin-bottom: 5px;">PASSWORD</label>
+                    <div style="position: relative;">
+                        <input type="password" name="password" id="addPassword" required 
+                               style="width: 100%; background: #000; border: 1px solid var(--accent-green); color: var(--accent-green); padding: 8px; padding-right: 40px; border-radius: 4px; font-family: 'Courier New', monospace; font-size: 13px;">
+                        <button type="button" onclick="togglePassword('addPassword', this)" 
+                                style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: transparent; border: none; color: var(--accent-green); cursor: pointer; text-shadow: 0 0 5px var(--accent-green);">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <div id="passwordStrength" style="height: 5px; background: #333; margin-top: 5px; border-radius: 2px; overflow: hidden;">
+                        <div id="strengthBar" style="height: 100%; width: 0; transition: all 0.3s;"></div>
+                    </div>
+                    <div id="passwordRequirements" style="font-size: 10px; color: #ff4d4d; margin-top: 5px;">
+                        Min 8 chars, Upper, Lower, Number, Symbol
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label style="color: var(--accent-green); font-size: 11px; display: block; margin-bottom: 5px;">CONFIRM_PASSWORD</label>
+                    <div style="position: relative;">
+                        <input type="password" name="password_confirmation" id="addConfirmPassword" required
+                               style="width: 100%; background: #000; border: 1px solid var(--accent-green); color: var(--accent-green); padding: 8px; padding-right: 40px; border-radius: 4px; font-family: 'Courier New', monospace; font-size: 13px;">
+                        <button type="button" onclick="togglePassword('addConfirmPassword', this)" 
+                                style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: transparent; border: none; color: var(--accent-green); cursor: pointer; text-shadow: 0 0 5px var(--accent-green);">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <div id="passwordMatch" style="font-size: 10px; margin-top: 5px;"></div>
+                </div>
+                
+                <div style="display: flex; gap: 10px;">
+                    <button type="button" onclick="closeAddStudentModal()" 
+                            style="flex: 1; background: transparent; border: 1px solid #6c757d; color: #6c757d; padding: 10px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; transition: var(--transition);">
+                        CANCEL
+                    </button>
+                    <button type="submit" id="submitAddStudent" disabled
+                            style="flex: 2; background: var(--accent-green); border: none; color: var(--primary-dark); padding: 10px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; transition: var(--transition); box-shadow: 0 0 10px rgba(0,255,65,0.4);">
+                        SAVE_STUDENT
                     </button>
                 </div>
             </form>
@@ -1451,6 +1611,239 @@
                 ]
             }
         };
+
+        function populateAddSections() {
+            const course = document.getElementById('addCourse').value;
+            const yearLevel = document.getElementById('addYearLevel').value;
+            const sectionSelect = document.getElementById('addSection');
+            
+            sectionSelect.innerHTML = '<option value="">Select section...</option>';
+            
+            if (course && yearLevel && sectionData[course] && sectionData[course][yearLevel]) {
+                sectionData[course][yearLevel].forEach(section => {
+                    const option = document.createElement('option');
+                    option.value = section.value;
+                    option.textContent = section.label;
+                    sectionSelect.appendChild(option);
+                });
+            }
+        }
+
+        function closeAddStudentModal() {
+            document.getElementById('addStudentModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+            document.getElementById('addStudentForm').reset();
+            document.getElementById('addImagePreview').src = "{{ asset('images/hack.png') }}";
+            document.getElementById('strengthBar').style.width = '0';
+            document.getElementById('passwordMatch').textContent = '';
+        }
+
+        function previewAddImage(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('addImagePreview').src = e.target.result;
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // Add Student Modal Open
+        document.getElementById('openAddStudentModal').addEventListener('click', function() {
+            document.getElementById('addStudentModal').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+            populateAddSections();
+        });
+
+        // Password Strength and Match Logic
+        const addPassword = document.getElementById('addPassword');
+        const addConfirmPassword = document.getElementById('addConfirmPassword');
+        const strengthBar = document.getElementById('strengthBar');
+        const passwordMatch = document.getElementById('passwordMatch');
+        const submitBtn = document.getElementById('submitAddStudent');
+
+        function checkRequirements(password) {
+            const requirements = {
+                length: password.length >= 8,
+                upper: /[A-Z]/.test(password),
+                lower: /[a-z]/.test(password),
+                number: /[0-9]/.test(password),
+                symbol: /[!@#$%^&*(),.?":{}|<>]/.test(password)
+            };
+            return requirements;
+        }
+
+        function updatePasswordUI() {
+            const password = addPassword.value;
+            const confirmPassword = addConfirmPassword.value;
+            const reqs = checkRequirements(password);
+            
+            // Update Strength Bar
+            let strength = 0;
+            if (password.length > 0) {
+                if (reqs.length) strength += 20;
+                if (reqs.upper) strength += 20;
+                if (reqs.lower) strength += 20;
+                if (reqs.number) strength += 20;
+                if (reqs.symbol) strength += 20;
+            }
+
+            strengthBar.style.width = strength + '%';
+            if (strength < 40) strengthBar.style.backgroundColor = '#ff4d4d';
+            else if (strength < 80) strengthBar.style.backgroundColor = '#ffcc00';
+            else strengthBar.style.backgroundColor = 'var(--accent-green)';
+
+            // Update Match Text
+            if (confirmPassword.length > 0) {
+                if (password === confirmPassword) {
+                    passwordMatch.textContent = '>> PASSWORDS_MATCH';
+                    passwordMatch.style.color = 'var(--accent-green)';
+                } else {
+                    passwordMatch.textContent = '>> PASSWORDS_MISMATCH';
+                    passwordMatch.style.color = '#ff4d4d';
+                }
+            } else {
+                passwordMatch.textContent = '';
+            }
+
+            // Enable/Disable Submit
+            const allReqsMet = Object.values(reqs).every(Boolean);
+            submitBtn.disabled = !(allReqsMet && password === confirmPassword && password.length > 0);
+        }
+
+        addPassword.addEventListener('input', updatePasswordUI);
+        addConfirmPassword.addEventListener('input', updatePasswordUI);
+
+        // School ID Auto-formatting (0000-0000)
+        const addSchoolId = document.getElementById('addSchoolId');
+        addSchoolId.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, ''); // Remove all non-digits
+            if (value.length > 8) value = value.slice(0, 8);
+            
+            let formattedValue = '';
+            if (value.length > 4) {
+                formattedValue = value.slice(0, 4) + '-' + value.slice(4);
+            } else {
+                formattedValue = value;
+            }
+            
+            e.target.value = formattedValue;
+        });
+
+        // Email Auto-complete (@mcclawis.edu.ph)
+        const addEmail = document.getElementById('addEmail');
+        addEmail.addEventListener('keypress', function(e) {
+            if (e.key === '@') {
+                e.preventDefault();
+                const currentVal = e.target.value;
+                // Only append if @ is not already present
+                if (!currentVal.includes('@')) {
+                    e.target.value = currentVal + '@mcclawis.edu.ph';
+                }
+            }
+        });
+
+        // Edit Form Auto-formatting
+        const editSchoolId = document.getElementById('editSchoolId');
+        editSchoolId.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 8) value = value.slice(0, 8);
+            let formattedValue = value.length > 4 ? value.slice(0, 4) + '-' + value.slice(4) : value;
+            e.target.value = formattedValue;
+        });
+
+        const editEmail = document.getElementById('editEmail');
+        editEmail.addEventListener('keypress', function(e) {
+            if (e.key === '@') {
+                e.preventDefault();
+                const currentVal = e.target.value;
+                if (!currentVal.includes('@')) {
+                    e.target.value = currentVal + '@mcclawis.edu.ph';
+                }
+            }
+        });
+
+        // Handle Add Student Form Submission
+        document.getElementById('addStudentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const form = this;
+            const modal = document.getElementById('addStudentModal');
+            
+            Swal.fire({
+                title: 'CONFIRM_REGISTRATION?',
+                text: "Are you sure you want to manually add this student?",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: 'var(--accent-green)',
+                cancelButtonColor: '#ff4d4d',
+                confirmButtonText: 'YES, ADD STUDENT',
+                cancelButtonText: 'CANCEL',
+                background: 'var(--secondary-dark)',
+                color: 'var(--text-light)'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'PROCESS_INITIATED',
+                        text: 'Registering student in database...',
+                        icon: 'info',
+                        background: 'var(--secondary-dark)',
+                        color: 'var(--accent-green)',
+                        showConfirmButton: false,
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+                    
+                    const formData = new FormData(form);
+                    
+                    fetch(form.action, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        }
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            return response.json().then(err => { throw err; });
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'REGISTRATION_SUCCESSFUL',
+                                text: 'Student has been manually added.',
+                                background: 'var(--secondary-dark)',
+                                color: 'var(--accent-green)',
+                                timer: 2000,
+                                showConfirmButton: false
+                            });
+                            closeAddStudentModal();
+                            if (window.studentsTable) {
+                                window.studentsTable.ajax.reload(null, false);
+                            }
+                        } else {
+                            throw new Error(data.message || 'Registration failed.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'REGISTRATION_FAILED',
+                            text: error.message || 'Failed to add student.',
+                            background: 'var(--secondary-dark)',
+                            color: '#ff4d4d'
+                        });
+                    });
+                }
+            });
+        });
 
         function populateEditSections(selectedSection = '') {
             const course = document.getElementById('editCourse').value;

@@ -478,6 +478,77 @@ class SuperAdminController extends Controller
     /**
      * Update student details by super admin.
      */
+    /**
+     * Store a newly created student in storage.
+     */
+    public function storeStudent(Request $request)
+    {
+        if (!session()->has('super_admin_id')) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
+        }
+
+        $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
+            'username' => 'required|string|max:255|unique:users,username',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|string|min:8|confirmed|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/',
+            'full_name' => 'required|string|max:255',
+            'school_id' => 'required|string|max:255|unique:users,school_id',
+            'course' => 'required|string|in:BSIT,BSHM,BSBA,BSED,BEED',
+            'year_level' => 'required|string|in:1st Year,2nd Year,3rd Year,4th Year',
+            'section' => 'nullable|string|max:255',
+            'student_status' => 'required|string|in:Regular,Irregular',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048'
+        ], [
+            'password.regex' => 'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed: ' . implode(', ', $validator->errors()->all())
+            ], 422);
+        }
+
+        // Handle image upload
+        $image_path = null;
+        if ($request->hasFile('image')) {
+            $upload_dir = 'uploads/students';
+            $upload_path = public_path($upload_dir);
+            
+            if (!file_exists($upload_path)) {
+                mkdir($upload_path, 0755, true);
+            }
+            
+            $file = $request->file('image');
+            $imageName = time() . '_' . $file->getClientOriginalName();
+            
+            if ($file->move($upload_path, $imageName)) {
+                $image_path = $imageName;
+            }
+        }
+
+        try {
+            User::create([
+                'username' => $request->username,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'full_name' => $request->full_name,
+                'school_id' => $request->school_id,
+                'role' => 'student',
+                'course' => $request->course,
+                'year_level' => $request->year_level,
+                'section' => $request->section,
+                'student_status' => $request->student_status,
+                'profile_image' => $image_path,
+                'status' => 'active'
+            ]);
+
+            return response()->json(['success' => true, 'message' => 'Student added successfully!']);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Error adding student: ' . $e->getMessage()], 500);
+        }
+    }
+
     public function updateStudent(Request $request)
     {
         if (!session()->has('super_admin_id')) {

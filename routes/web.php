@@ -106,6 +106,7 @@ Route::get('/superadmin/backup/download', [SuperAdminController::class, 'downloa
 Route::delete('/superadmin/activity-log/{id}', [SuperAdminController::class, 'deleteActivityLog'])->name('superadmin.activity-log.delete');
 Route::post('/superadmin/activity-log/bulk-delete', [SuperAdminController::class, 'bulkDeleteActivityLogs'])->name('superadmin.activity-log.bulk-delete');
 Route::post('/superadmin/update-student', [SuperAdminController::class, 'updateStudent'])->name('superadmin.update-student');
+Route::post('/superadmin/store-student', [SuperAdminController::class, 'storeStudent'])->name('superadmin.store-student');
 Route::post('/superadmin/update-password', [SuperAdminController::class, 'updatePassword'])->name('superadmin.update-password');
 Route::post('/superadmin/logout', [SuperAdminController::class, 'logout'])->name('superadmin.logout');
 Route::post('/superadmin/add-id-user', [SuperAdminController::class, 'addIdUser'])->name('superadmin.add-id-user');
@@ -191,6 +192,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard/students', [StudentController::class, 'index'])->name('students.index');
     Route::post('/dashboard/update-students', [StudentController::class, 'update'])->name('students.update');
     Route::post('/dashboard/delete-students', [StudentController::class, 'destroy'])->name('students.delete');
+   
 
     // Subject CRUD Routes
     Route::post('/dashboard/add-subject', [DashboardController::class, 'addSubject'])->name('subjects.store');
