@@ -753,7 +753,7 @@ function printOverallReport(staffData, type) {
                 </div>
             </div>
             
-            <div style="text-align: left; margin-bottom: 0.8em; font-size: 10pt; line-height: 1.2;">
+            <div style="text-align: left; margin-bottom: 0.1em; font-size: 10pt; line-height: 1.2;">
                 <p style="margin-bottom: 0.15em;">To:<strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DR. FLORIPIS A. MONTECILLO</strong></p>
                 <p style="margin-bottom: 0.3em; margin-left: 2em;"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;College President</p>        
                 <p style="margin-bottom: 0.3em;">From:&nbsp;&nbsp;&nbsp;&nbsp;Center for Guidance Services</p>
@@ -771,10 +771,10 @@ function printOverallReport(staffData, type) {
                     <thead>
                         <tr style="height: 40px; border: none !important;"><th colspan="4" style="border: none !important;"></th></tr>
                         <tr style="background-color: #f8f9fa;">
-                            <th style="border: 1px solid #ddd; padding: 4px 6px; text-align: left; font-weight: bold; font-size: 10pt;">${type === 'teaching' ? 'NAME OF INSTRUCTORS' : 'NAME OF STAFF'}</th>
-                            <th style="border: 1px solid #ddd; padding: 4px 6px; text-align: center; font-weight: bold; font-size: 10pt;">AVERAGE SCORES</th>
-                            <th style="border: 1px solid #ddd; padding: 4px 6px; text-align: center; font-weight: bold; font-size: 10pt;">${adjectivalLabel}</th>
-                            <th style="border: 1px solid #ddd; padding: 4px 6px; text-align: center; font-weight: bold; font-size: 10pt;">DEPARTMENT</th>
+                            <th style="border: 1px solid #ddd; padding: 4px 6px; text-align: left; font-weight: bold; font-size: 8.5pt;">${type === 'teaching' ? 'NAME OF INSTRUCTORS' : 'NAME OF STAFF'}</th>
+                            <th style="border: 1px solid #ddd; padding: 4px 6px; text-align: center; font-weight: bold; font-size: 8.5pt;">AVERAGE SCORES</th>
+                            <th style="border: 1px solid #ddd; padding: 4px 6px; text-align: center; font-weight: bold; font-size: 8.5pt;">${adjectivalLabel}</th>
+                            <th style="border: 1px solid #ddd; padding: 4px 6px; text-align: center; font-weight: bold; font-size: 8.5pt;">DEPARTMENT</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -794,10 +794,10 @@ function printOverallReport(staffData, type) {
 
         html += `
             <tr class="print-row" style="background-color: ${rowColor};">
-                <td style="border: 1px solid #ddd; padding: 4px 6px; text-align: left; font-size: 9.5pt; font-family: 'Century Gothic', sans-serif; text-transform: uppercase;">${staff.name}</td>
-                <td style="border: 1px solid #ddd; padding: 4px 6px; text-align: center; font-weight: bold; color: #232527; font-size: 9.5pt; font-family: 'Century Gothic', sans-serif; text-transform: uppercase;">${staff.rating.toFixed(2)}</td>
-                <td style="border: 1px solid #ddd; padding: 4px 6px; text-align: center; font-weight: bold; color: #080908; font-size: 9.5pt; font-family: 'Century Gothic', sans-serif; text-transform: uppercase;">${adjective}</td>
-                <td style="border: 1px solid #ddd; padding: 4px 6px; text-align: center; font-size: 9.5pt; font-family: 'Century Gothic', sans-serif; text-transform: uppercase;">${staff.department}</td>
+                <td style="border: 1px solid #ddd; padding: 4px 6px; text-align: left; font-size: 7pt; font-family: 'Century Gothic', sans-serif; text-transform: uppercase;">${staff.name}</td>
+                <td style="border: 1px solid #ddd; padding: 4px 6px; text-align: center; font-weight: bold; color: #232527; font-size: 7pt; font-family: 'Century Gothic', sans-serif; text-transform: uppercase;">${staff.rating.toFixed(2)}</td>
+                <td style="border: 1px solid #ddd; padding: 4px 6px; text-align: center; font-weight: bold; color: #080908; font-size: 7pt; font-family: 'Century Gothic', sans-serif; text-transform: uppercase;">${adjective}</td>
+                <td style="border: 1px solid #ddd; padding: 4px 6px; text-align: center; font-size: 7pt; font-family: 'Century Gothic', sans-serif; text-transform: uppercase;">${staff.department}</td>
             </tr>
         `;
     });
