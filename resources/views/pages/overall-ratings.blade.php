@@ -766,7 +766,7 @@ function printOverallReport(staffData, type) {
                 <p style="margin-bottom: 0.7em;">Please be advised that the following ${title.toLowerCase()} were evaluated by all MCC Students.</p>
             </div>
             
-            <div style="margin-bottom: 0.8em;">
+            <div style="margin-bottom: 0.3em;">
                 <table style="width: 100%; border-collapse: collapse; margin-top: 0.4em;">
                     <thead>
                         <tr style="height: 40px; border: none !important;"><th colspan="4" style="border: none !important;"></th></tr>
@@ -809,7 +809,7 @@ function printOverallReport(staffData, type) {
 
             <!-- Signature Section update margintop-->
             <div style='margin-top:1em;margin-bottom:0em;text-align:left; font-size:9.5pt; line-height:1.3;'>
-            <br>
+            
                 <div style='margin-bottom:1em;'>
                     Prepared by:
                 </div>
