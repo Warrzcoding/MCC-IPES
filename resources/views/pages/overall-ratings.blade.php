@@ -753,7 +753,7 @@ function printOverallReport(staffData, type) {
                 </div>
             </div>
             
-            <div style="text-align: left; margin-bottom: 0em; font-size: 10pt; line-height: 1.2;">
+            <div style="text-align: left; font-size: 10pt; line-height: 1.2;">
                 <p style="margin-bottom: 0.15em;">To:<strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DR. FLORIPIS A. MONTECILLO</strong></p>
                 <p style="margin-bottom: 0.3em; margin-left: 2em;"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;College President</p>        
                 <p style="margin-bottom: 0.3em;">From:&nbsp;&nbsp;&nbsp;&nbsp;Center for Guidance Services</p>
@@ -763,10 +763,10 @@ function printOverallReport(staffData, type) {
      
                 <p style="margin-bottom: 0.7em;">I am writing to formally endorse the Results of the Performance Evaluation of all MCC ${title} for Academic Year {{ $currentAcademicYear?->year }} - {{ $currentAcademicYear?->semester == 1 ? 'First' : ($currentAcademicYear?->semester == 2 ? 'Second' : $currentAcademicYear?->semester) }} Semester.</p>
                 
-                <p style="margin-bottom: 0.7em;">Please be advised that the following ${title.toLowerCase()} were evaluated by all MCC Students.</p>
+                <p style="margin-bottom: 0.1em;">Please be advised that the following ${title.toLowerCase()} were evaluated by all MCC Students.</p>
             </div>
             
-            <div style="margin-bottom: 0.1em;">
+            <div style="margin-bottom: 0.8em;">
                 <table style="width: 100%; border-collapse: collapse; margin-top: 0.1em;">
                     <thead>
                         <tr style="height: 40px; border: none !important;"><th colspan="4" style="border: none !important;"></th></tr>
