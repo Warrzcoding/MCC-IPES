@@ -794,10 +794,10 @@ function printOverallReport(staffData, type) {
 
         html += `
             <tr class="print-row" style="background-color: ${rowColor};">
-                <td style="border: 1px solid #ddd; padding: 4px 6px; text-align: left; font-size: 9pt; font-family: 'Century Gothic', sans-serif; text-transform: uppercase;">${staff.name}</td>
-                <td style="border: 1px solid #ddd; padding: 4px 6px; text-align: center; font-weight: bold; color: #232527; font-size: 9pt; font-family: 'Century Gothic', sans-serif; text-transform: uppercase;">${staff.rating.toFixed(2)}</td>
-                <td style="border: 1px solid #ddd; padding: 4px 6px; text-align: center; font-weight: bold; color: #080908; font-size: 9pt; font-family: 'Century Gothic', sans-serif; text-transform: uppercase;">${adjective}</td>
-                <td style="border: 1px solid #ddd; padding: 4px 6px; text-align: center; font-size: 9pt; font-family: 'Century Gothic', sans-serif; text-transform: uppercase;">${staff.department}</td>
+                <td style="border: 1px solid #ddd; padding: 4px 6px; text-align: left; font-size: 8.5pt; font-family: 'Century Gothic', sans-serif; text-transform: uppercase;">${staff.name}</td>
+                <td style="border: 1px solid #ddd; padding: 4px 6px; text-align: center; font-weight: bold; color: #232527; font-size: 8.5pt; font-family: 'Century Gothic', sans-serif; text-transform: uppercase;">${staff.rating.toFixed(2)}</td>
+                <td style="border: 1px solid #ddd; padding: 4px 6px; text-align: center; font-weight: bold; color: #080908; font-size: 8.5pt; font-family: 'Century Gothic', sans-serif; text-transform: uppercase;">${adjective}</td>
+                <td style="border: 1px solid #ddd; padding: 4px 6px; text-align: center; font-size: 8.5pt; font-family: 'Century Gothic', sans-serif; text-transform: uppercase;">${staff.department}</td>
             </tr>
         `;
     });
@@ -809,7 +809,7 @@ function printOverallReport(staffData, type) {
 
             <!-- Signature Section update margintop-->
             <div style='margin-top:3em;margin-bottom:0em;text-align:left; font-size:9pt; line-height:1.3;'>
-            <br>
+            <br><br>
                 <div style='margin-bottom:1em;'>
                     Prepared by:
                 </div>
