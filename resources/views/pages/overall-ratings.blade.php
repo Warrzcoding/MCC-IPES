@@ -808,7 +808,7 @@ function printOverallReport(staffData, type) {
             </div>
 
             <!-- Signature Section update margintop-->
-            <div style='margin-top:8em;margin-bottom:0em;text-align:left; font-size:10pt; line-height:1.3;'>
+            <div style='margin-top:3em;margin-bottom:0em;text-align:left; font-size:9pt; line-height:1.3;'>
             <br><br>
                 <div style='margin-bottom:1em;'>
                     Prepared by:
