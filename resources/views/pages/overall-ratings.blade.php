@@ -753,7 +753,7 @@ function printOverallReport(staffData, type) {
                 </div>
             </div>
             
-            <div style="text-align: left; margin-bottom: 0.8em; font-size: 10pt; line-height: 1.2;">
+            <div style="text-align: left; margin-bottom: 0.2em; font-size: 10pt; line-height: 1.2;">
                 <p style="margin-bottom: 0.15em;">To:<strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DR. FLORIPIS A. MONTECILLO</strong></p>
                 <p style="margin-bottom: 0.3em; margin-left: 2em;"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;College President</p>        
                 <p style="margin-bottom: 0.3em;">From:&nbsp;&nbsp;&nbsp;&nbsp;Center for Guidance Services</p>
