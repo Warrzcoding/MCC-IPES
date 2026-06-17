@@ -753,7 +753,7 @@ function printOverallReport(staffData, type) {
                 </div>
             </div>
             
-            <div style="text-align: left; margin-bottom: 0.1em; font-size: 10pt; line-height: 1.2;">
+            <div style="text-align: left; margin-bottom: 0.8em; font-size: 10pt; line-height: 1.2;">
                 <p style="margin-bottom: 0.15em;">To:<strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DR. FLORIPIS A. MONTECILLO</strong></p>
                 <p style="margin-bottom: 0.3em; margin-left: 2em;"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;College President</p>        
                 <p style="margin-bottom: 0.3em;">From:&nbsp;&nbsp;&nbsp;&nbsp;Center for Guidance Services</p>
@@ -767,12 +767,12 @@ function printOverallReport(staffData, type) {
             </div>
             
             <div style="margin-bottom: 0.8em;">
-                <table style="width: 100%; border-collapse: collapse; margin-top: 0.1em;">
+                <table style="width: 100%; border-collapse: collapse; margin-top: 0.4em;">
                     <thead>
                         <tr style="height: 40px; border: none !important;"><th colspan="4" style="border: none !important;"></th></tr>
                         <tr style="background-color: #f8f9fa;">
                             <th style="border: 1px solid #ddd; padding: 4px 6px; text-align: left; font-weight: bold; font-size: 10pt;">${type === 'teaching' ? 'NAME OF INSTRUCTORS' : 'NAME OF STAFF'}</th>
-                            <th style="border: 1px solid #ddd; padding: 4px 6px; text-align: center; font-weight: bold; font-size: 10pt;">AVERAGE SCORES</th>
+                            <th style="border: 1px solid #ddd; padding: 4px 6px; text-align: center; font-weight: bold; font-size: 10pt;">AVEsRAGE SCORES</th>
                             <th style="border: 1px solid #ddd; padding: 4px 6px; text-align: center; font-weight: bold; font-size: 10pt;">${adjectivalLabel}</th>
                             <th style="border: 1px solid #ddd; padding: 4px 6px; text-align: center; font-weight: bold; font-size: 10pt;">DEPARTMENT</th>
                         </tr>
