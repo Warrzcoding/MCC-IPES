@@ -766,7 +766,7 @@ function printOverallReport(staffData, type) {
                 <p style="margin-bottom: 0.7em;">Please be advised that the following ${title.toLowerCase()} were evaluated by all MCC Students.</p>
             </div>
             
-            <div style="margin-bottom: 0.8em;">
+            <div style="margin-bottom: 0.1em;">
                 <table style="width: 100%; border-collapse: collapse; margin-top: 0.1em;">
                     <thead>
                         <tr style="height: 40px; border: none !important;"><th colspan="4" style="border: none !important;"></th></tr>
