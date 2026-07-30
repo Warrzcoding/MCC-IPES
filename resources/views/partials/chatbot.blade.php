@@ -512,7 +512,7 @@
 
         downloadApkBtn.addEventListener('click', function() {
             pendingUrl = '{{ asset("apk/android/students_ipes.apk") }}';
-            confirmMsg.textContent = 'It will download only if you run this in browser';
+            confirmMsg.textContent = 'Download works only in browser.';
             confirmModal.style.display = 'flex';
         });
 
