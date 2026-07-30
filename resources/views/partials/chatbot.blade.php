@@ -516,7 +516,7 @@
             confirmModal.style.display = 'flex';
         });
 
-        cancelBtn.addEventListener('click', () => {
+        cancelBtn.addEventListener('click', () => {s
             confirmModal.style.display = 'none';
         });
 
